@@ -112,8 +112,46 @@ public final class SmsUdhUtil
     }
     
     /**
-     * Creates a "8Bit concatenated" UDH element using UDH_IEI_CONCATENATED_8BIT
-     * <p>
+     * Calculates if the given data needs a concatenated SMS.
+     * 
+     * @param ud User data
+     * @param udh UDH elements
+     * @return
+     */
+    public static boolean isConcat(SmsUserData ud, byte[] udh)
+    {
+        int udLength = ud.getLength();
+        
+        int bytesLeft = 140;
+        int maxChars;
+        
+        if (udh != null)
+        {
+            bytesLeft -= udh.length;
+        }
+
+        switch (SmsDcsUtil.getAlphabet(ud.getDcs()))
+        {
+        case SmsConstants.ALPHABET_GSM:
+            maxChars = (bytesLeft * 8) / 7;
+            break;
+            
+        case SmsConstants.ALPHABET_UCS2:
+            maxChars = bytesLeft / 2;
+            break;
+            
+        case SmsConstants.ALPHABET_8BIT:
+        default:
+            maxChars = bytesLeft;
+            break;
+        }
+
+        return (udLength > maxChars);
+    }
+    
+    /**
+     * Creates a "8Bit concatenated" UDH element using UDH_IEI_CONCATENATED_8BIT.
+     * 
      * This can be used to create a concatenated SMS.
      *
      * @param theRefNr The reference number of this SMS, must be the same in
