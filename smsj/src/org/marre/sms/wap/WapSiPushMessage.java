@@ -47,17 +47,27 @@ import java.io.IOException;
  * @author Markus Eriksson
  * @version 1.0
  */
+
 public class WapSiPushMessage extends WapPushMessage
 {
-    public WapSiPushMessage(String uri, String message)
-    {
-        super();
+	
+		public WapSiPushMessage(String uri, String message)
+		{
+				super();
 
         SIPush push = new SIPush(uri, message);
-        createSiPush(push);
-    }
+        createSiPush(push, false);
+		}
+	  
+		public WapSiPushMessage(String uri, String message, boolean uaAgentCompatable)
+		{
+			super();
 
-    protected void createSiPush(SIPush push)
+			SIPush push = new SIPush(uri, message);
+			createSiPush(push, uaAgentCompatable);
+		}
+
+    protected void createSiPush(SIPush push, boolean uaAgentCompatable)
     {
         ByteArrayOutputStream pushMsg = new ByteArrayOutputStream();
 
@@ -71,6 +81,12 @@ public class WapSiPushMessage extends WapPushMessage
             // Should not happen
         }
 
-        createMessage(pushMsg.toByteArray(), "application/vnd.wap.sic", "x-wap-application:wml.ua", null);
+				if (uaAgentCompatable){
+        	createMessage(pushMsg.toByteArray(), "application/vnd.wap.sic", "x-wap-application:wml.ua", null);
+				}
+				else {
+					createMessage(pushMsg.toByteArray(), "application/vnd.wap.sic", "x-wap-application:*", null);
+				}
+				
     }
 }
