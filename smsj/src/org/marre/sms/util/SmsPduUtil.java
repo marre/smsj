@@ -297,6 +297,24 @@ public class SmsPduUtil
     }
 
     /**
+     * Converts a unicode string to GSM charset
+     *
+     * @param str String to convert
+     * @return The string GSM encoded
+     */
+    public static final byte[] toGsmCharset(String str)
+    {
+        byte[] gsmBytes = new byte[str.length()];
+
+        for(int i=0; i < gsmBytes.length; i++)
+        {
+            gsmBytes[i] = toGsmCharset(str.charAt(i));
+        }
+
+        return gsmBytes;
+    }
+
+    /**
      * Convert a unicode char to a GSM char
      *
      * @param theUnicodeCh The unicode char to convert
