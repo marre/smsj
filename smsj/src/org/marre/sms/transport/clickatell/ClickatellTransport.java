@@ -151,9 +151,14 @@ public class ClickatellTransport implements SmsTransport
                 Object[] objs = responseFormat.parse(response);
                 if ("ERR".equalsIgnoreCase((String) objs[0]))
                 {
+                    MessageFormat errorFormat = new MessageFormat("{0}: {1}, {2}");
+                    Object[] errObjs = errorFormat.parse(response);
+                    
                     // Error message...
-                    String errorNo = (String) objs[1];
-                    throw new ClickatellException("Clickatell error. Error " + errorNo, Integer.parseInt(errorNo));
+                    String errorNo = (String) errObjs[1];
+                    String description = (String) errObjs[2];
+                    throw new ClickatellException("Clickatell error. Error " + errorNo + ", " + description, 
+                                                  Integer.parseInt(errorNo));
                 }
                 else
                 {
@@ -219,10 +224,14 @@ public class ClickatellTransport implements SmsTransport
     public void connect() throws SmsException
     {
         String[] response = null;
-        String requestString = MessageFormat.format(
-                "http://api.clickatell.com/http/auth?api_id={0}&user={1}&password={2}", 
-                new Object[]{myApiId, myUsername, myPassword, });
-
+        String requestString;
+        
+        logger.debug("Connecting...");
+        
+        requestString  = "http://api.clickatell.com/http/auth?api_id=" + myApiId;
+        requestString += "&user=" + myUsername;
+        requestString += "&password=" + myPassword;
+        
         try
         {
             response = sendRequest(requestString);
@@ -252,6 +261,8 @@ public class ClickatellTransport implements SmsTransport
         String udhStr;
         byte[] udhData;
         
+        logger.debug("Sending concat message...");
+        
         SmsUdhElement[] udhElements = theMsg.getUdhElements();
         SmsUserData userData = theMsg.getUserData();
 
@@ -265,11 +276,26 @@ public class ClickatellTransport implements SmsTransport
             throw new SmsException("Must connect before sending"); 
         }
 
+        requestString  = "http://api.clickatell.com/http/sendmsg?session_id=" + mySessionId;
+        requestString += "&concat=3";
+        requestString += "&to=" + theDestination.getAddress();
+        
+        if (theSender != null)
+        {
+            requestString += "&from=" + theSender.getAddress();
+        }
+        
+        // CLASS_0 message?
+        if (SmsDcsUtil.getMessageClass(userData.getDcs()) == SmsConstants.MSG_CLASS_0)
+        {
+            requestString += "&msg_type=SMS_FLASH";
+        }
+        
         //
         // Generate request URL
         //
         if ( (udhElements == null) || (udhElements.length == 0) )
-        {
+        {                        
             //
             // Message without UDH
             //
@@ -280,17 +306,15 @@ public class ClickatellTransport implements SmsTransport
 
             case SmsConstants.ALPHABET_UCS2:
                 udStr = StringUtil.bytesToHexString(userData.getData());
-                requestString = MessageFormat.format(
-                    "http://api.clickatell.com/http/sendmsg?session_id={0}&concat=3&to={1}&from={2}&unicode=1&text={3}",
-                    new Object[]{mySessionId, theDestination.getAddress(), theSender.getAddress(), udStr, });
+            
+                requestString += "&unicode=1";
+                requestString += "&text=" + udStr;
                 break;
 
             case SmsConstants.ALPHABET_GSM:
                 String msg = SmsPduUtil.readSeptets(userData.getData(), userData.getLength());
-                msg = URLEncoder.encode(msg);
-                requestString = MessageFormat.format(
-                    "http://api.clickatell.com/http/sendmsg?session_id={0}&concat=3&to={1}&from={2}&text={3}",
-                    new Object[]{mySessionId, theDestination.getAddress(), theSender.getAddress(), msg, });
+            
+                requestString += "&text=" + URLEncoder.encode(msg);
                 break;
 
             default:
@@ -308,19 +332,19 @@ public class ClickatellTransport implements SmsTransport
                 udStr = StringUtil.bytesToHexString(userData.getData());
                 udhData = SmsUdhUtil.toByteArray(udhElements);
                 udhStr = StringUtil.bytesToHexString(udhData);
-                requestString = MessageFormat.format(
-                    "http://api.clickatell.com/http/sendmsg?session_id={0}&concat=3&to={1}&from={2}&udh={3}&text={4}",
-                    new Object[]{mySessionId, theDestination.getAddress(), theSender.getAddress(), udhStr, udStr});
+                
+                requestString += "&udh=" + udhStr;
+                requestString += "&text=" + udStr;                
                 break;
 
             case SmsConstants.ALPHABET_UCS2:
                 udStr = StringUtil.bytesToHexString(userData.getData());
                 udhData = SmsUdhUtil.toByteArray(udhElements);
                 udhStr = StringUtil.bytesToHexString(udhData);
-                requestString = MessageFormat.format(
-                      "http://api.clickatell.com/http/sendmsg?"
-                    + "session_id={0}&concat=3&to={1}&from={2}&udh={3}&unicode=1&text={4}",
-                      new Object[]{mySessionId, theDestination.getAddress(), theSender.getAddress(), udhStr, udStr});
+
+                requestString += "&unicode=1";
+                requestString += "&udh=" + udhStr;
+                requestString += "&text=" + udStr;                
                 break;
 
             case SmsConstants.ALPHABET_GSM:
@@ -330,14 +354,6 @@ public class ClickatellTransport implements SmsTransport
                 throw new SmsException("Unsupported data coding scheme");
             }
         }
-
-        // CLASS_0 message?
-        if (SmsDcsUtil.getMessageClass(userData.getDcs()) == SmsConstants.MSG_CLASS_0)
-        {
-            requestString += "&msg_type=SMS_FLASH";
-        }
-
-        // myLog.debug("Request -> " + requestString);
 
         // Send request to clickatell
         try
@@ -352,6 +368,8 @@ public class ClickatellTransport implements SmsTransport
             // they are using "Authentication failed" instead
             case ClickatellException.ERROR_AUTH_FAILED:
             case ClickatellException.ERROR_SESSION_ID_EXPIRED:
+                logger.debug("Retrying...");
+            
                 // Try to get a new session id
                 connect();
 
@@ -394,10 +412,11 @@ public class ClickatellTransport implements SmsTransport
         String udStr;
         String udhStr;
 
+        logger.debug("Sending message...");
+        
         SmsUserData userData = thePdu.getUserData();
         byte[] udhData = thePdu.getUserDataHeaders();
-        
-        
+                
         if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC) 
         { 
             throw new SmsException("Cannot sent SMS to an ALPHANUMERIC address"); 
@@ -406,6 +425,20 @@ public class ClickatellTransport implements SmsTransport
         if (mySessionId == null)
         { 
             throw new SmsException("Must connect before sending"); 
+        }
+
+        requestString  = "http://api.clickatell.com/http/sendmsg?session_id=" + mySessionId;
+        requestString += "&to=" + theDestination.getAddress();
+        
+        if (theSender != null)
+        {
+            requestString += "&from=" + theSender.getAddress();
+        }
+
+        // CLASS_0 message?
+        if (SmsDcsUtil.getMessageClass(userData.getDcs()) == SmsConstants.MSG_CLASS_0)
+        {
+            requestString += "&msg_type=SMS_FLASH";
         }
 
         //
@@ -423,17 +456,15 @@ public class ClickatellTransport implements SmsTransport
 
             case SmsConstants.ALPHABET_UCS2:
                 udStr = StringUtil.bytesToHexString(userData.getData());
-                requestString = MessageFormat.format(
-                        "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&unicode=1&text={3}",
-                        new Object[]{mySessionId, theDestination.getAddress(), theSender.getAddress(), udStr});
+            
+                requestString += "&unicode=1";
+                requestString += "&text=" + udStr;
                 break;
 
             case SmsConstants.ALPHABET_GSM:
                 String msg = SmsPduUtil.readSeptets(userData.getData(), userData.getLength());
-                msg = URLEncoder.encode(msg);
-                requestString = MessageFormat.format(
-                        "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&text={3}", 
-                        new Object[]{mySessionId, theDestination.getAddress(), theSender.getAddress(), msg});
+
+                requestString += "&text=" + URLEncoder.encode(msg);
                 break;
 
             default:
@@ -450,17 +481,18 @@ public class ClickatellTransport implements SmsTransport
             case SmsConstants.ALPHABET_8BIT:
                 udStr = StringUtil.bytesToHexString(userData.getData());
                 udhStr = StringUtil.bytesToHexString(udhData);
-                requestString = MessageFormat.format(
-                    "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&udh={3}&text={4}",
-                    new Object[]{mySessionId, theDestination.getAddress(), theSender.getAddress(), udhStr, udStr});
+                
+                requestString += "&udh=" + udhStr;
+                requestString += "&text=" + udStr;
                 break;
 
             case SmsConstants.ALPHABET_UCS2:
                 udStr = StringUtil.bytesToHexString(userData.getData());
                 udhStr = StringUtil.bytesToHexString(udhData);
-                requestString = MessageFormat.format(
-                    "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&udh={3}&unicode=1&text={4}",
-                    new Object[]{mySessionId, theDestination.getAddress(), theSender.getAddress(), udhStr, udStr});
+                
+                requestString += "&unicode=1";
+                requestString += "&udh=" + udhStr;
+                requestString += "&text=" + udStr;
                 break;
 
             case SmsConstants.ALPHABET_GSM:
@@ -471,15 +503,6 @@ public class ClickatellTransport implements SmsTransport
             }
         }
 
-        // CLASS_0 message?
-        if (SmsDcsUtil.getMessageClass(userData.getDcs()) == SmsConstants.MSG_CLASS_0)
-        {
-            requestString += "&msg_type=SMS_FLASH";
-        }
-
-        // myLog.debug("Request -> " + requestString);
-
-        // Send request to clickatell
         // Send request to clickatell
         try
         {
@@ -493,6 +516,8 @@ public class ClickatellTransport implements SmsTransport
             // they are using "Authentication failed" instead
             case ClickatellException.ERROR_AUTH_FAILED:
             case ClickatellException.ERROR_SESSION_ID_EXPIRED:
+                logger.debug("Retrying...");
+            
                 // Try to get a new session id
                 connect();
 
@@ -562,6 +587,6 @@ public class ClickatellTransport implements SmsTransport
      */
     public void disconnect() throws SmsException
     {
-        /* The clickatell HTTP API is connection less */
+        // The clickatell HTTP API is connection less
     }
 }
