@@ -41,6 +41,7 @@
       <delete file="${dist}/${project}.jar"/>
       <jar jarfile="${dist}/${project}.jar">
          <fileset dir="${build.classes}" includes="**/*.class" excludes="org/marre/sms/test/*"/>
+         <fileset dir="./conf" includes="*.prop"/>
       </jar>
    </target>
    <!-- Builds Javadoc for this project-->
