@@ -57,7 +57,6 @@ public class WbxmlWriter implements XmlWriter
     private String myPublicID = null;
 
     public WbxmlWriter()
-    	throws IOException
     {
         reset();
     }
@@ -66,7 +65,6 @@ public class WbxmlWriter implements XmlWriter
 	 * @see org.marre.xml.XmlWriter#reset()
 	 */
 	public void reset() 
-		throws IOException
 	{
 		myWbxmlBody = new ByteArrayOutputStream();
 
