@@ -178,6 +178,20 @@ public class SmsConstants
     /** WAP vCalendar */
     public static final int PORT_WAP_VCALENDAR = 9205;
 
+    /**
+     * As defined in GSM 03.38. It contains all characters needed for most
+     * Western European languages. It also contains upper case Greek characters.
+     */
+    public static final int TEXT_ALPHABET_GSM = 0;
+    /**
+     * ISO 8859-1 (ISO Latin-1)
+     */
+    public static final int TEXT_ALPHABET_8BIT = 1;
+    /**
+     * Unicode UCS-2
+     */
+    public static final int TEXT_ALPHABET_UCS2 = 2;
+
     public static final byte MSG_CLASS_0 = 0x00;
     public static final byte MSG_CLASS_1 = 0x01;
     public static final byte MSG_CLASS_2 = 0x02;
