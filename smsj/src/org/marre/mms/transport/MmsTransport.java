@@ -36,6 +36,7 @@ package org.marre.mms.transport;
 
 import java.util.*;
 import org.marre.mms.*;
+import org.marre.mime.MimeHeader;
 
 public interface MmsTransport
 {
@@ -45,14 +46,14 @@ public interface MmsTransport
      * Initializes the transport with the given properties.
      *
      * @param theProps Properties
-     * @throws SmsException
+     * @throws MmsException
      */
     public void init(Properties theProps) throws MmsException;
 
     /**
      * Connects to the SMSC (or phone, or service, or...)
      *
-     * @throws SmsException
+     * @throws MmsException
      */
     public void connect() throws MmsException;
 
@@ -60,16 +61,15 @@ public interface MmsTransport
      * Sends an MmsMessage to the given destination
      *
      * @param theMessage The Message to send
-     * @param theDestination Destination address
-     * @param theSender Sender
-     * @throws SmsException
+     * @param theHeaders Headers
+     * @throws MmsException
      */
-    public void send(MmsMessage theMessage, MmsAddress theDestination, MmsAddress theSender) throws MmsException;
+    public void send(MmsMessage theMessage, MimeHeader theHeaders) throws MmsException;
 
     /**
      * Disconnects from the MMSC (or phone, or service, or...)
      *
-     * @throws SmsException
+     * @throws MmsException
      */
     public void disconnect() throws MmsException;
 }

@@ -38,8 +38,6 @@ import org.marre.mime.*;
 
 public interface MmsMessage
 {
-    public int getSize();
-
     public MimeContentType getContentType();
     public MimeBodyPart getContent();
 }
