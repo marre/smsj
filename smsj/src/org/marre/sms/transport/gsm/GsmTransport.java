@@ -95,7 +95,7 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
 
     public void init(Properties theProps) throws SmsException
     {
-        mySerialPortName=theProps.getProperty("sms.gsm.serialport", "COM1");
+        mySerialPortName=theProps.getProperty("sms.gsm.serialport", "COM2");
 
         CommPortIdentifier portId = null;
         Enumeration portList = CommPortIdentifier.getPortIdentifiers();
@@ -218,7 +218,6 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
         try
         {
             sendCmd("AT+CSMS=0", NOT_OK_RETRY);
-            myLog.error(myPortMessage);
             if (myPortMessage.indexOf("+CMS ERROR")>=0)
             {
                 // This will be catched below...
