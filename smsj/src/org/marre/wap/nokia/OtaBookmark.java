@@ -84,11 +84,11 @@ public class OtaBookmark
 
         writer.addStartElement("CHARACTERISTIC-LIST");
         writer.addStartElement("CHARACTERISTIC", new XmlAttribute[] {
-            new XmlAttribute("TYPE=BOOKMARK", null) });
+            new XmlAttribute("TYPE", "BOOKMARK") });
         writer.addEmptyElement("PARM", new XmlAttribute[] {
-            new XmlAttribute("NAME=NAME", ""), new XmlAttribute("VALUE",myTitle)});
+            new XmlAttribute("NAME", "NAME"), new XmlAttribute("VALUE",myTitle)});
         writer.addEmptyElement("PARM", new XmlAttribute[] {
-            new XmlAttribute("NAME=URL", ""), new XmlAttribute("VALUE",myUri)});
+            new XmlAttribute("NAME", "URL"), new XmlAttribute("VALUE",myUri)});
         writer.addEndTag();
         writer.addEndTag();
 
