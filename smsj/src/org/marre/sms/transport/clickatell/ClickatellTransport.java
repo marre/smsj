@@ -249,7 +249,7 @@ public class ClickatellTransport implements SmsTransport
             //
             // Message Contains UDH
             //
-            switch (theMsg.getDataCodingScheme())
+            switch (SmsDcsUtil.getAlphabet(theMsg.getDataCodingScheme()))
             {
             case SmsConstants.ALPHABET_8BIT:
                 ud = SmsPduUtil.bytesToHexString(theMsg.getUserData());
@@ -372,17 +372,17 @@ public class ClickatellTransport implements SmsTransport
             //
             switch (SmsDcsUtil.getAlphabet(theDcs))
             {
-            case SmsConstants.DCS_DEFAULT_8BIT:
+            case SmsConstants.ALPHABET_8BIT:
                 throw new SmsException("Clickatell API cannot send 8 bit encoded messages without UDH");
 
-            case SmsConstants.DCS_DEFAULT_UCS2:
+            case SmsConstants.ALPHABET_UCS2:
                 ud = SmsPduUtil.bytesToHexString(thePdu.getUserData());
                 requestString = MessageFormat.format(
                     "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&unicode=1&text={3}",
                     new Object[] { mySessionId, theDestination.getAddress(), theSender.getAddress(), ud });
                 break;
 
-            case SmsConstants.DCS_DEFAULT_7BIT:
+            case SmsConstants.ALPHABET_GSM:
                 String msg = SmsPduUtil.readSeptets(thePdu.getUserData(), thePdu.getUserDataLength());
                 msg = URLEncoder.encode(msg);
                 requestString = MessageFormat.format(
@@ -399,9 +399,9 @@ public class ClickatellTransport implements SmsTransport
             //
             // Message Contains UDH
             //
-            switch (theDcs)
+            switch (SmsDcsUtil.getAlphabet(theDcs))
             {
-            case SmsConstants.DCS_DEFAULT_8BIT:
+            case SmsConstants.ALPHABET_8BIT:
                 ud = SmsPduUtil.bytesToHexString(thePdu.getUserData());
                 udhData = thePdu.getUserDataHeaders();
                 // Add length of udh
@@ -412,7 +412,7 @@ public class ClickatellTransport implements SmsTransport
                     new Object[] { mySessionId, theDestination.getAddress(), theSender.getAddress(), udh, ud });
                 break;
 
-            case SmsConstants.DCS_DEFAULT_UCS2:
+            case SmsConstants.ALPHABET_UCS2:
                 ud = SmsPduUtil.bytesToHexString(thePdu.getUserData());
                 udhData = thePdu.getUserDataHeaders();
                 // Add length of udh
@@ -423,7 +423,7 @@ public class ClickatellTransport implements SmsTransport
                     new Object[] { mySessionId, theDestination.getAddress(), theSender.getAddress(), udh, ud });
                 break;
 
-            case SmsConstants.DCS_DEFAULT_7BIT:
+            case SmsConstants.ALPHABET_GSM:
                 throw new SmsException("Clickatell API cannot send 7 bit encoded messages with UDH");
 
             default:
