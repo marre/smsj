@@ -35,7 +35,6 @@
 package org.marre.sms.transport;
 
 import java.util.*;
-import java.lang.reflect.*;
 
 import org.marre.sms.*;
 

@@ -24,8 +24,6 @@ package org.marre.sms.nokia;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
-import java.io.OutputStream;
-import java.io.IOException;
 
 import org.marre.sms.util.SmsPduUtil;
 

@@ -22,8 +22,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.nokia;
 
-import java.io.*;
-
 import org.marre.sms.*;
 import org.marre.wap.nokia.*;
 import org.marre.mime.*;

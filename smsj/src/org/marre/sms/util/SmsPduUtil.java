@@ -35,7 +35,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.util;
 
-import java.util.*;
 import java.io.*;
 
 /**

@@ -23,7 +23,6 @@
 package org.marre.sms.nokia;
 
 import java.io.*;
-import java.awt.image.BufferedImage;
 
 import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsConcatMessage;

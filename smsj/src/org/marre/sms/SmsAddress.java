@@ -34,8 +34,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
-import java.io.ByteArrayOutputStream;
-
 /**
  * Represents an phonenumber in SMSj.
  * <p>

@@ -24,7 +24,6 @@ package org.marre.sms.nokia;
 
 import java.io.*;
 import java.util.LinkedList;
-import java.awt.image.BufferedImage;
 
 import org.marre.sms.util.SmsUdhUtil;
 import org.marre.sms.*;

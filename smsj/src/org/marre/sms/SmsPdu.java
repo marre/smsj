@@ -35,7 +35,6 @@
 package org.marre.sms;
 
 import java.io.*;
-import java.util.*;
 
 /**
  * Represents an SMS pdu

@@ -34,7 +34,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.wap.nokia;
 
-import java.util.*;
 import java.io.*;
 
 import org.marre.xml.*;
@@ -105,7 +104,7 @@ public class OtaBookmark
 
         try
         {
-            this.writeTo(this.getWbxmlWriter(), baos);
+            this.writeTo(OtaBookmark.getWbxmlWriter(), baos);
             baos.close();
         }
         catch (IOException e)
