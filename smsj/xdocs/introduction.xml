@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+    <properties>
+        <title>Introduction</title>
+        <author email="c95men at users.sourceforge.net">Markus Eriksson</author>
+    </properties>
+    <body>
+        <section name="Introduction">
+            <p>
+				This library allows you to send SMSes (GSM) from the Java platform. It gives you full control 
+				over the SMS including the UDH field so you can create and send EMS messages, Nokia ringtones, 
+				and images. It provides a pluggable transport layer that allows it be used with a range of 
+				different SMS servers. It also gives you full control to all parts of the SMS (UDH, UD, DCS...). 
+				This makes it possible to create all types of SMS messages, including Nokia picture messages and 
+				WAP push messages.
+			</p>
+			<p>
+				Features in the released version (0.2):
+			</p>
+			<ul>
+			  <li>Simple API for creating text messages (both 7-bit, 8-bit and Unicode). It's 
+				  also possible to create longer messages by concatenate many SMS:es.</li>
+			  <li>Transport for using the Clickatell SMS server (SMSC).
+				  <a href="http://www.clickatell.com/brochure/products/api_http.php">More information about Clickatell.</a></li>
+			  <li>Transport for sending SMS through a GSM phone connected to the serial port.<a href="http://www.clickatell.com/brochure/products/api_http.php"></a></li>
+			</ul>
+			<p>In development version (CVS):</p>
+			<ul>
+			  <li>Support for sending WAP push messages</li>
+			  <li>Support for sending different types of Nokia messages</li>
+			  <li>Simple WBXML writer</li>
+			  <li>Simple WSP encoding</li>
+			  <li>Simple MIME library</li>
+			  <li>UCP EMI transport</li>
+			</ul>
+			<p>Features that would be nice to have in this library:</p>
+			<ul>
+			  <li>EMS support</li>
+			  <li>MMS creation and sending (some initial support in CVS)</li>
+			  <li>CIMD transport</li>
+			  <li>...</li>
+			</ul>
+        </section>
+    </body>
+</document>

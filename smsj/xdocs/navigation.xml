@@ -14,9 +14,9 @@
 
         <menu name="General Information">
             <item name="Overview" href="/index.html"/>
-            <item name="Features" href="/features.html"/>
-            <item name="License" href="/license.html"/>
-            <item name="Downloads" href="/releases.html"/>
+<!--            <item name="Features" href="/features.html"/> -->
+<!--            <item name="License" href="/license.html"/> -->
+<!--            <item name="Downloads" href="/releases.html"/> -->
         </menu>
 
         <menu name="Documentation">
@@ -27,7 +27,7 @@
         </menu>
 
         <menu name="Misc.">
-            <item name="Build &amp; Install" href="/build.html"/>
+<!--            <item name="Build &amp; Install" href="/build.html"/> -->
             <item name="CVS Access" href="/cvs-usage.html"/>
         </menu>
     </body>

@@ -157,4 +157,9 @@ public final class WbxmlConstants
             "-//WAPFORUM//DTD EMN 1.0//EN", // (Email Notification 1.0 WAP-297)
             "-//OMA//DTD DRMREL 1.0//EN", // (DRM REL 1.0)
     };
+    
+    private WbxmlConstants()
+    {
+        // Utility class
+    }
 }
