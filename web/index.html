@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>SMS library for the Java platform</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="smsj.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<h1 class="blue">SMS library for the Java platform</h1>
+<p>This library allows you to send SMSes (GSM) from the Java platform. It gives 
+  you full control over the SMS including the UDH field so you can create and 
+  send EMS messages, Nokia ringtones, and images. It provides a pluggable transport 
+  layer that allows it be used with a range of different SMS servers. It also 
+  gives you full control to all parts of the SMS (UDH, UD, DCS...). This makes 
+  it possible to create all types of SMS messages, including Nokia picture messages 
+  and WAP push messages.</p>
+<p>Features in the released version (0.2): </p>
+<ul>
+  <li>Simple API for creating text messages (both 7-bit, 8-bit and Unicode). It's 
+    also possible to create longer messages by concatenate many SMS:es.</li>
+  <li> Transport for using the Clickatell SMS server (SMSC). <a href="http://www.clickatell.com/brochure/products/api_http.php">More 
+    information about Clickatell.</a></li>
+  <li>Transport for sending SMS through a GSM phone connected to the serial port.<a href="http://www.clickatell.com/brochure/products/api_http.php"></a></li>
+</ul>
+<p>In development version (CVS):</p>
+<ul>
+  <li>Support for sending WAP push messages (untested and only in CVS)</li>
+  <li>Support for sending different types of Nokia messages (untested and only 
+    in CVS)</li>
+  <li>Simple WBXML writer (needed for wap push)</li>
+  <li>Simple WSP encoding (needed for wap push)</li>
+  <li>Simple MIME library (needed for wap push).</li>
+  <li>UCP EMI transport (almost done)</li>
+</ul>
+<p>Features that would be nice to have in this library:</p>
+<ul>
+  <li>EMS support</li>
+  <li>MMS creation and sending</li>
+  <li>CIMD transport</li>
+  <li>...</li>
+</ul>
+<h1 class="blue">Sample usage of the highlevel API</h1>
+<p>The highlevel API is based around the <code>org.marre.sms.SmsSender</code> 
+  class. </p>
+<pre class="code">try
+{
+    // Send SMS with clickatell
+    SmsSender smsSender = SmsSender.getClickatellSender("username", "password", "apiid");
+    String msg = "A sample SMS.";
+    // International number to reciever without leading "+"
+    String reciever = "464545425463";
+    // Number of sender (not supported on all transports)
+    String sender = "46534534535";
+    smsSender.send(msg, reciever, sender);
+}
+catch (SmsException ex)
+{
+    ex.printStackTrace();
+}
+</pre>
+<h1 class="blue">Lowlevel API</h1>
+<p>Sample of the low level API </p>
+<pre class="code">Properties props = new Properties();
+// Load athentication information from file
+props.load(new FileInputStream("clickatell.props"));
+
+SmsTransport transport = SmsTransportManager.getTransport("org.marre.sms.transport.clickatell.ClickatellTransport", props);
+
+// Create pdu
+byte data[] = { 0x00, 0x01, 0x02, 0x03 };
+SmsUdhElement udhElements[] = new SmsUdhElement[1];
+udhElements[0] = SmsUdhUtil.get16BitApplicationPortUdh(SmsConstants.PORT_WAP_PUSH, 0);
+SmsPdu pushPdu = new SmsPdu(udhElements, data, data.length, SmsConstants.DCS_DEFAULT_8BIT);
+
+SmsAddress sender = new SmsAddress("2323232323");
+SmsAddress reciever = new SmsAddress("232332344");
+
+transport.connect();
+transport.send(pushPdu, reciever, sender);
+</pre>
+<h1 class="blue">Download information</h1>
+<p>Download the latest release of SMSJ <a href="http://www.sourceforge.net/projects/smsj/">here</a>. 
+Hosted at <a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=49024" border="0" alt="SourceForge Logo"></A>.
+</body>
+</html>
