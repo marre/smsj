@@ -77,5 +77,6 @@ public class WapSiPushMessage extends WapPushMessage
         }
 
         createMessage(pushMsg.toByteArray(), "application/vnd.wap.sic", "x-wap-application:wml.ua", null);
+
     }
 }
