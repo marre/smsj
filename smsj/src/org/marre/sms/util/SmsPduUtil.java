@@ -72,6 +72,26 @@ public class SmsPduUtil
     }
 
     /**
+     * Decodes a 7-bit encoded string from the given byte array
+     *
+     * @param theArray The byte array to read from
+     * @param theLength Number of decoded chars to read from the stream
+     * @return The decoded string
+     */
+    public static String readSeptets(byte[] theArray, int theLength)
+    {
+        try
+        {
+            return readSeptets(new ByteArrayInputStream(theArray), theLength);
+        }
+        catch (IOException ex)
+        {
+            // Shouldn't happen since we are reading from a bytearray...
+            return null;
+        }
+    }
+
+    /**
      * Decodes a 7-bit encoded string from the stream
      *
      * @param theIs The stream to read from
@@ -99,7 +119,7 @@ public class SmsPduUtil
             rest |= (data << restBits);
             restBits += 8;
 
-            while (restBits >= 7)
+            while ((msg.length() < theLength) && (restBits >= 7))
             {
                 msg.append(fromGsmCharset((byte)(rest & 0x7f)));
 
