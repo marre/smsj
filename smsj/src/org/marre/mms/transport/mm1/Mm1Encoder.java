@@ -100,16 +100,21 @@ public final class Mm1Encoder
         MmsHeaderEncoder.writeHeaderXMmsTransactionId(out, theHeaders.getTransactionId());
         MmsHeaderEncoder.writeHeaderXMmsMmsVersion(out, theHeaders.getVersion());
 
-        if (theHeaders.getSubject() != null)
+        if (theHeaders.getTo() != null)
         {
-            MmsHeaderEncoder.writeHeaderSubject(out, theHeaders.getSubject());
+            MmsHeaderEncoder.writeHeaderTo(out, theHeaders.getTo());
         }
-
+        
         if (theHeaders.getFrom() != null)
         {
             MmsHeaderEncoder.writeHeaderFrom(out, theHeaders.getFrom());
         }
-
+        
+        if (theHeaders.getSubject() != null)
+        {
+            MmsHeaderEncoder.writeHeaderSubject(out, theHeaders.getSubject());
+        }
+        
         // TODO: Add the rest of the headers
     }
 }

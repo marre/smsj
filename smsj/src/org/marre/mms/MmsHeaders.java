@@ -46,6 +46,7 @@ public class MmsHeaders
     protected int    myVersionId     = MmsConstants.X_MMS_MMS_VERSION_ID_1_0;
     protected String mySubject;
     protected String myFrom;
+    protected String myTo;
     
     public MmsHeaders()
     {
@@ -100,5 +101,15 @@ public class MmsHeaders
     public void setFrom(String from)
     {
         myFrom = from;
+    }
+    
+    public String getTo()
+    {
+        return myTo;
+    }
+    
+    public void setTo(String to)
+    {
+        myTo = to;
     }    
 }

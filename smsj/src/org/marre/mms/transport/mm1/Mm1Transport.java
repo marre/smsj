@@ -67,7 +67,7 @@ public class Mm1Transport implements MmsTransport
 
         if (myMmsProxyGatewayAddress == null)
         {
-            throw new MmsException("sms.mm1.proxygateway not set");
+            throw new MmsException("smsj.mm1.proxygateway not set");
         }
     }
 
@@ -101,9 +101,11 @@ public class Mm1Transport implements MmsTransport
             // Read the response
             // TODO: Parse the response
             InputStream response = urlConn.getInputStream();
-            while (response.read() != -1)
+            int a;
+            while ((a = response.read()) != -1)
             {
-                /* Just read */
+                System.err.print((char)a);
+                // Just read
             }
             response.close();
         }
