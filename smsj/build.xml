@@ -57,6 +57,10 @@
                version="false"
                use="true"
                windowtitle="SMSj API">
+          <classpath>
+              <pathelement path="${lib}/commons-logging-1.0.jar" /> 
+              <pathelement path="${lib}/comm.jar" /> 
+          </classpath>
       </javadoc>
    </target>
    <!-- Makes a distribution of this project -->
