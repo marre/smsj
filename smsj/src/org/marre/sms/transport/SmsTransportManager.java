@@ -32,12 +32,11 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.sms;
+package org.marre.sms.transport;
 
 import java.util.Properties;
 
 import org.marre.sms.SmsException;
-import org.marre.sms.SmsTransport;
 
 
 /**

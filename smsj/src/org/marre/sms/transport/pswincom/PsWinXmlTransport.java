@@ -52,7 +52,7 @@ import org.marre.sms.SmsMessage;
 import org.marre.sms.SmsPdu;
 import org.marre.sms.SmsPduUtil;
 import org.marre.sms.SmsTextMessage;
-import org.marre.sms.SmsTransport;
+import org.marre.sms.transport.SmsTransport;
 import org.marre.util.StringUtil;
 
 public class PsWinXmlTransport implements SmsTransport
