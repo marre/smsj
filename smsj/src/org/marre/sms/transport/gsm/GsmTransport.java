@@ -27,6 +27,7 @@ import org.marre.sms.SmsPdu;
 import org.marre.sms.SmsAddress;
 import org.marre.sms.SmsException;
 import org.marre.sms.SmsConstants;
+import org.marre.sms.SmsDcs;
 
 /**
  * An SmsTransport that sends the SMS from an GSM phone that is attached
@@ -96,12 +97,14 @@ public class GsmTransport implements SmsTransport
     public void send(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender)
         throws SmsException
     {
+        SmsDcs dcs = thePdu.getDataCodingScheme();
+
         if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
         {
             throw new SmsException("Cannot sent SMS to an ALPHANUMERIC address");
         }
 
-        if (thePdu.getDataCodingScheme() == 0x00)
+        if (dcs.getAlphabet() == SmsConstants.ALPHABET_GSM)
         {
             sendSeptetEncodedPdu(thePdu, theDestination, theSender);
         }
@@ -169,7 +172,7 @@ public class GsmTransport implements SmsTransport
             baos.write(0x00);
 
             // TP-DCS
-            baos.write(thePdu.getDataCodingScheme());
+            baos.write(thePdu.getDataCodingScheme().getDcs());
 
             // 1 octet/ 7 octets
             // TP-VP - Optional
@@ -300,7 +303,7 @@ public class GsmTransport implements SmsTransport
 
             // TP-DCS
             // UCS, septets, language, SMS class...
-            baos.write(thePdu.getDataCodingScheme());
+            baos.write(thePdu.getDataCodingScheme().getDcs());
 
             // TP-VP - Optional
             // Probably not needed
