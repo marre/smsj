@@ -26,7 +26,7 @@ public class SmsTextMessage extends SmsMessage
     public static final int TEXT_ENCODING_DEFAULT = 0;
     public static final int TEXT_ENCODING_DCS2 = 0;
 
-    public void SmsTextMessage(String theMsg)
+    public SmsTextMessage(String theMsg)
     {
         try
         {
