@@ -34,6 +34,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.transport.ucp;
 
+import java.text.StringCharacterIterator;
 import java.util.*;
 import java.io.*;
 
@@ -84,7 +85,7 @@ public abstract class UcpMsg
         myTrn = trn;
     }
 
-    public byte calcChecksum(String data)
+/*   public byte calcChecksum(String data)
     {
         int checksum = 0;
         for (int i=0; i < data.length(); i++)
@@ -93,6 +94,30 @@ public abstract class UcpMsg
         }
         return (byte)(checksum & 0xff);
     }
+*/
+    protected String calcChecksum(String parCadena) {
+		long sum = 0L;
+		StringCharacterIterator ci = new StringCharacterIterator(parCadena);
+		for (char c = ci.last(); c != '\uffff'; c = ci.previous())
+		    sum += (long) c;
+		String binSum = Long.toBinaryString(sum);
+		StringBuffer sb = new StringBuffer();
+		sb.append(Integer.toHexString(Integer.valueOf
+						  (binSum.substring((binSum.length()
+								     - 8),
+								    (binSum.length()
+								     - 4)),
+						   2)
+						  .intValue()));
+		sb.append(Integer.toHexString(Integer.valueOf
+						  (binSum.substring((binSum.length()
+								     - 4),
+								    binSum.length()),
+						   2)
+						  .intValue()));
+		return sb.toString().toUpperCase();
+    }
+    
 
     public String buildCommand()
     {
@@ -113,7 +138,7 @@ public abstract class UcpMsg
             length += 1;
         }
         // length += checksum
-        length += 2;
+        length += 3;
 
         // HEADER (TRN/LEN/O|R/OT)
 
@@ -141,7 +166,7 @@ public abstract class UcpMsg
         }
 
         // CHECKSUM
-        command.append(StringUtil.byteToHexString(calcChecksum(command.toString())));
+        command.append(calcChecksum(command.toString()));
 
         return command.toString();
     }
@@ -162,7 +187,9 @@ public abstract class UcpMsg
     public byte[] getCommand()
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(200);
-        try { writeTo(baos); } catch (Exception ex) {;}
+        try { 
+        	writeTo(baos); 
+        } catch (Exception ex) {;}
         return baos.toByteArray();
     }
 }
