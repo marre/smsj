@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.marre.mime.MimeBodyPart;
-import org.marre.mime.MimeHeader;
 import org.marre.mime.MimeMultipart;
 import org.marre.mime.encoder.MimeEncoder;
 import org.marre.mime.encoder.wap.WapMimeEncoder;

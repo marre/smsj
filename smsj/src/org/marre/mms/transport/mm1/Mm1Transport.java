@@ -39,7 +39,6 @@ import java.net.*;
 import java.util.Properties;
 
 import org.marre.mime.MimeBodyPart;
-import org.marre.mime.MimeHeader;
 import org.marre.mms.MmsException;
 import org.marre.mms.MmsHeaders;
 import org.marre.mms.transport.MmsTransport;
