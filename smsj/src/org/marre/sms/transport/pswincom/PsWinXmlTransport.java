@@ -44,237 +44,238 @@ import java.io.StringWriter;
 import java.net.Socket;
 import java.util.Properties;
 
-import org.marre.sms.*;
-import org.marre.sms.transport.SmsTransport;
-import org.marre.sms.util.SmsDcsUtil;
-import org.marre.sms.util.SmsPduUtil;
+import org.marre.sms.SmsAddress;
+import org.marre.sms.SmsConstants;
+import org.marre.sms.SmsDcsUtil;
+import org.marre.sms.SmsException;
+import org.marre.sms.SmsMessage;
+import org.marre.sms.SmsPdu;
+import org.marre.sms.SmsPduUtil;
+import org.marre.sms.SmsTextMessage;
+import org.marre.sms.SmsTransport;
 import org.marre.util.StringUtil;
 
-public class PsWinXmlTransport implements SmsTransport 
+public class PsWinXmlTransport implements SmsTransport
 {
-    private String myUsername = null;
-    private String myPassword = null;
-    
-	public void init(Properties theProps) 
-		throws SmsException 
-	{
-	    myUsername = theProps.getProperty("smsj.pswincom.username");
-	    myPassword = theProps.getProperty("smsj.pswincom.password");
+    private String myUsername;
+    private String myPassword;
 
-	    if ( (myUsername == null) || (myPassword == null) )
-	    {
-	        throw new SmsException("Incomplete login information for pswincom");
-	    }
-	}
+    public void init(Properties theProps) throws SmsException
+    {
+        myUsername = theProps.getProperty("smsj.pswincom.username");
+        myPassword = theProps.getProperty("smsj.pswincom.password");
 
-	public void connect() 
-		throws SmsException 
-	{
-	}
+        if ((myUsername == null) || (myPassword == null))
+        {
+            throw new SmsException("Incomplete login information for pswincom");
+        }
+    }
 
-	protected void addMsg(StringWriter theXmlWriter, SmsPdu thePdu, byte theDcs, SmsAddress theDestination, SmsAddress theSender)
-		throws SmsException
-	{
-	    // <MSG>
-	    theXmlWriter.write("<MSG>\r\n");
+    public void connect() throws SmsException
+    {
+    }
 
-	    switch (SmsDcsUtil.getAlphabet(theDcs))
-	    {
-	    case SmsConstants.ALPHABET_UCS2:
-	        // <OP>9</OP>
-	        theXmlWriter.write("<OP>9</OP>\r\n");
-	        // <TEXT>hex-text</TEXT>
-	        theXmlWriter.write("<TEXT>");
-	        theXmlWriter.write(StringUtil.bytesToHexString(thePdu.getUserData()));
-	        theXmlWriter.write("</TEXT>\r\n");
-	        break;
-	        
-	    case SmsConstants.ALPHABET_GSM:
-	        // <TEXT>txt</TEXT>
-	        theXmlWriter.write("<TEXT>");
-	        theXmlWriter.write(SmsPduUtil.readSeptets(thePdu.getUserData(), thePdu.getUserDataLength()));
-	        theXmlWriter.write("</TEXT>\r\n");
-	        break;	        
-	        
-	    case SmsConstants.ALPHABET_8BIT:
-	        // <OP>8</OP>
-	        theXmlWriter.write("<OP>8</OP>\r\n");
-	        // <TEXT>udh-and-ud</TEXT>
-	        theXmlWriter.write("<TEXT>");
-	        theXmlWriter.write(StringUtil.bytesToHexString(thePdu.getUserDataHeaders()) + 
-	                                   StringUtil.bytesToHexString(thePdu.getUserData()));
-	        theXmlWriter.write("</TEXT>\r\n");
-	        break;
-	        
-	    default:
-	        throw new SmsException("Unsupported alphabet");
-	    }
-	    
-	    // <RCV>434343434</RCV>
-	    theXmlWriter.write("<RCV>");
-	    theXmlWriter.write(theDestination.getAddress());
-	    theXmlWriter.write("</RCV>\r\n");
-	    
-	    // <SND>434344</SND>
-	    theXmlWriter.write("<SND>");
-	    theXmlWriter.write(theSender.getAddress());
-	    theXmlWriter.write("</SND>\r\n");
-	    
-	    if (SmsDcsUtil.getMessageClass(theDcs) == SmsConstants.MSG_CLASS_0)
-	    {    
-		    // <CLASS>0</CLASS>
-		    theXmlWriter.write("<CLASS>");
-		    theXmlWriter.write("0");
-		    theXmlWriter.write("</CLASS>\r\n");
-	    }
-	    
-	    // </MSG>
-	    theXmlWriter.write("</MSG>\r\n");
-	}
+    protected void addMsg(StringWriter theXmlWriter, SmsPdu thePdu, byte theDcs, SmsAddress theDestination,
+            SmsAddress theSender) throws SmsException
+    {
+        // <MSG>
+        theXmlWriter.write("<MSG>\r\n");
 
-	private void addTextMsg(StringWriter theXmlWriter, SmsTextMessage theMessage, SmsAddress theDestination, SmsAddress theSender)
-		throws SmsException
-	{
-	    // 70 UCS
-	    // 160 GSM
-	    
-	    byte dcs = theMessage.getDataCodingScheme();
-	    
-	    // <MSG>
-	    theXmlWriter.write("<MSG>\r\n");
+        switch (SmsDcsUtil.getAlphabet(theDcs))
+        {
+        case SmsConstants.ALPHABET_UCS2:
+            // <OP>9</OP>
+            theXmlWriter.write("<OP>9</OP>\r\n");
+            // <TEXT>hex-text</TEXT>
+            theXmlWriter.write("<TEXT>");
+            theXmlWriter.write(StringUtil.bytesToHexString(thePdu.getUserData().getData()));
+            theXmlWriter.write("</TEXT>\r\n");
+            break;
 
-	    switch (SmsDcsUtil.getAlphabet(dcs))
-	    {
-	    case SmsConstants.ALPHABET_UCS2:
-	        // <OP>9</OP>
-	        theXmlWriter.write("<OP>9</OP>\r\n");
-	        // <TEXT>hex-text</TEXT>
-	        theXmlWriter.write("<TEXT>");
-	        theXmlWriter.write(StringUtil.bytesToHexString(theMessage.getUserData()));
-	        theXmlWriter.write("</TEXT>\r\n");
-	        break;
-	        
-	    case SmsConstants.ALPHABET_GSM:
-	        // <TEXT>txt</TEXT>
-	        theXmlWriter.write("<TEXT>");
-	        theXmlWriter.write(theMessage.getText());
-	        theXmlWriter.write("</TEXT>\r\n");
-	        break;	        
-	        
-	    default:
-	        throw new SmsException("Unsupported alphabet");
-	    }
-	    
-	    // <RCV>434343434</RCV>
-	    theXmlWriter.write("<RCV>");
-	    theXmlWriter.write(theDestination.getAddress());
-	    theXmlWriter.write("</RCV>\r\n");
-	    
-	    // <SND>434344</SND>
-	    theXmlWriter.write("<SND>");
-	    theXmlWriter.write(theSender.getAddress());
-	    theXmlWriter.write("</SND>\r\n");
-	    
-	    if (SmsDcsUtil.getMessageClass(dcs) == SmsConstants.MSG_CLASS_0)
-	    {    
-	        // <CLASS>0</CLASS>
-	        theXmlWriter.write("<CLASS>");
-	        theXmlWriter.write("0");
-	        theXmlWriter.write("</CLASS>\r\n");
-	    }
-	    
-	    // </MSG>
-	    theXmlWriter.write("</MSG>\r\n");
-	}
-	
-	protected void writeXmlTo(OutputStream theOs, SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender)
-		throws IOException, SmsException
-	{
-	    SmsPdu msgPdu[] = theMessage.getPdus();
-	    byte dcs = theMessage.getDataCodingScheme();
-	    
-	    StringWriter xmlWriter = new StringWriter(1024);
-	    
-	    // <?xml version="1.0"?>
-	    // <SESSION>
-	    // <CLIENT>$myUsername</CLIENT>
-	    // <PW>$myPassword</PW>
-	    // <MSGLST>
-	    xmlWriter.write("<?xml version=\"1.0\"?>\r\n");
-	    xmlWriter.write("<SESSION>\r\n");
-	    xmlWriter.write("<CLIENT>" + myUsername + "</CLIENT>\r\n");
-	    xmlWriter.write("<PW>" + myPassword + "</PW>\r\n");
-	    xmlWriter.write("<MSGLST>\r\n");
-	    
-	    // <MSG>...</MSG>
-	    if (theMessage instanceof SmsTextMessage)
-	    {
-	        addTextMsg(xmlWriter, (SmsTextMessage)theMessage, theDestination, theSender);
-	    }
-	    else
-	    {    
-		    for(int i=0; i < msgPdu.length; i++)
-		    {
-		        addMsg(xmlWriter, msgPdu[i], dcs, theDestination, theSender);
-		    }
-	    }
-	    
-	    // </MSGLST>
-	    // </SESSION>
-	    xmlWriter.write("</MSGLST>\r\n");	    
-	    xmlWriter.write("</SESSION>\r\n");
-	    
-	    // Finally write XML to stream
-	    String xmlDoc = xmlWriter.toString();
-	    theOs.write(xmlDoc.getBytes());
-	}
-	
-    protected void sendReqToPsWinCom(byte[] theXmlReq)
-		throws IOException
-	{
-	    Socket xmlSocket = new Socket("62.70.71.19", 1111);
+        case SmsConstants.ALPHABET_GSM:
+            // <TEXT>txt</TEXT>
+            theXmlWriter.write("<TEXT>");
+            theXmlWriter.write(SmsPduUtil.readSeptets(thePdu.getUserData().getData(), thePdu.getUserData().getLength()));
+            theXmlWriter.write("</TEXT>\r\n");
+            break;
 
-	    // Send request
-	    OutputStream os = xmlSocket.getOutputStream();
-	    os.write(theXmlReq);
-	    
-	    // TODO: parse response
-	    InputStream is = xmlSocket.getInputStream();
-	    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-	    String resp;
-	    while ((resp = reader.readLine()) != null)
-	    {
-	        System.err.println(resp);
-	    }
-	}
-	
-	public void send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender)
-		throws SmsException 
-	{
-	    if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
-	    {
-	        throw new SmsException("Cannot sent SMS to ALPHANUMERIC address");
-	    }
-	    
-	    try
-	    {
-	        ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-	        
-	        // Create xml document
-		    writeXmlTo(baos, theMessage, theDestination, theSender);		    
-		    baos.close();
-		    
-		    // Send req
-		    sendReqToPsWinCom(baos.toByteArray());
-	    }
-	    catch (Exception ex)
-	    {
-	        throw new SmsException(ex.toString());
-	    }
-	}
+        case SmsConstants.ALPHABET_8BIT:
+            // <OP>8</OP>
+            theXmlWriter.write("<OP>8</OP>\r\n");
+            // <TEXT>udh-and-ud</TEXT>
+            theXmlWriter.write("<TEXT>");
+            theXmlWriter.write(StringUtil.bytesToHexString(thePdu.getUserDataHeaders())
+                    + StringUtil.bytesToHexString(thePdu.getUserData().getData()));
+            theXmlWriter.write("</TEXT>\r\n");
+            break;
 
-	public void disconnect() 
-		throws SmsException 
-	{
-	}
+        default:
+            throw new SmsException("Unsupported alphabet");
+        }
+
+        // <RCV>434343434</RCV>
+        theXmlWriter.write("<RCV>");
+        theXmlWriter.write(theDestination.getAddress());
+        theXmlWriter.write("</RCV>\r\n");
+
+        // <SND>434344</SND>
+        theXmlWriter.write("<SND>");
+        theXmlWriter.write(theSender.getAddress());
+        theXmlWriter.write("</SND>\r\n");
+
+        if (SmsDcsUtil.getMessageClass(theDcs) == SmsConstants.MSG_CLASS_0)
+        {
+            // <CLASS>0</CLASS>
+            theXmlWriter.write("<CLASS>");
+            theXmlWriter.write("0");
+            theXmlWriter.write("</CLASS>\r\n");
+        }
+
+        // </MSG>
+        theXmlWriter.write("</MSG>\r\n");
+    }
+
+    private void addTextMsg(StringWriter theXmlWriter, SmsTextMessage theMessage, SmsAddress theDestination,
+            SmsAddress theSender) throws SmsException
+    {
+        // 70 UCS
+        // 160 GSM
+
+        byte dcs = theMessage.getDataCodingScheme();
+
+        // <MSG>
+        theXmlWriter.write("<MSG>\r\n");
+
+        switch (SmsDcsUtil.getAlphabet(dcs))
+        {
+        case SmsConstants.ALPHABET_UCS2:
+            // <OP>9</OP>
+            theXmlWriter.write("<OP>9</OP>\r\n");
+            // <TEXT>hex-text</TEXT>
+            theXmlWriter.write("<TEXT>");
+            theXmlWriter.write(StringUtil.bytesToHexString(theMessage.getUserData().getData()));
+            theXmlWriter.write("</TEXT>\r\n");
+            break;
+
+        case SmsConstants.ALPHABET_GSM:
+            // <TEXT>txt</TEXT>
+            theXmlWriter.write("<TEXT>");
+            theXmlWriter.write(theMessage.getText());
+            theXmlWriter.write("</TEXT>\r\n");
+            break;
+
+        default:
+            throw new SmsException("Unsupported alphabet");
+        }
+
+        // <RCV>434343434</RCV>
+        theXmlWriter.write("<RCV>");
+        theXmlWriter.write(theDestination.getAddress());
+        theXmlWriter.write("</RCV>\r\n");
+
+        // <SND>434344</SND>
+        theXmlWriter.write("<SND>");
+        theXmlWriter.write(theSender.getAddress());
+        theXmlWriter.write("</SND>\r\n");
+
+        if (SmsDcsUtil.getMessageClass(dcs) == SmsConstants.MSG_CLASS_0)
+        {
+            // <CLASS>0</CLASS>
+            theXmlWriter.write("<CLASS>");
+            theXmlWriter.write("0");
+            theXmlWriter.write("</CLASS>\r\n");
+        }
+
+        // </MSG>
+        theXmlWriter.write("</MSG>\r\n");
+    }
+
+    protected void writeXmlTo(OutputStream theOs, SmsMessage theMessage, 
+                              SmsAddress theDestination, SmsAddress theSender)
+            throws IOException, SmsException
+    {
+        SmsPdu[] msgPdu = theMessage.getPdus();
+        byte dcs = theMessage.getDataCodingScheme();
+
+        StringWriter xmlWriter = new StringWriter(1024);
+
+        // <?xml version="1.0"?>
+        // <SESSION>
+        // <CLIENT>$myUsername</CLIENT>
+        // <PW>$myPassword</PW>
+        // <MSGLST>
+        xmlWriter.write("<?xml version=\"1.0\"?>\r\n");
+        xmlWriter.write("<SESSION>\r\n");
+        xmlWriter.write("<CLIENT>" + myUsername + "</CLIENT>\r\n");
+        xmlWriter.write("<PW>" + myPassword + "</PW>\r\n");
+        xmlWriter.write("<MSGLST>\r\n");
+
+        // <MSG>...</MSG>
+        if (theMessage instanceof SmsTextMessage)
+        {
+            addTextMsg(xmlWriter, (SmsTextMessage) theMessage, theDestination, theSender);
+        }
+        else
+        {
+            for (int i = 0; i < msgPdu.length; i++)
+            {
+                addMsg(xmlWriter, msgPdu[i], dcs, theDestination, theSender);
+            }
+        }
+
+        // </MSGLST>
+        // </SESSION>
+        xmlWriter.write("</MSGLST>\r\n");
+        xmlWriter.write("</SESSION>\r\n");
+
+        // Finally write XML to stream
+        String xmlDoc = xmlWriter.toString();
+        theOs.write(xmlDoc.getBytes());
+    }
+
+    protected void sendReqToPsWinCom(byte[] theXmlReq) throws IOException
+    {
+        Socket xmlSocket = new Socket("62.70.71.19", 1111);
+
+        // Send request
+        OutputStream os = xmlSocket.getOutputStream();
+        os.write(theXmlReq);
+
+        // TODO: parse response
+        InputStream is = xmlSocket.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        String resp;
+        while ((resp = reader.readLine()) != null)
+        {
+            System.err.println(resp);
+        }
+    }
+
+    public void send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException
+    {
+        if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
+        {
+            throw new SmsException("Cannot sent SMS to ALPHANUMERIC address");
+        }
+
+        try
+        {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
+
+            // Create xml document
+            writeXmlTo(baos, theMessage, theDestination, theSender);
+            baos.close();
+
+            // Send req
+            sendReqToPsWinCom(baos.toByteArray());
+        }
+        catch (IOException ex)
+        {
+            throw new SmsException(ex.toString());
+        }
+    }
+
+    public void disconnect() throws SmsException
+    {
+    }
 }

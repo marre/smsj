@@ -34,10 +34,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mms;
 
-
-public class MmsMessage 
+public class MmsMessage
 {
-	public MmsMessage()
-	{
-	}
+    public MmsMessage()
+    {
+    }
 }

@@ -25,7 +25,7 @@ package org.marre.sms.nokia;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 
-import org.marre.sms.util.SmsPduUtil;
+import org.marre.sms.SmsPduUtil;
 
 /**
  * Nokia OTA Bitmap format
@@ -33,53 +33,55 @@ import org.marre.sms.util.SmsPduUtil;
  * This class can currently only handle non-animated B/W OTA Bitmaps.
  * <p>
  * Format is:
+ * 
  * <pre>
- * Octet 1 -> 0 : Not sure what this is
- * Octet 2 -> <width> : Width of image
- * Octet 3 -> <height> : Height of image
- * Octet 4 -> 1 : Number of colors?? B/W == 1?
- * Octet 5-n -> <imgdata> : Image data 1 bit for each pixel
+ *                     Octet 1 -&gt; 0 : Not sure what this is
+ *                     Octet 2 -&gt; &lt;width&gt; : Width of image
+ *                     Octet 3 -&gt; &lt;height&gt; : Height of image
+ *                     Octet 4 -&gt; 1 : Number of colors?? B/W == 1?
+ *                     Octet 5-n -&gt; &lt;imgdata&gt; : Image data 1 bit for each pixel
  * </pre>
+ * 
  * I have only verified this class with BufferedImages of type TYPE_INT_ARGB
- *
+ * 
  * @author Markus Eriksson
  */
 public class OtaBitmap
 {
-    private int myWidth = 0;
-    private int myHeight = 0;
+    private int myWidth;
+    private int myHeight;
 
-    private byte myOtaImgData[] = null;
+    private byte[] myOtaImgData;
 
-		/**
-		 * Initialise with a raw Ota Bitmap
-		 * @param otaBitmap
-		 */
-		public OtaBitmap(byte[] otaBitmap){
-			
-			if (otaBitmap != null){
-			
-				//Read info field read until no more fields left bit 7 is 0
-				int infoField = otaBitmap[0]; //assume just 1 for now
-				myWidth = otaBitmap[1];
-				myHeight = otaBitmap[2];
-				int depth = otaBitmap[3];
-				
-				int length = otaBitmap.length - 4;
-				myOtaImgData = new byte[length];
-				
-				
-				System.arraycopy(otaBitmap, 4, myOtaImgData, 0, length);
-			}
-		}
-		
+    /**
+     * Initialise with a raw Ota Bitmap
+     * 
+     * @param otaBitmap
+     */
+    public OtaBitmap(byte[] otaBitmap)
+    {
+        if (otaBitmap != null)
+        {
+            //Read info field read until no more fields left bit 7 is 0
+            int infoField = otaBitmap[0]; //assume just 1 for now
+            myWidth = otaBitmap[1];
+            myHeight = otaBitmap[2];
+            int depth = otaBitmap[3];
+
+            int length = otaBitmap.length - 4;
+            myOtaImgData = new byte[length];
+
+            System.arraycopy(otaBitmap, 4, myOtaImgData, 0, length);
+        }
+    }
+
     /**
      * Creates an OtaBitmap object from an BufferedImage.
      * <p>
-     * Every pixel that is not white will be converted
-     * to black.
-     *
-     * @param theImg Image to convert.
+     * Every pixel that is not white will be converted to black.
+     * 
+     * @param theImg
+     *            Image to convert.
      */
     public OtaBitmap(BufferedImage theImg)
     {
@@ -93,29 +95,29 @@ public class OtaBitmap
         myHeight = theImg.getHeight();
 
         nTotalBytes = (myWidth * myHeight) / 8;
-        if ( ((myWidth * myHeight) % 8) > 0)
+        if (((myWidth * myHeight) % 8) > 0)
         {
             nTotalBytes++;
         }
 
         myOtaImgData = new byte[nTotalBytes];
 
-        for (int y=0; y < myHeight; y++)
+        for (int y = 0; y < myHeight; y++)
         {
-            for (int x=0; x < myWidth; x++)
+            for (int x = 0; x < myWidth; x++)
             {
                 int color = theImg.getRGB(x, y);
 
                 if (color != 0)
                 {
-                    data |= ((1 << (7-bitOffset)) & 0xff);
+                    data |= ((1 << (7 - bitOffset)) & 0xff);
                 }
 
                 bitOffset++;
 
                 if (bitOffset >= 8)
                 {
-                    myOtaImgData[nByte] = (byte)(data & 0xff);
+                    myOtaImgData[nByte] = (byte) (data & 0xff);
 
                     bitOffset = 0;
                     data = 0x00;
@@ -126,13 +128,13 @@ public class OtaBitmap
 
         if (bitOffset > 0)
         {
-            myOtaImgData[nByte] = (byte)(data & 0xff);
+            myOtaImgData[nByte] = (byte) (data & 0xff);
         }
     }
 
     /**
      * Returns the created image data (not including image header)
-     *
+     * 
      * @return Image data
      */
     public byte[] getImageData()
@@ -142,7 +144,7 @@ public class OtaBitmap
 
     /**
      * Returns the encoded OtaBitmap
-     *
+     * 
      * @return An encoded OtaBitmap
      */
     public byte[] getBytes()
@@ -159,33 +161,37 @@ public class OtaBitmap
 
         return otaBitmap;
     }
-    
-		/**
-		 * @return
-		 */
-		public int getHeight() {
-			return myHeight;
-		}
 
-		/**
-		 * @return
-		 */
-		public int getWidth() {
-			return myWidth;
-		}
+    /**
+     * @return
+     */
+    public int getHeight()
+    {
+        return myHeight;
+    }
 
-		/**
-		 * @param i
-		 */
-		public void setHeight(int i) {
-			myHeight = i;
-		}
+    /**
+     * @return
+     */
+    public int getWidth()
+    {
+        return myWidth;
+    }
 
-		/**
-		 * @param i
-		 */
-		public void setWidth(int i) {
-			myWidth = i;
-		}
+    /**
+     * @param i
+     */
+    public void setHeight(int i)
+    {
+        myHeight = i;
+    }
+
+    /**
+     * @param i
+     */
+    public void setWidth(int i)
+    {
+        myWidth = i;
+    }
 
 }

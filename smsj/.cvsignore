@@ -2,6 +2,7 @@ bak
 classes
 build
 dist
+target
 *.local
 *~
 bin

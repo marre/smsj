@@ -66,31 +66,29 @@ public abstract class MimeMultipart extends MimeBodyPart
         return (MimeBodyPart) myParts.get(theIndex);
     }
 
-/*
-    public List getBodyParts()
-    {
-        return Collections.unmodifiableList(myParts);
-    }
-*/    
+    /*
+     * public List getBodyParts() { return
+     * Collections.unmodifiableList(myParts); }
+     */
 
     public int getBodyPartCount()
     {
         return myParts.size();
     }
-    
+
     public String toString()
     {
-    	String s = "";
-    	
-    	Iterator i = myParts.iterator();
-    	int c = 0;
-    	
-    	while(i.hasNext())
-    	{
-    		MimeBodyPart bodyPart = (MimeBodyPart) i.next();
-    		s = s + bodyPart;
-    	}
-    		
-    	return s;		
+        String s = "";
+
+        Iterator i = myParts.iterator();
+        int c = 0;
+
+        while (i.hasNext())
+        {
+            MimeBodyPart bodyPart = (MimeBodyPart) i.next();
+            s = s + bodyPart;
+        }
+
+        return s;
     }
 }

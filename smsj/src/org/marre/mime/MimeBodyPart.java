@@ -34,29 +34,65 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
-import java.io.Serializable;
 import java.util.*;
 
-import org.marre.util.StringUtil;
-
-public class MimeBodyPart implements Serializable
+/**
+ * Represents a MIME body part.
+ * 
+ * A body part can contain headers and a body.
+ * 
+ * @author Markus Eriksson
+ * @version $Id$
+ */
+public class MimeBodyPart
 {
-    protected byte[] myContent = null;
-    protected MimeContentType myContentType = null;
+    protected byte[] myBody;
+    protected MimeContentType myContentType;
 
     protected List myHeaders;
 
+    /**
+     * Creates a new empty MimeBodyPart.
+     */
     public MimeBodyPart()
     {
         myHeaders = new LinkedList();
     }
 
-    // HEADERS
+    /**
+     * Creates a new empty MimeBodyPart.
+     */
+    public MimeBodyPart(byte[] body, MimeContentType contentType)
+    {
+        this();
+        setContent(body, contentType);
+    }
+    
+    /**
+     * Creates a new empty MimeBodyPart.
+     */
+    public MimeBodyPart(byte[] body, String contentType)
+    {
+        this();
+        setContent(body, contentType);
+    }
+    
+    /**
+     * Adds a mime header to this body part.
+     * 
+     * @param theHeader The header to add
+     */
     public void addHeader(MimeHeader theHeader)
     {
         myHeaders.add(theHeader);
     }
 
+    /**
+     * Adds a eader to this body part.
+     * 
+     * @param theHeaderName The name of the header
+     * @param theHeaderValue The value
+     */
     public void addHeader(String theHeaderName, String theHeaderValue)
     {
         MimeHeader header = getHeader(theHeaderName);
@@ -68,12 +104,24 @@ public class MimeBodyPart implements Serializable
         addHeader(new MimeHeader(theHeaderName, theHeaderValue));
     }
 
+    /**
+     * Retrieves a header with the given index.
+     * 
+     * @param theIndex Index of header to retrieve
+     * @return The header, or null if not found
+     */
     public MimeHeader getHeader(int theIndex)
     {
         return (MimeHeader) myHeaders.get(theIndex);
     }
 
-    public MimeHeader getHeader(String theHeader)
+    /**
+     * Retrieves a header with the given name.
+     * 
+     * @param headerName The name of the header to find
+     * @return The header, or null if not found
+     */
+    public MimeHeader getHeader(String headerName)
     {
         Iterator iter = myHeaders.iterator();
         
@@ -81,7 +129,7 @@ public class MimeBodyPart implements Serializable
         {
             MimeHeader header = (MimeHeader) iter.next();
             
-            if (header.getName().equalsIgnoreCase(theHeader))
+            if (header.getName().equalsIgnoreCase(headerName))
             {
                 return header;
             }
@@ -90,64 +138,97 @@ public class MimeBodyPart implements Serializable
         return null;
     }
     
+    /**
+     * Returns the number of headers.
+     * 
+     * @return The number of headers
+     */
     public int getHeaderCount()
     {
         return myHeaders.size();
     }
 
-    // CONTENT
+    /**
+     * Sets the main content of this body part.
+     * 
+     * @param theContent The main content
+     * @param theContentType The content-type of the content
+     */
     public void setContent(byte[] theContent, String theContentType)
     {
-        myContent = new byte[theContent.length];
-        System.arraycopy(theContent, 0, myContent, 0, theContent.length);
+        myBody = new byte[theContent.length];
+        System.arraycopy(theContent, 0, myBody, 0, theContent.length);
         myContentType = new MimeContentType(theContentType);
     }
 
+    /**
+     * Sets the main content of this body part.
+     * 
+     * @param theContent The main content
+     * @param theContentType The content type
+     */
     public void setContent(byte[] theContent, MimeContentType theContentType)
     {
-        myContent = new byte[theContent.length];
-        System.arraycopy(theContent, 0, myContent, 0, theContent.length);
+        myBody = new byte[theContent.length];
+        System.arraycopy(theContent, 0, myBody, 0, theContent.length);
         myContentType = theContentType;
     }
-
+    
+    /**
+     * Sets the "Content-Id" header.
+     * 
+     * @param theContentId The content-id
+     */
     public void setContentId(String theContentId)
     {
         addHeader("Content-Id", theContentId);
     }
 
+    /**
+     * Sets the "Content-Location" header.
+     * 
+     * @param theContentLocation The content-location
+     */
     public void setContentLocation(String theContentLocation)
     {
         addHeader("Content-Location", theContentLocation);
     }
     
-    public byte[] getContent()
+    /**
+     * Returns the content of this body part.
+     * 
+     * @return The content
+     */
+    public byte[] getBody()
     {
-        return myContent;
+        byte[] bodyCopy = null;
+        
+        if (myBody != null)
+        {
+            bodyCopy = new byte[myBody.length];
+            System.arraycopy(myBody, 0, bodyCopy, 0, myBody.length);
+        }
+        
+        return bodyCopy;
     }
 
-    public int getContentSize()
+    /**
+     * Returns the size of the body in this body part.
+     * 
+     * @return The size of the body
+     */
+    public int getBodySize()
     {
-        return myContent.length;
+        return myBody.length;
     }
 
+    /**
+     * Returns the content type.
+     * 
+     * @return The content type
+     */
     public MimeContentType getContentType()
     {
         return myContentType;
-    }
-    
-    public String toString()
-    {
-    		String s;
-    		s = myContentType.toString() + " ...\n";
-    		
-    		Iterator i = myHeaders.iterator();
-    		
-    		while(i.hasNext()){
-    			MimeHeader h = (MimeHeader) i.next();
-    			s = s + h.toString() + "\n";
-    		}
-    		
-    		s = s + StringUtil.bytesToHexString(myContent) + "\n";
-    		return s;
     }
 }

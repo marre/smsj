@@ -45,18 +45,18 @@ import org.marre.mms.transport.MmsTransport;
 
 /**
  * 
- *
+ * 
  * @author Markus Eriksson
  * @version $Id$
  */
 public class Mm1Transport implements MmsTransport
 {
-	public static final String CONTENT_TYPE_WAP_MMS_MESSAGE = "application/vnd.wap.mms-message";
-	
+    public static final String CONTENT_TYPE_WAP_MMS_MESSAGE = "application/vnd.wap.mms-message";
+
     /**
      * URL for the proxy gateway
      */
-    private String myMmsProxyGatewayAddress = null;
+    private String myMmsProxyGatewayAddress;
 
     /**
      * @see org.marre.mms.transport.MmsTransport#init(java.util.Properties)
@@ -74,43 +74,44 @@ public class Mm1Transport implements MmsTransport
     /**
      * @see org.marre.mms.transport.MmsTransport#connect()
      */
-    public void connect() 
-    	throws MmsException
+    public void connect() throws MmsException
     {
     }
 
-	/**
-	 * @see org.marre.mms.transport.MmsTransport#send(org.marre.mime.MimeBodyPart, org.marre.mime.MimeHeader[])
-	 */
-	public void send(MimeBodyPart theMessage, MmsHeaders theHeaders) 
-		throws MmsException 
-	{		
-		try
-		{
-			// POST
-			URL url = new URL(myMmsProxyGatewayAddress);
-			URLConnection urlConn = url.openConnection();
-			urlConn.setDoOutput(true);
-			urlConn.setDoInput(true);
-			urlConn.setAllowUserInteraction(false);
-			OutputStream out = urlConn.getOutputStream();
-		
-			Mm1Encoder.writeMessageToStream(out, theMessage, theHeaders);
-		
-			out.close();
+    /**
+     * @see org.marre.mms.transport.MmsTransport#send(org.marre.mime.MimeBodyPart,
+     *      org.marre.mime.MimeHeader[])
+     */
+    public void send(MimeBodyPart theMessage, MmsHeaders theHeaders) throws MmsException
+    {
+        try
+        {
+            // POST
+            URL url = new URL(myMmsProxyGatewayAddress);
+            URLConnection urlConn = url.openConnection();
+            urlConn.setDoOutput(true);
+            urlConn.setDoInput(true);
+            urlConn.setAllowUserInteraction(false);
+            OutputStream out = urlConn.getOutputStream();
 
-			// Read the response
+            Mm1Encoder.writeMessageToStream(out, theMessage, theHeaders);
+
+            out.close();
+
+            // Read the response
             // TODO: Parse the response
-			InputStream response = urlConn.getInputStream();
-			while (response.read() != -1)
-				;
-			response.close();
-		}
-		catch (IOException ex)
-		{
-			throw new MmsException(ex.getMessage());
-		}
-	}
+            InputStream response = urlConn.getInputStream();
+            while (response.read() != -1)
+            {
+                /* Just read */
+            }
+            response.close();
+        }
+        catch (IOException ex)
+        {
+            throw new MmsException(ex.getMessage());
+        }
+    }
 
     /**
      * @see org.marre.mms.transport.MmsTransport#disconnect()

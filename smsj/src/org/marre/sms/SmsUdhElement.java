@@ -44,8 +44,8 @@ import java.io.*;
  */
 public class SmsUdhElement
 {
-    protected int myUdhIei = 0;
-    protected byte[] myUdhIeiData = null;
+    protected int myUdhIei;
+    protected byte[] myUdhIeiData;
 
     /**
      * Creates an SmsUdhElement
@@ -65,7 +65,7 @@ public class SmsUdhElement
      * The length is including the UDH data length and the UDH "header" (2 bytes)
      * @return the length
      */
-    public int getTotalLength()
+    public int getTotalSize()
     {
         return myUdhIeiData.length + 2;
     }

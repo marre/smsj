@@ -36,7 +36,7 @@ package org.marre.mime;
 
 public class MimeMultipartRelated extends MimeMultipart
 {
-    private MimeBodyPart myStartBodyPart = null;
+    private MimeBodyPart myStartBodyPart;
 
     public MimeMultipartRelated()
     {
@@ -59,10 +59,10 @@ public class MimeMultipartRelated extends MimeMultipart
         {
             MimeContentType startCt = myStartBodyPart.getContentType();
             MimeHeader startCid = myStartBodyPart.getHeader("content-id");
-            
+
             // Add content-type
             ct.setParam("type", myStartBodyPart.getContentType().getValue());
-            
+
             // Add start parameter
             if (startCid != null)
             {
@@ -71,12 +71,12 @@ public class MimeMultipartRelated extends MimeMultipart
         }
         return ct;
     }
-    
-    public String toString(){
-    	String s = null;
-    	s = getContentType().toString() + "\n";
-    	s = s + super.toString();
-    	return s;
+
+    public String toString()
+    {
+        String s = null;
+        s = getContentType().toString() + "\n";
+        s = s + super.toString();
+        return s;
     }
 }
-

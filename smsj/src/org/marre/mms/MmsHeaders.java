@@ -35,17 +35,17 @@
 package org.marre.mms;
 
 import org.marre.util.StringUtil;
-import org.marre.wap.MmsConstants;
+import org.marre.wap.mms.MmsConstants;
 
 public class MmsHeaders
 {
     private static final int DEFAULT_TRANSACTION_ID_LENGTH = 6;
     
     protected int    myMessageTypeId = MmsConstants.X_MMS_MESSAGE_TYPE_ID_M_SEND_REQ;
-    protected String myTransactionId = null;
+    protected String myTransactionId;
     protected int    myVersionId     = MmsConstants.X_MMS_MMS_VERSION_ID_1_0;
-    protected String mySubject       = null;
-    protected String myFrom          = null;
+    protected String mySubject;
+    protected String myFrom;
     
     public MmsHeaders()
     {

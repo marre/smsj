@@ -1,40 +1,52 @@
 /*
-    SMS Library for the Java platform
-    Copyright (C) 2002  Markus Eriksson
+ SMS Library for the Java platform
+ Copyright (C) 2002  Markus Eriksson
 
-    This library is free software; you can redistribute it and/or
-    modify it under the terms of the GNU Lesser General Public
-    License as published by the Free Software Foundation; either
-    version 2.1 of the License, or (at your option) any later version.
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
 
-    This library is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-    Lesser General Public License for more details.
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
 
-    You should have received a copy of the GNU Lesser General Public
-    License along with this library; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package org.marre.sms.test;
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
-import java.awt.*;
-import java.awt.image.*;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.Properties;
 
-import org.marre.util.*;
+import org.marre.sms.SmsAddress;
+import org.marre.sms.SmsConcatMessage;
+import org.marre.sms.SmsConstants;
+import org.marre.sms.SmsMessage;
+import org.marre.sms.SmsPduUtil;
+import org.marre.sms.SmsSender;
+import org.marre.sms.SmsTextMessage;
+import org.marre.sms.SmsTransport;
+import org.marre.sms.SmsUdhElement;
+import org.marre.sms.SmsUdhUtil;
+import org.marre.sms.nokia.OtaBitmap;
+import org.marre.sms.SmsTransportManager;
+import org.marre.util.StringUtil;
 
-import org.marre.sms.*;
-import org.marre.sms.transport.*;
-import org.marre.sms.util.*;
-import org.marre.sms.nokia.*;
-
-public class TestSms
+public final class TestSms
 {
-    public static void testSeptets()
-        throws Exception
+    private TestSms()
+    {
+    }
+
+    public static void testSeptets() throws Exception
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -50,15 +62,17 @@ public class TestSms
         System.out.println("Copy     : " + copyString);
     }
 
-    public static void testGsmTransport()
-        throws Exception
+    public static void testGsmTransport() throws Exception
     {
         Properties props = new Properties();
         SmsTransport transport = SmsTransportManager.getTransport("org.marre.sms.transport.gsm.GsmTransport", props);
 
         // FIXME: The second message is truncated!
-        SmsMessage msg = new SmsTextMessage("123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678", SmsConstants.ALPHABET_GSM);
-//        SmsMessage msg = new SmsTextMessage("1234567890123456789012", SmsConstants.TEXT_ALPHABET_UCS2);
+        SmsMessage msg = new SmsTextMessage(
+                "123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678",
+                SmsConstants.ALPHABET_GSM);
+        //        SmsMessage msg = new SmsTextMessage("1234567890123456789012",
+        // SmsConstants.TEXT_ALPHABET_UCS2);
 
         SmsAddress sender = new SmsAddress("+1234567890");
         SmsAddress reciever = new SmsAddress("+9876543210");
@@ -66,8 +80,7 @@ public class TestSms
         transport.send(msg, reciever, sender);
     }
 
-    public static void testClickatellTransport()
-        throws Exception
+    public static void testClickatellTransport() throws Exception
     {
         SmsSender smsSender = SmsSender.getClickatellSender("clickatell.props");
 
@@ -79,15 +92,20 @@ public class TestSms
         String reciever = props.getProperty("reciever");
 
         smsSender.sendTextSms("Testing testing.", reciever, sender);
-//        smsSender.sendTextSms("Det har meddelandet ar mer an 160 tecken och borde darfor bli skickat i tva omgangar. Nu ar ju 160 tecken ganska langt och jag lite fantasilos sa det blir bara en massa trams!", reciever, sender);
-//        smsSender.sendUnicodeTextSms("Detta är ett lite längre UNICODE meddelande. ÅÄÖÅÄÖ. Undrar vad clickatell gör med den... Den pajjar det säkert...", reciever, sender);
+        //        smsSender.sendTextSms("Det har meddelandet ar mer an 160 tecken och
+        // borde darfor bli skickat i tva omgangar. Nu ar ju 160 tecken ganska
+        // langt och jag lite fantasilos sa det blir bara en massa trams!",
+        // reciever, sender);
+        //        smsSender.sendUnicodeTextSms("Detta är ett lite längre UNICODE
+        // meddelande. ÅÄÖÅÄÖ. Undrar vad clickatell gör med den... Den pajjar
+        // det säkert...", reciever, sender);
 
         smsSender.close();
         smsSender = null;
     }
 
-    public static void testPush()
-        throws Exception
+/*    
+    public static void testPush() throws Exception
     {
         Properties props = new Properties();
 
@@ -95,26 +113,17 @@ public class TestSms
         props.load(new FileInputStream("clickatell.props"));
 
         SmsTransport transport = SmsTransportManager.getTransport("org.marre.sms.transport.gsm.GsmTransport", props);
-//        SmsTransport transport = SmsTransportManager.getTransport("org.marre.sms.transport.clickatell.ClickatellTransport", props);
+        //        SmsTransport transport =
+        // SmsTransportManager.getTransport("org.marre.sms.transport.clickatell.ClickatellTransport",
+        // props);
 
         // Create pdu
-        byte data[] = {
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-        };
-        SmsUdhElement udhElements[] = new SmsUdhElement[1];
+        byte[] data = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1,
+                2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5,
+                6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3,
+                4, 5, 6, 7, 8, 9};
+        SmsUdhElement[] udhElements = new SmsUdhElement[1];
         udhElements[0] = SmsUdhUtil.get16BitApplicationPortUdh(SmsConstants.PORT_WAP_PUSH, 0);
 
         SmsConcatMessage pushMsg = new SmsConcatMessage(SmsConstants.DCS_DEFAULT_8BIT, udhElements, data, data.length);
@@ -126,9 +135,9 @@ public class TestSms
         transport.send(pushMsg, reciever, sender);
         transport.disconnect();
     }
-
-    public static void testAddress()
-        throws Exception
+*/
+    
+    public static void testAddress() throws Exception
     {
         new SmsAddress("123123123");
     }
@@ -137,48 +146,45 @@ public class TestSms
     {
         String a = "88888888888888888888888888888888888888888888";
         byte[] src = StringUtil.hexStringToBytes(a);
-        byte[] dest = new byte[a.length()/2 + 1];
+        byte[] dest = new byte[a.length() / 2 + 1];
 
-        SmsPduUtil.arrayCopy(src, 0, dest, 0, 8, src.length*8);
+        SmsPduUtil.arrayCopy(src, 0, dest, 0, 8, src.length * 8);
 
         System.out.println(a);
         System.out.println(StringUtil.bytesToHexString(dest));
     }
 
-/*
-    public static void testNol()
-        throws Exception
-    {
-        Properties props = new Properties();
-        SmsTransport transport = SmsTransportManager.getTransport("org.marre.sms.transport.gsm.GsmTransport", props);
-
-        BufferedImage img = new BufferedImage(72, 14, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = img.createGraphics();
-
-        graphics.drawString("Testing", 0, 12);
-        graphics.dispose();
-        graphics = null;
-
-        NokiaOperatorLogo nolMsg = new NokiaOperatorLogo(img, GsmOperators.SE_TELIA_MCC_MNC);
-
-        SmsAddress sender = new SmsAddress("+1234567890");
-        SmsAddress reciever = new SmsAddress("+9876543210");
-
-        transport.send(nolMsg, reciever, sender);
-    }
-*/
-    public static void testOtaBitmap()
-        throws Exception
+    /*
+     * public static void testNol() throws Exception { Properties props = new
+     * Properties(); SmsTransport transport =
+     * SmsTransportManager.getTransport("org.marre.sms.transport.gsm.GsmTransport",
+     * props);
+     * 
+     * BufferedImage img = new BufferedImage(72, 14,
+     * BufferedImage.TYPE_INT_ARGB); Graphics2D graphics = img.createGraphics();
+     * 
+     * graphics.drawString("Testing", 0, 12); graphics.dispose(); graphics =
+     * null;
+     * 
+     * NokiaOperatorLogo nolMsg = new NokiaOperatorLogo(img,
+     * GsmOperators.SE_TELIA_MCC_MNC);
+     * 
+     * SmsAddress sender = new SmsAddress("+1234567890"); SmsAddress reciever =
+     * new SmsAddress("+9876543210");
+     * 
+     * transport.send(nolMsg, reciever, sender); }
+     */
+    public static void testOtaBitmap() throws Exception
     {
         BufferedImage img = new BufferedImage(72, 14, BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D graphics = img.createGraphics();
 
-//        graphics.drawLine(3,3,10,10);
-//        graphics.drawOval(1, 1, 12, 12);
-//        graphics.draw(new Rectangle(0, 0, 10, 12));
+        //        graphics.drawLine(3,3,10,10);
+        //        graphics.drawOval(1, 1, 12, 12);
+        //        graphics.draw(new Rectangle(0, 0, 10, 12));
         graphics.drawString("Testing", 0, 12);
-//        graphics.drawRect(0, 0, 10, 10);
+        //        graphics.drawRect(0, 0, 10, 10);
 
         graphics.dispose();
         graphics = null;
@@ -192,16 +198,49 @@ public class TestSms
         System.out.println(StringUtil.bytesToHexString(bitmap.getBytes()));
     }
 
-    public static void main(String[] args)
-        throws Exception
+    public static void testPsWinCom() throws Exception
     {
-//        testNol();
-        testClickatellTransport();
-//        testPush();
-//        testOtaBitmap();
-//        testSeptets();
-//        testGsmTransport();
-//        testAddress();
-//        testArrayCopy();
+        Properties props = new Properties();
+
+        props.put("smsj.pswincom.username", "marre");
+        props.put("smsj.pswincom.password", "7Afr4K6");
+
+        SmsTransport transport = SmsTransportManager.getTransport("org.marre.sms.transport.pswincom.PsWinXmlTransport",
+                props);
+
+        SmsMessage msg = new SmsTextMessage("1234567890" + "1234567890" + "1234567890" + "1234567890" + "1234567890"
+                + "1234567890" + "1234567890" + "1234567890" + "1234567890" + "1234567890" + "1234567890"
+                + "1234567890" + "1234567890" + "1234567890" + "1234567890" + "1234567890" + "123456789s",
+                SmsConstants.ALPHABET_GSM);
+        //        SmsMessage msg = new SmsTextMessage("1234567890123456789012",
+        // SmsConstants.ALPHABET_UCS2);
+
+        SmsAddress sender = new SmsAddress("APA");
+        SmsAddress reciever = new SmsAddress("46706566642");
+
+        transport.send(msg, reciever, sender);
+    }
+
+/*    
+    public static void testSmsSender() throws Exception
+    {
+        SmsSender smsSender = SmsSender.getPsWinCommXmlSender("marre", "7Afr4K6");
+        //        smsSender.sendTextSms("New Alert", "46706566642", "TestSys");
+        smsSender.sendWapSiPushMsg("http://wap.sl.se", "SL", "46706566642", "TestSys");
+    }
+*/
+    
+    public static void main(String[] args) throws Exception
+    {
+        //        testNol();
+        //        testClickatellTransport();
+        //        testPush();
+        //        testOtaBitmap();
+        //        testSeptets();
+        //        testGsmTransport();
+        //        testAddress();
+        //        testArrayCopy();
+        //        testPsWinCom();
+        //        testSmsSender();
     }
 }

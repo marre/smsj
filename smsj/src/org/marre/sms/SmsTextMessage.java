@@ -36,9 +36,6 @@ package org.marre.sms;
 
 import java.io.*;
 
-import org.marre.sms.util.SmsDcsUtil;
-import org.marre.sms.util.SmsPduUtil;
-
 /**
  * Represents a text message.
  * <p>
@@ -50,8 +47,11 @@ import org.marre.sms.util.SmsPduUtil;
  */
 public class SmsTextMessage extends SmsConcatMessage
 {
+    protected String myText;
+    protected int myAlphabet;
+    
     /**
-     * Creates an SmsTextMessage with the given alphabet and message class
+     * Creates an SmsTextMessage with the given alphabet and message class.
      * <p>
      * theAlphabet can be any of:<br>
      * - SmsConstants.ALPHABET_GSM<br>
@@ -72,7 +72,7 @@ public class SmsTextMessage extends SmsConcatMessage
     {
         this(theMsg, theAlphabet);
         int dcs = getDataCodingScheme() | 0x10 | theMessageClass;
-        setDataCodingScheme((byte)(dcs & 0xff));
+        setDataCodingScheme((byte) (dcs & 0xff));
     }
 
     /**
@@ -88,34 +88,8 @@ public class SmsTextMessage extends SmsConcatMessage
      */
     public SmsTextMessage(String theMsg, int theAlphabet)
     {
-        try
-        {
-            switch (theAlphabet)
-            {
-            case SmsConstants.ALPHABET_GSM:
-                // 7-bit encoding, No message class, No compression
-                setDataCodingScheme(SmsConstants.DCS_DEFAULT_7BIT);
-                setContent(null, SmsPduUtil.getSeptets(theMsg), theMsg.length());
-                break;
-            case SmsConstants.ALPHABET_8BIT:
-                // 8bit data encoding, No message class, No compression
-                setDataCodingScheme(SmsConstants.DCS_DEFAULT_8BIT);
-                setContent(null, theMsg.getBytes("ISO-8859-1"), theMsg.length());
-                break;
-            case SmsConstants.ALPHABET_UCS2:
-                // 16 bit UCS2 encoding, No message class, No compression
-                setDataCodingScheme(SmsConstants.DCS_DEFAULT_UCS2);
-                setContent(null, theMsg.getBytes("UTF-16BE"), theMsg.length() * 2);
-                break;
-            }
-        }
-        catch (UnsupportedEncodingException ex)
-        {
-            // Shouldn't happen. According to the javadoc documentation
-            // for JDK 1.3.1 the "UTF-16BE" and "ISO-8859-1" encoding
-            // are standard...
-            throw new RuntimeException(ex.getMessage());
-        }
+        myText = theMsg;
+        myAlphabet = theAlphabet;
     }
 
     /**
@@ -133,19 +107,41 @@ public class SmsTextMessage extends SmsConcatMessage
      */
     public String getText()
     {
+        return myText;
+    }
+
+    /* (non-Javadoc)
+     * @see org.marre.sms.SmsConcatMessage#getUserData()
+     */
+    public SmsUserData getUserData()
+    {
+        SmsUserData ud;
+        
         try
         {
-            switch (SmsDcsUtil.getAlphabet(myDcs))
+            switch (myAlphabet)
             {
             case SmsConstants.ALPHABET_GSM:
-                return SmsPduUtil.readSeptets(getUserData(), getUserDataLength());
+                // 7-bit encoding, No message class, No compression
+                setDataCodingScheme(SmsConstants.DCS_DEFAULT_7BIT);
+                ud = new SmsUserData(SmsPduUtil.getSeptets(myText), myText.length());
+                break;
+                
             case SmsConstants.ALPHABET_8BIT:
                 // 8bit data encoding, No message class, No compression
-                return new String(getUserData(), "ISO-8859-1");
+                setDataCodingScheme(SmsConstants.DCS_DEFAULT_8BIT);
+                ud = new SmsUserData(myText.getBytes("ISO-8859-1"), myText.length());
+                break;
+                
             case SmsConstants.ALPHABET_UCS2:
-                return new String(getUserData(), "UTF-16BE");
+                // 16 bit UCS2 encoding, No message class, No compression
+                setDataCodingScheme(SmsConstants.DCS_DEFAULT_UCS2);
+                ud = new SmsUserData(myText.getBytes("UTF-16BE"), myText.length() * 2);
+                break;
+                
             default:
-                return null;
+                ud = null;
+                break;
             }
         }
         catch (UnsupportedEncodingException ex)
@@ -155,5 +151,12 @@ public class SmsTextMessage extends SmsConcatMessage
             // are standard...
             throw new RuntimeException(ex.getMessage());
         }
+        
+        return ud;
+    }
+
+    public SmsUdhElement[] getUdhElements()
+    {
+        return null;
     }
 }

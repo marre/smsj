@@ -35,9 +35,8 @@
 package org.marre.mime;
 
 import java.util.*;
-import java.io.Serializable;
 
-public class MimeHeader implements Serializable
+public class MimeHeader
 {
     protected String myHeaderName;
     protected String myHeaderValue;
@@ -46,6 +45,7 @@ public class MimeHeader implements Serializable
 
     protected MimeHeader()
     {
+        // Utility function
     }
 
     public MimeHeader(String theName, String theValue)
@@ -74,7 +74,7 @@ public class MimeHeader implements Serializable
     {
         // Remove parameter if it already exists...
         removeParam(theName);
-        
+
         // Add new...
         myParams.add(new MimeHeaderParam(theName, theValue));
     }
@@ -90,15 +90,15 @@ public class MimeHeader implements Serializable
                 return param;
             }
         }
-        
+
         // Not found
         return null;
     }
-    
+
     public void removeParam(String theName)
     {
         MimeHeaderParam param = getParam(theName);
-        
+
         if (param != null)
         {
             myParams.remove(param);
@@ -119,18 +119,18 @@ public class MimeHeader implements Serializable
     {
         return (MimeHeaderParam) myParams.get(theIndex);
     }
-    
+
     public String toString()
     {
-    	String s = myHeaderName + "=" + myHeaderValue;
-    	
-    	Iterator i = myParams.iterator();
-    	
-    	while (i.hasNext())
-    	{
-    		MimeHeaderParam mhp = (MimeHeaderParam) i.next();
-    		s = mhp.getName() + "=" + mhp.getValue();	
-    	}
-    	return s;	
+        String s = myHeaderName + "=" + myHeaderValue;
+
+        Iterator i = myParams.iterator();
+
+        while (i.hasNext())
+        {
+            MimeHeaderParam mhp = (MimeHeaderParam) i.next();
+            s = mhp.getName() + "=" + mhp.getValue();
+        }
+        return s;
     }
 }

@@ -36,7 +36,7 @@ package org.marre.mms;
 
 public class MmsException extends Exception
 {
-	public MmsException(String reason)
+    public MmsException(String reason)
     {
         super(reason);
     }

@@ -34,24 +34,31 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.transport.ucp;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
-import org.marre.util.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.marre.util.StringUtil;
 
 /**
- *
+ * Baseclass for UcpMsg.
+ * 
  * @author Markus Eriksson
  * @version $Id$
  */
 public abstract class UcpMsg
 {
+    protected static final byte STX = (byte) 0x02;
+    protected static final byte ETX = (byte) 0x03;
+
+    private static Log logger = LogFactory.getLog(UcpMsg.class);
+
     protected String[] myUcpFields;
     protected char myOR; // 'O' or 'R'
     protected int myTrn;
     protected byte myOT;
-
-    protected static final byte STX = (byte) 0x02;
-    protected static final byte ETX = (byte) 0x03;
 
     public UcpMsg(int nFields)
     {
@@ -86,11 +93,11 @@ public abstract class UcpMsg
     public byte calcChecksum(String data)
     {
         int checksum = 0;
-        for (int i=0; i < data.length(); i++)
+        for (int i = 0; i < data.length(); i++)
         {
             checksum = (checksum + data.charAt(i)) % 256;
         }
-        return (byte)(checksum & 0xff);
+        return (byte) (checksum & 0xff);
     }
 
     public String buildCommand()
@@ -103,7 +110,7 @@ public abstract class UcpMsg
         // length = trn + len + o|r + ot
         length = 3 + 5 + 2 + 3;
         // length += data
-        for(int i=0; i < myUcpFields.length; i++)
+        for (int i = 0; i < myUcpFields.length; i++)
         {
             if (myUcpFields[i] != null)
             {
@@ -125,12 +132,12 @@ public abstract class UcpMsg
         // O|R (Char 'O' or 'R')
         command.append(myOR);
         command.append('/');
-        // OT  (2 num char)
+        // OT (2 num char)
         command.append(StringUtil.intToString(myOT, 2));
         command.append('/');
 
         // DATA
-        for(int i=0; i < myUcpFields.length; i++)
+        for (int i = 0; i < myUcpFields.length; i++)
         {
             if (myUcpFields[i] != null)
             {
@@ -145,8 +152,7 @@ public abstract class UcpMsg
         return command.toString();
     }
 
-    public void writeTo(OutputStream os)
-        throws IOException
+    public void writeTo(OutputStream os) throws IOException
     {
         // STX
         os.write(STX);
@@ -161,10 +167,14 @@ public abstract class UcpMsg
     public byte[] getCommand()
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(200);
-        try { 
-        	writeTo(baos); 
-        } catch (Exception ex) {;}
+        try
+        {
+            writeTo(baos);
+        }
+        catch (IOException ex)
+        {
+            logger.debug("getCommand() - Failed to write to an ByteArrayOutputStream!");
+        }
         return baos.toByteArray();
     }
 }
-

@@ -36,51 +36,47 @@ package org.marre.sms;
 
 /**
  * Contains various SMS related constants
- *
+ * 
  * @author Markus Eriksson
  * @version $Id$
  */
-public class SmsConstants
+public final class SmsConstants
 {
     /**
-     * Type-Of-Number - Unknown.
-     * "Unknown" is used when the user or network has no a priori information
-     * about the numbering plan. In this case, the Address-Value field is
-     * organized according to the network dialling plan, e.g. prefix or escape
-     * digits might be present.
+     * Type-Of-Number - Unknown. "Unknown" is used when the user or network has
+     * no a priori information about the numbering plan. In this case, the
+     * Address-Value field is organized according to the network dialling plan,
+     * e.g. prefix or escape digits might be present.
      */
     public static final byte TON_UNKNOWN = 0x00;
     /**
-     * Type-Of-Number - International.
-     * The international format shall be accepted also when the message is
-     * destined to a recipient in the same country as the MSC or as the SGSN.
+     * Type-Of-Number - International. The international format shall be
+     * accepted also when the message is destined to a recipient in the same
+     * country as the MSC or as the SGSN.
      * <p>
      * Most common.
      */
     public static final byte TON_INTERNATIONAL = 0x01;
     /**
-     * Type-Of-Number - National.
-     * Prefix or escape digits shall not be included.
+     * Type-Of-Number - National. Prefix or escape digits shall not be included.
      */
     public static final byte TON_NATIONAL = 0x02;
     /**
-     * Type-Of-Number - Network specific.
-     * "Network specific number" is used to indicate administration/service
-     * number specific to the serving network, e.g. used to access an operator.
+     * Type-Of-Number - Network specific. "Network specific number" is used to
+     * indicate administration/service number specific to the serving network,
+     * e.g. used to access an operator.
      */
     public static final byte TON_NETWORK_SPECIFIC = 0x03;
     /**
-     * Type-Of-Number - Subscriber.
-     * "Subscriber number" is used when a specific short number representation
-     * is stored in one or more SCs as part of a higher layer application.
-     * (Note that "Subscriber number" shall only be used in connection with the
-     *  proper PID referring to this application).
+     * Type-Of-Number - Subscriber. "Subscriber number" is used when a specific
+     * short number representation is stored in one or more SCs as part of a
+     * higher layer application. (Note that "Subscriber number" shall only be
+     * used in connection with the proper PID referring to this application).
      */
     public static final byte TON_SUBSCRIBER = 0x04;
     /**
-     * Type-Of-Number - Alphanumeric.
-     * Number must be coded according to 3GPP TS 23.038 GSM 7-bit default
-     * alphabet.
+     * Type-Of-Number - Alphanumeric. Number must be coded according to 3GPP TS
+     * 23.038 GSM 7-bit default alphabet.
      * <p>
      * NPI Must be set to UNKNOWN.
      */
@@ -95,15 +91,13 @@ public class SmsConstants
      */
     public static final byte NPI_UNKNOWN = 0x00;
     /**
-     * Numbering-Plan-Identification - ISDN/Telephone.
-     * (E.164 /E.163)
+     * Numbering-Plan-Identification - ISDN/Telephone. (E.164 /E.163)
      * <p>
      * Most common.
      */
     public static final byte NPI_ISDN_TELEPHONE = 0x01;
     /**
-     * Numbering-Plan-Identification - Data Numbering Plan
-     * (X.121)
+     * Numbering-Plan-Identification - Data Numbering Plan (X.121)
      */
     public static final byte NPI_DATA = 0x03;
     /**
@@ -177,13 +171,14 @@ public class SmsConstants
     /** UDH_IEI_SPECIAL_MESSAGE type "Voice Message Waiting" */
     public static final int MESSAGE_WAITING_VOICE = 0x00;
     /** UDH_IEI_SPECIAL_MESSAGE type "Fax Message Waiting" */
-    public static final int MESSAGE_WAITING_FAX   = 0x01;
+    public static final int MESSAGE_WAITING_FAX = 0x01;
     /** UDH_IEI_SPECIAL_MESSAGE type "Electronic Mail Message Waiting" */
     public static final int MESSAGE_WAITING_EMAIL = 0x02;
-    /** UDH_IEI_SPECIAL_MESSAGE type "Other Message Waiting
-     *  (see 3GPP TS 23.038 [9] for definition of 'other')" */
+    /**
+     * UDH_IEI_SPECIAL_MESSAGE type "Other Message Waiting (see 3GPP TS 23.038
+     * [9] for definition of 'other')"
+     */
     public static final int MESSAGE_WAITING_OTHER = 0x03;
-
 
     /* PORT NUMBERS */
 
@@ -268,13 +263,13 @@ public class SmsConstants
     public static final byte EMS_TEXT_SIZE_SMALL = 0x08;
 
     /** EMS - Normal size font */
-    public static final byte EMS_TEXT_STYLE_BOLD = (byte)0x10;
+    public static final byte EMS_TEXT_STYLE_BOLD = (byte) 0x10;
     /** EMS - Large size font */
-    public static final byte EMS_TEXT_STYLE_ITALIC = (byte)0x20;
+    public static final byte EMS_TEXT_STYLE_ITALIC = (byte) 0x20;
     /** EMS - Small size font */
-    public static final byte EMS_TEXT_STYLE_UNDERLINED = (byte)0x40;
+    public static final byte EMS_TEXT_STYLE_UNDERLINED = (byte) 0x40;
     /** EMS - Small size font */
-    public static final byte EMS_TEXT_STYLE_STRIKETHROUGH = (byte)0x80;
+    public static final byte EMS_TEXT_STYLE_STRIKETHROUGH = (byte) 0x80;
 
     /** EMS - Color black */
     public static final byte EMS_TEXT_COLOR_BLACK = 0x00;

@@ -22,10 +22,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.nokia;
 
-import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsConcatMessage;
+import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsUdhElement;
-import org.marre.sms.util.SmsUdhUtil;
+import org.marre.sms.SmsUdhUtil;
+import org.marre.sms.SmsUserData;
 
 /**
  * 
@@ -34,6 +35,8 @@ import org.marre.sms.util.SmsUdhUtil;
  */
 public class NokiaRingTone extends SmsConcatMessage
 {
+    protected byte[] myRingToneData;
+    
     /**
      * Creates a ring tone
      *
@@ -42,19 +45,20 @@ public class NokiaRingTone extends SmsConcatMessage
     public NokiaRingTone(byte[] theRingTone)
     {
         super(SmsConstants.DCS_DEFAULT_8BIT);
-        setContent(theRingTone);
+        myRingToneData = theRingTone;
     }
 
     private void setContent(byte[] theRingTone)
     {
-      SmsUdhElement[] udhElements = new SmsUdhElement[1];
+    }
 
-      // Port
-      udhElements[0] = SmsUdhUtil.get16BitApplicationPortUdh(
-                                    SmsConstants.PORT_NOKIA_RING_TONE, 0);
+    public SmsUserData getUserData()
+    {
+        return new SmsUserData(myRingToneData);
+    }
 
-      // Let SmsConcatMessage build the pdus...
-      setContent(udhElements, theRingTone, theRingTone.length);
+    public SmsUdhElement[] getUdhElements()
+    {
+        return new SmsUdhElement[] { SmsUdhUtil.get16BitApplicationPortUdh(SmsConstants.PORT_NOKIA_RING_TONE, 0) };
     }
 }
-

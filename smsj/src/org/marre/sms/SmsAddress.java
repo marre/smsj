@@ -57,7 +57,7 @@ public class SmsAddress
     private int myTon = SmsConstants.TON_INTERNATIONAL;
     private int myNpi = SmsConstants.NPI_ISDN_TELEPHONE;
 
-    private String myAddress = null;
+    private String myAddress;
 
     /**
      * Creates an SmsAddress object.
@@ -74,7 +74,7 @@ public class SmsAddress
         int npi = SmsConstants.NPI_ISDN_TELEPHONE;
         int ton = SmsConstants.TON_INTERNATIONAL;
 
-        for(int i=0; i < theAddress.length(); i++)
+        for (int i = 0; i < theAddress.length(); i++)
         {
             char ch = theAddress.charAt(i);
             if (ALLOWED_DIGITS.indexOf(ch) == -1)
@@ -148,7 +148,7 @@ public class SmsAddress
                 throw new SmsException("Too long address, Max allowed is 20 digits (excluding any inital '+').");
             }
 
-            for(int i=0; i < theAddress.length(); i++)
+            for (int i = 0; i < theAddress.length(); i++)
             {
                 char ch = theAddress.charAt(i);
                 if (ALLOWED_DIGITS.indexOf(ch) == -1)

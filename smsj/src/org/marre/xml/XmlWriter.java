@@ -39,21 +39,25 @@ import java.io.OutputStream;
 
 public interface XmlWriter
 {
-    public void setDoctype(String publicID);
-    public void setDoctype(String name, String systemURI);
-    public void setDoctype(String name, String publicID, String publicURI);
+    void setDoctype(String publicID);
 
-    public void addStartElement(String tag) throws IOException;
-    public void addStartElement(String tag, XmlAttribute attribs[]) throws IOException;
+    void setDoctype(String name, String systemURI);
 
-    public void addEmptyElement(String tag) throws IOException;
-    public void addEmptyElement(String tag, XmlAttribute attribs[]) throws IOException;
+    void setDoctype(String name, String publicID, String publicURI);
 
-    public void addEndTag() throws IOException;
+    void addStartElement(String tag) throws IOException;
 
-    public void addCharacters(char[] ch, int start, int length) throws IOException;
-    public void addCharacters(String str) throws IOException;
+    void addStartElement(String tag, XmlAttribute[] attribs) throws IOException;
 
-    public void reset() throws IOException;
-	public void writeTo(OutputStream os) throws IOException;
+    void addEmptyElement(String tag) throws IOException;
+
+    void addEmptyElement(String tag, XmlAttribute[] attribs) throws IOException;
+
+    void addEndElement() throws IOException;
+
+    void addCharacters(char[] ch, int start, int length) throws IOException;
+
+    void addCharacters(String str) throws IOException;
+    
+    void flush() throws IOException;
 }

@@ -40,10 +40,10 @@ import java.io.OutputStream;
 
 import org.marre.sms.SmsAddress;
 import org.marre.sms.SmsConstants;
+import org.marre.sms.SmsDcsUtil;
 import org.marre.sms.SmsException;
 import org.marre.sms.SmsPdu;
-import org.marre.sms.util.SmsDcsUtil;
-import org.marre.sms.util.SmsPduUtil;
+import org.marre.sms.SmsPduUtil;
 
 /**
  *
@@ -52,10 +52,11 @@ import org.marre.sms.util.SmsPduUtil;
  * @author Markus Eriksson
  * @version $Id$
  */
-public class GsmEncoder
+public final class GsmEncoder
 {
     private GsmEncoder()
     {
+        /* Utility class */
     }
     
     public static byte[] encodePdu(SmsPdu thePdu, byte theDcs, SmsAddress theDestination, SmsAddress theSender)
@@ -74,10 +75,10 @@ public class GsmEncoder
     private static byte[] encodeSeptetPdu(SmsPdu thePdu, byte theDcs, SmsAddress theDestination, SmsAddress theSender)
         throws SmsException
     {
-        byte ud[] = thePdu.getUserData();
-        byte udh[] = thePdu.getUserDataHeaders();
+        byte[] ud = thePdu.getUserData().getData();
+        byte[] udh = thePdu.getUserDataHeaders();
 
-        int nUdSeptets = thePdu.getUserDataLength();
+        int nUdSeptets = thePdu.getUserData().getLength();
         int nUdBits = 0;
 
         int nUdhBytes = (udh == null) ? 0 : udh.length;
@@ -100,7 +101,7 @@ public class GsmEncoder
             baos.write(0x00);
 
             // UDH?
-            if( nUdhBytes == 0 )
+            if (nUdhBytes == 0)
             {
                 // TP-Message-Type-Indicator = SUBMIT
                 // TP-Reject-Duplicates = ON
@@ -162,7 +163,7 @@ public class GsmEncoder
             // Probably not needed
 
             // UDH?
-            if( (udh == null) || (udh.length == 0) )
+            if ((udh == null) || (udh.length == 0))
             {
                 // TP-UDL
                 baos.write(nUdSeptets);
@@ -173,7 +174,7 @@ public class GsmEncoder
             else
             {
                 // The whole UD PDU
-                byte fullUd[] = new byte[nTotalBytes];
+                byte[] fullUd = new byte[nTotalBytes];
 
                 // TP-UDL
                 // UDL includes the length of the UDHL
@@ -200,14 +201,14 @@ public class GsmEncoder
     private static byte[] encodeOctetPdu(SmsPdu thePdu, byte theDcs, SmsAddress theDestination, SmsAddress theSender)
         throws SmsException
     {
-        byte ud[] = thePdu.getUserData();
-        byte udh[] = thePdu.getUserDataHeaders();
+        byte[] ud = thePdu.getUserData().getData();
+        byte[] udh = thePdu.getUserDataHeaders();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream(200);
         
         try
         {
-            int nUdBytes = thePdu.getUserDataLength();
+            int nUdBytes = thePdu.getUserData().getLength();
             int nUdhBytes = (udh == null) ? 0 : udh.length;
             // +1 For the UDH Length
             int tpUdl = nUdBytes + nUdhBytes + 1;
@@ -216,7 +217,7 @@ public class GsmEncoder
             baos.write(0x00);
 
             // UDH?
-            if( nUdhBytes == 0 )
+            if (nUdhBytes == 0)
             {
                 // TP-Message-Type-Indicator = SUBMIT
                 // TP-Reject-Duplicates = ON
@@ -261,7 +262,7 @@ public class GsmEncoder
             // TP-VP - Optional
 
             // UDH?
-            if( nUdhBytes == 0 )
+            if (nUdhBytes == 0)
             {
                 // 1 Integer
                 // TP-UDL
@@ -275,7 +276,7 @@ public class GsmEncoder
             else
             {
                 // The whole UD PDU without the header length byte
-                byte fullUd[] = new byte[nUdBytes + nUdhBytes];
+                byte[] fullUd = new byte[nUdBytes + nUdhBytes];
 
                 // TP-UDL includes the length of UDH
                 // +1 is for the size header...

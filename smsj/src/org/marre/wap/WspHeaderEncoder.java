@@ -36,239 +36,248 @@ package org.marre.wap;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.marre.mime.MimeHeader;
 import org.marre.util.StringUtil;
-import org.marre.wap.util.WspUtil;
 
 /**
- *
+ * 
  * @author Markus Eriksson
  * @version $Id$
  */
-public class WspHeaderEncoder 
-{
-	private WspHeaderEncoder()
-	{
-	}
+public final class WspHeaderEncoder
+{        
+    private WspHeaderEncoder()
+    {
+        // Static class
+    }
+    
+    public static void writeHeader(byte wspEncodingVersion, OutputStream theOs, MimeHeader theHeader) throws IOException
+    {
+        String headerName = theHeader.getName();
+        int headerType = WspUtil.getHeaderType(headerName);
 
-	public static void writeHeader(OutputStream theOs, MimeHeader theHeader)
-	    throws IOException
-	{
-	    String name = theHeader.getName();
-	    int wellKnownHeaderId = StringUtil.findString(WapConstants.HEADER_NAMES, name.toLowerCase());
-	
-	    switch (wellKnownHeaderId)
-	    {
-	    case WapConstants.HEADER_ID_ACCEPT:
-	        break;
-	    case WapConstants.HEADER_ID_ACCEPT_APPLICATION:
-	        break;
-	    case WapConstants.HEADER_ID_ACCEPT_CHARSET:
-	        break;
-	    case WapConstants.HEADER_ID_ACCEPT_ENCODING:
-	        break;
-	    case WapConstants.HEADER_ID_ACCEPT_LANGUAGE:
-	        break;
-	    case WapConstants.HEADER_ID_ACCEPT_RANGES:
-	        break;
-	    case WapConstants.HEADER_ID_AGE:
-	        break;
-	    case WapConstants.HEADER_ID_ALLOW:
-	        break;
-	    case WapConstants.HEADER_ID_AUTHORIZATION:
-	        break;
-	    case WapConstants.HEADER_ID_BEARER_INDICATION:
-	        break;
-	    case WapConstants.HEADER_ID_CACHE_CONTROL:
-	        break;
-	    case WapConstants.HEADER_ID_CONNECTION:
-	        break;
-	    case WapConstants.HEADER_ID_CONTENT_BASE:
-	        break;
-	    case WapConstants.HEADER_ID_CONTENT_DISPOSITION:
-	        break;
-	    case WapConstants.HEADER_ID_CONTENT_ID:
-	        writeHeaderContentID(theOs, theHeader.getValue());
-	        break;
-	    case WapConstants.HEADER_ID_CONTENT_LANGUAGE:
-	        break;
-	    case WapConstants.HEADER_ID_CONTENT_LENGTH:
-	        break;
-	    case WapConstants.HEADER_ID_CONTENT_LOCATION:
-	        writeHeaderContentLocation(theOs, theHeader.getValue());
-	        break;
-	    case WapConstants.HEADER_ID_CONTENT_MD5:
-	        break;
-	    case WapConstants.HEADER_ID_CONTENT_RANGE:
-	        break;
-	    case WapConstants.HEADER_ID_CONTENT_TYPE:
-	        writeHeaderContentType(theOs, theHeader);
-	        break;
-	    case WapConstants.HEADER_ID_COOKIE:
-	        break;
-	    case WapConstants.HEADER_ID_DATE:
-	        break;
-	    case WapConstants.HEADER_ID_ENCODING_VERSION:
-	        break;
-	    case WapConstants.HEADER_ID_ETAG:
-	        break;
-	    case WapConstants.HEADER_ID_EXPECT:
-	        break;
-	    case WapConstants.HEADER_ID_EXPIRES:
-	        break;
-	    case WapConstants.HEADER_ID_FROM:
-	        break;
-	    case WapConstants.HEADER_ID_HOST:
-	        break;
-	    case WapConstants.HEADER_ID_IF_MATCH:
-	        break;
-	    case WapConstants.HEADER_ID_IF_MODIFIED_SINCE:
-	        break;
-	    case WapConstants.HEADER_ID_IF_NONE_MATCH:
-	        break;
-	    case WapConstants.HEADER_ID_IF_RANGE:
-	        break;
-	    case WapConstants.HEADER_ID_IF_UNMODIFIED_SINCE:
-	        break;
-	    case WapConstants.HEADER_ID_LAST_MODIFIED:
-	        break;
-	    case WapConstants.HEADER_ID_LOCATION:
-	        break;
-	    case WapConstants.HEADER_ID_MAX_FORWARDS:
-	        break;
-	    case WapConstants.HEADER_ID_PRAGMA:
-	        break;
-	    case WapConstants.HEADER_ID_PROFILE:
-	        break;
-	    case WapConstants.HEADER_ID_PROFILE_DIFF:
-	        break;
-	    case WapConstants.HEADER_ID_PROFILE_WARNING:
-	        break;
-	    case WapConstants.HEADER_ID_PROXY_AUTHENTICATE:
-	        break;
-	    case WapConstants.HEADER_ID_PROXY_AUTHORIZATION:
-	        break;
-	    case WapConstants.HEADER_ID_PUBLIC:
-	        break;
-	    case WapConstants.HEADER_ID_PUSH_FLAG:
-	        break;
-	    case WapConstants.HEADER_ID_RANGE:
-	        break;
-	    case WapConstants.HEADER_ID_REFERER:
-	        break;
-	    case WapConstants.HEADER_ID_RETRY_AFTER:
-	        break;
-	    case WapConstants.HEADER_ID_SERVER:
-	        break;
-	    case WapConstants.HEADER_ID_SET_COOKIE:
-	        break;
-	    case WapConstants.HEADER_ID_TE:
-	        break;
-	    case WapConstants.HEADER_ID_TRAILER:
-	        break;
-	    case WapConstants.HEADER_ID_TRANSFER_ENCODING:
-	        break;
-	    case WapConstants.HEADER_ID_UPGRADE:
-	        break;
-	    case WapConstants.HEADER_ID_USER_AGENT:
-	        break;
-	    case WapConstants.HEADER_ID_VARY:
-	        break;
-	    case WapConstants.HEADER_ID_VIA:
-	        break;
-	    case WapConstants.HEADER_ID_WARNING:
-	        break;
-	    case WapConstants.HEADER_ID_WWW_AUTHENTICATE:
-	        break;
-	    case WapConstants.HEADER_ID_X_WAP_APPLICATION_ID:
-	        writeHeaderXWapApplicationId(theOs, theHeader.getValue());
-	        break;
-	    case WapConstants.HEADER_ID_X_WAP_CONTENT_URI:
-	        break;
-	    case WapConstants.HEADER_ID_X_WAP_INITIATOR_URI:
-	        break;
-	    case WapConstants.HEADER_ID_X_WAP_SECURITY:
-	        break;
-	    case WapConstants.HEADER_ID_X_WAP_TOD:
-	        break;
-	
-	    default:
-	        // Custom header
-	        WspUtil.writeTokenText(theOs, theHeader.getName());
-	        WspUtil.writeTextString(theOs, theHeader.getValue());
-	        break;            
-	    }
-	}
-	
-	/**
-	 * Writes a wsp encoded content-id header as specified in
-	 * WAP-230-WSP-20010705-a.pdf.
-	 *
-	 * @param theOs
-	 * @param theContentLocation
-	 * @throws IOException
-	 */
-	public static void writeHeaderContentID(OutputStream theOs, String theContentId)
-	    throws IOException
-	{
-	    // TODO: Verify
-	    WspUtil.writeShortInteger(theOs, WapConstants.HEADER_ID_CONTENT_ID);
-	    WspUtil.writeQuotedString(theOs, theContentId);
-	}
-	
-	/**
-	 * Writes a wsp encoded content-location header as specified in
-	 * WAP-230-WSP-20010705-a.pdf.
-	 *
-	 * @param theOs
-	 * @param theContentLocation
-	 * @throws IOException
-	 */
-	public static void writeHeaderContentLocation(OutputStream theOs, String theContentLocation)
-	    throws IOException
-	{
-	    // TODO: Verify
-	    WspUtil.writeShortInteger(theOs, WapConstants.HEADER_ID_CONTENT_LOCATION);
-	    WspUtil.writeTextString(theOs, theContentLocation);
-	}
-	
-	public static void writeHeaderContentType(OutputStream theOs, String theContentType)
-	    throws IOException
-	{
-	    WspUtil.writeShortInteger(theOs, WapConstants.HEADER_ID_CONTENT_TYPE);
-	    WspUtil.writeContentType(theOs, theContentType);
-	}
-	
-	public static void writeHeaderContentType(OutputStream theOs, MimeHeader theContentType)
-	    throws IOException
-	{
-	    WspUtil.writeShortInteger(theOs, WapConstants.HEADER_ID_CONTENT_TYPE);
-	    WspUtil.writeContentType(theOs, theContentType);
-	}
-	
-	/**
-	 * Writes a wsp encoded X-Wap-Application-Id header as specified in
-	 * WAP-230-WSP-20010705-a.pdf.
-	 *
-	 * @param theOs
-	 * @param theAppId
-	 * @throws IOException
-	 */
-	public static void writeHeaderXWapApplicationId(OutputStream theOs, String theAppId)
-	    throws IOException
-	{
-	    int wellKnownAppId = StringUtil.findString(WapConstants.PUSH_APP_IDS, theAppId.toLowerCase());
-	
-	    WspUtil.writeShortInteger(theOs, WapConstants.HEADER_ID_X_WAP_APPLICATION_ID);
-	
-	    if (wellKnownAppId == -1)
-	    {
-	        WspUtil.writeTextString(theOs, theAppId);
-	    }
-	    else
-	    {
-	        WspUtil.writeInteger(theOs, wellKnownAppId);
-	    }
-	}
+        switch (headerType)
+        {
+        case WapConstants.HEADER_ACCEPT:
+            break;
+        case WapConstants.HEADER_ACCEPT_APPLICATION:
+            break;
+        case WapConstants.HEADER_ACCEPT_CHARSET:
+            break;
+        case WapConstants.HEADER_ACCEPT_ENCODING:
+            break;
+        case WapConstants.HEADER_ACCEPT_LANGUAGE:
+            break;
+        case WapConstants.HEADER_ACCEPT_RANGES:
+            break;
+        case WapConstants.HEADER_AGE:
+            break;
+        case WapConstants.HEADER_ALLOW:
+            break;
+        case WapConstants.HEADER_AUTHORIZATION:
+            break;
+        case WapConstants.HEADER_BEARER_INDICATION:
+            break;
+        case WapConstants.HEADER_CACHE_CONTROL:
+            break;
+        case WapConstants.HEADER_CONNECTION:
+            break;
+        case WapConstants.HEADER_CONTENT_BASE:
+            break;
+        case WapConstants.HEADER_CONTENT_DISPOSITION:
+            break;
+        case WapConstants.HEADER_CONTENT_ID:
+            writeHeaderContentID(wspEncodingVersion, theOs, theHeader.getValue());
+            break;
+        case WapConstants.HEADER_CONTENT_LANGUAGE:
+            break;
+        case WapConstants.HEADER_CONTENT_LENGTH:
+            break;
+        case WapConstants.HEADER_CONTENT_LOCATION:
+            writeHeaderContentLocation(wspEncodingVersion, theOs, theHeader.getValue());
+            break;
+        case WapConstants.HEADER_CONTENT_MD5:
+            break;
+        case WapConstants.HEADER_CONTENT_RANGE:
+            break;
+        case WapConstants.HEADER_CONTENT_TYPE:
+            writeHeaderContentType(wspEncodingVersion, theOs, theHeader);
+            break;
+        case WapConstants.HEADER_COOKIE:
+            break;
+        case WapConstants.HEADER_DATE:
+            break;
+        case WapConstants.HEADER_ENCODING_VERSION:
+            break;
+        case WapConstants.HEADER_ETAG:
+            break;
+        case WapConstants.HEADER_EXPECT:
+            break;
+        case WapConstants.HEADER_EXPIRES:
+            break;
+        case WapConstants.HEADER_FROM:
+            break;
+        case WapConstants.HEADER_HOST:
+            break;
+        case WapConstants.HEADER_IF_MATCH:
+            break;
+        case WapConstants.HEADER_IF_MODIFIED_SINCE:
+            break;
+        case WapConstants.HEADER_IF_NONE_MATCH:
+            break;
+        case WapConstants.HEADER_IF_RANGE:
+            break;
+        case WapConstants.HEADER_IF_UNMODIFIED_SINCE:
+            break;
+        case WapConstants.HEADER_LAST_MODIFIED:
+            break;
+        case WapConstants.HEADER_LOCATION:
+            break;
+        case WapConstants.HEADER_MAX_FORWARDS:
+            break;
+        case WapConstants.HEADER_PRAGMA:
+            break;
+        case WapConstants.HEADER_PROFILE:
+            break;
+        case WapConstants.HEADER_PROFILE_DIFF:
+            break;
+        case WapConstants.HEADER_PROFILE_WARNING:
+            break;
+        case WapConstants.HEADER_PROXY_AUTHENTICATE:
+            break;
+        case WapConstants.HEADER_PROXY_AUTHORIZATION:
+            break;
+        case WapConstants.HEADER_PUBLIC:
+            break;
+        case WapConstants.HEADER_PUSH_FLAG:
+            break;
+        case WapConstants.HEADER_RANGE:
+            break;
+        case WapConstants.HEADER_REFERER:
+            break;
+        case WapConstants.HEADER_RETRY_AFTER:
+            break;
+        case WapConstants.HEADER_SERVER:
+            break;
+        case WapConstants.HEADER_SET_COOKIE:
+            break;
+        case WapConstants.HEADER_TE:
+            break;
+        case WapConstants.HEADER_TRAILER:
+            break;
+        case WapConstants.HEADER_TRANSFER_ENCODING:
+            break;
+        case WapConstants.HEADER_UPGRADE:
+            break;
+        case WapConstants.HEADER_USER_AGENT:
+            break;
+        case WapConstants.HEADER_VARY:
+            break;
+        case WapConstants.HEADER_VIA:
+            break;
+        case WapConstants.HEADER_WARNING:
+            break;
+        case WapConstants.HEADER_WWW_AUTHENTICATE:
+            break;
+        case WapConstants.HEADER_X_WAP_APPLICATION_ID:
+            writeHeaderXWapApplicationId(wspEncodingVersion, theOs, theHeader.getValue());
+            break;
+        case WapConstants.HEADER_X_WAP_CONTENT_URI:
+            break;
+        case WapConstants.HEADER_X_WAP_INITIATOR_URI:
+            break;
+        case WapConstants.HEADER_X_WAP_SECURITY:
+            break;
+        case WapConstants.HEADER_X_WAP_TOD:
+            break;
+
+        default:
+            // Custom header
+            writeCustomHeader(theOs, theHeader.getName(), theHeader.getValue());
+            break;
+        }
+    }
+    
+    public static void writeCustomHeader(OutputStream theOs, String name, String value) throws IOException
+    {
+        WspUtil.writeTokenText(theOs, name);
+        WspUtil.writeTextString(theOs, value);
+    }
+    
+    /**
+     * Writes a wsp encoded content-id header as specified in
+     * WAP-230-WSP-20010705-a.pdf.
+     * 
+     * Content-ID is introduced in encoding version 1.3.
+     */
+    public static void writeHeaderContentID(byte wspEncodingVersion, OutputStream theOs, String theContentId) throws IOException
+    {
+        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_CONTENT_ID);
+        if (headerId != -1)
+        {
+            WspUtil.writeShortInteger(theOs, headerId);
+            WspUtil.writeQuotedString(theOs, theContentId);
+        }
+        else
+        {
+            WspHeaderEncoder.writeCustomHeader(theOs, "Content-ID", theContentId);
+        }
+    }
+    
+    /**
+     * Writes a wsp encoded content-location header as specified in
+     * WAP-230-WSP-20010705-a.pdf.
+     */
+    public static void writeHeaderContentLocation(byte wspEncodingVersion, OutputStream theOs, String theContentLocation) throws IOException
+    {
+        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_CONTENT_ID);        
+        WspUtil.writeShortInteger(theOs, headerId);
+        WspUtil.writeTextString(theOs, theContentLocation);
+    }
+
+    public static void writeHeaderContentType(byte wspEncodingVersion, OutputStream theOs, String theContentType) throws IOException
+    {
+        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_CONTENT_TYPE);        
+        WspUtil.writeShortInteger(theOs, headerId);
+        WspUtil.writeContentType(wspEncodingVersion, theOs, theContentType);
+    }
+
+    public static void writeHeaderContentType(byte wspEncodingVersion, OutputStream theOs, MimeHeader theContentType) throws IOException
+    {
+        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_CONTENT_TYPE);        
+        WspUtil.writeShortInteger(theOs, headerId);
+        WspUtil.writeContentType(wspEncodingVersion, theOs, theContentType);
+    }
+    
+    /**
+     * Writes a wsp encoded X-Wap-Application-Id header as specified in
+     * WAP-230-WSP-20010705-a.pdf.
+     * 
+     * X-Wap-Application-Id is introduced in encoding version 1.2.
+     */
+    public static void writeHeaderXWapApplicationId(byte wspEncodingVersion, OutputStream theOs, String theAppId) throws IOException
+    {
+        int wellKnownAppId = WspUtil.getWellKnownPushAppId(theAppId.toLowerCase());
+        
+        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_CONTENT_TYPE);        
+        if (headerId != -1)
+        {
+            WspUtil.writeShortInteger(theOs, headerId);
+            if (wellKnownAppId == -1)
+            {
+                WspUtil.writeTextString(theOs, theAppId);
+            }
+            else
+            {
+                WspUtil.writeInteger(theOs, wellKnownAppId);
+            }
+        }
+        else
+        {
+            writeCustomHeader(theOs, "X-Wap-Application-Id", theAppId);
+        }
+    }
 }

@@ -41,16 +41,18 @@ class ClickatellException extends Exception
     public static final int ERROR_AUTH_FAILED = 1;
     public static final int ERROR_SESSION_ID_EXPIRED = 3;
 
-    private int myErrId = 0;
+    private final int myErrId;
 
     private ClickatellException()
     {
         super();
+        myErrId = 0;
     }
 
     private ClickatellException(String theMsg)
     {
         super(theMsg);
+        myErrId = 0;
     }
 
     ClickatellException(String theMsg, int theErrId)

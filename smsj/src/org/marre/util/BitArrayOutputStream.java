@@ -82,20 +82,25 @@ public class BitArrayOutputStream extends ByteArrayOutputStream
 
     public synchronized void writeBits( byte[] data, int nBits )
     {
-        for(int i=0; nBits > 0; i++)
+        int bitsLeft = nBits;
+        
+        for (int i = 0; bitsLeft > 0; i++)
         {
-            writeBits(data[i], Math.min(nBits, 8));
-            nBits -= 8;
+            writeBits(data[i], Math.min(bitsLeft, 8));
+            bitsLeft -= 8;
         }
     }
 
     public synchronized void writeBits( int data, int nBits )
     {
-        while (nBits > 0)
+        int bitsLeft = nBits;
+        int dataLeft = data;
+        
+        while (bitsLeft > 0)
         {
-            writeBit(data & 0x01);
-            data >>= 1;
-            nBits--;
+            writeBit(dataLeft & 0x01);
+            dataLeft >>= 1;
+            bitsLeft--;
         }
     }
 

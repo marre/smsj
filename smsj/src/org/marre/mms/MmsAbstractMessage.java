@@ -37,39 +37,39 @@ package org.marre.mms;
 import org.marre.mime.MimeContentType;
 
 /**
- * Abstract baseclass for MmsMessages that adds common functionality
- * needed for most types of MmsMessages.
- *
+ * Abstract baseclass for MmsMessages that adds common functionality needed for
+ * most types of MmsMessages.
+ * 
  * @author Markus Eriksson
  * @version $Id$
  */
 public abstract class MmsAbstractMessage extends MmsMessage
 {
-	private MimeContentType myContentType; 
+    private MimeContentType myContentType;
 
-	/**
-	 * 
-	 * @param contentType
-	 */
-	public void setContentType(MimeContentType contentType)
-	{
-		myContentType = contentType;
-	}
+    /**
+     * 
+     * @param contentType
+     */
+    public void setContentType(MimeContentType contentType)
+    {
+        myContentType = contentType;
+    }
 
-	/**
-	 * 
-	 * @param contentType
-	 */	
-	public void setContentType(String contentType)
-	{
-		myContentType = new MimeContentType(contentType);
-	}
-	
-	/**
-	 * 
-	 */
-	public MimeContentType getContentType() 
-	{
-		return myContentType;
-	}
+    /**
+     * 
+     * @param contentType
+     */
+    public void setContentType(String contentType)
+    {
+        myContentType = new MimeContentType(contentType);
+    }
+
+    /**
+     *  
+     */
+    public MimeContentType getContentType()
+    {
+        return myContentType;
+    }
 }

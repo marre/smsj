@@ -49,13 +49,13 @@ public interface SmsMessage
      *
      * @return A byte representing the DCS
      */
-    public byte getDataCodingScheme();
+    byte getDataCodingScheme();
 
     /**
      * Returns the content of this SmsMessage in form of pdus.
      *
      * @return Pdus
      */
-    public SmsPdu[] getPdus();
+    SmsPdu[] getPdus();
 }
 

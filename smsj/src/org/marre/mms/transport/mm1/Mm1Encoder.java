@@ -40,50 +40,53 @@ import java.io.OutputStream;
 import org.marre.mime.MimeBodyPart;
 import org.marre.mime.MimeMultipart;
 import org.marre.mime.encoder.MimeEncoder;
-import org.marre.mime.encoder.wap.WapMimeEncoder;
 import org.marre.mms.MmsException;
 import org.marre.mms.MmsHeaders;
-import org.marre.wap.MmsHeaderEncoder;
-import org.marre.wap.util.WspUtil;
+import org.marre.wap.WapConstants;
+import org.marre.wap.WapMimeEncoder;
+import org.marre.wap.WspUtil;
+import org.marre.wap.mms.MmsHeaderEncoder;
 
 /**
  * 
- *
+ * 
  * @author Markus Eriksson
  * @version $Id$
  */
-public class Mm1Encoder
+public final class Mm1Encoder
 {
     private static MimeEncoder myWapMimeEncoder = new WapMimeEncoder();
+
+    private static byte myWspEncodingVersion = WapConstants.WSP_ENCODING_VERSION_1_2;
 
     private Mm1Encoder()
     {
     }
-    
+
     public static void writeMessageToStream(OutputStream out, MimeBodyPart theMessage, MmsHeaders theHeaders)
-        throws MmsException
+            throws MmsException
     {
         try
         {
             // Add headers
             writeHeadersToStream(out, theHeaders);
-            
+
             // Add content-type
 
             // Prefer "vnd.wap.multipart..." instead of "multipart/..."
             if (theMessage instanceof MimeMultipart)
             {
-                // Convert multipart headers...            
+                // Convert multipart headers...
                 // TODO: Clone content type... We shouldn't change theMsg...
                 String ct = theMessage.getContentType().getValue();
                 String newCt = WspUtil.convertMultipartContentType(ct);
                 theMessage.getContentType().setValue(newCt);
             }
-                        
-            MmsHeaderEncoder.writeHeaderContentType(out, theMessage.getContentType());
-            
+
+            MmsHeaderEncoder.writeHeaderContentType(myWspEncodingVersion, out, theMessage.getContentType());
+
             // Add content
-            myWapMimeEncoder.writeData(out, theMessage);
+            myWapMimeEncoder.writeBody(out, theMessage);
         }
         catch (IOException ex)
         {
@@ -91,8 +94,7 @@ public class Mm1Encoder
         }
     }
 
-    private static void writeHeadersToStream(OutputStream out, MmsHeaders theHeaders)
-        throws IOException
+    private static void writeHeadersToStream(OutputStream out, MmsHeaders theHeaders) throws IOException
     {
         MmsHeaderEncoder.writeHeaderXMmsMessageType(out, theHeaders.getMessageType());
         MmsHeaderEncoder.writeHeaderXMmsTransactionId(out, theHeaders.getTransactionId());
@@ -102,12 +104,12 @@ public class Mm1Encoder
         {
             MmsHeaderEncoder.writeHeaderSubject(out, theHeaders.getSubject());
         }
-        
+
         if (theHeaders.getFrom() != null)
         {
             MmsHeaderEncoder.writeHeaderFrom(out, theHeaders.getFrom());
         }
-        
-        // TODO: Add the rest of the headers        
+
+        // TODO: Add the rest of the headers
     }
 }

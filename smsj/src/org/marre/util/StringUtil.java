@@ -37,43 +37,36 @@ package org.marre.util;
 import java.util.Random;
 
 /**
- * @author MARE
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
-/**
- * Various functions to encode and decode strings
- *
+ * Various functions to encode and decode strings.
+ * 
  * @author Markus Eriksson
  */
-public class StringUtil
+public final class StringUtil
 {
     private static final char[] RANDOM_CHARS = "abcdefghijklmnopqrstuvwxyz1234567890".toCharArray();
 
     private static Random myRandom = new Random();
-    
+
     /**
-     * This class isn't intended to be instantiated
+     * This class isn't intended to be instantiated.
      */
     private StringUtil()
     {
     }
 
     /**
-     *
+     * 
      * @param stringTable
      * @param text
      * @return
      */
-    public static int findString(String stringTable[], String text)
+    public static int findString(String[] stringTable, String text)
     {
         if (stringTable != null)
         {
-            for(int i=0; i < stringTable.length; i++)
+            for (int i = 0; i < stringTable.length; i++)
             {
-                if ( (stringTable[i] != null) && 
-                     (stringTable[i].equals(text)) )
+                if ((stringTable[i] != null) && (stringTable[i].equals(text)))
                 {
                     return i;
                 }
@@ -84,15 +77,16 @@ public class StringUtil
 
     /**
      * Converts a byte array to a string with hex values.
-     *
-     * @param theData Data to convert
+     * 
+     * @param theData
+     *            Data to convert
      * @return the encoded string
      */
     public static String bytesToHexString(byte[] theData)
     {
-        StringBuffer hexStrBuff = new StringBuffer(theData.length*2);
+        StringBuffer hexStrBuff = new StringBuffer(theData.length * 2);
 
-        for(int i=0; i < theData.length; i++)
+        for (int i = 0; i < theData.length; i++)
         {
             String hexByteStr = Integer.toHexString(theData[i] & 0xff).toUpperCase();
             if (hexByteStr.length() == 1)
@@ -107,8 +101,9 @@ public class StringUtil
 
     /**
      * Converts a byte to a string with hex values.
-     *
-     * @param theByte Byte to convert
+     * 
+     * @param theByte
+     *            Byte to convert
      * @return the encoded string
      */
     public static String byteToHexString(byte theByte)
@@ -126,19 +121,20 @@ public class StringUtil
     }
 
     /**
-     * Converts a string of hex characters to a byte array
-     *
-     * @param theHexString The hex string to read
+     * Converts a string of hex characters to a byte array.
+     * 
+     * @param theHexString
+     *            The hex string to read
      * @return the resulting byte array
      */
     public static byte[] hexStringToBytes(String theHexString)
     {
-        byte data[] = new byte[theHexString.length()/2];
+        byte[] data = new byte[theHexString.length() / 2];
 
-        for(int i=0; i < data.length; i++)
+        for (int i = 0; i < data.length; i++)
         {
-            String a = theHexString.substring(i*2, i*2+2);
-            data[i] = (byte)Integer.parseInt(a, 16);
+            String a = theHexString.substring(i * 2, i * 2 + 2);
+            data[i] = (byte) Integer.parseInt(a, 16);
         }
 
         return data;
@@ -149,8 +145,10 @@ public class StringUtil
      * 
      * Converst an integer to nChars characters
      * 
-     * @param value Integer value
-     * @param nChars Number of chars to represent the "value"
+     * @param value
+     *            Integer value
+     * @param nChars
+     *            Number of chars to represent the "value"
      * @return String The string representing "value"
      */
     public static String intToString(int value, int nChars)
@@ -166,7 +164,7 @@ public class StringUtil
 
         return strBuf.toString();
     }
-    
+
     /**
      * Generates a random string of the given length.
      * 
@@ -178,12 +176,12 @@ public class StringUtil
     public static String randString(int length)
     {
         StringBuffer sb = new StringBuffer(length);
-        
-        for(int i=0; i < length; i++)
+
+        for (int i = 0; i < length; i++)
         {
             sb.append(RANDOM_CHARS[myRandom.nextInt(RANDOM_CHARS.length)]);
         }
-        
+
         return sb.toString();
     }
 }

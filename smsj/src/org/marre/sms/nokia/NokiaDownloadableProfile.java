@@ -23,6 +23,8 @@
 package org.marre.sms.nokia;
 
 import java.io.UnsupportedEncodingException;
+
+import org.marre.sms.SmsUserData;
 /**
  * Nokia Downloadable Profile
  *
@@ -31,9 +33,9 @@ import java.io.UnsupportedEncodingException;
  */
 public class NokiaDownloadableProfile extends NokiaMultipartMessage
 {
-    private String myProfileName = null;
-    private byte[] myScreenSaver = null;
-    private byte[] myRingingTone = null;
+    private String myProfileName;
+    private byte[] myScreenSaver;
+    private byte[] myRingingTone;
 
     public NokiaDownloadableProfile()
     {
@@ -64,29 +66,11 @@ public class NokiaDownloadableProfile extends NokiaMultipartMessage
         myRingingTone = theRingingTone;
     }
 
-    private void addScreenSaver(byte[] theBitmap)
-    {
-        addMultipart(NokiaPart.ITEM_SCREEN_SAVER, theBitmap);
-    }
-
     private void addProfileName(String theProfileName)
     {
-        try
-        {
-            addMultipart(NokiaPart.ITEM_PROFILE_NAME, theProfileName.getBytes("UTF-16BE"));
-        }
-        catch (UnsupportedEncodingException ex)
-        {
-            //myLog.fatal("Shouldn't happen, 'UTF-16BE' is in the standard", ex);
-        }
     }
 
-    private void addRingingTone(byte[] theRingingTone)
-    {
-        addMultipart(NokiaPart.ITEM_RINGTONE, theRingingTone);
-    }
-
-    protected void buildPdus()
+    public SmsUserData getUserData()
     {
         // Reset message
         clear();
@@ -94,20 +78,26 @@ public class NokiaDownloadableProfile extends NokiaMultipartMessage
         // Create message
         if (myProfileName != null)
         {
-            addProfileName(myProfileName);
+            try
+            {
+                addMultipart(NokiaPart.ITEM_PROFILE_NAME, myProfileName.getBytes("UTF-16BE"));
+            }
+            catch (UnsupportedEncodingException ex)
+            {
+                throw new RuntimeException(ex.getMessage());
+            }
         }
 
         if (myScreenSaver != null)
         {
-            addScreenSaver(myScreenSaver);
+            addMultipart(NokiaPart.ITEM_SCREEN_SAVER, myScreenSaver);
         }
 
         if (myRingingTone != null)
         {
-            addRingingTone(myRingingTone);
+            addMultipart(NokiaPart.ITEM_RINGTONE, myRingingTone);
         }
 
-        super.buildPdus();
+        return super.getUserData();
     }
 }
-

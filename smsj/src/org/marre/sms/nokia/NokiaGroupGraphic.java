@@ -22,12 +22,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.nokia;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsConcatMessage;
+import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsUdhElement;
-import org.marre.sms.util.SmsUdhUtil;
+import org.marre.sms.SmsUdhUtil;
+import org.marre.sms.SmsUserData;
 
 /**
  * Nokia Group Graphic (CLI) message
@@ -39,6 +41,8 @@ import org.marre.sms.util.SmsUdhUtil;
  */
 public class NokiaGroupGraphic extends SmsConcatMessage
 {
+    protected byte[] myOtaBitmap;
+    
     /**
      * Creates a group graphic SMS message
      *
@@ -60,24 +64,19 @@ public class NokiaGroupGraphic extends SmsConcatMessage
     public NokiaGroupGraphic(byte[] theOtaImage)
     {
         super(SmsConstants.DCS_DEFAULT_8BIT);
-        setContent(theOtaImage);
+        myOtaBitmap = theOtaImage;
     }
 
-    private void setContent(byte[] theOtaBitmap)
+    public SmsUserData getUserData()
     {
-        SmsUdhElement[] udhElements = new SmsUdhElement[1];
         ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
 
-        // Port
-        udhElements[0] = SmsUdhUtil.get16BitApplicationPortUdh(SmsConstants.PORT_NOKIA_CLI_LOGO, 0);
-
-        // Payload
         try
         {
             // Type?
             baos.write(0x30);
             // bitmap
-            baos.write(theOtaBitmap);
+            baos.write(myOtaBitmap);
 
             baos.close();
         }
@@ -85,9 +84,12 @@ public class NokiaGroupGraphic extends SmsConcatMessage
         {
             // Should not happen!
         }
+        
+        return new SmsUserData(baos.toByteArray());
+    }
 
-        // Let SmsConcatMessage build the pdus...
-        setContent(udhElements, baos.toByteArray(), baos.size());
+    public SmsUdhElement[] getUdhElements()
+    {
+        return new SmsUdhElement[] { SmsUdhUtil.get16BitApplicationPortUdh(SmsConstants.PORT_NOKIA_CLI_LOGO, 0) };
     }
 }
-

@@ -36,25 +36,20 @@ package org.marre.sms;
 
 import java.io.*;
 
-import org.marre.sms.util.SmsUdhUtil;
-
 /**
  * Represents an SMS pdu
  * <p>
  * A SMS pdu consists of a user data header (UDH) and the actual content often
  * called user data (UD).
- *
+ * 
  * @author Markus Eriksson
  * @version $Id$
  */
 
 public class SmsPdu
 {
-    /** Length of myUd, can be in octets or septets */
-    protected int myUdLength = 0;
-
-    protected SmsUdhElement[] myUdhElements = null;
-    protected byte myUd[] = null;
+    protected SmsUdhElement[] myUdhElements;
+    protected SmsUserData myUd;
 
     /**
      * Creates an empty SMS pdu object
@@ -65,11 +60,14 @@ public class SmsPdu
 
     /**
      * Creates an SMS pdu object.
-     *
-     * @param theUdhIeis The UDH elements
-     * @param theUd The content
-     * @param theUdLength The length of the content. Can be in octets or septets
-     * depending on the DCS
+     * 
+     * @param theUdhIeis
+     *            The UDH elements
+     * @param theUd
+     *            The content
+     * @param theUdLength
+     *            The length of the content. Can be in octets or septets
+     *            depending on the DCS
      */
     public SmsPdu(SmsUdhElement[] theUdhIeis, byte[] theUd, int theUdLength)
     {
@@ -78,13 +76,28 @@ public class SmsPdu
     }
 
     /**
+     * Creates an SMS pdu object.
+     * 
+     * @param theUdhIeis
+     *            The UDH elements
+     * @param theUd
+     *            The content
+     */
+    public SmsPdu(SmsUdhElement[] theUdhIeis, SmsUserData theUd)
+    {
+        setUserDataHeaders(theUdhIeis);
+        setUserData(theUd);
+    }
+    
+    /**
      * Sets the UDH field
-     *
-     * @param theUdhElements The UDH elements
+     * 
+     * @param theUdhElements
+     *            The UDH elements
      */
     public void setUserDataHeaders(SmsUdhElement[] theUdhElements)
     {
-        if (theUdhElements!=null)
+        if (theUdhElements != null)
         {
             myUdhElements = new SmsUdhElement[theUdhElements.length];
 
@@ -92,30 +105,30 @@ public class SmsPdu
         }
         else
         {
-            myUdhElements=null;
+            myUdhElements = null;
         }
     }
 
     /**
      * Returns the user data headers
-     *
+     * 
      * @return A byte array representing the UDH fields or null if there aren't
-     * any UDH
+     *         any UDH
      */
     public byte[] getUserDataHeaders()
     {
-        if ( myUdhElements == null)
+        if (myUdhElements == null)
         {
             return null;
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream(100);
-        
-        baos.write( (byte) SmsUdhUtil.getUdhLength(myUdhElements));
+
+        baos.write((byte) SmsUdhUtil.getTotalSize(myUdhElements));
 
         try
         {
-            for(int i=0; i < myUdhElements.length; i++)
+            for (int i = 0; i < myUdhElements.length; i++)
             {
                 myUdhElements[i].writeTo(baos);
             }
@@ -125,44 +138,41 @@ public class SmsPdu
             // Shouldn't happen.
             throw new RuntimeException("Failed to write to ByteArrayOutputStream");
         }
-        
+
         return baos.toByteArray();
     }
 
     /**
      * Sets the user data field of the message.
-     *
-     * @param theUd The content
-     * @param theUdLength The length, can be in septets or octets depending on
-     * the DCS
+     * 
+     * @param theUd
+     *            The content
+     * @param theUdLength
+     *            The length, can be in septets or octets depending on the DCS
      */
     public void setUserData(byte[] theUd, int theUdLength)
     {
-        myUd = theUd;
-        myUdLength = theUdLength;
+        myUd = new SmsUserData(theUd, theUdLength);
     }
 
+    /**
+     * Sets the user data field of the message.
+     * 
+     * @param theUd
+     *            The content
+     */
+    public void setUserData(SmsUserData theUd)
+    {
+        myUd = theUd;
+    }
+    
     /**
      * Returns the user data part of the message.
-     *
+     * 
      * @return UD field
      */
-    public byte[] getUserData()
+    public SmsUserData getUserData()
     {
         return myUd;
-    }
-
-    /**
-     * Returns the length of the user data field
-     * <p>
-     * This can be in characters or byte depending on the message (DCS).
-     * If message is 7 bit coded the length is given in septets.
-     * If 8bit or UCS2 the length is in octets.
-     *
-     * @return The length
-     */
-    public int getUserDataLength()
-    {
-        return myUdLength;
     }
 }

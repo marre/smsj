@@ -34,12 +34,52 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime.encoder;
 
-import java.io.*;
-import org.marre.mime.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
+import org.marre.mime.MimeBodyPart;
+
+/**
+ * Interface for all mime encoders.
+ * 
+ * @author Markus Eriksson
+ * @version $Id$
+ */
 public interface MimeEncoder
 {
-    public void writeContentType(OutputStream theOs, MimeBodyPart theMsg) throws IOException;
-    public void writeHeaders(OutputStream theOs, MimeBodyPart theMsg) throws IOException;
-    public void writeData(OutputStream theOs, MimeBodyPart theMsg) throws IOException;
+    /**
+     * Writes the content-type of the message to the given stream.
+     * 
+     * @param theOs
+     *            The stream to write to
+     * @param theMsg
+     *            The message to get the content-type from
+     * @throws IOException
+     *             Thrown if we fail to write the content-type to the stream
+     */
+    void writeContentType(OutputStream theOs, MimeBodyPart theMsg) throws IOException;
+
+    /**
+     * Writes the headers of the message to the given stream.
+     * 
+     * @param theOs
+     *            The stream to write to
+     * @param theMsg
+     *            The message to get the headers from
+     * @throws IOException
+     *             Thrown if we fail to write the headers to the stream
+     */
+    void writeHeaders(OutputStream theOs, MimeBodyPart theMsg) throws IOException;
+
+    /**
+     * Writes the body of the message to the given stream.
+     * 
+     * @param theOs
+     *            The stream to write to
+     * @param theMsg
+     *            The message to get the data from
+     * @throws IOException
+     *             Thrown if we fail to write the body to the stream
+     */
+    void writeBody(OutputStream theOs, MimeBodyPart theMsg) throws IOException;
 }

@@ -43,7 +43,7 @@ package org.marre.sms;
  */
 public abstract class SmsAbstractMessage implements SmsMessage
 {
-    protected byte myDcs = 0x00;
+    protected byte myDcs;
 
     /**
      * Returns the DCS field

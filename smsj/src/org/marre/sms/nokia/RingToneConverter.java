@@ -22,11 +22,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.nokia;
 
+/*
 import java.io.*;
 import java.util.*;
 import org.marre.sms.util.*;
 import org.marre.sms.SmsMessage;
 import org.marre.sms.*;
+*/
 
 /**
  * Converts various ring tone formats to the nokia ring tone format
@@ -34,7 +36,7 @@ import org.marre.sms.*;
  * @author     Boris von Loesch, Markus Eriksson
  * @version    $Id$
  */
-public class RingToneConverter
+public final class RingToneConverter
 {
    protected static final int DEFAULT_BEATS_PER_MINUTE = 63;
    protected static final int DEFAULT_OCTAVE = 5;
@@ -51,9 +53,11 @@ public class RingToneConverter
          "f", "f#", "g", "g#", "a", "a#", "b"};
 
    protected static final int LOWEST_RTTL_OCTAVE = 4;
-   private int aktOctave = DEFAULT_OCTAVE;
-   protected int elementCount = 0;
+   
+   protected int elementCount;
 
+   private int aktOctave = DEFAULT_OCTAVE;
+   
    /**
     * 
     */
