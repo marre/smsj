@@ -157,7 +157,7 @@ public class PsWinXmlTransport implements SmsTransport
 	    case SmsConstants.ALPHABET_GSM:
 	        // <TEXT>txt</TEXT>
 	        theXmlWriter.write("<TEXT>");
-	        theXmlWriter.write(SmsPduUtil.readSeptets(theMessage.getUserData(), theMessage.getUserDataLength()));
+	        theXmlWriter.write(theMessage.getText());
 	        theXmlWriter.write("</TEXT>\r\n");
 	        break;	        
 	        
