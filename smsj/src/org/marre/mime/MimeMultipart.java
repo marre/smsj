@@ -20,10 +20,13 @@ package org.marre.mime;
 
 import java.util.*;
 
-public class MimeMultipart
+public class MimeMultipart extends MimeBodyPart
 {
+    private List myParts;
+
     public MimeMultipart(String theSubtype)
     {
+        myParts = new LinkedList();
     }
 
     public void addBodyPart(MimeBodyPart theBodyPart)
@@ -52,13 +55,9 @@ public class MimeMultipart
         return null;
     }
 
-    public int getCount()
+    public int getBodyPartCount()
     {
         return 0;
     }
-
-    public String getContentType()
-    {
-        return null;
-    }
 }
+

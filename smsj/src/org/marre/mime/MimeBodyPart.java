@@ -24,7 +24,6 @@ import java.util.*;
 public class MimeBodyPart
 {
     protected byte[] myContent = null;
-    protected MimeMultipart myMultipart = null;
 
     protected Map myHeaders;
 
@@ -61,17 +60,12 @@ public class MimeBodyPart
         System.arraycopy(theContent, 0, myContent, 0, theContent.length);
     }
 
-    public void setContent(MimeMultipart theMultipart)
-    {
-        myMultipart = theMultipart;
-    }
-
     public byte[] getContent()
     {
         return myContent;
     }
 
-    public int getSize()
+    public int getContentSize()
     {
         return 0;
     }
