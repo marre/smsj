@@ -232,6 +232,54 @@ public class SmsSender
     }
     
     /**
+     * Convenience method to create a SmsSender object that knows how to send
+     * messages via PSWinComm
+     *
+     * @param theUsername PsWinComm username
+     * @param thePassword PsWinComm password
+     * @return A SmsSender object that uses the PsWinXmlTransport to send
+     * messages
+     * @throws SmsException
+     */
+    static public SmsSender getPsWinCommXmlSender(String theUsername, String thePassword)
+    throws SmsException
+    {
+        Properties props = new Properties();
+
+        props.setProperty("smsj.pswincom.username", theUsername);
+        props.setProperty("smsj.pswincom.password", thePassword);
+
+        return new SmsSender("org.marre.sms.transport.pswincom.PsWinXmlTransport", props);
+    }
+
+    /**
+     * Convenience method to create a SmsSender object that knows how to send
+     * messages via PSWinComm
+     *
+     * @param thePropsFilename Filename of a properties file containing
+     * properties for the pswincomm transport.
+     * @return A SmsSender object that uses the PsWinXmlTransport to send
+     * messages
+     * @throws SmsException
+     */
+    static public SmsSender getPsWinCommXmlSender(String thePropsFilename)
+    throws SmsException
+    {
+        Properties props = new Properties();
+
+        try
+        {
+            props.load(new FileInputStream(thePropsFilename));
+        }
+        catch (IOException ex)
+        {
+            throw new SmsException("Couldn't load clickatell properties from file : " + thePropsFilename);
+        }
+
+        return new SmsSender("org.marre.sms.transport.pswincom.PsWinXmlTransport", props);
+    }
+    
+    /**
      *
      * Sends an OTA Bookmark (Nokia specification) to the given recipient
      * 
