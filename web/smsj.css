@@ -19,3 +19,7 @@ pre.code {
 	padding: 5px;
 
 }
+
+img.noborder {
+	border: none;
+}
