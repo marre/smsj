@@ -67,7 +67,6 @@ public class WbxmlWriter implements XmlWriter
 	public void reset() 
 	{
 		myWbxmlBody = new ByteArrayOutputStream();
-
 		myStringTable = new HashMap();
 		myStringTableBuf = new ByteArrayOutputStream();
 	}
@@ -100,11 +99,15 @@ public class WbxmlWriter implements XmlWriter
 
     public void setDoctype(String name, String systemURI)
     {
-        // Not sure what to do here
+        myPublicID = null; //Liquidterm: Defaults to unknown
     }
 
     public void setDoctype(String name, String publicID, String publicURI)
     {
+        myPublicID = publicID;
+    }
+    
+    public void setDoctype(String publicID) {
         myPublicID = publicID;
     }
 
@@ -136,9 +139,9 @@ public class WbxmlWriter implements XmlWriter
             tagIndex += 0x05; // Tag token table starts at #5
             myWbxmlBody.write(WbxmlConstants.TOKEN_KNOWN_AC | tagIndex);
         }
-        else
+        else if (tag != null)
         {
-            // Unknown. Add as literal
+            // Unknown. Add as literal (Liquidterm: only if not null)
             myWbxmlBody.write(WbxmlConstants.TOKEN_LITERAL_AC);
             writeStrT(myWbxmlBody, tag);
         }
@@ -157,9 +160,9 @@ public class WbxmlWriter implements XmlWriter
             tagIndex += 0x05; // Tag token table starts at #5
             myWbxmlBody.write(WbxmlConstants.TOKEN_KNOWN | tagIndex);
         }
-        else
+        else if (tag != null)
         {
-            // Unknown. Add as literal
+            // Unknown. Add as literal (Liquidterm: if not null)
             myWbxmlBody.write(WbxmlConstants.TOKEN_LITERAL);
             writeStrT(myWbxmlBody, tag);
         }
@@ -286,8 +289,11 @@ public class WbxmlWriter implements XmlWriter
     private void writeStrI(OutputStream theOs, String str)
         throws IOException
     {
-        theOs.write(str.getBytes("UTF-8"));
-        theOs.write(0x00);
+        //Liquidterm: protection against null values
+        if (str != null) {
+            theOs.write(str.getBytes("UTF-8"));
+            theOs.write(0x00);
+        }
     }
 
     private void writeStrT(OutputStream theOs, String str)
@@ -337,13 +343,16 @@ public class WbxmlWriter implements XmlWriter
             }
 
             // VALUE
-            idx = StringUtil.findString(myAttrValueTokens, attribs[i].getValue());
-            if(idx >= 0) {
-                idx += 0x85; // Attr value token table starts at 85
-                myWbxmlBody.write (idx);
-            } else {
-                myWbxmlBody.write(WbxmlConstants.TOKEN_STR_I);
-                writeStrI(myWbxmlBody, attribs[i].getValue());
+            String attrValue = attribs[i].getValue();
+            if (attrValue != null && (! attrValue.equals(""))) {
+                idx = StringUtil.findString(myAttrValueTokens, attrValue);
+                if(idx >= 0) {
+                    idx += 0x85; // Attr value token table starts at 85
+                    myWbxmlBody.write (idx);
+                } else {
+                    myWbxmlBody.write(WbxmlConstants.TOKEN_STR_I);
+                    writeStrI(myWbxmlBody, attrValue);
+                }
             }
         }
 

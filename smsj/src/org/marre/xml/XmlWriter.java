@@ -39,6 +39,7 @@ import java.io.OutputStream;
 
 public interface XmlWriter
 {
+    public void setDoctype(String publicID);
     public void setDoctype(String name, String systemURI);
     public void setDoctype(String name, String publicID, String publicURI);
 
