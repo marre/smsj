@@ -149,6 +149,7 @@ public class ClickatellTransport implements SmsTransport
         MessageFormat responseFormat = new MessageFormat("{0}: {1}");
         String requestString;
         String ud;
+        byte udhData[];
         String udh;
 
         if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
@@ -171,17 +172,17 @@ public class ClickatellTransport implements SmsTransport
             //
             switch (SmsDcsUtil.getAlphabet(thePdu.getDataCodingScheme()))
             {
-            case SmsConstants.ALPHABET_8BIT:
+            case SmsConstants.DCS_DEFAULT_8BIT:
                 throw new SmsException("Clickatell API cannot send 8 bit encoded messages without UDH");
 
-            case SmsConstants.ALPHABET_UCS2:
+            case SmsConstants.DCS_DEFAULT_UCS2:
                 ud = SmsPduUtil.bytesToHexString(thePdu.getUserData());
                 requestString = MessageFormat.format(
                     "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&text={3}&unicode=1",
                     new Object[] { mySessionId, theDestination.getAddress(), theSender.getAddress(), ud });
                 break;
 
-            case SmsConstants.ALPHABET_GSM:
+            case SmsConstants.DCS_DEFAULT_7BIT:
                 String msg = SmsPduUtil.readSeptets(thePdu.getUserData(), thePdu.getUserDataLength());
                 msg = URLEncoder.encode(msg);
                 requestString = MessageFormat.format(
@@ -200,35 +201,37 @@ public class ClickatellTransport implements SmsTransport
             //
             switch (thePdu.getDataCodingScheme())
             {
-            case SmsConstants.ALPHABET_8BIT:
+            case SmsConstants.DCS_DEFAULT_8BIT:
                 ud = SmsPduUtil.bytesToHexString(thePdu.getUserData());
-                udh = SmsPduUtil.bytesToHexString(thePdu.getUserDataHeaders());
+                udhData = thePdu.getUserDataHeaders();
+                // Add length of udh
+                udh = SmsPduUtil.bytesToHexString(new byte[] {(byte) (udhData.length & 0xff)});
+                udh += SmsPduUtil.bytesToHexString(udhData);
                 requestString = MessageFormat.format(
                     "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&udh={3}&text={4}",
                     new Object[] { mySessionId, theDestination.getAddress(), theSender.getAddress(), udh, ud });
                 break;
 
-            case SmsConstants.ALPHABET_UCS2:
+            case SmsConstants.DCS_DEFAULT_UCS2:
                 ud = SmsPduUtil.bytesToHexString(thePdu.getUserData());
-                udh = SmsPduUtil.bytesToHexString(thePdu.getUserDataHeaders());
+                udhData = thePdu.getUserDataHeaders();
+                // Add length of udh
+                udh = SmsPduUtil.bytesToHexString(new byte[] {(byte) (udhData.length & 0xff)});
+                udh += SmsPduUtil.bytesToHexString(udhData);
                 requestString = MessageFormat.format(
                     "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&udh={3}&text={4}&unicode=1",
                     new Object[] { mySessionId, theDestination.getAddress(), theSender.getAddress(), udh, ud });
                 break;
 
-            case SmsConstants.ALPHABET_GSM:
-                String msg = SmsPduUtil.readSeptets(thePdu.getUserData(), thePdu.getUserDataLength());
-                msg = URLEncoder.encode(msg);
-                udh = SmsPduUtil.bytesToHexString(thePdu.getUserDataHeaders());
-                requestString = MessageFormat.format(
-                    "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&udh={3}&text={4}&msg_type=SMS_TEXT",
-                    new Object[] { mySessionId, theDestination.getAddress(), theSender.getAddress(), udh, msg });
-                break;
+            case SmsConstants.DCS_DEFAULT_7BIT:
+                throw new SmsException("Clickatell API cannot send 7 bit encoded messages with UDH");
 
             default:
                 throw new SmsException("Unsupported data coding scheme");
             }
         }
+
+        System.err.println(requestString);
 
         //
         // Send request to clickatell
