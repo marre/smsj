@@ -94,12 +94,17 @@
         <artifactId>commons-logging</artifactId>
         <version>1.0.4</version>
         <type>jar</type>
-        <properties>
-			<comment>Only used in junit tests. Not needed at runtime.</comment>
-        </properties>
 	</dependency>
 
-<!--
+    <dependency>
+		<groupId>sun</groupId>
+        <artifactId>javacomm</artifactId>
+        <version>2.0</version>
+        <type>jar</type>
+        <url>http://java.sun.com/products/javacomm/index.jsp</url>
+	</dependency>
+	
+	<!--
     <dependency>
       <groupId>bcel</groupId>
       <artifactId>bcel</artifactId>
