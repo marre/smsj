@@ -145,8 +145,8 @@ public class UcpTransport implements SmsTransport
         {
             byte dcs = theMessage.getDataCodingScheme();
             boolean moreToSend = (i < (msgPdu.length - 1));
-            byte[] submitCmd = buildSubmit(dcs, msgPdu[i], moreToSend,theSender,theDest);
-			System.out.println("SMSC response: " + sendUcp(submitCmd));
+            byte[] submitCmd = buildSubmit(dcs, msgPdu[i], moreToSend,theDest,theSender);
+            System.out.println("SMSC response: " + sendUcp(submitCmd));
         }
     }
 
@@ -169,7 +169,7 @@ public class UcpTransport implements SmsTransport
 		ucplogin.setField(ucplogin.FIELD_PWD,util.encodeInIRA(pwd));				
     	return ucplogin.getCommand();	
     }
-    public byte[] buildSubmit(byte dcs, SmsPdu pdu, boolean moreToSend, SmsAddress sender, SmsAddress dest)
+    public byte[] buildSubmit(byte dcs, SmsPdu pdu, boolean moreToSend, SmsAddress dest, SmsAddress sender)
         throws SmsException
     {
         String ud;
