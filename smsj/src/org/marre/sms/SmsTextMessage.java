@@ -19,6 +19,7 @@
 package org.marre.sms;
 
 import java.io.*;
+
 import org.marre.sms.util.SmsPduUtil;
 
 /**
@@ -31,55 +32,120 @@ import org.marre.sms.util.SmsPduUtil;
  */
 public class SmsTextMessage implements SmsMessage
 {
-    /**
-     * As defined in GSM 03.38. It contains all characters needed for most
-     * Western European languages. It also contains upper case Greek characters.
-     */
-    public static final int TEXT_ALPHABET_GSM = 0;
-    /**
-     * ISO 8859-1 (ISO Latin-1)
-     */
-    public static final int TEXT_ALPHABET_ISO_LATIN_1 = 1;
-    /**
-     * Unicode UCS-2
-     */
-    public static final int TEXT_ALPHABET_UCS2 = 2;
-
-    private SmsPdu myPdu = null;
+    private String myMsg = null;
+    private int myAlphabet = SmsConstants.TEXT_ALPHABET_GSM;
 
     public SmsTextMessage(String theMsg, int theAlphabet)
     {
-        myPdu = new SmsPdu();
+        myMsg = theMsg;
+        myAlphabet = theAlphabet;
+    }
 
+    public SmsTextMessage(String theMsg)
+    {
+        this(theMsg, SmsConstants.TEXT_ALPHABET_GSM);
+    }
+
+    public SmsPdu[] getPdus()
+    {
+        SmsPdu[] smsPdus = null;
+
+        switch(myAlphabet)
+        {
+        case SmsConstants.TEXT_ALPHABET_GSM:
+            smsPdus = getPdus(160, 153);
+            break;
+        case SmsConstants.TEXT_ALPHABET_8BIT:
+            smsPdus = getPdus(140, 134);
+            break;
+        case SmsConstants.TEXT_ALPHABET_UCS2:
+            smsPdus = getPdus(70, 67);
+            break;
+        }
+
+        return smsPdus;
+    }
+
+    private SmsPdu[] getPdus(int maxChars, int maxConcatenatedChars)
+    {
+        SmsPdu smsPdus[] = null;
+        int msgLength = myMsg.length();
+
+        if (msgLength <= maxChars)
+        {
+            SmsPdu smsPdu = new SmsPdu();
+            setUserData(smsPdu, myMsg);
+            smsPdus = new SmsPdu[] { smsPdu };
+        }
+        else
+        {
+            // FIXME: REFNO
+            int refno = 3;
+            int nSms = msgLength / maxConcatenatedChars;
+            if ( (msgLength % maxConcatenatedChars) > 0 )
+            {
+                nSms += 1;
+            }
+
+            smsPdus = new SmsPdu[nSms];
+
+            for(int i=0; i < nSms; i++)
+            {
+                int msgStart = maxConcatenatedChars * i;
+                int msgEnd = msgStart + maxConcatenatedChars;
+
+                smsPdus[i] = new SmsPdu();
+                if (msgEnd > msgLength)
+                {
+                    msgEnd = msgLength;
+                }
+                setUserData(smsPdus[i], myMsg.substring(msgStart, msgEnd));
+
+                // Set user data header
+                byte[] udh = new byte[5];
+                udh[0] = SmsConstants.UDH_IEI_CONCATENATED_8BIT;
+                udh[1] = 3;
+                udh[2] = (byte) (refno & 0xff);
+                udh[3] = (byte) (nSms & 0xff);
+                udh[4] = (byte) (i & 0xff);
+
+                smsPdus[i].setUserDataHeader(udh);
+            }
+        }
+
+        return smsPdus;
+    }
+
+    private void setUserData(SmsPdu thePdu, String theMsg)
+    {
         try
         {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
-            int userDataLength = 0;
+            byte dcs = 0x00;
 
-            switch (theAlphabet)
+            switch (myAlphabet)
             {
-            case TEXT_ALPHABET_GSM:
+            case SmsConstants.TEXT_ALPHABET_GSM:
                 SmsPduUtil.writeSeptets(baos, theMsg);
-                userDataLength = theMsg.length();
                 // 7-bit encoding, No message class, No compression
-                myPdu.setDataCodingScheme((byte)0x00);
+                dcs = (byte)0x00;
                 break;
-            case TEXT_ALPHABET_ISO_LATIN_1:
+            case SmsConstants.TEXT_ALPHABET_8BIT:
                 baos.write(theMsg.getBytes("ISO-8859-1"));
-                userDataLength = theMsg.length();
                 // 8bit data encoding, No message class, No compression
-                myPdu.setDataCodingScheme((byte)0x04);
+                dcs = (byte)0x04;
                 break;
-            case TEXT_ALPHABET_UCS2:
+            case SmsConstants.TEXT_ALPHABET_UCS2:
                 baos.write(theMsg.getBytes("UTF-16BE"));
-                userDataLength = theMsg.length() * 2;
                 // 16 bit UCS2 encoding, No message class, No compression
-                myPdu.setDataCodingScheme((byte)0x08);
+                dcs = (byte)0x08;
                 break;
             }
 
             baos.close();
-            myPdu.setUserData(baos.toByteArray(), userDataLength);
+
+            thePdu.setUserData(baos.toByteArray());
+            thePdu.setDataCodingScheme(dcs);
         }
         catch (UnsupportedEncodingException ex)
         {
@@ -94,15 +160,5 @@ public class SmsTextMessage implements SmsMessage
             // stream.
             throw new RuntimeException(ex.getMessage());
         }
-    }
-
-    public SmsTextMessage(String theMsg)
-    {
-        this(theMsg, TEXT_ALPHABET_GSM);
-    }
-
-    public SmsPdu[] getPdus()
-    {
-        return new SmsPdu[] { myPdu };
     }
 }
