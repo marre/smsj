@@ -176,7 +176,7 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
         st = theProps.getProperty("sms.gsm.flowcontrol", "NONE").toUpperCase();
         if (st.equals("RTSCTS")) myFlowControl=SerialPort.FLOWCONTROL_RTSCTS_IN|SerialPort.FLOWCONTROL_RTSCTS_OUT;
         else if (st.equals("XONXOFF")) myFlowControl=SerialPort.FLOWCONTROL_XONXOFF_IN|SerialPort.FLOWCONTROL_XONXOFF_OUT;
-        else if (st.equals("NONE")) myFlowControl=mySerialPort.FLOWCONTROL_NONE;
+        else if (st.equals("NONE")) myFlowControl=SerialPort.FLOWCONTROL_NONE;
 
         StringTokenizer stk = new StringTokenizer(theProps.getProperty("sms.gsm.initcommands", "AT+CMGF=0"));
         myInitCmds = new String[stk.countTokens()];
