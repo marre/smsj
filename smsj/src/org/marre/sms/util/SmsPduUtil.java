@@ -118,6 +118,8 @@ public class SmsPduUtil
      */
     public static String readSeptets(byte[] theArray, int theLength)
     {
+    		if (theArray == null) return null;
+    		        
         try
         {
             return readSeptets(new ByteArrayInputStream(theArray), theLength);
