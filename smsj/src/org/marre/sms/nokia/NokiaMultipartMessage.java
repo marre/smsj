@@ -64,6 +64,7 @@ abstract class NokiaMultipartMessage extends SmsConcatMessage
     protected void addMultipart(byte theItemType, byte[] data)
     {
         myParts.add(new NokiaPart(theItemType, data));
+        isDirty = true;
     }
 
     /**
@@ -72,6 +73,7 @@ abstract class NokiaMultipartMessage extends SmsConcatMessage
     protected void clear()
     {
         myParts.clear();
+        isDirty = true;
     }
 
     /**
