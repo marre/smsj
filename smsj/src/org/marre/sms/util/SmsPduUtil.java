@@ -236,15 +236,15 @@ public class SmsPduUtil
     /**
      * Convert a unicode char to a GSM char
      *
-     * @param ch The unicode char to convert
+     * @param theUnicodeCh The unicode char to convert
      * @return GSM representation of the given unicode char
      */
-    public static final byte toGsmCharset(char ch)
+    public static final byte toGsmCharset(char theUnicodeCh)
     {
         // First check through the GSM charset table
         for(int i=0; i < GSM_DEFAULT_ALPHABET_TABLE.length; i++)
         {
-            if (GSM_DEFAULT_ALPHABET_TABLE[i] == ch)
+            if (GSM_DEFAULT_ALPHABET_TABLE[i] == theUnicodeCh)
             {
                 // Found the correct char
                 return (byte) i;
@@ -254,7 +254,7 @@ public class SmsPduUtil
         // Alternative chars.
         for(int i=0; i < GSM_DEFAULT_ALPHABET_ALTERNATIVES.length/2; i+=2)
         {
-            if (GSM_DEFAULT_ALPHABET_ALTERNATIVES[i*2] == ch)
+            if (GSM_DEFAULT_ALPHABET_ALTERNATIVES[i*2] == theUnicodeCh)
             {
                 return (byte) (GSM_DEFAULT_ALPHABET_ALTERNATIVES[i*2 + 1] & 0x7f);
             }
@@ -262,6 +262,41 @@ public class SmsPduUtil
 
         // Couldn't find a valid char
         return '?';
+    }
+
+    /**
+     *
+     * @param theSrc
+     * @param theSrcStart
+     * @param theDest
+     * @param theDestStart
+     * @param theDestOffset
+     * @param theLength In bits
+     */
+    public static final void arrayCopy(
+                        byte[] theSrc, int theSrcStart,
+                        byte[] theDest, int theDestStart, int theDestOffset,
+                        int theLength)
+    {
+        int c = 0;
+        int nBytes = theLength / 8;
+        int nRestBits = theLength % 8;
+
+        for(int i=0; i < nBytes; i++)
+        {
+            c |= ((theSrc[theSrcStart + i] & 0xff) << theDestOffset);
+            theDest[theDestStart + i] |= (byte) (c & 0xff);
+            c >>>= 8;
+        }
+
+        if (nRestBits > 0)
+        {
+            c |= ((theSrc[theSrcStart + nBytes] & 0xff) << theDestOffset);
+        }
+        if (theDestOffset > 0)
+        {
+            theDest[theDestStart + nBytes] |= c & 0xff;
+        }
     }
 
     public static final char EXT_TABLE_PREFIX = 0x1B;
