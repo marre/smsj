@@ -96,26 +96,17 @@ public class SmsPduUtil
         while(msg.length() < theLength)
         {
             char ch;
-            int octetBits = 8;
-            int octet = theIs.read();
+            int data = theIs.read();
 
-            if (octet == -1)
+            if (data == -1)
             {
                 throw new IOException("Unexpected end of stream");
             }
 
-            octet <<= restBits;
-            octet |= rest;
-            octetBits += restBits;
+            rest = (data << restBits) | rest;
+            restBits += 8;
 
-            msg.append((char) (octet & 0x7f));
-            octet >>>= 7;
-            octetBits -= 7;
-
-            rest = octet;
-            restBits = octetBits;
-
-            if(restBits >= 7)
+            while (restBits >= 7)
             {
                 msg.append((char)(rest & 0x7f));
 
