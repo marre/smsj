@@ -35,7 +35,9 @@
 package org.marre.sms.transport.gsm;
 
 import org.marre.sms.SmsAddress;
+import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsException;
+import org.marre.sms.SmsMessage;
 import org.marre.sms.SmsPdu;
 import org.marre.sms.SmsTextMessage;
 import org.marre.sms.SmsUdhElement;
@@ -51,7 +53,221 @@ import junit.framework.TestCase;
  */
 
 public class GsmEncoderTest extends TestCase
-{
+{    
+    class UDH5Msg extends SmsTextMessage 
+    {
+        public UDH5Msg(String txt) 
+        {
+            super(txt);
+        }
+        
+        public SmsUdhElement[] getUdhElements() 
+        {
+            return new SmsUdhElement[]{SmsUdhUtil.get8BitApplicationPortUdh(10,11)};
+        }
+    }
+    
+    public void testUdh5() throws SmsException
+    {
+        SmsMessage udhMsg;
+        SmsPdu[] smsPdus;
+        byte[] data;
+
+        // 5 bytes UDH, 2 septets
+        udhMsg = new UDH5Msg("01");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F30000080404020A0BC062",
+                StringUtil.bytesToHexString(data));
+        
+        // 5 bytes UDH, 3 septets
+        udhMsg = new UDH5Msg("012");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F30000090404020A0BC06232",
+                StringUtil.bytesToHexString(data));
+        
+        // 5 bytes UDH, 4 septets
+        udhMsg = new UDH5Msg("0123");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F300000A0404020A0BC062B219",
+                StringUtil.bytesToHexString(data));
+        
+        // 5 bytes UDH, 5 septets
+        udhMsg = new UDH5Msg("01234");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F300000B0404020A0BC062B2190D",
+                StringUtil.bytesToHexString(data));
+        
+        // 5 bytes UDH, 6 septets
+        udhMsg = new UDH5Msg("012345");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F300000C0404020A0BC062B219AD06",
+                StringUtil.bytesToHexString(data));
+        
+        // 5 bytes UDH, 7 septets
+        udhMsg = new UDH5Msg("0123456");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F300000D0404020A0BC062B219AD6603",
+                StringUtil.bytesToHexString(data));
+        
+        // 5 bytes UDH, 8 septets
+        udhMsg = new UDH5Msg("01234567");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F300000E0404020A0BC062B219AD66BB01",
+                StringUtil.bytesToHexString(data));
+        
+        // 5 bytes UDH, 9 septets
+        udhMsg = new UDH5Msg("012345678");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F300000F0404020A0BC062B219AD66BBE100",
+                StringUtil.bytesToHexString(data));
+    }
+    
+    class UDH6Msg extends SmsTextMessage 
+    {
+        public UDH6Msg(String txt) 
+        {
+            super(txt);
+        }
+        
+        public SmsUdhElement[] getUdhElements() 
+        {
+            return new SmsUdhElement[]{SmsUdhUtil.get8BitConcatUdh(3, 2, 1)};
+        }
+    }
+    
+    public void testUdh6() throws SmsException
+    {
+        SmsMessage udhMsg;
+        SmsPdu[] smsPdus;
+        byte[] data;
+
+        // 6 bytes UDH, 2 septets
+        udhMsg = new UDH6Msg("01");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F30000090500030302016031",
+                StringUtil.bytesToHexString(data));
+        
+        // 6 bytes UDH, 3 septets
+        udhMsg = new UDH6Msg("012");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F300000A050003030201603119",
+                StringUtil.bytesToHexString(data));
+        
+        // 6 bytes UDH, 4 septets
+        udhMsg = new UDH6Msg("0123");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F300000B0500030302016031D90C",
+                StringUtil.bytesToHexString(data));
+        
+        // 6 bytes UDH, 5 septets
+        udhMsg = new UDH6Msg("01234");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F300000C0500030302016031D98C06",
+                StringUtil.bytesToHexString(data));
+        
+        // 6 bytes UDH, 6 septets
+        udhMsg = new UDH6Msg("012345");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F300000D0500030302016031D98C5603",
+                StringUtil.bytesToHexString(data));
+        
+        // 6 bytes UDH, 7 septets
+        udhMsg = new UDH6Msg("0123456");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F300000E0500030302016031D98C56B301",
+                StringUtil.bytesToHexString(data));
+        
+        // 6 bytes UDH, 8 septets
+        udhMsg = new UDH6Msg("01234567");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F300000F0500030302016031D98C56B3DD00",
+                StringUtil.bytesToHexString(data));
+        
+        // 6 bytes UDH, 9 septets
+        udhMsg = new UDH6Msg("012345678");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F30000100500030302016031D98C56B3DD70",
+                StringUtil.bytesToHexString(data));
+    }
+    
+    class UDH7Msg extends SmsTextMessage 
+    {
+        public UDH7Msg(String txt) 
+        {
+            super(txt);
+        }
+        
+        public SmsUdhElement[] getUdhElements() 
+        {
+            return new SmsUdhElement[]{SmsUdhUtil.get16BitApplicationPortUdh(10,11)};
+        }
+    }
+    
+    public void testUdh7() throws SmsException
+    {
+        SmsMessage udhMsg;
+        SmsPdu[] smsPdus;
+        byte[] data;
+
+        // 7 bytes UDH, 5 septets
+        udhMsg = new UDH7Msg("01234");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F300000D060504000A000BB0986C4603",
+                StringUtil.bytesToHexString(data));
+        
+        // 7 bytes UDH, 6 septets
+        udhMsg = new UDH7Msg("012345");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F300000E060504000A000BB0986C46AB01",
+                StringUtil.bytesToHexString(data));
+        
+        // 7 bytes UDH, 7 septets
+        udhMsg = new UDH7Msg("0123456");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F300000F060504000A000BB0986C46ABD900",
+                StringUtil.bytesToHexString(data));
+        
+        // 5 bytes UDH, 8 septets
+        udhMsg = new UDH7Msg("01234567");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F3000010060504000A000BB0986C46ABD96E",
+                StringUtil.bytesToHexString(data));
+        
+        // 5 bytes UDH, 9 septets
+        udhMsg = new UDH7Msg("012345678");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F3000011060504000A000BB0986C46ABD96E38",
+                StringUtil.bytesToHexString(data));
+
+        // 5 bytes UDH, 10 septets
+        udhMsg = new UDH7Msg("0123456789");
+        smsPdus = udhMsg.getPdus();
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("004100039121F3000012060504000A000BB0986C46ABD96EB81C",
+                StringUtil.bytesToHexString(data));        
+    }
+    
     public void testSeptetEncoder() throws SmsException
     {
         SmsTextMessage textMsg;
