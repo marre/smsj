@@ -37,6 +37,7 @@ package org.marre.wap.util;
 import java.io.*;
 
 import org.marre.wap.*;
+import org.marre.mime.*;
 
 /**
  *
@@ -70,7 +71,7 @@ public class WspUtil
     public static void writeUintvar(OutputStream theOs, long theValue)
         throws IOException
     {
-        int nOctets = 0;
+        int nOctets = 1;
         while ((theValue >> (7*nOctets)) > 0)
         {
             nOctets++;
@@ -143,6 +144,25 @@ public class WspUtil
         theOs.write((byte) (theValue | (byte)0x80));
     }
 
+    public static void writeValueLength(OutputStream theOs, long theValue)
+        throws IOException
+    {
+        // ShortLength | (Length-quote Length)
+
+        if (theValue <= 30)
+        {
+            // Short-length
+            theOs.write((int)theValue);
+        }
+        else
+        {
+            // Length-quote == Octet 31
+            theOs.write(31);
+            writeUintvar(theOs, theValue);
+        }
+        theOs.write((byte) (theValue | (byte)0x80));
+    }
+
     /**
      * Writes an "extension media" in pdu format to the given output stream.
      * It currently only handles ASCII chars, but should be extended to
@@ -180,9 +200,52 @@ public class WspUtil
         theOs.write(0x00);
     }
 
+    public static void writeQuotedString(OutputStream theOs, String theStr)
+        throws IOException
+    {
+        /*
+        Quoted-string = <Octet 34> *TEXT End-of-string
+        ;The TEXT encodes an RFC2616 Quoted-string with the enclosing quotation-marks <"> removed
+        */
+
+        // <Octet 34>
+        theOs.write(34);
+
+        theOs.write(theStr.getBytes("ISO-8859-1"));
+        theOs.write(0x00);
+    }
+
+    public static void writeTokenText(OutputStream theOs, String theStr)
+        throws IOException
+    {
+        /*
+        Token-Text = Token End-of-string
+        */
+        // TODO: Token => RFC2616
+
+        theOs.write(theStr.getBytes("ISO-8859-1"));
+        theOs.write(0x00);
+    }
+
+    public static void writeTextValue(OutputStream theOs, String theStr)
+        throws IOException
+    {
+        /*
+        // No-value | Token-text | Quoted-string
+        */
+        // FIXME: Verify
+        writeQuotedString(theOs, theStr);
+    }
+
     /**
      * Writes a wsp encoded content-type as specified in
      * WAP-230-WSP-20010705-a.pdf.
+     * <p>
+     * Uses the "constrained media" format.<br>
+     * Note! This method can only be used on simple content types (like
+     * "text/plain" or "image/gif"). If a more complex content-type is needed
+     * (like "image/gif; start=cid; parameter=value;") you must use the
+     * MimeContentType class.
      *
      * @param theOs
      * @param theContentType
@@ -204,6 +267,236 @@ public class WspUtil
     }
 
     /**
+     * Writes a wsp encoded content-type as specified in
+     * WAP-230-WSP-20010705-a.pdf.
+     * <p>
+     * This method automatically chooses the most compact way to represent
+     * the given content type.
+     *
+     * @param theOs
+     * @param theContentType
+     * @throws IOException
+     */
+    public static void writeContentType(OutputStream theOs, MimeContentType theContentType)
+        throws IOException
+    {
+        if (theContentType.getParamCount() == 0)
+        {
+            // Simple content type, use "constrained-media" format
+            writeContentType(theOs, theContentType.getValue());
+        }
+        else
+        {
+            // Complex, use "content-general-form"
+            int wellKnownContentType = findContentType(theContentType.getValue());
+
+            // Create parameter byte array of
+            // well-known-media (integer) or extension media
+            // 0 or more parameters
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            if (wellKnownContentType == -1)
+            {
+                writeExtensionMedia(baos, theContentType.getValue());
+            }
+            else
+            {
+                // well-known-media (integer)
+                writeInteger(baos, wellKnownContentType);
+            }
+
+            // Add Parameters
+            for (int i=0; i < theContentType.getParamCount(); i++)
+            {
+                MimeHeaderParam headerParam = theContentType.getParam(i);
+                writeParameter(baos, headerParam.getName(), headerParam.getValue());
+            }
+            baos.close();
+
+            // Write to stream
+
+            // content-general-form
+            // value length
+            writeValueLength(theOs, baos.size());
+            // Write parameter byte array
+            theOs.write(baos.toByteArray());
+        }
+    }
+
+    public static void writeTypedValue(OutputStream os, int paramType, String value)
+        throws IOException
+    {
+        switch (paramType)
+        {
+        // "Used to indicate that the parameter actually have no value,
+        // eg, as the parameter "bar" in ";foo=xxx; bar; baz=xyzzy"."
+        case WapConstants.PARAMETER_TYPE_NO_VALUE:
+            os.write(0x00);
+            break;
+
+        case WapConstants.PARAMETER_TYPE_TEXT_VALUE:
+            writeTextValue(os, value);
+            break;
+
+        case WapConstants.PARAMETER_TYPE_INTEGER_VALUE:
+            writeInteger(os, Long.parseLong(value));
+            break;
+
+        case WapConstants.PARAMETER_TYPE_DATE_VALUE:
+            // TODO: Implement
+            /*
+            ; The encoding of dates shall be done in number of seconds from
+            ; 1970-01-01, 00:00:00 GMT.
+            */
+            writeTextString(os, value);
+            break;
+
+        case WapConstants.PARAMETER_TYPE_DELTA_SECONDS_VALUE:
+            // Integer-Value
+            // TODO: Implement
+            writeTextString(os, value);
+            break;
+
+        case WapConstants.PARAMETER_TYPE_Q_VALUE:
+            // TODO: Implement
+            /*
+            ; The encoding is the same as in Uintvar-integer, but with restricted size. When quality factor 0
+            ; and quality factors with one or two decimal digits are encoded, they shall be multiplied by 100
+            ; and incremented by one, so that they encode as a one-octet value in range 1-100,
+            ; ie, 0.1 is encoded as 11 (0x0B) and 0.99 encoded as 100 (0x64). Three decimal quality
+            ; factors shall be multiplied with 1000 and incremented by 100, and the result shall be encoded
+            ; as a one-octet or two-octet uintvar, eg, 0.333 shall be encoded as 0x83 0x31.
+            ; Quality factor 1 is the default value and shall never be sent.
+            */
+            writeTextString(os, value);
+            break;
+
+        case WapConstants.PARAMETER_TYPE_VERSION_VALUE:
+            // TODO: Implement
+            /*
+            ; The three most significant bits of the Short-integer value are interpreted to encode a major
+            ; version number in the range 1-7, and the four least significant bits contain a minor version
+            ; number in the range 0-14. If there is only a major version number, this is encoded by
+            ; placing the value 15 in the four least significant bits. If the version to be encoded fits these
+            ; constraints, a Short-integer must be used, otherwise a Text-string shall be used.
+            */
+            writeTextString(os, value);
+            break;
+
+        case WapConstants.PARAMETER_TYPE_URI_VALUE:
+            // Text-String
+            // TODO: Verify
+            /*
+            ; URI value should be encoded per [RFC2616], but service user may use a different format.
+            */
+            writeTextString(os, value);
+            break;
+
+        case WapConstants.PARAMETER_TYPE_TEXT_STRING:
+            writeTextString(os, value);
+            break;
+
+        case WapConstants.PARAMETER_TYPE_WELL_KNOWN_CHARSET:
+            // Any-Charset | Integer-Value
+            // ; Both are encoded using values from Character Set Assignments table in Assigned Numbers
+            // TODO: Implement
+            writeTextString(os, value);
+            break;
+
+        case WapConstants.PARAMETER_TYPE_FIELD_NAME:
+            // Token-text | Well-known-field-name
+            // TODO: Implement
+            writeTextString(os, value);
+            break;
+
+        case WapConstants.PARAMETER_TYPE_SHORT_INTEGER:
+            writeShortInteger(os, Integer.parseInt(value));
+            break;
+
+        case WapConstants.PARAMETER_TYPE_CONSTRAINED_ENCODING:
+            // Constrained-Encoding == Content-type
+            writeContentType(os, value);
+            break;
+
+        default:
+            // TODO: Implement
+            writeTextString(os, value);
+            break;
+        }
+    }
+
+    public static void writeParameter(OutputStream os, String name, String value)
+        throws IOException
+    {
+        int wellKnownParameter = findParameter(name);
+
+        if (wellKnownParameter == -1)
+        {
+            // Untyped-parameter
+            // Token-Text
+            writeTokenText(os, name);
+
+            // Untyped-value == Integer-Value | Text-value
+            writeTextString(os, value);
+        }
+        else
+        {
+            // Typed-parameter
+
+            // Well-known-parameter-token == Integer-value
+            writeInteger(os, wellKnownParameter);
+            // Typed-value
+            writeTypedValue(os, WapConstants.PARAMETER_TYPES[wellKnownParameter], value);
+        }
+    }
+
+    public static void writeHeader(OutputStream theOs, MimeHeader theHeader)
+        throws IOException
+    {
+        String name = theHeader.getName();
+
+        if ("content-location".equalsIgnoreCase(name))
+        {
+            writeHeaderContentLocation(theOs, theHeader.getValue());
+        }
+        else if ("content-id".equalsIgnoreCase(name))
+        {
+            writeHeaderContentID(theOs, theHeader.getValue());
+        }
+    }
+
+    /**
+     * Writes a wsp encoded content-id header as specified in
+     * WAP-230-WSP-20010705-a.pdf.
+     *
+     * @param theOs
+     * @param theContentLocation
+     * @throws IOException
+     */
+    public static void writeHeaderContentID(OutputStream theOs, String theContentId)
+        throws IOException
+    {
+        // TODO: Verify
+        WspUtil.writeShortInteger(theOs, WapConstants.HEADER_ID_CONTENT_ID);
+        writeQuotedString(theOs, theContentId);
+    }
+
+    /**
+     * Writes a wsp encoded content-location header as specified in
+     * WAP-230-WSP-20010705-a.pdf.
+     *
+     * @param theOs
+     * @param theContentLocation
+     * @throws IOException
+     */
+    public static void writeHeaderContentLocation(OutputStream theOs, String theContentLocation)
+        throws IOException
+    {
+        // TODO: Verify
+        WspUtil.writeShortInteger(theOs, WapConstants.HEADER_ID_CONTENT_LOCATION);
+        writeTextString(theOs, theContentLocation);
+    }
+
+    /**
      * Writes a wsp encoded X-Wap-Application-Id header as specified in
      * WAP-230-WSP-20010705-a.pdf.
      *
@@ -211,7 +504,7 @@ public class WspUtil
      * @param theAppId
      * @throws IOException
      */
-    public static void writeWapApplicationId(OutputStream theOs, String theAppId)
+    public static void writeHeaderXWapApplicationId(OutputStream theOs, String theAppId)
         throws IOException
     {
         int wellKnownAppId = findPushAppId(theAppId);
@@ -229,6 +522,38 @@ public class WspUtil
     }
 
     /**
+     *
+     * @param stringTable
+     * @param text
+     * @return
+     */
+    public static int findString(String stringTable[], String text)
+    {
+        if (stringTable != null)
+        {
+            for(int i=0; i < stringTable.length; i++)
+            {
+                if (stringTable[i].equals(text))
+                {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Finds an WINA assigned number for the given parameter.
+     *
+     * @param theParameter
+     * @return WINA assigned number if found, otherwise -1
+     */
+    public static final int findParameter(String theParameter)
+    {
+        return findString(WapConstants.PARAMETER_NAMES, theParameter.toLowerCase());
+    }
+
+    /**
      * Finds an WINA assigned number for the given contenttype.
      *
      * @param theContentType
@@ -236,22 +561,7 @@ public class WspUtil
      */
     public static final int findContentType(String theContentType)
     {
-        if (theContentType == null)
-        {
-            return -1;
-        }
-
-        for (int i=0; i < WapConstants.CONTENT_TYPES.length; i++)
-        {
-            if (WapConstants.CONTENT_TYPES[i].equalsIgnoreCase(theContentType))
-            {
-                // Found it
-                return i;
-            }
-        }
-
-        // Not found
-        return -1;
+        return findString(WapConstants.CONTENT_TYPES, theContentType.toLowerCase());
     }
 
     /**
@@ -260,6 +570,7 @@ public class WspUtil
      * @param theContentType
      * @return Content type or null if not found
      */
+/*
     public static final String findContentType(int theContentType)
     {
         try
@@ -271,7 +582,7 @@ public class WspUtil
             return null;
         }
     }
-
+*/
     /**
      * Finds an WINA "well known" number for the given push app id
      *
@@ -280,22 +591,7 @@ public class WspUtil
      */
     public static final int findPushAppId(String thePushAppId)
     {
-        if (thePushAppId == null)
-        {
-            return -1;
-        }
-
-        for (int i=0; i < WapConstants.PUSH_APP_IDS.length; i++)
-        {
-            if (WapConstants.PUSH_APP_IDS[i].equalsIgnoreCase(thePushAppId))
-            {
-                // Found it
-                return i;
-            }
-        }
-
-        // Not found
-        return -1;
+        return findString(WapConstants.PUSH_APP_IDS, thePushAppId.toLowerCase());
     }
 
     /**
@@ -304,6 +600,7 @@ public class WspUtil
      * @param theContentType
      * @return Content type or null if not found
      */
+/*
     public static final String findPushAppId(int thePushAppId)
     {
         try
@@ -315,5 +612,5 @@ public class WspUtil
             return null;
         }
     }
-
+*/
 }

@@ -130,5 +130,96 @@ public class WapConstants
         };
 
     public static final int PDU_TYPE_PUSH = 0x06;
+    public static final int HEADER_ID_CONTENT_LOCATION = 0x0e;
     public static final int HEADER_ID_X_WAP_APPLICATION_ID = 0x2f;
+    public static final int HEADER_ID_CONTENT_ID = 0x40;
+
+    /*
+     * IANA assigned charset values
+     * http://www.iana.org/assignments/character-sets
+     */
+    public static final int MIB_ENUM_UTF_8 = 106;
+
+    public static final int PARAMETER_TYPE_NO_VALUE = 0x01;
+    public static final int PARAMETER_TYPE_TEXT_VALUE = 0x02;
+    public static final int PARAMETER_TYPE_INTEGER_VALUE = 0x03;
+    public static final int PARAMETER_TYPE_DATE_VALUE = 0x04;
+    public static final int PARAMETER_TYPE_DELTA_SECONDS_VALUE = 0x05;
+    public static final int PARAMETER_TYPE_Q_VALUE = 0x06;
+    public static final int PARAMETER_TYPE_VERSION_VALUE = 0x07;
+    public static final int PARAMETER_TYPE_URI_VALUE = 0x08;
+
+    public static final int PARAMETER_TYPE_TEXT_STRING = 0x09;
+    public static final int PARAMETER_TYPE_WELL_KNOWN_CHARSET = 0x0A;
+    public static final int PARAMETER_TYPE_FIELD_NAME = 0x0B;
+    public static final int PARAMETER_TYPE_SHORT_INTEGER = 0x0C;
+    public static final int PARAMETER_TYPE_CONSTRAINED_ENCODING = 0x0D;
+
+    public static final String PARAMETER_NAMES[] = {
+        "q",
+        "charset",
+        "level",
+        "type",
+        null,
+        "name",           // Deprecated in encoding v1.4
+        "filename",       // Deprecated in encoding v1.4
+        "differences",
+        "padding",
+        "type",
+        "start",          // Deprecated in encoding v1.4
+        "start-info",     // Deprecated in encoding v1.4
+        "comment",        // Deprecated in encoding v1.4
+        "domain",         // Deprecated in encoding v1.4
+        "max-age",
+        "path",           // Deprecated in encoding v1.4
+
+        "secure",
+        "sec",
+        "mac",
+        "creation-date",
+        "modification-date",
+        "read-date",
+        "size",
+        "name",
+        "filename",
+        "start",
+        "start-info",
+        "comment",
+        "domain",
+        "path",
+    };
+
+    public static final int PARAMETER_TYPES[] = {
+        PARAMETER_TYPE_Q_VALUE,
+        PARAMETER_TYPE_WELL_KNOWN_CHARSET,
+        PARAMETER_TYPE_VERSION_VALUE,
+        PARAMETER_TYPE_INTEGER_VALUE,
+        -1,
+        PARAMETER_TYPE_TEXT_STRING, // Deprecated in encoding v1.4
+        PARAMETER_TYPE_TEXT_STRING, // Deprecated in encoding v1.4
+        PARAMETER_TYPE_FIELD_NAME,
+        PARAMETER_TYPE_SHORT_INTEGER,
+        PARAMETER_TYPE_CONSTRAINED_ENCODING,
+        PARAMETER_TYPE_TEXT_STRING, // Deprecated in encoding v1.4
+        PARAMETER_TYPE_TEXT_STRING, // Deprecated in encoding v1.4
+        PARAMETER_TYPE_TEXT_STRING, // Deprecated in encoding v1.4
+        PARAMETER_TYPE_TEXT_STRING, // Deprecated in encoding v1.4
+        PARAMETER_TYPE_DELTA_SECONDS_VALUE,
+        PARAMETER_TYPE_TEXT_STRING, // Deprecated in encoding v1.4
+
+        PARAMETER_TYPE_NO_VALUE,
+        PARAMETER_TYPE_SHORT_INTEGER,
+        PARAMETER_TYPE_TEXT_VALUE,
+        PARAMETER_TYPE_DATE_VALUE,
+        PARAMETER_TYPE_DATE_VALUE,
+        PARAMETER_TYPE_DATE_VALUE,
+        PARAMETER_TYPE_INTEGER_VALUE,
+        PARAMETER_TYPE_TEXT_VALUE,
+        PARAMETER_TYPE_TEXT_VALUE,
+        PARAMETER_TYPE_TEXT_VALUE,
+        PARAMETER_TYPE_TEXT_VALUE,
+        PARAMETER_TYPE_TEXT_VALUE,
+        PARAMETER_TYPE_TEXT_VALUE,
+        PARAMETER_TYPE_TEXT_VALUE,
+    };
 }
