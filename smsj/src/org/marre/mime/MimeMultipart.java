@@ -38,10 +38,18 @@ import java.util.*;
 
 public class MimeMultipart extends MimeBodyPart
 {
-    private List myParts;
+    protected List myParts;
 
-    public MimeMultipart(String theSubtype)
+    protected String mySubtype = null;
+
+    public MimeMultipart()
     {
+        this(null);
+    }
+
+    public MimeMultipart(String subtype)
+    {
+        mySubtype = (subtype == null) ? "*" : subtype ;
         myParts = new LinkedList();
     }
 
@@ -79,5 +87,11 @@ public class MimeMultipart extends MimeBodyPart
     {
         return myParts.size();
     }
-}
 
+    public MimeContentType getContentType()
+    {
+        MimeContentType ct = super.getContentType();
+        ct.setValue("multipart/" + mySubtype);
+        return ct;
+    }
+}

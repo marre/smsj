@@ -55,6 +55,11 @@ public class MimeHeader implements Serializable
         myParams = new LinkedList();
     }
 
+    public void setValue(String theValue)
+    {
+        myHeaderValue = theValue;
+    }
+
     public String getName()
     {
         return myHeaderName;
