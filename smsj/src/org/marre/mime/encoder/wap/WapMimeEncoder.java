@@ -40,6 +40,7 @@ import java.io.*;
 
 import org.marre.mime.*;
 
+import org.marre.wap.*;
 import org.marre.wap.util.*;
 
 public class WapMimeEncoder implements MimeEncoder
@@ -66,7 +67,7 @@ public class WapMimeEncoder implements MimeEncoder
         for (int i=0; i < theMsg.getHeaderCount(); i++)
         {
             MimeHeader header = theMsg.getHeader(i);
-            WspUtil.writeHeader(theOs, header);
+            WspHeaderEncoder.writeHeader(theOs, header);
         }
     }
 

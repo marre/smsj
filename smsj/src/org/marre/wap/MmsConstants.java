@@ -45,55 +45,55 @@ public class MmsConstants
 
     public static final int HEADER_ID_BCC = 0x01;
     public static final int HEADER_ID_CC = 0x02;
-    public static final int HEADER_ID_CONTENT_LOCATION = 0x03;
+    public static final int HEADER_ID_X_MMS_CONTENT_LOCATION = 0x03;
     public static final int HEADER_ID_CONTENT_TYPE = 0x04;
     public static final int HEADER_ID_DATE = 0x05;
-    public static final int HEADER_ID_DELIVERY_REPORT = 0x06;
-    public static final int HEADER_ID_DELIVERY_TIME = 0x07;
-    public static final int HEADER_ID_EXPIRY = 0x08;
+    public static final int HEADER_ID_X_MMS_DELIVERY_REPORT = 0x06;
+    public static final int HEADER_ID_X_MMS_DELIVERY_TIME = 0x07;
+    public static final int HEADER_ID_X_MMS_EXPIRY = 0x08;
     public static final int HEADER_ID_FROM = 0x09;
-    public static final int HEADER_ID_MESSAGE_CLASS = 0x0A;
+    public static final int HEADER_ID_X_MMS_MESSAGE_CLASS = 0x0A;
     public static final int HEADER_ID_MESSAGE_ID = 0x0B;
-    public static final int HEADER_ID_MESSAGE_TYPE = 0x0C;
-    public static final int HEADER_ID_MMS_VERSION = 0x0D;
-    public static final int HEADER_ID_MESSAGE_SIZE = 0x0E;
-    public static final int HEADER_ID_PRIORITY = 0x0F;
+    public static final int HEADER_ID_X_MMS_MESSAGE_TYPE = 0x0C;
+    public static final int HEADER_ID_X_MMS_MMS_VERSION = 0x0D;
+    public static final int HEADER_ID_X_MMS_MESSAGE_SIZE = 0x0E;
+    public static final int HEADER_ID_X_MMS_PRIORITY = 0x0F;
 
-    public static final int HEADER_ID_READ_REPLY = 0x10;
-    public static final int HEADER_ID_REPORT_ALLOWED = 0x11;
-    public static final int HEADER_ID_RESPONSE_STATUS = 0x12;
-    public static final int HEADER_ID_RESPONSE_TEXT = 0x13;
-    public static final int HEADER_ID_SENDER_VISIBILITY = 0x14;
-    public static final int HEADER_ID_STATUS = 0x15;
+    public static final int HEADER_ID_X_MMS_READ_REPLY = 0x10;
+    public static final int HEADER_ID_X_MMS_REPORT_ALLOWED = 0x11;
+    public static final int HEADER_ID_X_MMS_RESPONSE_STATUS = 0x12;
+    public static final int HEADER_ID_X_MMS_RESPONSE_TEXT = 0x13;
+    public static final int HEADER_ID_X_MMS_SENDER_VISIBILITY = 0x14;
+    public static final int HEADER_ID_X_MMS_STATUS = 0x15;
     public static final int HEADER_ID_SUBJECT = 0x16;
     public static final int HEADER_ID_TO = 0x17;
-    public static final int HEADER_ID_TRANSACITON_ID = 0x18;
+    public static final int HEADER_ID_X_MMS_TRANSACITON_ID = 0x18;
 
     public static final String HEADER_NAMES[] = {
         null,
         "bcc",
         "cc",
-        "content-location",
+        "x-mms-content-location",
         "content-type",
         "date",
-        "delivery-report",
-        "delivery-time",
-        "expiry",
+        "x-mms-delivery-report",
+        "x-mms-delivery-time",
+        "x-mms-expiry",
         "from",
-        "message-class",
+        "x-mms-message-class",
         "message-id",
-        "message-type",
-        "mms-version",
-        "message-size",
-        "priority",
-        "read-reply",
-        "report-allowed",
-        "response-status",
-        "response-text",
-        "sender-visibility",
-        "status",
+        "x-mms-message-type",
+        "x-mms-mms-version",
+        "x-mms-message-size",
+        "x-mms-priority",
+        "x-mms-read-reply",
+        "x-mms-report-allowed",
+        "x-mms-response-status",
+        "x-mms-response-text",
+        "x-mms-sender-visibility",
+        "x-mms-status",
         "subject",
         "to",
-        "transaction-id",
+        "x-mms-transaction-id",
     };
 }
