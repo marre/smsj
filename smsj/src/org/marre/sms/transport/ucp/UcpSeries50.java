@@ -94,7 +94,7 @@ public class UcpSeries50 extends UcpMsg
 
     public UcpSeries50(byte operation)
     {
-        super(32);
+        super(33);
         setOR('O');
         setOT(operation);
     }
