@@ -98,6 +98,7 @@ public class MmsConstants
     };
     
     public static final String X_MMS_MESSAGE_TYPE_NAMES[] = {
+		"m-send-req",
 		"m-send-conf",
 		"m-notification-ind",
 		"m-notifyresp-ind",
@@ -108,6 +109,12 @@ public class MmsConstants
 
 	public static final int FROM_ADDRESS_PRESENT = 0x00;    
 	public static final int FROM_INSERT_ADDRESS = 0x01;
+	
+	public static final boolean EXPIRY_TIME_ABSOLUTE = true;
+	public static final boolean EXPIRY_TIME_RELATIVE = false;
+	
+	public static final short ABSOLUTE_TOKEN = 0x00;
+	public static final short RELATIVE_TOKEN = 0x01;
 	
 	public static final String X_MMS_READ_REPLY_NAMES[] = {
 		"yes",
