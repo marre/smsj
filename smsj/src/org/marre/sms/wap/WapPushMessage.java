@@ -47,9 +47,8 @@ import org.marre.sms.util.*;
 
 /**
  * Connectionless WAP push message with SMS as bearer.
- * <p>
- * It will support the setting of "content-type" and "X-Wap-Application-Id",
- * no other headers will be supported.
+ *
+ * It supports the "content-type" and "X-Wap-Application-Id" headers.
  *
  * @author Markus Eriksson
  * @version 1.0
