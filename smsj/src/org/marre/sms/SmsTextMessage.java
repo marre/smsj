@@ -48,7 +48,7 @@ public class SmsTextMessage extends SmsConcatMessage
             case SmsConstants.ALPHABET_GSM:
                 // 7-bit encoding, No message class, No compression
                 setDataCodingScheme(SmsConstants.DCS_DEFAULT_7BIT);
-                setContent(null, SmsPduUtil.createSeptetByteArray(theMsg), theMsg.length());
+                setContent(null, SmsPduUtil.getSeptets(theMsg), theMsg.length());
                 break;
             case SmsConstants.ALPHABET_8BIT:
                 // 8bit data encoding, No message class, No compression
