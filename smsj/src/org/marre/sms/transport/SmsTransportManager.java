@@ -23,12 +23,30 @@ import java.lang.reflect.*;
 
 import org.marre.sms.*;
 
+/**
+ * smsj Transport Manager
+ * <p>
+ * Contains methods to manage the different transports. Currently it only
+ * contains a method to dynamically instantiate and initialize an SmsTransport
+ *
+ * @author Markus Eriksson
+ * @version 1.0
+ */
 public class SmsTransportManager
 {
     private SmsTransportManager()
     {
     }
 
+    /**
+     * Dynamically instantiates and initializes an SmsTransport
+     *
+     * @param theClassname Full classname of the transport.
+     * Ex. "org.marre.sms.transport.gsm.GsmTransport"
+     * @param theProps Properties to initialize the transport with.
+     * @return Returns an initialized SmsTransport object
+     * @throws SmsException If we failed to load the requested transport
+     */
     public static final SmsTransport getTransport(String theClassname, Properties theProps)
         throws SmsException
     {
@@ -36,9 +54,11 @@ public class SmsTransportManager
 
         try
         {
+            // Try to find and instanciate the transport
             Class clazz = Class.forName(theClassname);
             Object obj = clazz.newInstance();
 
+            // No promblems so far. Initialize the transport
             transport = (SmsTransport)obj;
             transport.init(theProps);
 

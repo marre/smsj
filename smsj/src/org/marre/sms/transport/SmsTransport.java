@@ -24,17 +24,70 @@ import org.marre.sms.SmsPdu;
 import org.marre.sms.SmsAddress;
 import org.marre.sms.SmsException;
 
+/**
+ * Interface for a SMS transport
+ * <p>
+ * This interface is used for all smsj transports. A good example of
+ * implementation of this interface is the GsmTransport or the ClickatellTransport.
+ * <p>
+ *
+ * @author Markus Eriksson
+ * @version 1.0
+ */
 public interface SmsTransport
 {
+    /**
+     * Initializes the transport
+     * <p>
+     * Initializes the transport with the given properties.
+     *
+     * @param theProps Properties
+     * @throws SmsException
+     */
     public void init(Properties theProps) throws SmsException;
 
+    /**
+     * Connects to the SMSC (or phone, or service, or...)
+     *
+     * @throws SmsException
+     */
     public void connect() throws SmsException;
 
+    /**
+     * Sends a single SMS to the given destination
+     *
+     * @param thePdu The PDU to send
+     * @param theDestination Destination address
+     * @param theSender Sender
+     * @throws SmsException
+     */
     public void send(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender) throws SmsException;
 
+    /**
+     * Sends an array of SMS to the reciever.
+     * <p>
+     * Often implemented as a for loop calling the other send() method
+     *
+     * @param thePdus The array of SmsPdus to send
+     * @param theDestination Destination address
+     * @param theSender Sender
+     * @throws SmsException
+     */
     public void send(SmsPdu thePdus[], SmsAddress theDestination, SmsAddress theSender) throws SmsException;
 
+    /**
+     * Sends a "ping" to the SMSC (or phone, or service, or...)
+     * <p>
+     * Used to keep the connection alive
+     *
+     * @throws SmsException
+     */
     public void ping() throws SmsException;
 
+    /**
+     * Disconnects from the SMSC (or phone, or service, or...)
+     *
+     * @throws SmsException
+     */
     public void disconnect() throws SmsException;
 }
