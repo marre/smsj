@@ -65,6 +65,23 @@ public class MimeBodyPart implements Serializable
         return (MimeHeader) myHeaders.get(theIndex);
     }
 
+    public MimeHeader getHeader(String theHeader)
+    {
+        Iterator iter = myHeaders.iterator();
+        
+        while (iter.hasNext())
+        {
+            MimeHeader header = (MimeHeader) iter.next();
+            
+            if (header.getName().equalsIgnoreCase(theHeader))
+            {
+                return header;
+            }
+        }
+        
+        return null;
+    }
+    
     public int getHeaderCount()
     {
         return myHeaders.size();
