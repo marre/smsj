@@ -36,6 +36,8 @@ package org.marre.sms.transport.ucp;
 
 import java.util.*;
 import java.io.*;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 import org.marre.util.StringUtil;
 import org.marre.sms.util.SmsPduUtil;
@@ -55,16 +57,45 @@ import org.marre.sms.SmsConstants;
  */
 public class UcpTransport implements SmsTransport
 {
+	private Socket s = null;
+	private DataOutputStream out = null;
+	private DataInputStream in = null;
+	private BufferedReader stdIn = null;	
+    
     public UcpTransport()
     {
     }
 
     public void init(Properties theProps) throws SmsException
     {
+    	//Normaly we sould get the Data from the Props, but temporaly hardCoded
+    	String server = "213.61.220.27";
+    	int port = 1500;
+    	try {
+		    s = new Socket(server, port);
+		    out = new DataOutputStream(s.getOutputStream());
+		    in = new DataInputStream(s.getInputStream());
+		} catch (UnknownHostException e) {
+			throw new SmsException("Unknown host");
+		} catch (IOException e) {
+		    System.err.println
+			("SendSMS.send: Cannot open TCP/IP connection to: ".concat
+			     (server).concat(":").concat(String.valueOf(port)));
+			throw new SmsException("Cannot connect to Server");
+		} catch (Exception e) {
+		    System.err.println
+			("SendSMS.send: Cannot open TCP/IP connection to: ".concat
+			     (server).concat(":").concat(String.valueOf(port)));
+			throw new SmsException("Cannot connect to Server");
+		}
+		System.out.println("Connected sucessfully to the target Host");
     }
 
     public void connect() throws SmsException
     {
+    	//Logging into the Remote Host via UCP 60;
+		byte [] message = buildLogin("","");
+		System.out.println("SMSC response: " + sendUcp(message));
     }
 
     public void send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender)
@@ -84,12 +115,29 @@ public class UcpTransport implements SmsTransport
             boolean moreToSend = (i < (msgPdu.length - 1));
             byte[] submitCmd = buildSubmit(dcs, msgPdu[i], moreToSend,
 theDestination, theSender);
+			System.out.println("SMSC response: " + sendUcp(submitCmd));
         }
     }
 
     /**
+     * Building the Login Stream
+     * @author Lorenz Barth
+     * @throws SmsException
+     * @param userid, pwd
      *
      */
+    public byte[] buildLogin(String userid, String pwd) throws SmsException {
+		StringUtil stu = new StringUtil();
+    	UCPSeries60 ucplogin = new UCPSeries60(UCPSeries60.OP_OPEN_SESSION);
+    	ucplogin.setTRN(0x01);
+    	ucplogin.setField(ucplogin.FIELD_OAdC,"u0000854");
+		ucplogin.setField(ucplogin.FIELD_OTON,"6");
+		ucplogin.setField(ucplogin.FIELD_ONPI,"5");
+		ucplogin.setField(ucplogin.FIELD_STYP,"1");
+		ucplogin.setField(ucplogin.FIELD_VERS,"0100");
+		ucplogin.setField(ucplogin.FIELD_PWD,stu.encodeInIRA("cjSBtqk7"));				
+    	return ucplogin.getCommand();	
+    }
     public byte[] buildSubmit(byte dcs, SmsPdu pdu, boolean moreToSend, SmsAddress dest, SmsAddress sender)
         throws SmsException
     {
@@ -154,9 +202,56 @@ theDestination, theSender);
     {
     }
 
-    public void disconnect()
-        throws SmsException
-    {
+	/**
+	 * Closing Socket and Streams
+	 * 
+	 * @author Lorenz Barth
+	 * @throws SmsException
+	 * 
+	 */
+    public void disconnect() throws SmsException {
+    	try {
+			out.close();
+			in.close();
+			s.close();
+    	}catch (Exception e) {
+			e.printStackTrace();
+			throw new SmsException(e.getMessage());
+		}
+    }
+
+    /**
+     * This method is sending the Data to over the existing Connection and recives
+     * the answer, the Answer is returned as a String
+     * @author Lorenz Barth
+     * @throws SmsException
+     * @param byte[] of Data
+     */
+    public String sendUcp(byte[] data) throws SmsException {
+		if(!s.isConnected() || out!=null || in!=null) {
+			throw new SmsException("Please Connect first");
+		}
+    	System.out.println("SMSC send: " + new String(data,0,data.length));
+    	StringBuffer strBuf;
+		try {
+			out.write(data);
+			out.flush();
+			byte[] b = new byte[1];
+			if ((b[0] = in.readByte()) != 2) {
+				System.out.println("SendSMS.send: The SMSC sends a bad reply");
+				throw new SmsException("The SMSC sends a bad reply");
+			}
+			strBuf = new StringBuffer();
+			while ((b[0] = in.readByte()) != 3) {
+				strBuf.append(new String(b));
+			}
+		} catch (IOException e) {
+			throw new SmsException(e.getMessage());
+		} catch (SmsException e) {
+			throw new SmsException(e.getMessage());
+		}
+		// Return the String
+    	return strBuf.toString();
     }
 }
 
