@@ -43,7 +43,7 @@ import org.marre.mime.MimeContentType;
  * @author Markus Eriksson
  * @version $Id$
  */
-public abstract class MmsAbstractMessage implements MmsMessage 
+public abstract class MmsAbstractMessage
 {
 	private MimeContentType myContentType; 
 
