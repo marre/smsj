@@ -41,16 +41,19 @@ public class GsmTransport implements SmsTransport
         // Connect serial port
     }
 
-    public void sendMessage(SmsMessage theMsg, SmsAddress theDestination, String theSender)
+    public void sendMessage(SmsMessage theMsg, SmsAddress theDestination, SmsAddress theSender)
         throws SmsException
     {
         byte ud[] = theMsg.getUserData();
         int udLength = theMsg.getUserDataLength();
         byte udh[] = theMsg.getUserDataHeader();
 
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(160);
+
         try
         {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream(160);
+            // Use default SMSC
+            baos.write(0x00);
 
             if( (udh == null) || (udh.length == 0) )
             {
@@ -137,11 +140,14 @@ public class GsmTransport implements SmsTransport
                 // TP-UD
                 baos.write(ud);
             }
+            baos.close();
         }
         catch (IOException ex)
         {
             throw new SmsException(ex.getMessage());
         }
+        System.out.println("PDU : " + SmsPduUtil.bytesToHexString(baos.toByteArray()));
+        System.out.println("Length : " + baos.size());
     }
 
     public void ping()
