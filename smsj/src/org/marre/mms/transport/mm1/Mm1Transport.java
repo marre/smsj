@@ -38,12 +38,14 @@ import java.io.*;
 import java.net.*;
 import java.util.Properties;
 
+import org.marre.mime.MimeBodyPart;
 import org.marre.mime.MimeHeader;
+import org.marre.mime.MimeMultipart;
 import org.marre.mime.encoder.wap.WapMimeEncoder;
 import org.marre.mms.MmsException;
-import org.marre.mms.MmsMessage;
 import org.marre.mms.transport.MmsTransport;
 import org.marre.wap.MmsHeaderEncoder;
+import org.marre.wap.util.WspUtil;
 
 /**
  * 
@@ -53,6 +55,8 @@ import org.marre.wap.MmsHeaderEncoder;
  */
 public class Mm1Transport implements MmsTransport
 {
+	public static final String CONTENT_TYPE_WAP_MMS_MESSAGE = "application/vnd.wap.mms-message";
+	
     /**
      * URL for the proxy gateway
      */
@@ -72,24 +76,30 @@ public class Mm1Transport implements MmsTransport
 
         if (myMmsProxyGatewayAddress == null)
         {
-            throw new MmsException("Incomplete login information for clickatell");
+            throw new MmsException("sms.mm1.proxygateway not set");
         }
     }
 
     /**
      * @see org.marre.mms.transport.MmsTransport#connect()
      */
-    public void connect() throws MmsException
+    public void connect() 
+    	throws MmsException
     {
     }
 
 	/**
-	 * @see org.marre.mms.transport.MmsTransport#send(org.marre.mms.MmsMessage, org.marre.mime.MimeHeader[])
+	 * @see org.marre.mms.transport.MmsTransport#send(org.marre.mime.MimeBodyPart, org.marre.mime.MimeHeader[])
 	 */
-	public void send(MmsMessage theMessage, MimeHeader[] theHeaders) throws MmsException 
-	{
+	public void send(MimeBodyPart theMessage, MimeHeader[] theHeaders) 
+		throws MmsException 
+	{		
 		try
 		{
+			FileOutputStream fos = new FileOutputStream("c:\\mm1.mms");
+			writeMessageToStream(fos, theMessage, theHeaders);
+			fos.close();
+/*			
 			// POST
 			URL url = new URL(myMmsProxyGatewayAddress);
 			URLConnection urlConn = url.openConnection();
@@ -107,6 +117,7 @@ public class Mm1Transport implements MmsTransport
 			while (response.read() != -1)
 				;
 			response.close();
+*/			
 		}
 		catch (IOException ex)
 		{
@@ -114,7 +125,7 @@ public class Mm1Transport implements MmsTransport
 		}
 	}
 
-	private void writeMessageToStream(OutputStream out, MmsMessage theMessage, MimeHeader[] theHeaders)
+	private void writeMessageToStream(OutputStream out, MimeBodyPart theMessage, MimeHeader[] theHeaders)
 		throws MmsException
 	{
 		try
@@ -126,10 +137,20 @@ public class Mm1Transport implements MmsTransport
 			}
 			
 			// Add content-type
+
+            if (theMessage instanceof MimeMultipart)
+            {
+                // Convert multipart headers...            
+                // TODO: Clone content type... We shouldn't change theMsg...
+                String ct = theMessage.getContentType().getValue();
+                String newCt = WspUtil.convertMultipartContentType(ct);
+                theMessage.getContentType().setValue(newCt);
+            }
+                        
 			MmsHeaderEncoder.writeHeaderContentType(out, theMessage.getContentType());
 			
 			// Add content
-			myWapMimeEncoder.writeData(out, theMessage.getContent());
+			myWapMimeEncoder.writeData(out, theMessage);
 		}
 		catch (IOException ex)
 		{
