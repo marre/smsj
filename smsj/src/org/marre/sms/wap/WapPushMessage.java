@@ -156,13 +156,13 @@ public class WapPushMessage extends SmsConcatMessage
             // App ID
             if( theAppId != null)
             {
-                WspUtil.writeHeaderXWapApplicationId(headers, theAppId);
+                WspHeaderEncoder.writeHeaderXWapApplicationId(headers, theAppId);
             }
             
             // Content Location
             if( theContentLocation != null)
             {
-                WspUtil.writeHeaderContentLocation(headers, theContentLocation);
+                WspHeaderEncoder.writeHeaderContentLocation(headers, theContentLocation);
             }
             
             // Done with the headers...
