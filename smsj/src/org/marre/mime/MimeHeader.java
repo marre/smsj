@@ -70,7 +70,7 @@ public class MimeHeader implements Serializable
         return myHeaderValue;
     }
 
-    public void addParam(String theName, String theValue)
+    public void setParam(String theName, String theValue)
     {
         // Remove parameter if it already exists...
         removeParam(theName);
