@@ -45,6 +45,7 @@ import org.marre.sms.SmsTextMessage;
 import org.marre.sms.transport.SmsTransport;
 import org.marre.sms.transport.SmsTransportManager;
 import org.marre.wap.nokia.NokiaOtaBrowserSettings;
+import org.marre.wap.push.SmsMmsNotificationMessage;
 import org.marre.wap.push.SmsWapPushMessage;
 import org.marre.wap.push.WapSIPush;
 
@@ -291,9 +292,9 @@ public class SmsSender
 
     /**
      * Sends an ordinary SMS to the given recipient.
-     * <p>- No limit on the number of concatenated SMS that this message will
-     * use. <br>- Will send the message with the GSM charset (Max 160
-     * chars/SMS) <br>
+     * 
+     * No limit on the number of concatenated SMS that this message will
+     * use. Will send the message with the GSM charset (Max 160 chars/SMS).
      * 
      * @param theMsg
      *            Message to send
@@ -313,9 +314,27 @@ public class SmsSender
 
     /**
      * Sends an ordinary SMS to the given recipient.
-     * <p>- No limit on the number of concatenated SMS that this message will
-     * use. <br>- Will send the message with the UCS2 charset (MAX 70
-     * chars/SMS) <br>
+     * 
+     * No limit on the number of concatenated SMS that this message will
+     * use. Will send the message with the GSM charset (Max 160 chars/SMS).
+     * 
+     * @param theMsg
+     *            Message to send
+     * @param theDest
+     *            Destination number (international format without leading +)
+     *            Ex. 44546754235
+     * @throws SmsException
+     */
+    public void sendTextSms(String theMsg, String theDest) throws SmsException
+    {
+        sendTextSms(theMsg, theDest, null, SmsConstants.ALPHABET_GSM);
+    }
+    
+    /**
+     * Sends an ordinary SMS to the given recipient.
+     * 
+     * No limit on the number of concatenated SMS that this message will
+     * use. Will send the message with the UCS2 charset (MAX 70 chars/SMS).
      * 
      * @param theMsg
      *            Message to send
@@ -334,6 +353,24 @@ public class SmsSender
     }
 
     /**
+     * Sends an ordinary SMS to the given recipient.
+     * 
+     * No limit on the number of concatenated SMS that this message will
+     * use. Will send the message with the UCS2 charset (MAX 70 chars/SMS).
+     * 
+     * @param theMsg
+     *            Message to send
+     * @param theDest
+     *            Destination number (international format without leading +)
+     *            Ex. 44546754235
+     * @throws SmsException
+     */
+    public void sendUnicodeTextSms(String theMsg, String theDest) throws SmsException
+    {
+        sendTextSms(theMsg, theDest, null, SmsConstants.ALPHABET_UCS2);
+    }
+    
+    /**
      * Used internally to actually send the message
      * 
      * @param theMsg
@@ -351,8 +388,15 @@ public class SmsSender
     private void sendTextSms(String theMsg, String theDest, String theSender, int theAlphabet) throws SmsException
     {
         SmsTextMessage textMessage = new SmsTextMessage(theMsg, theAlphabet);
+        SmsAddress destAddress = new SmsAddress(theDest);
+        SmsAddress senderAddress = null;
 
-        myTransport.send(textMessage, new SmsAddress(theDest), new SmsAddress(theSender));
+        if (theSender != null)
+        {
+            senderAddress = new SmsAddress(theSender);
+        }
+        
+        myTransport.send(textMessage, destAddress, senderAddress);
     }
 
    /**
@@ -383,18 +427,15 @@ public class SmsSender
    }
     
   /**
-   *
-   * Sends a Wap Push SI containing to the given recipient
+   * Sends a Wap Push SI containing to the given recipient.
    * 
    * @param theMessage String with the description of the service
    * @param theUri String with the url referenced by the SI
    * @param theDest String with the recipient number
-   * @param theSender String with the sender number. Can also be an
-   * alphanumerical string (not supported by all transports).
    *
    * @throws SmsException
    */
-  public void sendWapSiPushMsg(String theUri, String theMessage, String theDest, String theSender) throws SmsException 
+  public void sendWapSiPushMsg(String theUri, String theMessage, String theDest) throws SmsException 
   {
       //Liquidterm: add some URI checking
       //add checking on url and message length
@@ -403,12 +444,32 @@ public class SmsSender
       SmsWapPushMessage wapPushMessage = new SmsWapPushMessage(siPush);
 //      wapPushMessage.setXWapApplicationId("x-wap-application:*"); 
       
-      SmsAddress sender = new SmsAddress(theSender);
       SmsAddress reciever = new SmsAddress(theDest);
       
-      myTransport.send(wapPushMessage, reciever, sender);
+      myTransport.send(wapPushMessage, reciever, null);
   }
-   
+ 
+  
+  /**
+   * Sends a simple MMS Notification.
+   * 
+   * @param contentLocation Where the mms pdu can be downloaded from.
+   * @param size The size of the message.
+   * @param subject The subject of the message.
+   * @param dest String with the recipient number
+   *
+   * @throws SmsException
+   */
+  public void sendMmsNotification(String contentLocation, long size, String subject, String dest) throws SmsException
+  {
+     SmsMmsNotificationMessage mmsNotification = new SmsMmsNotificationMessage(contentLocation, size);
+     mmsNotification.setSubject(subject);
+     
+     SmsAddress reciever = new SmsAddress(dest);
+     
+     myTransport.send(mmsNotification, reciever, null);
+ }
+ 
     /**
      * Call this when you are done with the SmsSender object.
      * <p>
