@@ -113,5 +113,6 @@ public class WapConstants
             "application/vnd.wap.xhtml+xml",
         };
 
-
+    public static final int PDU_TYPE_PUSH = 0x06;
+    public static final int HEADER_ID_X_WAP_APPLICATION_ID = 0x2f;
 }
