@@ -32,24 +32,27 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
 {
     private static Log myLog = LogFactory.getLog(NokiaPictureMessage.class);
 
+    public static final int PICTURE_ABOVE_TEXT = 1;
+    public static final int PICTURE_BELOW_TEXT = 2;
+
     /**
      *
      * @param theBitmap
      * @param theMsg
      */
-    public NokiaPictureMessage(OtaBitmap theBitmap, String theMsg)
+    public NokiaPictureMessage(OtaBitmap theBitmap, String theMsg, int theOrientation)
     {
-        this(theBitmap, theMsg, false);
+        this(theBitmap, theMsg, theOrientation, false);
     }
 
     /**
      *
-     * @param theMsg
      * @param theBitmap
+     * @param theMsg
      */
-    public NokiaPictureMessage(String theMsg, OtaBitmap theBitmap)
+    public NokiaPictureMessage(byte[] theBitmap, String theMsg, int theOrientation)
     {
-        this(theMsg, theBitmap, false);
+        this(theBitmap, theMsg, theOrientation, false);
     }
 
     /**
@@ -58,22 +61,38 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
      * @param theMsg
      * @param asUnicode
      */
-    public NokiaPictureMessage(OtaBitmap theBitmap, String theMsg, boolean asUnicode)
+    public NokiaPictureMessage(OtaBitmap theBitmap, String theMsg, int theOrientation, boolean asUnicode)
     {
-        addBitmap(theBitmap);
-        addText(theMsg, asUnicode);
+        this(theBitmap.getBytes(), theMsg, theOrientation, asUnicode);
     }
 
     /**
      *
-     * @param theMsg
      * @param theBitmap
+     * @param theMsg
      * @param asUnicode
      */
-    public NokiaPictureMessage(String theMsg, OtaBitmap theBitmap, boolean asUnicode)
+    public NokiaPictureMessage(byte[] theBitmap, String theMsg, int theOrientation, boolean asUnicode)
     {
-        addText(theMsg, asUnicode);
-        addBitmap(theBitmap);
+        if (theOrientation == PICTURE_ABOVE_TEXT)
+        {
+            addBitmap(theBitmap);
+            addText(theMsg, asUnicode);
+        }
+        else
+        {
+            addText(theMsg, asUnicode);
+            addBitmap(theBitmap);
+        }
+    }
+
+    /**
+     *
+     * @param theBitmap
+     */
+    private void addBitmap(byte[] theBitmap)
+    {
+        addMultipart(NokiaPart.ITEM_OTA_BITMAP, theBitmap);
     }
 
     /**

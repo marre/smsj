@@ -37,9 +37,9 @@ import org.marre.sms.util.SmsUdhUtil;
  */
 public class NokiaOperatorLogo extends SmsConcatMessage
 {
-    static Log myLog = LogFactory.getLog(NokiaOperatorLogo.class);
+    private static Log myLog = LogFactory.getLog(NokiaOperatorLogo.class);
 
-    /** 
+    /**
      * If set to true it will make the message two bytes shorter
      * to make it possible to fit a 72x14 pixel image in one SMS
      * instead of two.<br>
@@ -56,33 +56,20 @@ public class NokiaOperatorLogo extends SmsConcatMessage
      */
     public NokiaOperatorLogo(OtaBitmap theOtaBitmap, int theMcc, int theMnc)
     {
-        super(SmsConstants.DCS_DEFAULT_8BIT);
-        setContent(theOtaBitmap.getBytes(), theMcc, theMnc);
+        this(theOtaBitmap.getBytes(), theMcc, theMnc);
     }
 
     /**
      * Creates a Nokia Operator Logo message
      *
-     * @param theImg
+     * @param theOtaImage The ota image as a byte array
      * @param theMcc GSM Mobile Country Code
      * @param theMnc GSM Mobile Network Code
      */
-    public NokiaOperatorLogo(BufferedImage theImg, int theMcc, int theMnc)
-    {
-        this(new OtaBitmap(theImg), theMcc, theMnc);
-    }
-
-    /**
-     * Creates a Nokia Operator Logo message
-     *
-     * @param theOtaImage The ota image as an hexstring
-     * @param theMcc GSM Mobile Country Code
-     * @param theMnc GSM Mobile Network Code
-     */
-    public NokiaOperatorLogo(String theOtaImage, int theMcc, int theMnc)
+    public NokiaOperatorLogo(byte[] theOtaImage, int theMcc, int theMnc)
     {
         super(SmsConstants.DCS_DEFAULT_8BIT);
-        setContent(SmsPduUtil.hexStringToBytes(theOtaImage), theMcc, theMnc);
+        setContent(theOtaImage, theMcc, theMnc);
     }
 
     /**
@@ -99,25 +86,20 @@ public class NokiaOperatorLogo extends SmsConcatMessage
     /**
      * Creates a Nokia Operator Logo message
      *
-     * @param theImg
-     * @param theOperatorMccMnc Operator defined in org.marre.sms.util.GsmOperators
-     */
-    public NokiaOperatorLogo(BufferedImage theImg, int[] theOperatorMccMnc)
-    {
-        this(new OtaBitmap(theImg), theOperatorMccMnc);
-    }
-
-    /**
-     * Creates a Nokia Operator Logo message
-     *
-     * @param theOtaImage The ota image as an hex string
+     * @param theOtaImage The ota image as a byte array
      * @param theOperatorMccMnc
      */
-    public NokiaOperatorLogo(String theOtaImage, int[] theOperatorMccMnc)
+    public NokiaOperatorLogo(byte[] theOtaImage, int[] theOperatorMccMnc)
     {
         this(theOtaImage, theOperatorMccMnc[0], theOperatorMccMnc[1]);
     }
 
+    /**
+     *
+     * @param theOtaBitmap
+     * @param theMcc
+     * @param theMnc
+     */
     private void setContent(byte[] theOtaBitmap, int theMcc, int theMnc)
     {
         SmsUdhElement[] udhElements = new SmsUdhElement[1];

@@ -45,27 +45,17 @@ public class NokiaGroupGraphic extends SmsConcatMessage
      */
     public NokiaGroupGraphic(OtaBitmap theOtaBitmap)
     {
-        super(SmsConstants.DCS_DEFAULT_8BIT);
-        setContent(theOtaBitmap.getBytes());
+        this(theOtaBitmap.getBytes());
     }
 
     /**
      *
-     * @param theImg
+     * @param theOtaImage The ota image as a byte-array
      */
-    public NokiaGroupGraphic(BufferedImage theImg)
-    {
-        this(new OtaBitmap(theImg));
-    }
-
-    /**
-     *
-     * @param theOtaImage The ota image as an hexstring
-     */
-    public NokiaGroupGraphic(String theOtaImage)
+    public NokiaGroupGraphic(byte[] theOtaImage)
     {
         super(SmsConstants.DCS_DEFAULT_8BIT);
-        setContent(SmsPduUtil.hexStringToBytes(theOtaImage));
+        setContent(theOtaImage);
     }
 
     /**
@@ -100,4 +90,3 @@ public class NokiaGroupGraphic extends SmsConcatMessage
         setContent(udhElements, baos.toByteArray(), baos.size());
     }
 }
-
