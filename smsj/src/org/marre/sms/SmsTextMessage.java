@@ -21,13 +21,36 @@ package org.marre.sms;
 import java.io.*;
 import org.marre.sms.util.SmsPduUtil;
 
-public class SmsTextMessage extends SmsMessage
+/**
+ * SmsTextMessag
+ *
+ * @todo Add concatenated msg support
+ *
+ * @author Markus Eriksson
+ * @version 1.0
+ */
+public class SmsTextMessage implements SmsMessage
 {
+    /**
+     * As defined in GSM 03.38. It contains all characters needed for most
+     * Western European languages. It also contains upper case Greek characters.
+     */
     public static final int TEXT_ALPHABET_GSM = 0;
-    public static final int TEXT_ALPHABET_UCS2 = 1;
+    /**
+     * ISO 8859-1 (ISO Latin-1)
+     */
+    public static final int TEXT_ALPHABET_ISO_LATIN_1 = 1;
+    /**
+     * Unicode UCS-2
+     */
+    public static final int TEXT_ALPHABET_UCS2 = 2;
+
+    private SmsPdu myPdu = null;
 
     public SmsTextMessage(String theMsg, int theAlphabet)
     {
+        myPdu = new SmsPdu();
+
         try
         {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
@@ -39,23 +62,30 @@ public class SmsTextMessage extends SmsMessage
                 SmsPduUtil.writeSeptets(baos, theMsg);
                 userDataLength = theMsg.length();
                 // 7-bit encoding, No message class, No compression
-                setDataCodingScheme((byte)0x00);
+                myPdu.setDataCodingScheme((byte)0x00);
+                break;
+            case TEXT_ALPHABET_ISO_LATIN_1:
+                baos.write(theMsg.getBytes("ISO-8859-1"));
+                userDataLength = theMsg.length();
+                // 8bit data encoding, No message class, No compression
+                myPdu.setDataCodingScheme((byte)0x04);
                 break;
             case TEXT_ALPHABET_UCS2:
                 baos.write(theMsg.getBytes("UTF-16BE"));
                 userDataLength = theMsg.length() * 2;
                 // 16 bit UCS2 encoding, No message class, No compression
-                setDataCodingScheme((byte)0x08);
+                myPdu.setDataCodingScheme((byte)0x08);
                 break;
             }
 
             baos.close();
-            setUserData(myUd = baos.toByteArray(), userDataLength);
+            myPdu.setUserData(baos.toByteArray(), userDataLength);
         }
         catch (UnsupportedEncodingException ex)
         {
             // Shouldn't happen. According to the javadoc documentation
-            // for JDK 1.3.1 the "UTF-16BE" is standard...
+            // for JDK 1.3.1 the "UTF-16BE" and "ISO-8859-1" encoding
+            // are standard...
             throw new RuntimeException(ex.getMessage());
         }
         catch (IOException ex)
@@ -69,5 +99,10 @@ public class SmsTextMessage extends SmsMessage
     public SmsTextMessage(String theMsg)
     {
         this(theMsg, TEXT_ALPHABET_GSM);
+    }
+
+    public SmsPdu[] getPdus()
+    {
+        return new SmsPdu[] { myPdu };
     }
 }
