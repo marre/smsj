@@ -23,7 +23,6 @@
 package org.marre.wap.nokia;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.marre.xml.XmlAttribute;
 import org.marre.xml.XmlWriter;

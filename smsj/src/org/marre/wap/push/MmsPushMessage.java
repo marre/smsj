@@ -38,7 +38,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.marre.util.StringUtil;
-import org.marre.wap.WapConstants;
 import org.marre.wap.mms.MmsConstants;
 import org.marre.wap.mms.MmsHeaderEncoder;
 

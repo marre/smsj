@@ -22,10 +22,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.nokia;
 
-import org.marre.sms.SmsConcatMessage;
 import org.marre.sms.SmsConstants;
-import org.marre.sms.SmsUdhElement;
-import org.marre.sms.SmsUdhUtil;
+import org.marre.sms.SmsPortAddressedMessage;
 import org.marre.sms.SmsUserData;
 
 /**
@@ -33,7 +31,7 @@ import org.marre.sms.SmsUserData;
  * @author Markus Eriksson
  * @version $Id$
  */
-public class NokiaRingTone extends SmsConcatMessage
+public class NokiaRingTone extends SmsPortAddressedMessage
 {
     protected byte[] myRingToneData;
     
@@ -44,6 +42,8 @@ public class NokiaRingTone extends SmsConcatMessage
      */
     public NokiaRingTone(byte[] theRingTone)
     {
+        super(SmsConstants.PORT_NOKIA_RING_TONE, 0);
+        
         myRingToneData = theRingTone;
     }
 
@@ -54,10 +54,5 @@ public class NokiaRingTone extends SmsConcatMessage
     public SmsUserData getUserData()
     {
         return new SmsUserData(myRingToneData);
-    }
-
-    public SmsUdhElement[] getUdhElements()
-    {
-        return new SmsUdhElement[] { SmsUdhUtil.get16BitApplicationPortUdh(SmsConstants.PORT_NOKIA_RING_TONE, 0) };
     }
 }

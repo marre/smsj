@@ -27,11 +27,8 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.marre.sms.SmsConcatMessage;
 import org.marre.sms.SmsConstants;
-import org.marre.sms.SmsPdu;
-import org.marre.sms.SmsUdhElement;
-import org.marre.sms.SmsUdhUtil;
+import org.marre.sms.SmsPortAddressedMessage;
 import org.marre.sms.SmsUserData;
 
 /**
@@ -42,7 +39,7 @@ import org.marre.sms.SmsUserData;
  * @author Markus Eriksson
  * @version $Id$
  */
-abstract class NokiaMultipartMessage extends SmsConcatMessage
+abstract class NokiaMultipartMessage extends SmsPortAddressedMessage
 {
     private List myParts = new LinkedList();
 
@@ -51,6 +48,7 @@ abstract class NokiaMultipartMessage extends SmsConcatMessage
      */
     protected NokiaMultipartMessage()
     {
+        super(SmsConstants.PORT_NOKIA_MULTIPART_MESSAGE, 0);
     }
 
     /**
@@ -108,10 +106,5 @@ abstract class NokiaMultipartMessage extends SmsConcatMessage
         }
 
         return new SmsUserData(baos.toByteArray());
-    }
-
-    public SmsUdhElement[] getUdhElements()
-    {
-        return new SmsUdhElement[] { SmsUdhUtil.get16BitApplicationPortUdh(SmsConstants.PORT_NOKIA_MULTIPART_MESSAGE, 0) };
     }
 }

@@ -34,20 +34,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.wap.nokia;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.marre.mime.MimeContentType;
-import org.marre.sms.SmsConcatMessage;
-import org.marre.sms.SmsConstants;
-import org.marre.sms.SmsUdhElement;
-import org.marre.sms.SmsUdhUtil;
-import org.marre.wap.WapConstants;
-import org.marre.wap.WspUtil;
 import org.marre.wap.wbxml.WbxmlDocument;
 import org.marre.wap.wbxml.WbxmlWriter;
 import org.marre.xml.XmlWriter;

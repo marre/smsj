@@ -25,11 +25,9 @@ package org.marre.sms.nokia;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.marre.sms.SmsConcatMessage;
 import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsPduUtil;
-import org.marre.sms.SmsUdhElement;
-import org.marre.sms.SmsUdhUtil;
+import org.marre.sms.SmsPortAddressedMessage;
 import org.marre.sms.SmsUserData;
 
 /**
@@ -38,7 +36,7 @@ import org.marre.sms.SmsUserData;
  * @author Markus Eriksson
  * @version $Id$
  */
-public class NokiaOperatorLogo extends SmsConcatMessage
+public class NokiaOperatorLogo extends SmsPortAddressedMessage
 {
     /**
      * If set to true it will make the message two bytes shorter to make it
@@ -82,6 +80,8 @@ public class NokiaOperatorLogo extends SmsConcatMessage
      */
     public NokiaOperatorLogo(byte[] theOtaImage, int theMcc, int theMnc)
     {
+        super(SmsConstants.PORT_NOKIA_OPERATOR_LOGO, 0);
+        
         myBitmap = theOtaImage;
         myMcc = theMcc;
         myMnc = theMnc;
@@ -99,6 +99,8 @@ public class NokiaOperatorLogo extends SmsConcatMessage
      */
     public NokiaOperatorLogo(byte[] theOtaImage, int theMcc, int theMnc, boolean discardHeaders)
     {
+        super(SmsConstants.PORT_NOKIA_OPERATOR_LOGO, 0);
+        
         myDiscardNokiaHeaders = discardHeaders;
         myBitmap = theOtaImage;
         myMcc = theMcc;
@@ -169,10 +171,5 @@ public class NokiaOperatorLogo extends SmsConcatMessage
         }
 
         return new SmsUserData(baos.toByteArray());
-    }
-
-    public SmsUdhElement[] getUdhElements()
-    {
-        return new SmsUdhElement[] { SmsUdhUtil.get16BitApplicationPortUdh(SmsConstants.PORT_NOKIA_OPERATOR_LOGO, 0) };
     }
 }

@@ -25,10 +25,8 @@ package org.marre.sms.nokia;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.marre.sms.SmsConcatMessage;
 import org.marre.sms.SmsConstants;
-import org.marre.sms.SmsUdhElement;
-import org.marre.sms.SmsUdhUtil;
+import org.marre.sms.SmsPortAddressedMessage;
 import org.marre.sms.SmsUserData;
 
 /**
@@ -39,7 +37,7 @@ import org.marre.sms.SmsUserData;
  * @author Markus Eriksson
  * @version $Id$
  */
-public class NokiaGroupGraphic extends SmsConcatMessage
+public class NokiaGroupGraphic extends SmsPortAddressedMessage
 {
     protected byte[] myOtaBitmap;
     
@@ -63,6 +61,8 @@ public class NokiaGroupGraphic extends SmsConcatMessage
      */
     public NokiaGroupGraphic(byte[] theOtaImage)
     {
+        super(SmsConstants.PORT_NOKIA_CLI_LOGO, 0);
+        
         myOtaBitmap = theOtaImage;
     }
 
@@ -85,10 +85,5 @@ public class NokiaGroupGraphic extends SmsConcatMessage
         }
         
         return new SmsUserData(baos.toByteArray());
-    }
-
-    public SmsUdhElement[] getUdhElements()
-    {
-        return new SmsUdhElement[] { SmsUdhUtil.get16BitApplicationPortUdh(SmsConstants.PORT_NOKIA_CLI_LOGO, 0) };
     }
 }

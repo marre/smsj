@@ -25,8 +25,6 @@ package org.marre.sms.nokia;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 
-import org.marre.sms.SmsPduUtil;
-
 /**
  * Nokia OTA Bitmap format
  * <p>

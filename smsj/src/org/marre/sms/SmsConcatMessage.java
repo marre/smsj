@@ -34,8 +34,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Random;
 
 /**

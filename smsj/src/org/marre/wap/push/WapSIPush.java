@@ -36,14 +36,11 @@ package org.marre.wap.push;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.Date;
 
 import org.marre.wap.wbxml.WbxmlDocument;
 import org.marre.wap.wbxml.WbxmlWriter;
-import org.marre.xml.TextXmlWriter;
 import org.marre.xml.XmlAttribute;
-import org.marre.xml.XmlDocument;
 import org.marre.xml.XmlWriter;
 
 public class WapSIPush implements WbxmlDocument

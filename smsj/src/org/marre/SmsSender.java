@@ -374,7 +374,7 @@ public class SmsSender
        browserSettings.addBookmark(theTitle, theUri);
        
        SmsWapPushMessage wapPushMessage = new SmsWapPushMessage(browserSettings, "application/x-wap-prov.browser-bookmarks");
-       wapPushMessage.setPushPorts(49154, SmsConstants.PORT_OTA_SETTINGS_BROWSER);
+       wapPushMessage.setPorts(49154, SmsConstants.PORT_OTA_SETTINGS_BROWSER);
        
        SmsAddress sender = new SmsAddress(theSender);
        SmsAddress reciever = new SmsAddress(theDest);

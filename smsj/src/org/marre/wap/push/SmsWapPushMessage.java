@@ -36,23 +36,16 @@ package org.marre.wap.push;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 import org.marre.mime.MimeBodyPart;
 import org.marre.mime.MimeContentType;
-import org.marre.sms.SmsConcatMessage;
 import org.marre.sms.SmsConstants;
-import org.marre.sms.SmsMessage;
-import org.marre.sms.SmsUdhElement;
-import org.marre.sms.SmsUdhUtil;
+import org.marre.sms.SmsPortAddressedMessage;
 import org.marre.sms.SmsUserData;
 import org.marre.wap.WapConstants;
 import org.marre.wap.WapMimeEncoder;
-import org.marre.wap.WspHeaderEncoder;
 import org.marre.wap.WspUtil;
 import org.marre.wap.wbxml.WbxmlDocument;
-import org.marre.xml.TextXmlWriter;
-import org.marre.xml.XmlWriter;
 
 /**
  * Connectionless WAP push message with SMS as bearer.
@@ -62,24 +55,27 @@ import org.marre.xml.XmlWriter;
  * @author Markus Eriksson
  * @version 1.0
  */
-public class SmsWapPushMessage extends SmsConcatMessage
+public class SmsWapPushMessage extends SmsPortAddressedMessage
 {
-    protected int myDstPort = SmsConstants.PORT_WAP_PUSH;
-    protected int mySrcPort = SmsConstants.PORT_WAP_WSP;
     protected byte myWspEncodingVersion = WapConstants.WSP_ENCODING_VERSION_1_2;
     protected MimeBodyPart myPushMsg;
         
     protected SmsWapPushMessage()
     {
+        super(SmsConstants.PORT_WAP_PUSH, SmsConstants.PORT_WAP_WSP);
     }
     
     public SmsWapPushMessage(MimeBodyPart thePushMsg)
     {
+        this();
+        
         myPushMsg = thePushMsg;
     }
     
     public SmsWapPushMessage(WbxmlDocument thePushMsg, MimeContentType theContentType)
     {
+        this();
+        
         // The current wbxml encoder can only output utf-8
         theContentType.setParam("charset", "utf-8");
         myPushMsg = new MimeBodyPart(buildPushMessage(thePushMsg), theContentType);
@@ -87,6 +83,8 @@ public class SmsWapPushMessage extends SmsConcatMessage
     
     public SmsWapPushMessage(WbxmlDocument thePushMsg, String theContentType)
     {
+        this();
+        
         MimeContentType ct = new MimeContentType(theContentType);
         // The current wbxml encoder can only output utf-8
         ct.setParam("charset", "utf-8");
@@ -100,11 +98,15 @@ public class SmsWapPushMessage extends SmsConcatMessage
      
     public SmsWapPushMessage(byte[] thePushMsg, MimeContentType theContentType)
     {
+        this();
+        
         myPushMsg = new MimeBodyPart(thePushMsg, theContentType);
     }
         
     public SmsWapPushMessage(byte[] thePushMsg, String theContentType)
     {
+        this();
+        
         myPushMsg = new MimeBodyPart(thePushMsg, theContentType);
     }
     
@@ -131,12 +133,6 @@ public class SmsWapPushMessage extends SmsConcatMessage
     public void setWspEncodingVersion(byte wspEncodingVersion)
     {
         myWspEncodingVersion = wspEncodingVersion;
-    }
-    
-    public void setPushPorts(int srcPort, int dstPort)
-    {
-        mySrcPort = srcPort;
-        myDstPort = dstPort;
     }
     
     public SmsUserData getUserData()
@@ -195,11 +191,6 @@ public class SmsWapPushMessage extends SmsConcatMessage
         return new SmsUserData(baos.toByteArray());
     }
 
-    public SmsUdhElement[] getUdhElements()
-    {
-        return new SmsUdhElement[] { SmsUdhUtil.get16BitApplicationPortUdh(myDstPort, mySrcPort) }; 
-    }
-    
     public void setXWapApplicationId(String appId)
     {
         myPushMsg.addHeader("X-Wap-Application-Id", appId);
