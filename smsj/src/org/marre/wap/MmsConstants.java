@@ -67,7 +67,7 @@ public class MmsConstants
     public static final int HEADER_ID_X_MMS_STATUS = 0x15;
     public static final int HEADER_ID_SUBJECT = 0x16;
     public static final int HEADER_ID_TO = 0x17;
-    public static final int HEADER_ID_X_MMS_TRANSACITON_ID = 0x18;
+    public static final int HEADER_ID_X_MMS_TRANSACTION_ID = 0x18;
 
     public static final String HEADER_NAMES[] = {
         null,
@@ -96,4 +96,47 @@ public class MmsConstants
         "to",
         "x-mms-transaction-id",
     };
+    
+    public static final String X_MMS_MESSAGE_TYPE_NAMES[] = {
+		"m-send-conf",
+		"m-notification-ind",
+		"m-notifyresp-ind",
+		"m-retrieve-conf",
+		"m-acknowledge-ind",
+		"m-delivery-ind"    	
+    };
+
+	public static final int FROM_ADDRESS_PRESENT = 0x00;    
+	public static final int FROM_INSERT_ADDRESS = 0x01;
+	
+	public static final String X_MMS_READ_REPLY_NAMES[] = {
+		"yes",
+		"no"
+	};
+
+	public static final String X_MMS_PRIORITY_NAMES[] = {
+		"low",
+		"normal",
+		"high"
+	};
+	
+	public static final String X_MMS_STATUS_NAMES[] = {
+		"expired",
+		"retrieved",
+		"rejected",
+		"deferred",
+		"unrecognised",
+	};
+	
+	public static final String X_MMS_MESSAGE_CLASS_NAMES[] = {
+		"personal",
+		"advertisment",
+		"informational",
+		"auto",
+	};
+				
+	public static final String X_MMS_SENDER_VISIBILITY_NAMES[] = {
+		"hide",
+		"show",
+	};
 }
