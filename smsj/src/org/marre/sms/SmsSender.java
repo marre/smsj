@@ -257,12 +257,11 @@ public class SmsSender
     
     /**
      *
-     * Sends a Wap Push SI containing to the given recipient (doesn't work yet)
+     * Sends a Wap Push SI containing to the given recipient
      * 
      * @param theMessage String with the description of the service
      * @param theUri String with the url referenced by the SI
-     * @param theDest String with the recipient number (international format
-     * without leading +)
+     * @param theDest String with the recipient number
      * @param theSender String with the sender number. Can also be an
      * alphanumerical string (not supported by all transports).
      *
