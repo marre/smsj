@@ -87,6 +87,10 @@ public class SmsTransportManager
         {
             throw new SmsException("Couldn't find " + theClassname + ". Please check your classpath.");
         }
+        catch (SmsException ex)
+        {
+            throw ex;
+        }
         catch (Exception ex)
         {
             throw new SmsException("Couldn't load " + theClassname + ".");
