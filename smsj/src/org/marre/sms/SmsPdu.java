@@ -21,6 +21,12 @@ package org.marre.sms;
 import java.io.*;
 import java.util.*;
 
+/**
+ * Represents an SMS pdu
+ *
+ * @author Markus Eriksson
+ * @version 1.0
+ */
 public class SmsPdu
 {
     protected byte myDcs = 0x00;
@@ -31,21 +37,43 @@ public class SmsPdu
     protected SmsUdhElement[] myUdhElements = null;
     protected byte myUd[] = null;
 
+    /**
+     * Creates an empty SMS pdu object
+     */
     public SmsPdu()
     {
     }
 
+    /**
+     * Creates an SMS pdu object
+     *
+     * @param theUdhIeis
+     * @param theUd
+     * @param theUdLength
+     * @param theDcs
+     */
     public SmsPdu(SmsUdhElement[] theUdhIeis, byte[] theUd, int theUdLength, byte theDcs)
     {
         setUserDataHeaders(theUdhIeis);
         setUserData(theUd, theUdLength, theDcs);
     }
 
+    /**
+     * Sets the UDH field
+     *
+     * @param theUdhElements
+     */
     public void setUserDataHeaders(SmsUdhElement[] theUdhElements)
     {
         myUdhElements = theUdhElements;
     }
 
+    /**
+     * Returns the user data headers
+     *
+     * @return A byte array representing the UDH fields or null if there aren't
+     * any UDH
+     */
     public byte[] getUserDataHeaders()
     {
         if ( myUdhElements == null)
@@ -71,6 +99,13 @@ public class SmsPdu
         return baos.toByteArray();
     }
 
+    /**
+     * Sets the user data field of the message.
+     *
+     * @param theUd
+     * @param theUdLength
+     * @param theDcs
+     */
     public void setUserData(byte[] theUd, int theUdLength, byte theDcs)
     {
         myUd = theUd;
@@ -78,16 +113,38 @@ public class SmsPdu
         myDcs = theDcs;
     }
 
+    /**
+     * Returns the user data part of the message.
+     *
+     * @return UD field
+     */
     public byte[] getUserData()
     {
         return myUd;
     }
 
+    /**
+     * Returns the length of the user data field
+     * <p>
+     * This can be in characters or byte depending on the message (DCS).
+     * If message is 7 bit coded the length is given in septets.
+     * If 8bit or UCS2 the length is in octets.
+     *
+     * @return The length
+     */
     public int getUserDataLength()
     {
         return myUdLength;
     }
 
+    /**
+     * Returns the DCS field
+     * <p>
+     * Use org.marre.sms.util.SmsDcsUtil to parse the information in the
+     * DCS field.
+     *
+     * @return the DCS
+     */
     public byte getDataCodingScheme()
     {
         return myDcs;
