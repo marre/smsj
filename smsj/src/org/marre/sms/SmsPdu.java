@@ -20,18 +20,16 @@ package org.marre.sms;
 
 public class SmsPdu
 {
-    protected byte myDcs = 0;
+    protected int myDcs = 0;
     protected byte myUd[] = null;
     protected byte myUdh[] = null;
 
-    public void setDataCodingScheme(byte theDcs)
+    public SmsPdu()
     {
-        myDcs = theDcs;
     }
 
-    public byte getDataCodingScheme()
+    public SmsPdu(byte[] theUdh, byte[] theUd, int theDcs)
     {
-        return myDcs;
     }
 
     public void setUserDataHeader(byte[] theUdh)
@@ -44,13 +42,24 @@ public class SmsPdu
         return myUdh;
     }
 
-    public void setUserData(byte[] theUd)
+    public void setUserData(byte[] theUd, int theDcs)
     {
         myUd = theUd;
+        myDcs = theDcs;
     }
 
     public byte[] getUserData()
     {
         return myUd;
+    }
+
+    public int getDataCodingScheme()
+    {
+        return myDcs;
+    }
+
+    public boolean isValid()
+    {
+        return true;
     }
 }
