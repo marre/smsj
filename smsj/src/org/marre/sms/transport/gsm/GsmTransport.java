@@ -118,7 +118,7 @@ public class GsmTransport implements SmsTransport
         throws SmsException
     {
         byte ud[] = thePdu.getUserData();
-        byte udh[] = thePdu.getUserDataHeader();
+        byte udh[] = thePdu.getUserDataHeaders();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream(200);
 
@@ -222,7 +222,7 @@ public class GsmTransport implements SmsTransport
         throws SmsException
     {
         byte ud[] = thePdu.getUserData();
-        byte udh[] = thePdu.getUserDataHeader();
+        byte udh[] = thePdu.getUserDataHeaders();
 
         int nUdSeptets = thePdu.getUserDataLength();
         int nUdBits = 0;
