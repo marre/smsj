@@ -245,13 +245,13 @@ public class SmsConstants
     public static final byte EMS_TEXT_SIZE_SMALL = 0x08;
 
     /** EMS - Normal size font */
-    public static final int EMS_TEXT_STYLE_BOLD = 0x10;
+    public static final byte EMS_TEXT_STYLE_BOLD = (byte)0x10;
     /** EMS - Large size font */
-    public static final int EMS_TEXT_STYLE_ITALIC = 0x20;
+    public static final byte EMS_TEXT_STYLE_ITALIC = (byte)0x20;
     /** EMS - Small size font */
-    public static final int EMS_TEXT_STYLE_UNDERLINED = 0x40;
+    public static final byte EMS_TEXT_STYLE_UNDERLINED = (byte)0x40;
     /** EMS - Small size font */
-    public static final int EMS_TEXT_STYLE_STRIKETHROUGH = 0x80;
+    public static final byte EMS_TEXT_STYLE_STRIKETHROUGH = (byte)0x80;
 
     /** EMS - Color black */
     public static final byte EMS_TEXT_COLOR_BLACK = 0x00;
