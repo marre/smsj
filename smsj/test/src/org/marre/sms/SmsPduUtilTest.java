@@ -34,10 +34,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
-import org.marre.sms.transport.gsm.GsmEncoder;
-import org.marre.util.StringUtil;
-
 import junit.framework.TestCase;
+
+import org.marre.util.StringUtil;
 
 /**
  * 

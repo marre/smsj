@@ -42,7 +42,6 @@ import java.util.Map;
 
 import org.marre.mime.MimeHeader;
 import org.marre.mime.MimeHeaderParam;
-import org.marre.util.StringUtil;
 
 /**
  * 

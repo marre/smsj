@@ -34,15 +34,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.wap.push;
 
-import java.io.IOException;
+import junit.framework.TestCase;
 
 import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsPdu;
 import org.marre.sms.SmsUserData;
 import org.marre.util.StringUtil;
 import org.marre.wap.nokia.NokiaOtaBrowserSettings;
-
-import junit.framework.TestCase;
 
 /**
  * 
@@ -61,7 +59,7 @@ public class SmsWapPushMessageTest extends TestCase
         // Check contents
         SmsWapPushMessage push = new SmsWapPushMessage(browserSettings);
         // Set ports
-        push.setPushPorts(49154, SmsConstants.PORT_OTA_SETTINGS_BROWSER);
+        push.setPorts(SmsConstants.PORT_OTA_SETTINGS_BROWSER, 49154);
         
         SmsUserData userData = push.getUserData();
         
@@ -78,5 +76,20 @@ public class SmsWapPushMessageTest extends TestCase
                 StringUtil.bytesToHexString(pdus[0].getUserDataHeaders()));
         assertEquals("00062C1F2A6170706C69636174696F6E2F782D7761702D70726F762E62726F777365722D73657474696E67730081EA01016A0045C67F0187151103576170000187171103687474703A2F2F7761702E646B000101", 
                 StringUtil.bytesToHexString(pdus[0].getUserData().getData()));
+    }
+    
+    public void testSiPush()
+    {
+        WapSIPush wapSIPush = new WapSIPush("http://www.xyz.com/email/123/abc.wml", "You have 4 new e-mails");
+        
+        // Check contents
+        SmsWapPushMessage push = new SmsWapPushMessage(wapSIPush);
+        
+        SmsUserData userData = push.getUserData();
+
+/*        
+        assertEquals("00062C1F2A6170706C69636174696F6E2F782D7761702D70726F762E62726F777365722D73657474696E67730081EA01016A0045C67F0187151103576170000187171103687474703A2F2F7761702E646B000101", 
+                     StringUtil.bytesToHexString(userData.getData()));
+*/                     
     }
 }

@@ -35,20 +35,18 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.transport.gsm;
 
-import java.util.*;
-import java.io.*;
+import java.io.IOException;
+import java.util.Properties;
 
-import javax.comm.*;
+import javax.comm.PortInUseException;
 
-import org.marre.util.*;
-
-import org.marre.sms.transport.SmsTransport;
-import org.marre.sms.SmsPdu;
 import org.marre.sms.SmsAddress;
-import org.marre.sms.SmsMessage;
-import org.marre.sms.SmsException;
 import org.marre.sms.SmsConstants;
-import org.marre.sms.SmsUserData;
+import org.marre.sms.SmsException;
+import org.marre.sms.SmsMessage;
+import org.marre.sms.SmsPdu;
+import org.marre.sms.transport.SmsTransport;
+import org.marre.util.StringUtil;
 
 /**
  * An SmsTransport that sends the SMS from an GSM phone that is attached
@@ -150,7 +148,7 @@ public class GsmTransport implements SmsTransport
      */
     public String[] send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException
     {
-        SmsPdu msgPdu[] = null;
+        SmsPdu[] msgPdu = null;
 
         if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
         {
@@ -161,7 +159,7 @@ public class GsmTransport implements SmsTransport
 
         for(int i=0; i < msgPdu.length; i++)
         {
-            byte data[] = GsmEncoder.encodePdu(msgPdu[i], theDestination, theSender); 
+            byte[] data = GsmEncoder.encodePdu(msgPdu[i], theDestination, theSender); 
             sendSms(data);
         }
         

@@ -35,7 +35,6 @@
 package org.marre.xml;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 public interface XmlWriter
 {

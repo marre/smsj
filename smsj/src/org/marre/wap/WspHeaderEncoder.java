@@ -36,11 +36,8 @@ package org.marre.wap;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.marre.mime.MimeHeader;
-import org.marre.util.StringUtil;
 
 /**
  * 
