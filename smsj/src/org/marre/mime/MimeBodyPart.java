@@ -34,10 +34,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.*;
 
-public class MimeBodyPart
+public class MimeBodyPart implements Serializable
 {
     protected byte[] myContent = null;
     protected MimeContentType myContentType = null;

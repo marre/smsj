@@ -35,13 +35,18 @@
 package org.marre.mime;
 
 import java.util.*;
+import java.io.Serializable;
 
-public class MimeHeader
+public class MimeHeader implements Serializable
 {
     protected String myHeaderName;
     protected String myHeaderValue;
 
     protected List myParams;
+
+    protected MimeHeader()
+    {
+    }
 
     public MimeHeader(String theName, String theValue)
     {
