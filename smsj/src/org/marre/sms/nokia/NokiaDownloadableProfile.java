@@ -82,8 +82,12 @@ public class NokiaDownloadableProfile extends NokiaMultipartMessage
         }
     }
 
-    public SmsPdu[] getPdus()
+    protected void buildPdus()
     {
+        // Reset message
+        clear();
+
+        // Create message
         if (myProfileName != null)
         {
             addProfileName(myProfileName);
@@ -94,7 +98,7 @@ public class NokiaDownloadableProfile extends NokiaMultipartMessage
             addScreenSaver(myScreenSaver);
         }
 
-        return super.getPdus();
+        super.buildPdus();
     }
 }
 

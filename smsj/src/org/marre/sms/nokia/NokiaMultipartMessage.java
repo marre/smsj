@@ -28,11 +28,8 @@ import java.awt.image.BufferedImage;
 
 import org.apache.commons.logging.*;
 
-import org.marre.sms.SmsConstants;
-import org.marre.sms.SmsConcatMessage;
-import org.marre.sms.SmsUdhElement;
-import org.marre.sms.SmsPdu;
 import org.marre.sms.util.SmsUdhUtil;
+import org.marre.sms.*;
 
 /**
  * Baseclass for Nokia Multipart Messages
@@ -45,6 +42,8 @@ import org.marre.sms.util.SmsUdhUtil;
 abstract class NokiaMultipartMessage extends SmsConcatMessage
 {
     private static Log myLog = LogFactory.getLog(NokiaMultipartMessage.class);
+
+    private boolean isDirty = true;
 
     private LinkedList myParts = new LinkedList();
 
@@ -65,6 +64,14 @@ abstract class NokiaMultipartMessage extends SmsConcatMessage
     protected void addMultipart(byte theItemType, byte[] data)
     {
         myParts.add(new NokiaPart(theItemType, data));
+    }
+
+    /**
+     * Removes all parts from the message
+     */
+    protected void clear()
+    {
+        myParts.clear();
     }
 
     /**
@@ -113,5 +120,75 @@ abstract class NokiaMultipartMessage extends SmsConcatMessage
 
         // Let SmsConcatMessage build the pdus...
         setContent(udhElements, baos.toByteArray(), baos.size());
+    }
+
+    /**
+     * Overridden to rebuild the message if dirty
+     */
+    public SmsPdu[] getPdus()
+    {
+        if (isDirty)
+        {
+            buildPdus();
+            isDirty = false;
+        }
+
+        return super.getPdus();
+    }
+
+    /**
+     * Overridden to rebuild the message if dirty
+     */
+    public int getUserDataLength()
+    {
+        if (isDirty)
+        {
+            buildPdus();
+            isDirty = false;
+        }
+
+        return super.getUserDataLength();
+    }
+
+    /**
+     * Overridden to rebuild the message if dirty
+     */
+    public SmsUdhElement[] getUdhElements()
+    {
+        if (isDirty)
+        {
+            buildPdus();
+            isDirty = false;
+        }
+
+        return super.getUdhElements();
+    }
+
+    /**
+     * Overridden to rebuild the message if dirty
+     */
+    public byte[] getUserData()
+    {
+        if (isDirty)
+        {
+            buildPdus();
+            isDirty = false;
+        }
+
+        return super.getUserData();
+    }
+
+    /**
+     * Overridden to rebuild the message if dirty
+     */
+    public byte[] getUserDataHeaders()
+    {
+        if (isDirty)
+        {
+            buildPdus();
+            isDirty = false;
+        }
+
+        return super.getUserDataHeaders();
     }
 }
