@@ -150,10 +150,10 @@ public class SmsUdhUtil
     {
         byte[] udh = new byte[4];
 
-        udh[0] = (byte) (theDestPort & 0xff);
-        udh[1] = (byte) ((theDestPort >> 8) & 0xff);
-        udh[2] = (byte) (theOrigPort & 0xff);
-        udh[3] = (byte) ((theOrigPort >> 8) & 0xff);
+        udh[0] = (byte) ((theDestPort >> 8) & 0xff);
+        udh[1] = (byte) (theDestPort & 0xff);
+        udh[2] = (byte) ((theOrigPort >> 8) & 0xff);
+        udh[3] = (byte) (theOrigPort & 0xff);
 
         return new SmsUdhElement(SmsConstants.UDH_IEI_APP_PORT_16BIT, udh);
     }
@@ -173,8 +173,8 @@ public class SmsUdhUtil
     {
         byte[] udh = new byte[4];
 
-        udh[0] = (byte) (theRefNr & 0xff);
-        udh[1] = (byte) ((theRefNr >> 8) & 0xff);
+        udh[0] = (byte) ((theRefNr >> 8) & 0xff);
+        udh[1] = (byte) (theRefNr & 0xff);
         udh[2] = (byte) (theTotSms & 0xff);
         udh[3] = (byte) (theSeqNr  & 0xff);
 
