@@ -20,7 +20,7 @@ package org.marre.sms;
 
 public class SmsPdu
 {
-    protected int myDcs = 0;
+    protected SmsDcs myDcs = null;
 
     /** Length of myUd, can be in octets or septets */
     protected int myUdLength = 0;
@@ -32,7 +32,7 @@ public class SmsPdu
     {
     }
 
-    public SmsPdu(byte[] theUdh, byte[] theUd, int theUdLength, int theDcs)
+    public SmsPdu(byte[] theUdh, byte[] theUd, int theUdLength, SmsDcs theDcs)
     {
         setUserDataHeader(theUdh);
         setUserData(theUd, theUdLength, theDcs);
@@ -48,7 +48,7 @@ public class SmsPdu
         return myUdh;
     }
 
-    public void setUserData(byte[] theUd, int theUdLength, int theDcs)
+    public void setUserData(byte[] theUd, int theUdLength, SmsDcs theDcs)
     {
         myUd = theUd;
         myUdLength = theUdLength;
@@ -65,7 +65,7 @@ public class SmsPdu
         return myUdLength;
     }
 
-    public int getDataCodingScheme()
+    public SmsDcs getDataCodingScheme()
     {
         return myDcs;
     }

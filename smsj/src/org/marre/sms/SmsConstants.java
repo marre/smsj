@@ -182,21 +182,26 @@ public class SmsConstants
      * As defined in GSM 03.38. It contains all characters needed for most
      * Western European languages. It also contains upper case Greek characters.
      */
-    public static final int TEXT_ALPHABET_GSM = 0;
-    /**
-     * ISO 8859-1 (ISO Latin-1)
-     */
-    public static final int TEXT_ALPHABET_8BIT = 1;
-    /**
-     * Unicode UCS-2
-     */
-    public static final int TEXT_ALPHABET_UCS2 = 2;
+    public static final int ALPHABET_GSM = 0;
+    /** ISO 8859-1 (ISO Latin-1) */
+    public static final int ALPHABET_8BIT = 1;
+    /** Unicode UCS-2 */
+    public static final int ALPHABET_UCS2 = 2;
+    /** Reserved */
+    public static final int ALPHABET_RESERVED = 3;
+    /** Unknown */
+    public static final int ALPHABET_UNKNOWN = 4;
 
-    public static final byte MSG_CLASS_0 = 0x00;
-    public static final byte MSG_CLASS_1 = 0x01;
-    public static final byte MSG_CLASS_2 = 0x02;
-    public static final byte MSG_CLASS_3 = 0x03;
-    public static final byte MSG_CLASS_UNKNOWN = 0x04;
+    /** Class 0 SMS, sometimes called FLASH message */
+    public static final byte MSG_CLASS_0 = 0;
+    /** Class 1 SMS. Default meaning: ME-specific */
+    public static final byte MSG_CLASS_1 = 1;
+    /** Class 2 SMS, SIM specific message */
+    public static final byte MSG_CLASS_2 = 2;
+    /** Class 3 SMS. Default meaning: TE specific (See GSM TS 07.05) */
+    public static final byte MSG_CLASS_3 = 3;
+    /** Message with no specific message class (Often handled as an class 1 SMS) */
+    public static final byte MSG_CLASS_UNKNOWN = 4;
 
     private SmsConstants()
     {
