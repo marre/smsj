@@ -34,6 +34,14 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.util;
 
+import java.util.Random;
+
+/**
+ * @author MARE
+ *
+ * To change the template for this generated type comment go to
+ * Window>Preferences>Java>Code Generation>Code and Comments
+ */
 /**
  * Various functions to encode and decode strings
  *
@@ -41,10 +49,14 @@ package org.marre.util;
  */
 public class StringUtil
 {
+    private static final char[] RANDOM_CHARS = "abcdefghijklmnopqrstuvwxyz1234567890".toCharArray();
+
+    private static Random myRandom = new Random();
+    
     /**
      * This class isn't intended to be instantiated
      */
-    public StringUtil()
+    private StringUtil()
     {
     }
 
@@ -154,5 +166,24 @@ public class StringUtil
 
         return strBuf.toString();
     }
+    
+    /**
+     * Generates a random string of the given length.
+     * 
+     * "abcdefghijklmnopqrstuvwxyz1234567890"
+     * 
+     * @param length
+     * @return A random string
+     */
+    public static String randString(int length)
+    {
+        StringBuffer sb = new StringBuffer(length);
+        
+        for(int i=0; i < length; i++)
+        {
+            sb.append(RANDOM_CHARS[myRandom.nextInt(RANDOM_CHARS.length)]);
+        }
+        
+        return sb.toString();
+    }
 }
-
