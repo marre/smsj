@@ -36,6 +36,7 @@ package org.marre.sms;
 
 import java.io.*;
 
+import org.marre.sms.util.SmsDcsUtil;
 import org.marre.sms.util.SmsPduUtil;
 
 /**
@@ -125,5 +126,34 @@ public class SmsTextMessage extends SmsConcatMessage
     public SmsTextMessage(String theMsg)
     {
         this(theMsg, SmsConstants.ALPHABET_GSM);
+    }
+    
+    /**
+     * Returns the text message. 
+     */
+    public String getText()
+    {
+        try
+        {
+            switch (SmsDcsUtil.getAlphabet(myDcs))
+            {
+            case SmsConstants.ALPHABET_GSM:
+                return SmsPduUtil.readSeptets(getUserData(), getUserDataLength());
+            case SmsConstants.ALPHABET_8BIT:
+                // 8bit data encoding, No message class, No compression
+                return new String(getUserData(), "ISO-8859-1");
+            case SmsConstants.ALPHABET_UCS2:
+                return new String(getUserData(), "UTF-16BE");
+            default:
+                return null;
+            }
+        }
+        catch (UnsupportedEncodingException ex)
+        {
+            // Shouldn't happen. According to the javadoc documentation
+            // for JDK 1.3.1 the "UTF-16BE" and "ISO-8859-1" encoding
+            // are standard...
+            throw new RuntimeException(ex.getMessage());
+        }
     }
 }
