@@ -96,6 +96,16 @@ public class WbxmlWriter implements XmlWriter
 
     /////// XmlWriter
 
+    public void setDoctype(String name, String systemURI)
+    {
+        // Not sure what to do here
+    }
+
+    public void setDoctype(String name, String publicID, String publicURI)
+    {
+        // Find id, if not found add as string
+    }
+
     public void addStartElement(String tag)
         throws IOException
     {

@@ -1,12 +1,14 @@
 <project name="SMSj" default="compile" basedir=".">
    <!-- set global properties for this build -->
    <property name="project" value="smsj"/>
+
    <property name="lib" value="lib"/>
    <property name="source" value="src"/>
    <property name="build" value="build"/>
    <property name="build.classes" value="${build}/classes"/>
    <property name="doc.api" value="${build}/javadoc"/>
    <property name="dist" value="dist"/>
+   <property name="jakarta-logging" value="${lib}/commons-logging-1.0.jar"/>
 
    <!-- Set up classpath -->
    <path id="classpath">
@@ -32,16 +34,19 @@
    </target>
    <!-- Build all the sources -->
    <target name="compile" depends="prepare">
-      <!-- <property name="build.compiler" value="jikes"/> -->
+      <property name="build.compiler" value="jikes"/> 
       <mkdir dir="${build.classes}"/>
       <javac srcdir="${source}" destdir="${build.classes}" classpathref="classpath" debug="on" deprecation="on" optimize="off"/>
    </target>
    <!-- Build the JAR file -->
    <target name="jar" depends="compile" description="Builds the entire project">
       <delete file="${dist}/${project}.jar"/>
+      <!-- Whole project except for test -->
       <jar jarfile="${dist}/${project}.jar">
          <fileset dir="${build.classes}" includes="**/*.class" excludes="org/marre/sms/test/*"/>
          <fileset dir="./conf" includes="*.prop"/>
+         <!-- Add jakarta logging to JAR file -->
+         <zipfileset src="${jakarta-logging}" includes="**/*.class" />
       </jar>
    </target>
    <!-- Builds Javadoc for this project-->

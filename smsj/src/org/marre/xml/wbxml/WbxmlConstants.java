@@ -118,4 +118,23 @@ public final class WbxmlConstants
 
     /** Tag contains attributes */
     public static final byte TOKEN_KNOWN = (byte)0x00;
+
+    public static final String[] KNOWN_PUBLIC_DOCTYPES = {
+        // 0 String table index follows; public identifier is encoded as a literal in the string table. 
+        // 1 Unknown or missing public identifier. 
+        "-//WAPFORUM//DTD WML 1.0//EN", // (WML 1.0) 
+        "-//WAPFORUM//DTD WTA 1.0//EN", // (Deprecated - WTA Event 1.0) 
+        "-//WAPFORUM//DTD WML 1.1//EN", // (WML 1.1) 
+        "-//WAPFORUM//DTD SI 1.0//EN", // (Service Indication 1.0) 
+        "-//WAPFORUM//DTD SL 1.0//EN", // (Service Loading 1.0) 
+        "-//WAPFORUM//DTD CO 1.0//EN", // (Cache Operation 1.0) 
+        "-//WAPFORUM//DTD CHANNEL 1.1//EN", // (Channel 1.1) 
+        "-//WAPFORUM//DTD WML 1.2//EN", // (WML 1.2) 
+        "-//WAPFORUM//DTD WML 1.3//EN", // (WML 1.3) 
+        "-//WAPFORUM//DTD PROV 1.0//EN", // (Provisioning 1.0) 
+        "-//WAPFORUM//DTD WTA-WML 1.2//EN", // (WTA-WML 1.2) 
+        "-//WAPFORUM//DTD EMN 1.0//EN", // (Email Notification 1.0 WAP-297) 
+        "-//OMA//DTD DRMREL 1.0//EN", // (DRM REL 1.0) 
+    };
 }
+

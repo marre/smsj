@@ -38,6 +38,9 @@ import java.io.IOException;
 
 public interface XmlWriter
 {
+    public void setDoctype(String name, String systemURI);
+    public void setDoctype(String name, String publicID, String publicURI);
+
     public void addStartElement(String tag) throws IOException;
     public void addStartElement(String tag, XmlAttribute attribs[]) throws IOException;
 
