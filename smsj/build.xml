@@ -3,10 +3,9 @@
    <property name="project" value="smsj"/>
    <property name="lib" value="lib"/>
    <property name="source" value="src"/>
-   <property name="doc" value="doc"/>
-   <property name="doc.api" value="${doc}/api"/>
    <property name="build" value="build"/>
    <property name="build.classes" value="${build}/classes"/>
+   <property name="doc.api" value="${build}/javadoc"/>
    <property name="dist" value="dist"/>
 
    <!-- Set up classpath -->
