@@ -23,94 +23,117 @@ import java.io.*;
 
 // TODO: GSM charset
 
+/**
+ * Various functions to encode and decode strings
+ *
+ * @author Markus Eriksson
+ */
 public class SmsPduUtil
 {
+    /**
+     * This class isn't intended to be instantiated
+     */
     private SmsPduUtil()
     {
     }
 
+    /**
+     * Pack the given string into septets.
+     *
+     * @todo Convert to GSM charset
+     *
+     * @param theOs Write the septets into this stream
+     * @param theMsg The message to encode
+     * @throws IOException Thrown when failing to write to theOs
+     */
     public static void writeSeptets(OutputStream theOs, String theMsg)
         throws IOException
     {
-        int bb = 0, bblen = 0;
+        int data = 0;
+        int nBits = 0;
 
         for(int i=0; i < theMsg.length(); i++)
         {
-            char c = (char)(theMsg.charAt(i) & 0x7f);
-            bb |= (c << bblen); // insert c to bb.
-            bblen += 7;
+            char ch = (char)(theMsg.charAt(i) & 0x7f);
+            data |= (ch << nBits);
+            nBits += 7;
 
-            while(bblen >= 8)
+            while(nBits >= 8)
             {
-                // we have a full octet.
-                char o = (char) (bb & 0xff); // take 8 bits.
-                theOs.write(o);
-                bb >>>= 8;
-                bblen -= 8;
+                // Write full octet
+                char octet = (char) (data & 0xff);
+                theOs.write(octet);
+                data >>>= 8;
+                nBits -= 8;
             } // while
         } // for
 
         // Write remaining byte
-        if( (bblen > 0) )
+        if( (nBits > 0) )
         {
-            theOs.write(bb);
+            theOs.write(data);
         }
     }
 
+    /**
+     * Decodes a 7-bit encoded string from the stream
+     *
+     * @todo GSM charset
+     *
+     * @param theIs The stream to read from
+     * @param theLength Number of decoded chars to read from the stream
+     * @return The decoded string
+     * @throws IOException when failing to read from theIs
+     */
     public static String readSeptets(InputStream theIs, int theLength)
         throws IOException
     {
         StringBuffer msg = new StringBuffer(160);
 
-        int r=0, rlen=0; // ints are 32 bit long.
+        int rest = 0;
+        int restBits = 0;
 
-        // assumes even number of chars in octet string.
         while(msg.length() < theLength)
         {
-            char c;
-            int o;
-            int olen;
+            char ch;
+            int octetBits = 8;
+            int octet = theIs.read();
 
-            o = theIs.read();
-            if (o == -1)
+            if (octet == -1)
             {
                 throw new IOException("Unexpected end of stream");
             }
 
-            olen = 8;
+            octet <<= restBits;
+            octet |= rest;
+            octetBits += restBits;
 
-            if(rlen >= 7)
+            msg.append((char) (octet & 0x7f));
+            octet >>>= 7;
+            octetBits -= 7;
+
+            rest = octet;
+            restBits = octetBits;
+
+            if(restBits >= 7)
             {
-                // take a full char off remainder.
-                c = (char) (r & 0x7f);
-                r >>>= 7;
-                rlen -= 7;
-                msg.append(c);
+                msg.append((char)(rest & 0x7f));
 
-                if (msg.length() == theLength)
-                {
-                    break;
-                }
-
+                rest >>>= 7;
+                restBits -= 7;
             }
-
-            o <<= rlen; // push remainding bits from r to o.
-            o |= r;
-            olen += rlen;
-
-            c = (char) (o & 0x7f); // get first 7 bits from o.
-            o >>>= 7;
-            olen -= 7;
-
-            r = o; // put remainding bits from o to r.
-            rlen = olen;
-
-            msg.append(c);
         } // for
 
         return msg.toString();
     }
 
+    /**
+     * Writes the given phonenumber to the stream (BCD coded)
+     *
+     * @param theOs Stream to write to
+     * @param theNumber Number to convert
+     * @throws IOException when failing to write to theOs
+     */
     public static void writeBcdNumber(OutputStream theOs, String theNumber)
         throws IOException
     {
@@ -159,11 +182,26 @@ public class SmsPduUtil
         }
     }
 
+    /**
+     * Not implemented yet
+     *
+     * @todo Implement
+     *
+     * @param theIs
+     * @param theLength
+     * @return Decoded number
+     */
     public static String readBcdNumber(InputStream theIs, int theLength)
     {
         return null;
     }
 
+    /**
+     * Conversts a byte array to a string with hex values.
+     *
+     * @param theData Data to convert
+     * @return the encoded string
+     */
     public static String bytesToHexString(byte[] theData)
     {
         StringBuffer hexStrBuff = new StringBuffer(theData.length*2);
@@ -181,6 +219,12 @@ public class SmsPduUtil
         return hexStrBuff.toString();
     }
 
+    /**
+     * Converts a string of hex characters to a byte array
+     *
+     * @param theHexString The hex string to read
+     * @return the resulting byte array
+     */
     public static byte[] hexStringToBytes(String theHexString)
     {
         byte data[] = new byte[theHexString.length()/2];
