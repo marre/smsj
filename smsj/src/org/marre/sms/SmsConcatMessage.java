@@ -19,6 +19,7 @@
 package org.marre.sms;
 
 import java.util.*;
+import java.io.*;
 import org.marre.sms.util.*;
 
 /**
@@ -40,6 +41,10 @@ public class SmsConcatMessage extends SmsAbstractMessage
 
     protected SmsUdhElement[] myUdhElements = null;
     protected byte myUd[] = null;
+
+    protected SmsConcatMessage()
+    {
+    }
 
     protected SmsConcatMessage(byte theDcs)
     {
@@ -70,9 +75,23 @@ public class SmsConcatMessage extends SmsAbstractMessage
      *
      * @return the UD
      */
-    public byte[] getUd()
+    public byte[] getUserData()
     {
         return myUd;
+    }
+
+    /**
+     * Returns the length of the user data field
+     * <p>
+     * This can be in characters or byte depending on the message (DCS).
+     * If message is 7 bit coded the length is given in septets.
+     * If 8bit or UCS2 the length is in octets.
+     *
+     * @return The length
+     */
+    public int getUserDataLength()
+    {
+        return myUdLength;
     }
 
     /**
@@ -80,9 +99,29 @@ public class SmsConcatMessage extends SmsAbstractMessage
      *
      * @return the UDH
      */
-    public byte[] getUdh()
+    public byte[] getUserDataHeaders()
     {
-        return null;
+        if ( myUdhElements == null)
+        {
+            return null;
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(100);
+
+        try
+        {
+            for(int i=0; i < myUdhElements.length; i++)
+            {
+                myUdhElements[i].writeTo(baos);
+            }
+        }
+        catch (IOException ioe)
+        {
+            // Shouldn't happen.
+            throw new RuntimeException("Failed to write to ByteArrayOutputStream");
+        }
+
+        return baos.toByteArray();
     }
 
     /**
@@ -103,7 +142,7 @@ public class SmsConcatMessage extends SmsAbstractMessage
 
         // 8-bit concat header is 6 bytes...
         nMaxConcatChars = theMaxBytes - 6;
-        nMaxChars = nMaxConcatChars;
+        nMaxChars = theMaxBytes;
 
         if (myUdLength <= nMaxChars)
         {
@@ -130,13 +169,13 @@ public class SmsConcatMessage extends SmsAbstractMessage
             else
             {
                 pduUdhElements = new SmsUdhElement[myUdhElements.length + 1];
-            }
 
-            // Copy the UDH headers
-            for (int j=0; j < myUdhElements.length; j++)
-            {
-                // Leave position pduUdhElements[0] for the concat UDHI
-                pduUdhElements[j + 1] = myUdhElements[j];
+                // Copy the UDH headers
+                for (int j=0; j < myUdhElements.length; j++)
+                {
+                    // Leave position pduUdhElements[0] for the concat UDHI
+                    pduUdhElements[j + 1] = myUdhElements[j];
+                }
             }
 
             // Create pdus
@@ -153,11 +192,11 @@ public class SmsConcatMessage extends SmsAbstractMessage
                 // Create
                 // Must concatenate messages
                 // Calc pdu length
-                udOffset = nMaxChars * i;
+                udOffset = nMaxConcatChars * i;
                 udBytes = myUd.length - udOffset;
-                if (udBytes > nMaxChars)
+                if (udBytes > nMaxConcatChars)
                 {
-                    udBytes = nMaxChars;
+                    udBytes = nMaxConcatChars;
                 }
                 udLength = udBytes;
 
@@ -173,43 +212,12 @@ public class SmsConcatMessage extends SmsAbstractMessage
     {
         int nMaxChars;
         int nMaxConcatChars;
-        byte pduUd[] = null;
+        SmsPdu smsPdus[] = null;
 
         // 8-bit concat header is 6 bytes...
         nMaxConcatChars = (theMaxBytes - 6) / 2;
         nMaxChars = theMaxBytes / 2;
 
-        if (myUdLength <= theMaxBytes)
-        {
-            return new SmsPdu[] { new SmsPdu(myUdhElements, myUd, myUdLength) };
-        }
-
-        // Must concatenate messages
-        return null;
-    }
-
-    private SmsPdu[] createSeptetPdus(int theMaxBytes)
-    {
-        int nMaxChars;
-        int nMaxConcatChars;
-        byte pduUd[] = null;
-
-        // 8-bit concat header is 6 bytes...
-        nMaxConcatChars = ((theMaxBytes - 6) * 8) / 7;
-        nMaxChars = (theMaxBytes * 8) / 7;
-
-        if (myUdLength <= nMaxChars)
-        {
-            return new SmsPdu[] { new SmsPdu(myUdhElements, myUd, myUdLength) };
-        }
-
-        // Must concatenate messages
-        return null;
-    }
-/*
-    private SmsPdu[] createPdus(int theMaxBytes)
-    {
-        SmsPdu smsPdus[] = null;
         if (myUdLength <= nMaxChars)
         {
             smsPdus = new SmsPdu[] { new SmsPdu(myUdhElements, myUd, myUdLength) };
@@ -217,81 +225,87 @@ public class SmsConcatMessage extends SmsAbstractMessage
         else
         {
             int refno = myRnd.nextInt(256);
-            int nSms = myUdLength / nMaxConcatChars;
-            if ( (myUdLength % nMaxConcatChars) > 0 )
+
+            // Calculate number of SMS needed
+            int nSms = (myUdLength/2) / nMaxConcatChars;
+            if ( ((myUdLength/2) % nMaxConcatChars) > 0 )
             {
                 nSms += 1;
             }
-
             smsPdus = new SmsPdu[nSms];
 
-            for(int i=0; i < nSms; i++)
+            // Calculate number of UDHI
+            SmsUdhElement[] pduUdhElements = null;
+            if (myUdhElements == null)
             {
-                int msgStart = ((nMaxConcatChars * i) * nBitsPerChar) / 8;
-                int msgBitOffset = ((nMaxConcatChars * i) * nBitsPerChar) % 8;
-                int msgLength = nMaxConcatChars;
+                pduUdhElements = new SmsUdhElement[1];
+            }
+            else
+            {
+                pduUdhElements = new SmsUdhElement[myUdhElements.length + 1];
 
-                if (msgLength > (udLength - (nMaxConcatChars * i)))
-                {
-                    msgLength = udLength - (
-                }
-
-                int msgBitLength = msgLength * nBitsPerChar;
-                int msgByteLength = msgBitLength / 8;
-
-                if (msgBitLength % 8 > 0)
-                {
-                    msgByteLength += 1;
-                }
-
-                byte pduUd[] = null;
-
-                SmsUdhElement[] pduUdhElements = new SmsUdhElement[myUdhElements.length + 1];
-
-                // Add a concat header
-                pduUdhElements[0] = SmsUdhUtil.get8BitConcatUdh(refno, nSms, i + 1);
+                // Copy the UDH headers
                 for (int j=0; j < myUdhElements.length; j++)
                 {
+                    // Leave position pduUdhElements[0] for the concat UDHI
                     pduUdhElements[j + 1] = myUdhElements[j];
                 }
+            }
 
-                smsPdus[i] = new SmsPdu(pduUdhElements, ud, udLength);
-                createPdu(pduUdhElements, msgOffset, maxConcatLength);
+            // Create pdus
+            for (int i=0; i < nSms; i++)
+            {
+                byte pduUd[];
+                int udBytes;
+                int udLength;
+                int udOffset;
+
+                // Create concat header
+                pduUdhElements[0] = SmsUdhUtil.get8BitConcatUdh(refno, nSms, i + 1);
+
+                // Create
+                // Must concatenate messages
+                // Calc pdu length
+                udOffset = nMaxConcatChars * i;
+                udLength = (myUdLength/2) - udOffset;
+                if (udLength > nMaxConcatChars)
+                {
+                    udLength = nMaxConcatChars;
+                }
+                udBytes = udLength * 2;
+
+                pduUd = new byte[udBytes];
+                SmsPduUtil.arrayCopy(myUd, udOffset * 2, pduUd, 0, udBytes);
+                smsPdus[i] = new SmsPdu(pduUdhElements, pduUd, udBytes);
             }
         }
-
         return smsPdus;
     }
 
-    private SmsPdu createPdu(SmsUdhElement[] theUdhElements, int theOffset, int theMaxLength)
+    private SmsPdu[] createSeptetPdus(int theMaxBytes)
     {
-        byte pduUd[] = null;
-        int udBytes;
-        int udLength = 0;
+        int nMaxChars;
+        int nMaxConcatChars;
+        SmsPdu smsPdus[] = null;
 
-        // Copy data to pduUd
-        switch (SmsDcsUtil.getAlphabet(getDataCodingScheme()))
+        // 8-bit concat header is 6 bytes...
+        nMaxConcatChars = ((theMaxBytes - 6) * 8) / 7;
+        nMaxChars = (theMaxBytes * 8) / 7;
+
+        if (myUdLength <= nMaxChars)
         {
-        case SmsConstants.ALPHABET_GSM:
-            break;
-        case SmsConstants.ALPHABET_8BIT:
-        case SmsConstants.ALPHABET_UCS2:
-            // Calc pdu length
-            udBytes = myUd.length - theOffset;
-            if (udBytes > theMaxLength)
-            {
-                udBytes = theMaxLength;
-            }
-            udLength = udBytes;
-            // Copy
-            pduUd = new byte[udBytes];
-            SmsPduUtil.arrayCopy(myUd, theOffset, pduUd, 0, udBytes);
-            break;
+            smsPdus = new SmsPdu[] { new SmsPdu(myUdhElements, myUd, myUdLength) };
         }
-
-        return new SmsPdu(theUdhElements, pduUd, udLength);
+        else
+        {
+            // Convert septets into an ordinary string
+            // Divide string into parts
+            // Write septets...
+            throw new RuntimeException("Not implemented yet!");
+        }
+        return smsPdus;
     }
-*/
+
     public SmsPdu[] getPdus()
     {
         SmsPdu[] smsPdus = null;
