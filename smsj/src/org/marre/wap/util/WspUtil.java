@@ -190,7 +190,7 @@ public class WspUtil
         */
 
         byte strBytes[] = theStr.getBytes("ISO-8859-1");
-
+			
         if ( (strBytes[0] & 0x80) > 0x00 )
         {
             theOs.write(0x7f);
@@ -343,18 +343,18 @@ public class WspUtil
             break;
 
         case WapConstants.WSP_TYPE_DATE_VALUE:
-            // TODO: Implement
             /*
             ; The encoding of dates shall be done in number of seconds from
             ; 1970-01-01, 00:00:00 GMT.
             */
-            writeTextString(os, value);
+            Long l = Long.valueOf(value);
+            writeLongInteger(os, l.longValue());
             break;
 
         case WapConstants.WSP_TYPE_DELTA_SECONDS_VALUE:
             // Integer-Value
-            // TODO: Implement
-            writeTextString(os, value);
+						Integer i = Integer.valueOf(value);
+						writeInteger(os, i.intValue());
             break;
 
         case WapConstants.WSP_TYPE_Q_VALUE:
