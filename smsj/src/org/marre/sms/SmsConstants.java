@@ -18,6 +18,11 @@
 */
 package org.marre.sms;
 
+/**
+ * Contains various SMS related constants
+ *
+ * @author Markus Eriksson
+ */
 public class SmsConstants
 {
     /**
@@ -149,6 +154,19 @@ public class SmsConstants
     public static final byte UDH_IEI_RFC822_EMAIL_HEADER = 0x20;
     /** Hyperlink format element */
     public static final byte UDH_IEI_HYPERLINK_FORMAT = 0x21;
+
+    /* MESSAGE INDICATION TYPES FOR UDH_IEI_SPECIAL_MESSAGE */
+
+    /** UDH_IEI_SPECIAL_MESSAGE type "Voice Message Waiting" */
+    public static final int MESSAGE_WAITING_VOICE = 0x00;
+    /** UDH_IEI_SPECIAL_MESSAGE type "Fax Message Waiting" */
+    public static final int MESSAGE_WAITING_FAX   = 0x01;
+    /** UDH_IEI_SPECIAL_MESSAGE type "Electronic Mail Message Waiting" */
+    public static final int MESSAGE_WAITING_EMAIL = 0x02;
+    /** UDH_IEI_SPECIAL_MESSAGE type "Other Message Waiting
+     *  (see 3GPP TS 23.038 [9] for definition of 'other')" */
+    public static final int MESSAGE_WAITING_OTHER = 0x03;
+
 
     /* PORT NUMBERS */
 
