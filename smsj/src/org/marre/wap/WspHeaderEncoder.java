@@ -56,7 +56,7 @@ public final class WspHeaderEncoder
     
     public static void writeHeader(byte wspEncodingVersion, OutputStream theOs, MimeHeader theHeader) throws IOException
     {
-        String headerName = theHeader.getName();
+        String headerName = theHeader.getName().toLowerCase();
         int headerType = WspUtil.getHeaderType(headerName);
 
         switch (headerType)
@@ -233,7 +233,7 @@ public final class WspHeaderEncoder
      */
     public static void writeHeaderContentLocation(byte wspEncodingVersion, OutputStream theOs, String theContentLocation) throws IOException
     {
-        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_CONTENT_ID);        
+        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_CONTENT_LOCATION);        
         WspUtil.writeShortInteger(theOs, headerId);
         WspUtil.writeTextString(theOs, theContentLocation);
     }
@@ -262,7 +262,7 @@ public final class WspHeaderEncoder
     {
         int wellKnownAppId = WspUtil.getWellKnownPushAppId(theAppId.toLowerCase());
         
-        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_CONTENT_TYPE);        
+        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_X_WAP_APPLICATION_ID);        
         if (headerId != -1)
         {
             WspUtil.writeShortInteger(theOs, headerId);
