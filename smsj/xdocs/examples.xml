@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+    <properties>
+        <title>Examples</title>
+        <author email="c95men at users.sourceforge.net ">Markus Eriksson</author>
+    </properties>
+    <body>
+        <section name="Table of Contents">
+            <blockquote>
+				Simple examples.
+            </blockquote>
+            <p>
+                <ol>
+                    <li>
+                        <a href="#Using SmsSender">Using SmsSender</a>
+                    </li>
+                </ol>
+            </p>
+        </section>
+		
+        <section name="Using SmsSender">
+            <p>
+				Simple example using the <code>SmsSender</code> class:
+                <source><![CDATA[SmsSender sender = SmsSender.getClickatellSender("username", "password", "apiid");
+// "441111111" is the destination number
+// "443333333" is the sender number
+sender.sendTextSms("Just a sample SMS", "441111111", "443333333");
+sender.close();]]></source>
+            </p>
+        </section>
+    </body>
+</document>
