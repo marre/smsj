@@ -29,8 +29,6 @@ import java.io.UnsupportedEncodingException;
 /**
  * Nokia Picture message
  * <p>
- * <b>Note!</b> I haven't been able to verify if PICTURE_ABOVE_TEXT or
- * PICTURE_BELOW_TEXT actually works as expected.
  * @author Markus Eriksson
  * @version $Id$
  */
@@ -38,18 +36,15 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
 {
     private static Log myLog = LogFactory.getLog(NokiaPictureMessage.class);
 
-    public static final int PICTURE_ABOVE_TEXT = 1;
-    public static final int PICTURE_BELOW_TEXT = 2;
-
     /**
      * Creates a Nokia Picture Message
      *
      * @param theBitmap
      * @param theMsg
      */
-    public NokiaPictureMessage(OtaBitmap theBitmap, String theMsg, int theOrientation)
+    public NokiaPictureMessage(OtaBitmap theBitmap, String theMsg)
     {
-        this(theBitmap, theMsg, theOrientation, false);
+        this(theBitmap, theMsg, false);
     }
 
     /**
@@ -58,21 +53,9 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
      * @param theBitmap
      * @param theMsg
      */
-    public NokiaPictureMessage(byte[] theBitmap, String theMsg, int theOrientation)
+    public NokiaPictureMessage(byte[] theBitmap, String theMsg)
     {
-        this(theBitmap, theMsg, theOrientation, false);
-    }
-
-    /**
-     * Creates a Nokia Picture Message
-     *
-     * @param theBitmap
-     * @param theMsg
-     * @param asUnicode Set to true if text should be sent as unicode
-     */
-    public NokiaPictureMessage(OtaBitmap theBitmap, String theMsg, int theOrientation, boolean asUnicode)
-    {
-        this(theBitmap.getBytes(), theMsg, theOrientation, asUnicode);
+        this(theBitmap, theMsg, false);
     }
 
     /**
@@ -82,18 +65,22 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
      * @param theMsg
      * @param asUnicode Set to true if text should be sent as unicode
      */
-    public NokiaPictureMessage(byte[] theBitmap, String theMsg, int theOrientation, boolean asUnicode)
+    public NokiaPictureMessage(OtaBitmap theBitmap, String theMsg, boolean asUnicode)
     {
-        if (theOrientation == PICTURE_ABOVE_TEXT)
-        {
-            addBitmap(theBitmap);
-            addText(theMsg, asUnicode);
-        }
-        else
-        {
-            addText(theMsg, asUnicode);
-            addBitmap(theBitmap);
-        }
+        this(theBitmap.getBytes(), theMsg, asUnicode);
+    }
+
+    /**
+     * Creates a Nokia Picture Message
+     *
+     * @param theBitmap
+     * @param theMsg
+     * @param asUnicode Set to true if text should be sent as unicode
+     */
+    public NokiaPictureMessage(byte[] theBitmap, String theMsg, boolean asUnicode)
+    {
+        addBitmap(theBitmap);
+        addText(theMsg, asUnicode);
 
         // Finally let the NokiaMultipartMessage build the pdu:s
         buildPdus();
@@ -143,3 +130,4 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
         }
     }
 }
+
