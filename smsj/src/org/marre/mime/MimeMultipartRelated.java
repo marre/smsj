@@ -34,89 +34,42 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
-import java.util.*;
-import java.io.Serializable;
-
-public class MimeHeader implements Serializable
+public class MimeMultipartRelated extends MimeMultipart
 {
-    protected String myHeaderName;
-    protected String myHeaderValue;
+    private MimeBodyPart myStartBodyPart = null;
 
-    protected List myParams;
-
-    protected MimeHeader()
+    public MimeMultipartRelated()
     {
+        super("related");
     }
 
-    public MimeHeader(String theName, String theValue)
+    public void setStartBodyPart(MimeBodyPart theBodyPart)
     {
-        myHeaderName = theName;
-        myHeaderValue = theValue;
-        myParams = new LinkedList();
-    }
-
-    public void setValue(String theValue)
-    {
-        myHeaderValue = theValue;
-    }
-
-    public String getName()
-    {
-        return myHeaderName;
-    }
-
-    public String getValue()
-    {
-        return myHeaderValue;
-    }
-
-    public void addParam(String theName, String theValue)
-    {
-        // Remove parameter if it already exists...
-        removeParam(theName);
-        
-        // Add new...
-        myParams.add(new MimeHeaderParam(theName, theValue));
-    }
-
-    public MimeHeaderParam getParam(String theName)
-    {
-        Iterator iter = myParams.iterator();
-        while (iter.hasNext())
+        myStartBodyPart = null;
+        if (myParts.contains(theBodyPart))
         {
-            MimeHeaderParam param = (MimeHeaderParam) iter.next();
-            if (param.getName().equalsIgnoreCase(theName))
+            myStartBodyPart = theBodyPart;
+        }
+    }
+
+    public MimeContentType getContentType()
+    {
+        MimeContentType ct = super.getContentType();
+        if (myStartBodyPart != null)
+        {
+            MimeContentType startCt = myStartBodyPart.getContentType();
+            MimeHeader startCid = myStartBodyPart.getHeader("content-id");
+            
+            // Add content-type
+            ct.addParam("type", myStartBodyPart.getContentType().getValue());
+            
+            // Add start parameter
+            if (startCid != null)
             {
-                return param;
+                ct.addParam("start", startCid.getValue());
             }
         }
-        
-        // Not found
-        return null;
-    }
-    
-    public void removeParam(String theName)
-    {
-        MimeHeaderParam param = getParam(theName);
-        
-        if (param != null)
-        {
-            myParams.remove(param);
-        }
-    }
-
-    public List getAllParams()
-    {
-        return myParams;
-    }
-
-    public int getParamCount()
-    {
-        return myParams.size();
-    }
-
-    public MimeHeaderParam getParam(int theIndex)
-    {
-        return (MimeHeaderParam) myParams.get(theIndex);
+        return ct;
     }
 }
+

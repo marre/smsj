@@ -161,7 +161,6 @@ public class WspUtil
             theOs.write(31);
             writeUintvar(theOs, theValue);
         }
-        theOs.write((byte) (theValue | (byte)0x80));
     }
 
     /**
@@ -400,8 +399,8 @@ public class WspUtil
         case WapConstants.WSP_TYPE_WELL_KNOWN_CHARSET:
             // Any-Charset | Integer-Value
             // ; Both are encoded using values from Character Set Assignments table in Assigned Numbers
-            // TODO: Implement
-            writeTextString(os, value);
+            // TODO: Implement correctly. Currently we always say "UTF8"
+            writeInteger(os, WapConstants.MIB_ENUM_UTF_8);
             break;
 
         case WapConstants.WSP_TYPE_FIELD_NAME:
@@ -451,4 +450,39 @@ public class WspUtil
         }
     }
 
+    /**
+     * Converts from a "multipart/" content type to "vnd.wap..." content type.
+     * 
+     * @param ct
+     * @return
+     */
+    public static String convertMultipartContentType(String ct)
+    {
+        if (ct.equalsIgnoreCase("multipart/*"))
+        {
+            return "application/vnd.wap.multipart.*";
+        }
+        else if (ct.equalsIgnoreCase("multipart/mixed"))
+        {
+            return "application/vnd.wap.multipart.mixed";
+        }
+        else if (ct.equalsIgnoreCase("multipart/form-data"))
+        {
+            return "application/vnd.wap.multipart.form-data";
+        }
+        else if (ct.equalsIgnoreCase("multipart/byteranges"))
+        {
+            return "application/vnd.wap.multipart.byteranges";
+        }
+        else if (ct.equalsIgnoreCase("multipart/alternative"))
+        {
+            return "application/vnd.wap.multipart.alternative";
+        }
+        else if (ct.equalsIgnoreCase("multipart/related"))
+        {
+            return "application/vnd.wap.multipart.related";
+        }
+        
+        return ct;
+    }
 }

@@ -40,17 +40,15 @@ public class MimeMultipart extends MimeBodyPart
 {
     protected List myParts;
 
-    protected String mySubtype = null;
-
-    public MimeMultipart()
+    protected MimeMultipart()
     {
-        this(null);
+        myParts = new LinkedList();
     }
 
     public MimeMultipart(String subtype)
     {
-        mySubtype = (subtype == null) ? "*" : subtype ;
-        myParts = new LinkedList();
+        this();
+        myContentType = new MimeContentType("multipart/" + subtype);
     }
 
     public void addBodyPart(MimeBodyPart theBodyPart)
@@ -58,19 +56,9 @@ public class MimeMultipart extends MimeBodyPart
         myParts.add(theBodyPart);
     }
 
-    public void addBodyPart(MimeBodyPart theBodyPart, int theIndex)
-    {
-        myParts.add(theIndex, theBodyPart);
-    }
-
     public void removeBodyPart(MimeBodyPart theBodyPart)
     {
         myParts.remove(theBodyPart);
-    }
-
-    public void removeBodyPart(int theIndex)
-    {
-        myParts.remove(theIndex);
     }
 
     public MimeBodyPart getBodyPart(int theIndex)
@@ -78,20 +66,15 @@ public class MimeMultipart extends MimeBodyPart
         return (MimeBodyPart) myParts.get(theIndex);
     }
 
+/*
     public List getBodyParts()
     {
-        return myParts;
+        return Collections.unmodifiableList(myParts);
     }
+*/    
 
     public int getBodyPartCount()
     {
         return myParts.size();
-    }
-
-    public MimeContentType getContentType()
-    {
-        MimeContentType ct = super.getContentType();
-        ct.setValue("multipart/" + mySubtype);
-        return ct;
     }
 }

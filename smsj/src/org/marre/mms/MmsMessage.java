@@ -38,6 +38,10 @@ import org.marre.mime.*;
 
 public interface MmsMessage
 {
+/*	MARE: Not sure if we need a MmsMessage...
+ 	It's probably only a container for a MimeBodyPart...
+ 	
     public MimeContentType getContentType();
     public MimeBodyPart getContent();
+*/    
 }

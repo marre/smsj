@@ -32,91 +32,45 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.mime;
+package org.marre.mime.util;
 
-import java.util.*;
-import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 
-public class MimeHeader implements Serializable
+import org.marre.mime.MimeBodyPart;
+
+public class MimeUtil
 {
-    protected String myHeaderName;
-    protected String myHeaderValue;
-
-    protected List myParams;
-
-    protected MimeHeader()
+    private MimeUtil()
     {
-    }
-
-    public MimeHeader(String theName, String theValue)
-    {
-        myHeaderName = theName;
-        myHeaderValue = theValue;
-        myParams = new LinkedList();
-    }
-
-    public void setValue(String theValue)
-    {
-        myHeaderValue = theValue;
-    }
-
-    public String getName()
-    {
-        return myHeaderName;
-    }
-
-    public String getValue()
-    {
-        return myHeaderValue;
-    }
-
-    public void addParam(String theName, String theValue)
-    {
-        // Remove parameter if it already exists...
-        removeParam(theName);
-        
-        // Add new...
-        myParams.add(new MimeHeaderParam(theName, theValue));
-    }
-
-    public MimeHeaderParam getParam(String theName)
-    {
-        Iterator iter = myParams.iterator();
-        while (iter.hasNext())
-        {
-            MimeHeaderParam param = (MimeHeaderParam) iter.next();
-            if (param.getName().equalsIgnoreCase(theName))
-            {
-                return param;
-            }
-        }
-        
-        // Not found
-        return null;
     }
     
-    public void removeParam(String theName)
+    public static final MimeBodyPart createTextBodyPart(String str)
     {
-        MimeHeaderParam param = getParam(theName);
-        
-        if (param != null)
+        return createTextBodyPart(str, "text/plain");
+    }
+    
+    public static final MimeBodyPart createTextBodyPart(String str, String contentType)
+    {
+        byte[] data = null;
+
+        try 
         {
-            myParams.remove(param);
+            data = str.getBytes("UTF-8");
         }
+        catch (UnsupportedEncodingException ex)
+        {
+            // Shouldn't happen.... UTF-8 is standard...
+        }
+        
+        return createBinaryBodyPart(data, contentType);
     }
 
-    public List getAllParams()
+    public static final MimeBodyPart createBinaryBodyPart(byte[] content, String contentType)
     {
-        return myParams;
-    }
+        MimeBodyPart binBodyPart = new MimeBodyPart();
 
-    public int getParamCount()
-    {
-        return myParams.size();
-    }
+        binBodyPart.setContent(content, contentType);
 
-    public MimeHeaderParam getParam(int theIndex)
-    {
-        return (MimeHeaderParam) myParams.get(theIndex);
-    }
+        return binBodyPart;
+    }    
 }
