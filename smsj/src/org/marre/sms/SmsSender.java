@@ -84,6 +84,7 @@ public class SmsSender
         throws SmsException
     {
         myTransport = SmsTransportManager.getTransport(theTransport, theProps);
+        myTransport.connect();
     }
 
     /**
@@ -210,10 +211,7 @@ public class SmsSender
     {
         SmsTextMessage textMessage = new SmsTextMessage(theMsg, theAlphabet);
 
-        // FIXME: Currently it is a bit stupid and always reconnects...
-        myTransport.connect();
         myTransport.send(textMessage, new SmsAddress(theDest), new SmsAddress(theSender));
-        myTransport.disconnect();
     }
 
     /**
