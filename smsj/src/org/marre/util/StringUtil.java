@@ -52,6 +52,27 @@ public class StringUtil
     }
 
     /**
+     *
+     * @param stringTable
+     * @param text
+     * @return
+     */
+    public static int findString(String stringTable[], String text)
+    {
+        if (stringTable != null)
+        {
+            for(int i=0; i < stringTable.length; i++)
+            {
+                if (stringTable[i].equals(text))
+                {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Converts a byte array to a string with hex values.
      *
      * @param theData Data to convert

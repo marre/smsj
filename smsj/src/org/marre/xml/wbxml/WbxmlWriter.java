@@ -38,6 +38,7 @@ import java.io.*;
 import java.util.*;
 
 import org.marre.xml.*;
+import org.marre.util.*;
 
 import org.marre.wap.util.WspUtil;
 import org.marre.wap.WapConstants;
@@ -111,7 +112,7 @@ public class WbxmlWriter implements XmlWriter
     public void addStartElement(String tag)
         throws IOException
     {
-        int tagIndex = WspUtil.findString(myTagTokens, tag);
+        int tagIndex = StringUtil.findString(myTagTokens, tag);
         if (tagIndex >= 0)
         {
             // Known tag
@@ -129,7 +130,7 @@ public class WbxmlWriter implements XmlWriter
     public void addStartElement(String tag, XmlAttribute[] attribs)
         throws IOException
     {
-        int tagIndex = WspUtil.findString(myTagTokens, tag);
+        int tagIndex = StringUtil.findString(myTagTokens, tag);
         if (tagIndex >= 0)
         {
             // Known tag
@@ -150,7 +151,7 @@ public class WbxmlWriter implements XmlWriter
     public void addEmptyElement(String tag)
         throws IOException
     {
-        int tagIndex = WspUtil.findString(myTagTokens, tag);
+        int tagIndex = StringUtil.findString(myTagTokens, tag);
         if (tagIndex >= 0)
         {
             // Known tag
@@ -168,7 +169,7 @@ public class WbxmlWriter implements XmlWriter
     public void addEmptyElement(String tag, XmlAttribute[] attribs)
         throws IOException
     {
-        int tagIndex = WspUtil.findString(myTagTokens, tag);
+        int tagIndex = StringUtil.findString(myTagTokens, tag);
 
         if (tagIndex >= 0)
         {
@@ -267,10 +268,10 @@ public class WbxmlWriter implements XmlWriter
         }
         else
         {
-            int idx = WspUtil.findString(WbxmlConstants.KNOWN_PUBLIC_DOCTYPES, publicID);
+            int idx = StringUtil.findString(WbxmlConstants.KNOWN_PUBLIC_DOCTYPES, publicID);
             if (idx != -1)
             {
-                // Known ID 
+                // Known ID
                 idx += 2; // Skip 0 and 1
                 WspUtil.writeUintvar(os, idx);
             }
@@ -324,7 +325,7 @@ public class WbxmlWriter implements XmlWriter
         for (int i = 0; i < attribs.length; i++)
         {
             // TYPE
-            idx = WspUtil.findString(myAttrStartTokens, attribs[i].getType());
+            idx = StringUtil.findString(myAttrStartTokens, attribs[i].getType());
             if (idx >= 0)
             {
                 idx += 0x05; // Attr start token table starts at #5
@@ -337,7 +338,7 @@ public class WbxmlWriter implements XmlWriter
             }
 
             // VALUE
-            idx = WspUtil.findString(myAttrValueTokens, attribs[i].getValue());
+            idx = StringUtil.findString(myAttrValueTokens, attribs[i].getValue());
             if(idx >= 0) {
                 idx += 0x85; // Attr value token table starts at 85
                 myWbxmlBody.write (idx);

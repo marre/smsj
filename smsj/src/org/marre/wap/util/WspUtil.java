@@ -38,6 +38,7 @@ import java.io.*;
 
 import org.marre.wap.*;
 import org.marre.mime.*;
+import org.marre.util.*;
 
 /**
  *
@@ -522,27 +523,6 @@ public class WspUtil
     }
 
     /**
-     *
-     * @param stringTable
-     * @param text
-     * @return
-     */
-    public static int findString(String stringTable[], String text)
-    {
-        if (stringTable != null)
-        {
-            for(int i=0; i < stringTable.length; i++)
-            {
-                if (stringTable[i].equals(text))
-                {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    }
-
-    /**
      * Finds an WINA assigned number for the given parameter.
      *
      * @param theParameter
@@ -550,7 +530,7 @@ public class WspUtil
      */
     public static final int findParameter(String theParameter)
     {
-        return findString(WapConstants.PARAMETER_NAMES, theParameter.toLowerCase());
+        return StringUtil.findString(WapConstants.PARAMETER_NAMES, theParameter.toLowerCase());
     }
 
     /**
@@ -561,7 +541,7 @@ public class WspUtil
      */
     public static final int findContentType(String theContentType)
     {
-        return findString(WapConstants.CONTENT_TYPES, theContentType.toLowerCase());
+        return StringUtil.findString(WapConstants.CONTENT_TYPES, theContentType.toLowerCase());
     }
 
     /**
@@ -591,7 +571,7 @@ public class WspUtil
      */
     public static final int findPushAppId(String thePushAppId)
     {
-        return findString(WapConstants.PUSH_APP_IDS, thePushAppId.toLowerCase());
+        return StringUtil.findString(WapConstants.PUSH_APP_IDS, thePushAppId.toLowerCase());
     }
 
     /**
