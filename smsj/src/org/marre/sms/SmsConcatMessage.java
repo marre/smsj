@@ -27,7 +27,9 @@ import org.marre.sms.util.*;
  * <p>
  * - Only usable for messages that uses the same UDH fields for all
  * message parts.<br>
- * - Can currently only handle 8-bit messages.
+ * - This class could be better written. There are several parts that are copy-
+ * pasted.<br>
+ * - The septet coding could be a bit optimized.<br>
  *
  * @author Markus Eriksson
  * @version 1.0
@@ -298,10 +300,60 @@ public class SmsConcatMessage extends SmsAbstractMessage
         }
         else
         {
-            // Convert septets into an ordinary string
-            // Divide string into parts
-            // Write septets...
-            throw new RuntimeException("Not implemented yet!");
+            int refno = myRnd.nextInt(256);
+
+            // Calculate number of SMS needed
+            int nSms = myUdLength / nMaxConcatChars;
+            if ( (myUdLength % nMaxConcatChars) > 0 )
+            {
+                nSms += 1;
+            }
+            smsPdus = new SmsPdu[nSms];
+
+            // Calculate number of UDHI
+            SmsUdhElement[] pduUdhElements = null;
+            if (myUdhElements == null)
+            {
+                pduUdhElements = new SmsUdhElement[1];
+            }
+            else
+            {
+                pduUdhElements = new SmsUdhElement[myUdhElements.length + 1];
+
+                // Copy the UDH headers
+                for (int j=0; j < myUdhElements.length; j++)
+                {
+                    // Leave position pduUdhElements[0] for the concat UDHI
+                    pduUdhElements[j + 1] = myUdhElements[j];
+                }
+            }
+
+            // Convert septets into a string...
+            String msg = SmsPduUtil.readSeptets(myUd, myUdLength);
+
+            // Create pdus
+            for (int i=0; i < nSms; i++)
+            {
+                byte pduUd[];
+                int udOffset;
+                int udLength;
+
+                // Create concat header
+                pduUdhElements[0] = SmsUdhUtil.get8BitConcatUdh(refno, nSms, i + 1);
+
+                // Create
+                // Must concatenate messages
+                // Calc pdu length
+                udOffset = nMaxConcatChars * i;
+                udLength = myUdLength - udOffset;
+                if (udLength > nMaxConcatChars)
+                {
+                    udLength = nMaxConcatChars;
+                }
+
+                pduUd = SmsPduUtil.getSeptets(msg.substring(udOffset, udOffset + udLength));
+                smsPdus[i] = new SmsPdu(pduUdhElements, pduUd, udLength);
+            }
         }
         return smsPdus;
     }
