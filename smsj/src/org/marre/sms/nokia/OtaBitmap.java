@@ -157,7 +157,7 @@ public class OtaBitmap
         otaBitmap[3] = 1; // Number of colors
 
         // Add image data
-        SmsPduUtil.arrayCopy(myOtaImgData, 0, otaBitmap, 4, 0, myOtaImgData.length * 8);
+        System.arraycopy(myOtaImgData, 0, otaBitmap, 4, myOtaImgData.length);
 
         return otaBitmap;
     }
