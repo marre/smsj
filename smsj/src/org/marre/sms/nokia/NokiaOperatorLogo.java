@@ -39,7 +39,16 @@ public class NokiaOperatorLogo extends SmsConcatMessage
 {
     static Log myLog = LogFactory.getLog(NokiaOperatorLogo.class);
 
+    /** 
+     * If set to true it will make the message two bytes shorter
+     * to make it possible to fit a 72x14 pixel image in one SMS
+     * instead of two.<br>
+     * <b>Note!</b> This will probably only work on Nokia phones...
+     */
+    private boolean myDiscardNokiaHeaders = false;
+
     /**
+     * Creates a Nokia Operator Logo message
      *
      * @param theOtaBitmap
      * @param theMcc GSM Mobile Country Code
@@ -52,6 +61,7 @@ public class NokiaOperatorLogo extends SmsConcatMessage
     }
 
     /**
+     * Creates a Nokia Operator Logo message
      *
      * @param theImg
      * @param theMcc GSM Mobile Country Code
@@ -63,10 +73,11 @@ public class NokiaOperatorLogo extends SmsConcatMessage
     }
 
     /**
+     * Creates a Nokia Operator Logo message
      *
      * @param theOtaImage The ota image as an hexstring
-     * @param theMcc
-     * @param theMnc
+     * @param theMcc GSM Mobile Country Code
+     * @param theMnc GSM Mobile Network Code
      */
     public NokiaOperatorLogo(String theOtaImage, int theMcc, int theMnc)
     {
@@ -75,6 +86,7 @@ public class NokiaOperatorLogo extends SmsConcatMessage
     }
 
     /**
+     * Creates a Nokia Operator Logo message
      *
      * @param theBitmap
      * @param theOperatorMccMnc Operator defined in org.marre.sms.util.GsmOperators
@@ -85,6 +97,7 @@ public class NokiaOperatorLogo extends SmsConcatMessage
     }
 
     /**
+     * Creates a Nokia Operator Logo message
      *
      * @param theImg
      * @param theOperatorMccMnc Operator defined in org.marre.sms.util.GsmOperators
@@ -95,6 +108,7 @@ public class NokiaOperatorLogo extends SmsConcatMessage
     }
 
     /**
+     * Creates a Nokia Operator Logo message
      *
      * @param theOtaImage The ota image as an hex string
      * @param theOperatorMccMnc
@@ -116,14 +130,20 @@ public class NokiaOperatorLogo extends SmsConcatMessage
 
         try
         {
-            // Header??
-            baos.write(0x30);
+            if (! myDiscardNokiaHeaders)
+            {
+                // Header??
+                baos.write(0x30);
+            }
             // mcc
             SmsPduUtil.writeBcdNumber(baos, "" + theMcc);
             // mnc
             SmsPduUtil.writeBcdNumber(baos, "" + theMnc);
-            // Start of content?
-            baos.write(0x0A);
+            if (! myDiscardNokiaHeaders)
+            {
+                // Start of content?
+                baos.write(0x0A);
+            }
             // bitmap
             baos.write(theOtaBitmap);
 
