@@ -72,6 +72,19 @@ public final class GsmOperators
     public static final int   FI_SONERA_MNC = 91;
     public static final int[] FI_SONERA_MCC_MNC = {FI_SONERA_MCC, FI_SONERA_MNC};
 
+	// GER - T-Mobil D1
+    public static final int   GER_TMOBIL_MCC = 262;
+    public static final int   GER_TMOBIL_MNC = 01;
+    public static final int[] GER_TMOBIL_MCC_MNC = {GER_TMOBIL_MCC, GER_TMOBIL_MNC};
+
+	// GER - Vodafone D2
+    public static final int   GER_VODAFONED2_MCC = 262;
+    public static final int   GER_VODAFONED2_MNC = 01;
+    public static final int[] GER_VODAFONED2_MCC_MNC = {GER_VODAFONED2_MCC, GER_VODAFONED2_MNC};
+
+
+
+
     /**
      * Returns the Mcc and Mnc number for the given number, if the area code is in the property file
      * @param mccmncProp  The property file
