@@ -36,87 +36,68 @@ package org.marre.wap.push;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
+import org.marre.mime.MimeBodyPart;
+import org.marre.sms.SmsUserData;
 import org.marre.util.StringUtil;
 import org.marre.wap.mms.MmsConstants;
 import org.marre.wap.mms.MmsHeaderEncoder;
 
 /**
- * MMS notification message.
+ * Simple MMS notification message sent over Sms.
  * 
- * @author Lincoln Spiteri
  * @version $Id$
  */
-public class MmsPushMessage extends SmsWapPushMessage
+public class SmsMmsNotificationMessage extends SmsWapPushMessage
 {
     private static final int DEFAULT_TRANSACTION_ID_LENGTH = 5;
     private static final long DEFAULT_EXPIRY = 3 * 24 * 60 * 60; // 3 days
 
-    protected String myContentLocation;
+    protected String myTransactionId;
     protected String myFrom;
     protected String mySubject;
     protected int myMessageClassId = MmsConstants.X_MMS_MESSAGE_CLASS_ID_PERSONAL;
-    protected String myTransactionId;
     protected long mySize;
     protected long myExpiry;
+    protected String myContentLocation;
 
-    public MmsPushMessage(String theContentLocation)
+    public SmsMmsNotificationMessage(String theContentLocation, long size)
     {
         super();
 
         myContentLocation = theContentLocation;
         myTransactionId = StringUtil.randString(DEFAULT_TRANSACTION_ID_LENGTH);
         myExpiry = DEFAULT_EXPIRY;
+        mySize = size;
     }
-
-    public void createMmsPush()
+    
+    protected void writeNotificationTo(OutputStream os) throws IOException
     {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        // X-Mms-Message-Type (m-notification-ind)
+        MmsHeaderEncoder.writeHeaderXMmsMessageType(os, MmsConstants.X_MMS_MESSAGE_TYPE_ID_M_NOTIFICATION_IND);
+        MmsHeaderEncoder.writeHeaderXMmsTransactionId(os, myTransactionId);
+        MmsHeaderEncoder.writeHeaderXMmsMmsVersion(os, MmsConstants.X_MMS_MMS_VERSION_ID_1_0);
 
-        try
+        if ((myFrom != null) && (myFrom.length() > 0))
         {
-            // X-Mms-Message-Type (m-notification-ind)
-            MmsHeaderEncoder.writeHeaderXMmsMessageType(baos, MmsConstants.X_MMS_MESSAGE_TYPE_ID_M_NOTIFICATION_IND);
-            MmsHeaderEncoder.writeHeaderXMmsTransactionId(baos, myTransactionId);
-            MmsHeaderEncoder.writeHeaderXMmsMmsVersion(baos, MmsConstants.X_MMS_MMS_VERSION_ID_1_0);
-
-            if (myFrom.length() > 0)
-            {
-                MmsHeaderEncoder.writeHeaderFrom(baos, myFrom);
-            }
-
-            if (mySubject.length() > 0)
-            {
-                MmsHeaderEncoder.writeHeaderSubject(baos, mySubject);
-            }
-
-            MmsHeaderEncoder.writeHeaderXMmsMessageClass(baos, myMessageClassId);
-            MmsHeaderEncoder.writeHeaderXMmsMessageSize(baos, mySize);
-            MmsHeaderEncoder.writeHeaderXMmsExpiryRelative(baos, myExpiry);
-            MmsHeaderEncoder.writeHeaderContentLocation(baos, myContentLocation);
-
-            baos.close();
-        }
-        catch (IOException e)
-        {
-            // Should not happen, we are writing to an ByteArray
+            MmsHeaderEncoder.writeHeaderFrom(os, myFrom);
         }
 
-        // TODO: This is just plain wrong...
-/*        
-        createMessage(WapConstants.WSP_ENCODING_VERSION_1_2, baos.toByteArray(), 
-                      "application/vnd.wap.mms-message", "x-wap-application:mms.ua", null);
-*/                      
+        if ((mySubject != null) && (mySubject.length() > 0))
+        {
+            MmsHeaderEncoder.writeHeaderSubject(os, mySubject);
+        }
+
+        MmsHeaderEncoder.writeHeaderXMmsMessageClass(os, myMessageClassId);
+        MmsHeaderEncoder.writeHeaderXMmsMessageSize(os, mySize);
+        MmsHeaderEncoder.writeHeaderXMmsExpiryRelative(os, myExpiry);
+        MmsHeaderEncoder.writeHeaderContentLocation(os, myContentLocation);
     }
 
     public void setMessageClass(int messageClassId)
     {
         myMessageClassId = messageClassId;
-    }
-
-    public void setSize(long theSize)
-    {
-        mySize = theSize;
     }
 
     public void setSubject(String theSubject)
@@ -137,5 +118,25 @@ public class MmsPushMessage extends SmsWapPushMessage
     public void setTransactionId(String transactionId)
     {
         myTransactionId = transactionId;
+    }
+    
+    public SmsUserData getUserData()
+    {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(256);
+        
+        try
+        {
+            writeNotificationTo(baos);
+            baos.close();
+        }
+        catch (IOException ex)
+        {
+            throw new RuntimeException(ex.getMessage());
+        }        
+        
+        myPushMsg = new MimeBodyPart(baos.toByteArray(), "application/vnd.wap.mms-message");        
+        setXWapApplicationId("x-wap-application:mms.ua");
+
+        return super.getUserData();
     }
 }
