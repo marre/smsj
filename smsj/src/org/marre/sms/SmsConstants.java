@@ -22,6 +22,7 @@ package org.marre.sms;
  * Contains various SMS related constants
  *
  * @author Markus Eriksson
+ * @version $Id$
  */
 public class SmsConstants
 {

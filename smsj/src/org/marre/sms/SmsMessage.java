@@ -25,3 +25,4 @@ public interface SmsMessage
     public byte getDataCodingScheme();
     public SmsPdu[] getPdus();
 }
+

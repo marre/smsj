@@ -18,6 +18,13 @@
 */
 package org.marre.sms;
 
+/**
+ * Abstract baseclass for SmsMessages that adds common functionality
+ * needed for most types of SmsMessages.
+ *
+ * @author Markus Eriksson
+ * @version $Id$
+ */
 public abstract class SmsAbstractMessage implements SmsMessage
 {
     protected byte myDcs = 0x00;
@@ -45,3 +52,4 @@ public abstract class SmsAbstractMessage implements SmsMessage
         myDcs = theDcs;
     }
 }
+

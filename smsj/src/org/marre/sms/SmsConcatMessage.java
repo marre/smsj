@@ -20,6 +20,7 @@ package org.marre.sms;
 
 import java.util.*;
 import java.io.*;
+import org.apache.commons.logging.*;
 import org.marre.sms.util.*;
 
 /**
@@ -32,11 +33,12 @@ import org.marre.sms.util.*;
  * - The septet coding could be a bit optimized.<br>
  *
  * @author Markus Eriksson
- * @version 1.0
+ * @version $Id$
  */
 public class SmsConcatMessage extends SmsAbstractMessage
 {
     private static final Random myRnd = new Random();
+    private static Log myLog = LogFactory.getLog(SmsConcatMessage.class);
 
     /** Length of myUd, can be in octets or septets */
     protected int myUdLength = 0;
@@ -44,15 +46,35 @@ public class SmsConcatMessage extends SmsAbstractMessage
     protected SmsUdhElement[] myUdhElements = null;
     protected byte myUd[] = null;
 
+    /**
+     * Creates an empty SmsConcatMessage
+     */
     protected SmsConcatMessage()
     {
     }
 
+    /**
+     * Creates an SmsConcatMessage with the given DCS
+     *
+     * @param theDcs Data Coding Scheme to use
+     */
     protected SmsConcatMessage(byte theDcs)
     {
         setDataCodingScheme(theDcs);
     }
 
+    /**
+     * Creates an SmsConcatMessage
+     * <p>
+     * theUdhElements should not contain any concat udh elements. These will
+     * be added by SmsConcatMessage if needed.
+     *
+     * @param theDcs Data Coding Scheme to use
+     * @param theUdhElements The UDH elements to use on all messages
+     * @param theUd User Data
+     * @param theUdLength The length of the User Data. Can be in septets or
+     * octets depending on the DCS
+     */
     public SmsConcatMessage(byte theDcs, SmsUdhElement[] theUdhElements, byte[] theUd, int theUdLength)
     {
         setDataCodingScheme(theDcs);
@@ -61,9 +83,11 @@ public class SmsConcatMessage extends SmsAbstractMessage
 
     /**
      * Set content of this message
-     * @param theUdhElements
-     * @param theUd
-     * @param theUdLength
+     *
+     * @param theUdhElements The UDH elements to use on all messages
+     * @param theUd User Data
+     * @param theUdLength The length of the User Data. Can be in septets or
+     * octets depending on the DCS
      */
     public void setContent(SmsUdhElement[] theUdhElements, byte[] theUd, int theUdLength)
     {
@@ -97,9 +121,12 @@ public class SmsConcatMessage extends SmsAbstractMessage
     }
 
     /**
-     * Returns the whole udh as a byte array
+     * Returns the whole udh as a byte array.
+     * <p>
+     * The returned UDH is the same as specified when the message was created.
+     * No concat headers are added.
      *
-     * @return the UDH
+     * @return the UDH elements as a byte array.
      */
     public byte[] getUserDataHeaders()
     {
@@ -120,7 +147,7 @@ public class SmsConcatMessage extends SmsAbstractMessage
         catch (IOException ioe)
         {
             // Shouldn't happen.
-            throw new RuntimeException("Failed to write to ByteArrayOutputStream");
+            myLog.fatal("Failed to write to ByteArrayOutputStream", ioe);
         }
 
         return baos.toByteArray();
@@ -128,6 +155,9 @@ public class SmsConcatMessage extends SmsAbstractMessage
 
     /**
      * Returns the udh elements
+     * <p>
+     * The returned UDH is the same as specified when the message was created.
+     * No concat headers are added.
      *
      * @return the UDH as SmsUdhElements
      */
@@ -358,6 +388,14 @@ public class SmsConcatMessage extends SmsAbstractMessage
         return smsPdus;
     }
 
+    /**
+     * Converts this message into SmsPdu:s
+     * <p>
+     * If the message is too long to fit in one SmsPdu the message is divided
+     * into many SmsPdu:s with a 8-bit concat pdu UDH element.
+     * 
+     * @return Returns the message as SmsPdu:s
+     */
     public SmsPdu[] getPdus()
     {
         SmsPdu[] smsPdus = null;
@@ -381,3 +419,4 @@ public class SmsConcatMessage extends SmsAbstractMessage
         return smsPdus;
     }
 }
+

@@ -20,6 +20,22 @@ package org.marre.sms;
 
 import java.io.ByteArrayOutputStream;
 
+/**
+ * Represents an phonenumber in SMSj.
+ * <p>
+ * The address can be a phonenumber (+463482422) or alphanumeric
+ * ('SmsService'). Not all networks and transports supports alphanumeric
+ * sending id.
+ * <p>
+ * Max address length is <br>
+ * - 20 digits (excluding any initial '+') or<br>
+ * - 11 alphanumeric chars (if TON == TON_ALPHANUMERIC).
+ * <p>
+ * Look in SmsConstants for definitions of TON and NPI.
+ * 
+ * @author Markus Eriksson
+ * @version $Id$
+ */
 public class SmsAddress
 {
     private static final String ALLOWED_DIGITS = "+0123456789*#ab";
@@ -60,10 +76,6 @@ public class SmsAddress
 
     /**
      * Creates an SmsAddress object.
-     * <p>
-     * Max address length is <br>
-     * 20 digits (excluding any initial '+') or<br>
-     * 11 alphanumeric chars (if TON == TON_ALPHANUMERIC).
      * <p>
      * If you choose TON_ALPHANUMERIC then the NPI will be set to NPI_UNKNOWN.
      *
@@ -110,8 +122,10 @@ public class SmsAddress
         {
             myNpi = theNpi;
 
+            // Trim '+' from address
             if (myAddress.charAt(0) == '+')
             {
+                myAddress = myAddress.substring(1);
                 addressLength -= 1;
             }
 
@@ -131,18 +145,38 @@ public class SmsAddress
         }
     }
 
+    /**
+     * Returns the address
+     *
+     * @return The address
+     */
     public String getAddress()
     {
         return myAddress;
     }
 
+    /**
+     * Returns the TON field
+     * <p>
+     * See SmsConstants for definitions of different TON:s
+     *
+     * @return The TON 
+     */
     public int getTypeOfNumber()
     {
         return myTon;
     }
 
+    /**
+     * Returns the NPI field
+     * <p>
+     * See SmsConstants for definitions of different TON:s
+     *
+     * @return The NPI
+     */
     public int getNumberingPlanIdentification()
     {
         return myNpi;
     }
 }
+
