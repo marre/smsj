@@ -18,6 +18,49 @@
 */
 package org.marre.sms.test;
 
+import java.io.*;
+import java.util.*;
+
+import org.marre.sms.*;
+import org.marre.sms.transport.*;
+import org.marre.sms.util.*;
+
 public class TestSms
 {
+    public static void testSeptets()
+        throws Exception
+    {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        String testString = "Testing 123456 ÅÄÖ";
+
+        SmsPduUtil.writeSeptets(baos, testString);
+        baos.close();
+
+        String copyString = SmsPduUtil.readSeptets(new ByteArrayInputStream(baos.toByteArray()), testString.length());
+
+        System.out.println("Original : " + testString);
+        System.out.println("Copy     : " + copyString);
+    }
+
+    public static void testGsmTransport()
+        throws Exception
+    {
+        Properties props = new Properties();
+        SmsTransport transport = SmsTransportManager.getTransport("org.marre.sms.transport.gsm.GsmTransport", props);
+
+        SmsMessage msg = new SmsTextMessage("Can this really work? I'm impressed.", SmsTextMessage.TEXT_ALPHABET_ISO_LATIN_1);
+
+        SmsAddress sender = new SmsAddress("+1234567890");
+        SmsAddress reciever = new SmsAddress("+9876543210");
+
+        transport.send(msg.getPdus(), reciever, sender);
+    }
+
+    public static void main(String[] args)
+        throws Exception
+    {
+        testSeptets();
+        testGsmTransport();
+    }
 }
