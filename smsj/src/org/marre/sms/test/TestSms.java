@@ -26,12 +26,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
 
+import org.marre.SmsSender;
 import org.marre.sms.SmsAddress;
 import org.marre.sms.SmsConcatMessage;
 import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsMessage;
 import org.marre.sms.SmsPduUtil;
-import org.marre.sms.SmsSender;
 import org.marre.sms.SmsTextMessage;
 import org.marre.sms.SmsTransport;
 import org.marre.sms.SmsUdhElement;
@@ -202,8 +202,9 @@ public final class TestSms
     {
         Properties props = new Properties();
 
-        props.put("smsj.pswincom.username", "marre");
-        props.put("smsj.pswincom.password", "7Afr4K6");
+        // Load phonenumbers from props file
+        Properties props = new Properties();
+        props.load(new FileInputStream("pswincomm.props"));
 
         SmsTransport transport = SmsTransportManager.getTransport("org.marre.sms.transport.pswincom.PsWinXmlTransport",
                 props);
@@ -214,9 +215,6 @@ public final class TestSms
                 SmsConstants.ALPHABET_GSM);
         //        SmsMessage msg = new SmsTextMessage("1234567890123456789012",
         // SmsConstants.ALPHABET_UCS2);
-
-        SmsAddress sender = new SmsAddress("APA");
-        SmsAddress reciever = new SmsAddress("46706566642");
 
         transport.send(msg, reciever, sender);
     }
