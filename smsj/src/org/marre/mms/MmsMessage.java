@@ -34,14 +34,163 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mms;
 
-import org.marre.mime.*;
 
-public interface MmsMessage
+import org.marre.mime.*;
+import org.marre.mms.util.MmsUtil;
+
+public class MmsMessage 
 {
-/*	MARE: Not sure if we need a MmsMessage...
- 	It's probably only a container for a MimeBodyPart...
- 	
-    public MimeContentType getContentType();
-    public MimeBodyPart getContent();
-*/    
+
+	public static final boolean MULTIPART_RELATED = true;
+	public static final boolean MULTIPART_MIXED = false;
+	
+	boolean type;
+	
+	String from;
+	String to;
+	String cc;
+	String subject;
+	String messageClass;
+	String priority;
+	String deliveryReport;
+	
+	MimeMultipart messageBody;
+	
+	public MmsMessage()
+	{
+		messageClass = "personal";
+	}
+		
+	public void setMessage(MimeMultipart messageBody)
+	{
+		if (messageBody == null)
+		{
+			return;
+		}
+		
+		if (messageBody instanceof MimeMultipartRelated)
+		{
+			type = MULTIPART_RELATED;			
+		}
+				
+		this.messageBody = messageBody;
+	}
+	
+	public MimeMultipart getMessage()
+	{
+		return messageBody;
+	}
+	
+	public boolean isMultipartRelated()
+	{
+		if (type == MULTIPART_RELATED)
+		{
+			return true;
+		}
+		
+		return false;
+	}
+
+	public boolean isMultipartMixed()
+	{
+		if (type == MULTIPART_MIXED)
+		{
+			return true;
+		}
+		
+		return false;
+	}
+				
+	public static void main(String[] args){
+		
+		MimeBodyPart smilBodyPart = MmsUtil.createSmilBodyPart("test_smil".getBytes(), "0000");
+		MimeBodyPart textBodyPart = MmsUtil.createTextBodyPart("test_text".getBytes(), "test.txt");
+		
+		MimeMultipartRelated mmr = new MimeMultipartRelated();
+		mmr.addBodyPart(smilBodyPart);
+		mmr.addBodyPart(textBodyPart);
+		
+		MmsMessage mms = new MmsMessage();
+		mms.setMessage(mmr);		
+	}
+
+	public String getCc() 
+	{
+		return cc;
+	}
+
+	public String getDeliveryReport() 
+	{
+		return deliveryReport;
+	}
+
+	public String getFrom() 
+	{
+		return from;
+	}
+
+	public MimeMultipart getMessageBody() 
+	{
+		return messageBody;
+	}
+
+	public String getMessageClass() 
+	{
+		return messageClass;
+	}
+
+	public String getPriority() 
+	{
+		return priority;
+	}
+
+	public String getSubject() 
+	{
+		return subject;
+	}
+
+	public String getTo() 
+	{
+		return to;
+	}
+
+	public void setCc(String string) 
+	{
+		cc = string;
+	}
+
+	public void setDeliveryReport(String string) 
+	{
+		deliveryReport = string;
+	}
+
+	public void setFrom(String string) 
+	{
+		from = string;
+	}
+
+	public void setMessageBody(MimeMultipart multipart) 
+	{
+		messageBody = multipart;
+	}
+
+	public void setMessageClass(String string) 
+	{
+		messageClass = string;
+	}
+
+	public void setPriority(String string) 
+	{
+		priority = string;
+	}
+
+	public void setSubject(String string) 
+	{
+		subject = string;
+	}
+
+	public void setTo(String string) 
+	{
+		to = string;
+	}
 }
