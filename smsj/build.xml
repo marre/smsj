@@ -1,0 +1,102 @@
+<project name="SMSj" default="compile" basedir=".">
+   <!-- set global properties for this build -->
+   <property name="project" value="smsj"/>
+   <property name="lib" value="lib"/>
+   <property name="source" value="src"/>
+   <property name="doc" value="doc"/>
+   <property name="doc.api" value="${doc}/api"/>
+   <property name="build" value="build"/>
+   <property name="build.classes" value="${build}/classes"/>
+   <property name="dist" value="dist"/>
+
+   <!-- Set up classpath -->
+   <path id="classpath">
+      <fileset dir="${lib}">
+         <include name="**/*.jar"/>
+      </fileset>
+   </path>
+   <!-- set version etc -->
+   <target name="globals">
+      <tstamp/>
+      <property name="version" value="${DSTAMP}"/>
+      <property name="archive" value="${project}${version}"/>
+   </target>
+   <!-- Kill all the directories created in prepare -->
+   <target name="clean" depends="globals">
+      <delete dir="${build}"/>
+      <delete dir="${dist}"/>
+   </target>
+   <!-- Prepare target directories -->
+   <target name="prepare" depends="clean">
+      <mkdir dir="${build}"/>
+      <mkdir dir="${dist}"/>
+   </target>
+   <!-- Build all the sources -->
+   <target name="compile" depends="prepare">
+      <!-- <property name="build.compiler" value="jikes"/> -->
+      <mkdir dir="${build.classes}"/>
+      <javac srcdir="${source}" destdir="${build.classes}" classpathref="classpath" debug="on" deprecation="on" optimize="off"/>
+   </target>
+   <!-- Build the JAR file -->
+   <target name="jar" depends="compile" description="Builds the entire project">
+      <delete file="${dist}/${project}.jar"/>
+      <jar jarfile="${dist}/${project}.jar">
+         <fileset dir="${build.classes}" includes="**/*.class" excludes="org/marre/sms/test/*"/>
+      </jar>
+   </target>
+   <!--Deploys all files in this project-->
+   <target name="deploy" depends="jar" description="Deploys the entire project">
+      <copy todir="${deploydir.jar}" file="${dist}/${project}.jar"/>
+      <copy todir="${deploydir.develop.jar}" file="${dist}/${project}.jar"/>
+   </target>
+   <!-- Builds Javadoc for this project-->
+   <target name="javadoc" depends="compile" description="Creates JavaDoc for this project">
+      <delete dir="${doc.api}"/>
+      <mkdir dir="${doc.api}"/>
+      <javadoc packagenames="org.marre.sms.*"
+               sourcepath="${source}"
+               excludepackagenames="com.marre.sms.*"
+               defaultexcludes="yes"
+               destdir="${doc.api}"
+               author="false"
+               version="false"
+               use="true"
+               windowtitle="SMSj API">
+      </javadoc>
+   </target>
+   <!-- Makes a distribution of this project -->
+   <target name="dist" depends="javadoc,jar" description="Packages this project">
+      <!-- JAR file -->
+      <move file="${dist}/${project}.jar" tofile="${dist}/${project}-${version}.jar"/>
+      <!-- Javadoc -->
+      <delete file="${dist}/${project}-${version}-javadoc.zip"/>
+      <zip zipfile="${dist}/${project}-${version}-javadoc.zip">
+          <zipfileset dir="${doc.api}" prefix="api"/>
+      </zip>
+      <!-- Source -->
+      <delete file="${dist}/${project}-${version}-src.zip"/>
+      <zip zipfile="${dist}/${project}-${version}-src.zip">
+          <zipfileset dir="src" includes="**/*.java"/>
+      </zip>
+      <!-- Full project -->
+      <delete file="${dist}/${project}-${version}-prj.zip"/>
+      <zip zipfile="${dist}/${project}-${version}-prj.zip">
+          <zipfileset dir="src" prefix="src" includes="**/*.java"/>
+          <zipfileset dir="lib" prefix="lib" includes="**/*.jar"/>
+          <zipfileset dir="." includes="*.jpx"/>
+          <zipfileset dir="." includes="*.library"/>
+          <zipfileset dir="." includes="build.xml"/>
+      </zip>
+   </target>
+   <!-- Shows the targets -->
+   <target name="?" depends="globals">
+      <echo message="ANT build for ${project} ${version}"/>
+      <echo message="The following targets are available:"/>
+      <echo message="  ?        Lists the build targets"/>
+      <echo message="  clean    Cleans the build and distribution directories"/>
+      <echo message="  jar      Builds the binary JAR in the dist directory"/>
+      <echo message="  javadoc  Generates javadoc documentation"/>
+      <echo message="  dist     Creates a full distribution with src, javadoc and jarfile"/>
+   </target>
+</project>
+
