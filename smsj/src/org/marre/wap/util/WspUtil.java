@@ -257,8 +257,9 @@ public class WspUtil
         int wellKnownContentType = StringUtil.findString(WapConstants.CONTENT_TYPES, theContentType.toLowerCase());
 
         if (wellKnownContentType == -1)
-        {
-            writeExtensionMedia(theOs, theContentType);
+        {	
+						writeValueLength(theOs, theContentType.length() + 1);
+						writeExtensionMedia(theOs, theContentType);
         }
         else
         {
@@ -353,8 +354,8 @@ public class WspUtil
 
         case WapConstants.WSP_TYPE_DELTA_SECONDS_VALUE:
             // Integer-Value
-            Integer i = Integer.valueOf(value);
-            writeInteger(os, i.intValue());
+						Integer i = Integer.valueOf(value);
+						writeInteger(os, i.intValue());
             break;
 
         case WapConstants.WSP_TYPE_Q_VALUE:
@@ -484,7 +485,7 @@ public class WspUtil
         }
         else
         {
-            return ct;
-        }        
+        return ct;
     }
+}
 }
