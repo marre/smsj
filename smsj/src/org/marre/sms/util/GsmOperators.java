@@ -1,6 +1,7 @@
 /*
     SMS Library for the Java platform
     Copyright (C) 2002  Markus Eriksson
+    Portions Copyright (C) 2002 Boris von Loesch
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -18,6 +19,8 @@
 */
 package org.marre.sms.util;
 
+import java.util.*;
+import java.io.*;
 /**
  * Contains MCC and MNC definitions for various GSM operators.
  * <p>
@@ -52,4 +55,66 @@ public final class GsmOperators
     public static final int   FI_SONERA_MCC = 244;
     public static final int   FI_SONERA_MNC = 91;
     public static final int[] FI_SONERA_MCC_MNC = {FI_SONERA_MCC, FI_SONERA_MNC};
+
+    /**
+     * Returns the Mcc and Mnc number for the given number, if the area code is in the property file
+     * @param mccmncProp  The property file
+     * @param intReceiverNr the receivers number in international format (e.g. +49172..)
+     * @return
+     */
+    public static int[] getMCC_MNC(Properties mccmncProp, String intReceiverNr)
+    {
+        //Check the first seven or less charakters
+        int i=7;
+        String operator="";
+        int[] ret = {0,0};
+        //Find operator
+        while ((i>2)&&(operator.equals("")))
+        {
+            operator=mccmncProp.getProperty(intReceiverNr.substring(0, i), "");
+            i--;
+        }
+        //Find MCC and MNC
+        if (!operator.equals(""))
+        {
+            String mccmnc=mccmncProp.getProperty(operator, "0,0");
+            ret[0]=Integer.valueOf(mccmnc.substring(0,mccmnc.indexOf(","))).intValue();
+            ret[1]=Integer.valueOf(mccmnc.substring(mccmnc.indexOf(",")+1)).intValue();
+        }
+        return ret;
+    }
+
+    /**
+     * Returns the Mcc and Mnc number for the given number, if the area code is in the property file
+     * @param propFileName  The property filename
+     * @param intReceiverNr the receivers number in international format (e.g. +49172..)
+     * @return
+     */
+    public static int[] getMCC_MNC(String propFileName, String intReceiverNr)
+      throws IOException
+    {
+        Properties prop = new Properties();
+        prop.load(new FileInputStream(propFileName));
+        return getMCC_MNC(prop, intReceiverNr);
+    }
+
+    /**
+     * Returns the Mcc and Mnc number for the given number, if the area code is in the property file.
+     * The property file is loaded as resource mccmnc.prop
+     * @param intReceiverNr the receivers number in international format (e.g. +49172..)
+     * @return
+     */
+    public static int[] getMCC_MNC(String intReceiverNr)
+      throws IOException
+    {
+        Properties prop = new Properties();
+        ClassLoader cl = GsmOperators.class.getClassLoader();
+        InputStream inst = cl.getResourceAsStream("mccmnc.prop");
+        if (inst==null)
+        {
+            throw new FileNotFoundException ("Could not load resource mccmnc.prop");
+        }
+        prop.load(inst);
+        return getMCC_MNC(prop, intReceiverNr);
+    }
 }
