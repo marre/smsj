@@ -82,8 +82,20 @@ public final class GsmOperators
     public static final int   GER_VODAFONED2_MNC = 01;
     public static final int[] GER_VODAFONED2_MCC_MNC = {GER_VODAFONED2_MCC, GER_VODAFONED2_MNC};
 
+	// IT - TIM (Telecom Italia Mobile)
+    public static final int   IT_TIM_MCC = 222;
+    public static final int   IT_TIM_MNC = 01;
+    public static final int[] IT_TIM_MCC_MNC = {IT_TIM_MCC, IT_TIM_MNC};
 
-
+	// IT - VODAFONE OMNITEL
+    public static final int   IT_VODAFONE_MCC = 222;
+    public static final int   IT_VODAFONE_MNC = 10;
+    public static final int[] IT_VODAFONE_MCC_MNC = {IT_VODAFONE_MCC, IT_VODAFONE_MNC};
+        
+	// IT - WIND
+    public static final int   IT_WIND_MCC = 222;
+    public static final int   IT_WIND_MNC = 88;
+    public static final int[] IT_WIND_MCC_MNC = {IT_WIND_MCC, IT_WIND_MNC};
 
     /**
      * Returns the Mcc and Mnc number for the given number, if the area code is in the property file
