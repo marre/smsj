@@ -36,6 +36,8 @@ package org.marre.sms;
 
 import java.io.*;
 
+import org.marre.sms.util.SmsUdhUtil;
+
 /**
  * Represents an SMS pdu
  * <p>
@@ -108,6 +110,8 @@ public class SmsPdu
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream(100);
+        
+        baos.write( (byte) SmsUdhUtil.getUdhLength(myUdhElements));
 
         try
         {
@@ -121,7 +125,7 @@ public class SmsPdu
             // Shouldn't happen.
             throw new RuntimeException("Failed to write to ByteArrayOutputStream");
         }
-
+        
         return baos.toByteArray();
     }
 
