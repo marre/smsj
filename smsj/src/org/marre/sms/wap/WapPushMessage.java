@@ -38,7 +38,9 @@ import java.io.*;
 
 import org.marre.wap.*;
 import org.marre.wap.util.*;
+import org.marre.mime.MimeBodyPart;
 import org.marre.mime.MimeContentType;
+import org.marre.mime.encoder.wap.WapMimeEncoder;
 
 import org.marre.sms.*;
 import org.marre.sms.util.*;
@@ -64,12 +66,21 @@ public class WapPushMessage extends SmsConcatMessage
     /**
      * Sends a CL WAP push message OTA with SMS.
      *
-     * @param thePushMsg The push message
+     * @param thePushMsg The push message (Must be WSP encoded)
      */
     public WapPushMessage(byte[] thePushMsg)
     {
         super(SmsConstants.DCS_DEFAULT_8BIT);
+        
         myPushMsg = thePushMsg;
+        
+        setContent(
+            new SmsUdhElement[] {
+                SmsUdhUtil.get16BitApplicationPortUdh(SmsConstants.PORT_WAP_PUSH,
+                                                      SmsConstants.PORT_WAP_WSP)
+            },
+            myPushMsg,
+            myPushMsg.length);        
     }
 
     /**
@@ -78,42 +89,40 @@ public class WapPushMessage extends SmsConcatMessage
      * @param thePushMsg The push message
      * @param theContentType Content-type of the push
      * @param theAppId WAP Push Application ID
+     * @param theContentLocation Content-Location URI
      */
-    public WapPushMessage(byte[] thePushMsg, MimeContentType theContentType, String theAppId)
+    public WapPushMessage(byte[] thePushMsg, MimeContentType theContentType, String theAppId, String theContentLocation)
     {
         super(SmsConstants.DCS_DEFAULT_8BIT);
-        createMessage(thePushMsg, theContentType, theAppId);
+        createMessage(thePushMsg, theContentType, theAppId, theContentLocation);
     }
-
+    
     /**
      * Creates a CL WAP push message OTA with SMS.
      *
      * @param thePushMsg The push message
      * @param theContentType Content-type of the push
      * @param theAppId WAP Push Application ID
+     * @param theContentLocation Content-Location URI
      */
-    public WapPushMessage(byte[] thePushMsg, String theContentType, String theAppId)
+    public WapPushMessage(byte[] thePushMsg, String theContentType, String theAppId, String theContentLocation)
     {
-        this(thePushMsg, new MimeContentType(theContentType), theAppId);
+        super(SmsConstants.DCS_DEFAULT_8BIT);
+        createMessage(thePushMsg, theContentType, theAppId, theContentLocation);
     }
-
-    /**
-     * Sends a CL WAP push message OTA with SMS.
-     *
-     * @param thePushMsg The push message
-     * @param theContentType Content-type of the push
-     */
-    public WapPushMessage(byte[] thePushMsg, String theContentType)
+    
+    public WapPushMessage(MimeBodyPart thePushMsg)
     {
-        this(thePushMsg, theContentType, null);
+        super(SmsConstants.DCS_DEFAULT_8BIT);
+        createMessage(thePushMsg);
     }
-
-    protected void createMessage(byte[] thePushMsg, String theContentType, String theAppId)
+    
+    protected void createMessage(byte[] thePushMsg, String theContentType, String theAppId, String theContentLocation)
     {
-        this.createMessage(thePushMsg, new MimeContentType(theContentType), theAppId);
+        this.createMessage(thePushMsg, new MimeContentType(theContentType), theAppId, theContentLocation);
     }
-
-    protected void createMessage(byte[] thePushMsg, MimeContentType theContentType, String theAppId)
+    
+    protected void createMessage(byte[] thePushMsg, MimeContentType theContentType, String theAppId, String theContentLocation)
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -142,13 +151,20 @@ public class WapPushMessage extends SmsConcatMessage
 
             // WAP-HEADERS
             // There could be more wap headers, but we currently only use
-            // the Application ID
+            // the Application ID and content location
 
             // App ID
             if( theAppId != null)
             {
                 WspUtil.writeHeaderXWapApplicationId(headers, theAppId);
             }
+            
+            // Content Location
+            if( theContentLocation != null)
+            {
+                WspUtil.writeHeaderContentLocation(headers, theContentLocation);
+            }
+            
             // Done with the headers...
             headers.close();
 
@@ -181,7 +197,71 @@ public class WapPushMessage extends SmsConcatMessage
             myPushMsg,
             myPushMsg.length);
     }
+    
+    protected void createMessage(MimeBodyPart thePushMsg)
+    {
+        WapMimeEncoder wapMimeEncoder = new WapMimeEncoder();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
+        try
+        {
+            //
+            // WSP HEADER
+            //
+
+            // TID - Transaction ID
+            // FIXME: Should perhaps set TID to something useful?
+            WspUtil.writeUint8(baos, 0x00);
+
+            // Type
+            WspUtil.writeUint8(baos, WapConstants.PDU_TYPE_PUSH);
+
+            //
+            // WAP PUSH FIELDS
+            //
+
+            // Create headers first
+            ByteArrayOutputStream headers = new ByteArrayOutputStream();
+
+            // Content-type
+            wapMimeEncoder.writeContentType(headers, thePushMsg);
+
+            // WAP-HEADERS
+            wapMimeEncoder.writeHeaders(headers, thePushMsg);
+
+            // Done with the headers...
+            headers.close();
+
+            // Headers created, write headers lenght and headers to baos
+
+            // HeadersLen - Length of Content-type and Headers
+            WspUtil.writeUintvar(baos, headers.size());
+
+            // Headers
+            baos.write(headers.toByteArray());
+
+            // Data
+            wapMimeEncoder.writeData(baos, thePushMsg);
+
+            // Done
+            baos.close();
+        }
+        catch (IOException ex)
+        {
+            // Shouldn't happen
+        }
+
+        myPushMsg = baos.toByteArray();
+
+        setContent(
+            new SmsUdhElement[] {
+                SmsUdhUtil.get16BitApplicationPortUdh(SmsConstants.PORT_WAP_PUSH,
+                                                      SmsConstants.PORT_WAP_WSP)
+            },
+            myPushMsg,
+            myPushMsg.length);
+    }
+    
     /**
      * Returns the wsp encoded wap push message without any SMS headers
      * <p>

@@ -255,7 +255,7 @@ public class WspUtil
     public static void writeContentType(OutputStream theOs, String theContentType)
         throws IOException
     {
-        int wellKnownContentType = findContentType(theContentType);
+        int wellKnownContentType = StringUtil.findString(WapConstants.CONTENT_TYPES, theContentType.toLowerCase());
 
         if (wellKnownContentType == -1)
         {
@@ -288,8 +288,9 @@ public class WspUtil
         }
         else
         {
+            String theContentType1 = theContentType.getValue();
             // Complex, use "content-general-form"
-            int wellKnownContentType = findContentType(theContentType.getValue());
+            int wellKnownContentType = StringUtil.findString(WapConstants.CONTENT_TYPES, theContentType1.toLowerCase());
 
             // Create parameter byte array of
             // well-known-media (integer) or extension media
@@ -330,19 +331,19 @@ public class WspUtil
         {
         // "Used to indicate that the parameter actually have no value,
         // eg, as the parameter "bar" in ";foo=xxx; bar; baz=xyzzy"."
-        case WapConstants.PARAMETER_TYPE_NO_VALUE:
+        case WapConstants.WSP_TYPE_NO_VALUE:
             os.write(0x00);
             break;
 
-        case WapConstants.PARAMETER_TYPE_TEXT_VALUE:
+        case WapConstants.WSP_TYPE_TEXT_VALUE:
             writeTextValue(os, value);
             break;
 
-        case WapConstants.PARAMETER_TYPE_INTEGER_VALUE:
+        case WapConstants.WSP_TYPE_INTEGER_VALUE:
             writeInteger(os, Long.parseLong(value));
             break;
 
-        case WapConstants.PARAMETER_TYPE_DATE_VALUE:
+        case WapConstants.WSP_TYPE_DATE_VALUE:
             // TODO: Implement
             /*
             ; The encoding of dates shall be done in number of seconds from
@@ -351,13 +352,13 @@ public class WspUtil
             writeTextString(os, value);
             break;
 
-        case WapConstants.PARAMETER_TYPE_DELTA_SECONDS_VALUE:
+        case WapConstants.WSP_TYPE_DELTA_SECONDS_VALUE:
             // Integer-Value
             // TODO: Implement
             writeTextString(os, value);
             break;
 
-        case WapConstants.PARAMETER_TYPE_Q_VALUE:
+        case WapConstants.WSP_TYPE_Q_VALUE:
             // TODO: Implement
             /*
             ; The encoding is the same as in Uintvar-integer, but with restricted size. When quality factor 0
@@ -371,7 +372,7 @@ public class WspUtil
             writeTextString(os, value);
             break;
 
-        case WapConstants.PARAMETER_TYPE_VERSION_VALUE:
+        case WapConstants.WSP_TYPE_VERSION_VALUE:
             // TODO: Implement
             /*
             ; The three most significant bits of the Short-integer value are interpreted to encode a major
@@ -383,7 +384,7 @@ public class WspUtil
             writeTextString(os, value);
             break;
 
-        case WapConstants.PARAMETER_TYPE_URI_VALUE:
+        case WapConstants.WSP_TYPE_URI_VALUE:
             // Text-String
             // TODO: Verify
             /*
@@ -392,28 +393,28 @@ public class WspUtil
             writeTextString(os, value);
             break;
 
-        case WapConstants.PARAMETER_TYPE_TEXT_STRING:
+        case WapConstants.WSP_TYPE_TEXT_STRING:
             writeTextString(os, value);
             break;
 
-        case WapConstants.PARAMETER_TYPE_WELL_KNOWN_CHARSET:
+        case WapConstants.WSP_TYPE_WELL_KNOWN_CHARSET:
             // Any-Charset | Integer-Value
             // ; Both are encoded using values from Character Set Assignments table in Assigned Numbers
             // TODO: Implement
             writeTextString(os, value);
             break;
 
-        case WapConstants.PARAMETER_TYPE_FIELD_NAME:
+        case WapConstants.WSP_TYPE_FIELD_NAME:
             // Token-text | Well-known-field-name
             // TODO: Implement
             writeTextString(os, value);
             break;
 
-        case WapConstants.PARAMETER_TYPE_SHORT_INTEGER:
+        case WapConstants.WSP_TYPE_SHORT_INTEGER:
             writeShortInteger(os, Integer.parseInt(value));
             break;
 
-        case WapConstants.PARAMETER_TYPE_CONSTRAINED_ENCODING:
+        case WapConstants.WSP_TYPE_CONSTRAINED_ENCODING:
             // Constrained-Encoding == Content-type
             writeContentType(os, value);
             break;
@@ -428,7 +429,7 @@ public class WspUtil
     public static void writeParameter(OutputStream os, String name, String value)
         throws IOException
     {
-        int wellKnownParameter = findParameter(name);
+        int wellKnownParameter = StringUtil.findString(WapConstants.PARAMETER_NAMES, name.toLowerCase());
 
         if (wellKnownParameter == -1)
         {
@@ -454,14 +455,148 @@ public class WspUtil
         throws IOException
     {
         String name = theHeader.getName();
+        int wellKnownHeaderId = StringUtil.findString(WapConstants.HEADER_NAMES, name.toLowerCase());
 
-        if ("content-location".equalsIgnoreCase(name))
+        switch (wellKnownHeaderId)
         {
-            writeHeaderContentLocation(theOs, theHeader.getValue());
-        }
-        else if ("content-id".equalsIgnoreCase(name))
-        {
+        case WapConstants.HEADER_ID_ACCEPT:
+            break;
+        case WapConstants.HEADER_ID_ACCEPT_APPLICATION:
+            break;
+        case WapConstants.HEADER_ID_ACCEPT_CHARSET:
+            break;
+        case WapConstants.HEADER_ID_ACCEPT_ENCODING:
+            break;
+        case WapConstants.HEADER_ID_ACCEPT_LANGUAGE:
+            break;
+        case WapConstants.HEADER_ID_ACCEPT_RANGES:
+            break;
+        case WapConstants.HEADER_ID_AGE:
+            break;
+        case WapConstants.HEADER_ID_ALLOW:
+            break;
+        case WapConstants.HEADER_ID_AUTHORIZATION:
+            break;
+        case WapConstants.HEADER_ID_BEARER_INDICATION:
+            break;
+        case WapConstants.HEADER_ID_CACHE_CONTROL:
+            break;
+        case WapConstants.HEADER_ID_CONNECTION:
+            break;
+        case WapConstants.HEADER_ID_CONTENT_BASE:
+            break;
+        case WapConstants.HEADER_ID_CONTENT_DISPOSITION:
+            break;
+        case WapConstants.HEADER_ID_CONTENT_ID:
             writeHeaderContentID(theOs, theHeader.getValue());
+            break;
+        case WapConstants.HEADER_ID_CONTENT_LANGUAGE:
+            break;
+        case WapConstants.HEADER_ID_CONTENT_LENGTH:
+            break;
+        case WapConstants.HEADER_ID_CONTENT_LOCATION:
+            writeHeaderContentLocation(theOs, theHeader.getValue());
+            break;
+        case WapConstants.HEADER_ID_CONTENT_MD5:
+            break;
+        case WapConstants.HEADER_ID_CONTENT_RANGE:
+            break;
+        case WapConstants.HEADER_ID_CONTENT_TYPE:
+            writeHeaderContentLocation(theOs, theHeader.getValue());
+            break;
+        case WapConstants.HEADER_ID_COOKIE:
+            break;
+        case WapConstants.HEADER_ID_DATE:
+            break;
+        case WapConstants.HEADER_ID_ENCODING_VERSION:
+            break;
+        case WapConstants.HEADER_ID_ETAG:
+            break;
+        case WapConstants.HEADER_ID_EXPECT:
+            break;
+        case WapConstants.HEADER_ID_EXPIRES:
+            break;
+        case WapConstants.HEADER_ID_FROM:
+            break;
+        case WapConstants.HEADER_ID_HOST:
+            break;
+        case WapConstants.HEADER_ID_IF_MATCH:
+            break;
+        case WapConstants.HEADER_ID_IF_MODIFIED_SINCE:
+            break;
+        case WapConstants.HEADER_ID_IF_NONE_MATCH:
+            break;
+        case WapConstants.HEADER_ID_IF_RANGE:
+            break;
+        case WapConstants.HEADER_ID_IF_UNMODIFIED_SINCE:
+            break;
+        case WapConstants.HEADER_ID_LAST_MODIFIED:
+            break;
+        case WapConstants.HEADER_ID_LOCATION:
+            break;
+        case WapConstants.HEADER_ID_MAX_FORWARDS:
+            break;
+        case WapConstants.HEADER_ID_PRAGMA:
+            break;
+        case WapConstants.HEADER_ID_PROFILE:
+            break;
+        case WapConstants.HEADER_ID_PROFILE_DIFF:
+            break;
+        case WapConstants.HEADER_ID_PROFILE_WARNING:
+            break;
+        case WapConstants.HEADER_ID_PROXY_AUTHENTICATE:
+            break;
+        case WapConstants.HEADER_ID_PROXY_AUTHORIZATION:
+            break;
+        case WapConstants.HEADER_ID_PUBLIC:
+            break;
+        case WapConstants.HEADER_ID_PUSH_FLAG:
+            break;
+        case WapConstants.HEADER_ID_RANGE:
+            break;
+        case WapConstants.HEADER_ID_REFERER:
+            break;
+        case WapConstants.HEADER_ID_RETRY_AFTER:
+            break;
+        case WapConstants.HEADER_ID_SERVER:
+            break;
+        case WapConstants.HEADER_ID_SET_COOKIE:
+            break;
+        case WapConstants.HEADER_ID_TE:
+            break;
+        case WapConstants.HEADER_ID_TRAILER:
+            break;
+        case WapConstants.HEADER_ID_TRANSFER_ENCODING:
+            break;
+        case WapConstants.HEADER_ID_UPGRADE:
+            break;
+        case WapConstants.HEADER_ID_USER_AGENT:
+            break;
+        case WapConstants.HEADER_ID_VARY:
+            break;
+        case WapConstants.HEADER_ID_VIA:
+            break;
+        case WapConstants.HEADER_ID_WARNING:
+            break;
+        case WapConstants.HEADER_ID_WWW_AUTHENTICATE:
+            break;
+        case WapConstants.HEADER_ID_X_WAP_APPLICATION_ID:
+            writeHeaderXWapApplicationId(theOs, theHeader.getValue());
+            break;
+        case WapConstants.HEADER_ID_X_WAP_CONTENT_URI:
+            break;
+        case WapConstants.HEADER_ID_X_WAP_INITIATOR_URI:
+            break;
+        case WapConstants.HEADER_ID_X_WAP_SECURITY:
+            break;
+        case WapConstants.HEADER_ID_X_WAP_TOD:
+            break;
+
+        default:
+            // Custom header
+            writeTokenText(theOs, theHeader.getName());
+            writeTextString(theOs, theHeader.getValue());
+            break;            
         }
     }
 
@@ -522,7 +657,7 @@ public class WspUtil
     public static void writeHeaderXWapApplicationId(OutputStream theOs, String theAppId)
         throws IOException
     {
-        int wellKnownAppId = findPushAppId(theAppId);
+        int wellKnownAppId = StringUtil.findString(WapConstants.PUSH_APP_IDS, theAppId.toLowerCase());
 
         WspUtil.writeShortInteger(theOs, WapConstants.HEADER_ID_X_WAP_APPLICATION_ID);
 
@@ -536,27 +671,9 @@ public class WspUtil
         }
     }
 
-    /**
-     * Finds an WINA assigned number for the given parameter.
-     *
-     * @param theParameter
-     * @return WINA assigned number if found, otherwise -1
-     */
-    public static final int findParameter(String theParameter)
-    {
-        return StringUtil.findString(WapConstants.PARAMETER_NAMES, theParameter.toLowerCase());
-    }
+    
 
-    /**
-     * Finds an WINA assigned number for the given contenttype.
-     *
-     * @param theContentType
-     * @return WINA assigned number if found, otherwise -1
-     */
-    public static final int findContentType(String theContentType)
-    {
-        return StringUtil.findString(WapConstants.CONTENT_TYPES, theContentType.toLowerCase());
-    }
+    
 
     /**
      * Returns a contenttype from a WINA assigned content type number
@@ -577,16 +694,7 @@ public class WspUtil
         }
     }
 */
-    /**
-     * Finds an WINA "well known" number for the given push app id
-     *
-     * @param theContentType
-     * @return WINA assigned number if found, otherwise -1
-     */
-    public static final int findPushAppId(String thePushAppId)
-    {
-        return StringUtil.findString(WapConstants.PUSH_APP_IDS, thePushAppId.toLowerCase());
-    }
+    
 
     /**
      * Returns a push app id from a WINA "well known" number

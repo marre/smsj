@@ -55,14 +55,19 @@ public class WapSiPushMessage extends WapPushMessage
 
     public WapSiPushMessage(String uri, String message)
     {
+        this(uri, message, null);
+    }
+    
+    public WapSiPushMessage(String uri, String message, String contentLocation)
+    {
         super();
 
         push = new SIPush(uri, message);
 
-        createSiPush();
+        createSiPush(contentLocation);
     }
 
-    protected void createSiPush()
+    protected void createSiPush(String contentLocation)
     {
         ByteArrayOutputStream pushMsg = new ByteArrayOutputStream();
 
@@ -76,6 +81,6 @@ public class WapSiPushMessage extends WapPushMessage
             // Should not happen
         }
 
-        createMessage(pushMsg.toByteArray(), "application/vnd.wap.slc", "x-wap-application:wml.ua");
+        createMessage(pushMsg.toByteArray(), "application/vnd.wap.slc", "x-wap-application:wml.ua", contentLocation);
     }
 }
