@@ -25,7 +25,7 @@ import java.text.*;
 import org.marre.sms.transport.SmsTransport;
 import java.util.Properties;
 import org.marre.sms.*;
-import org.marre.sms.util.SmsPduUtil;
+import org.marre.sms.util.*;
 
 /**
  * An SmsTransport that sends the SMS with clickatell over HTTP.
@@ -35,6 +35,10 @@ import org.marre.sms.util.SmsPduUtil;
  * Known limitations:<br>
  * - Impossible to set the sending address<br>
  * - Cannot send 8-Bit messages without an UDH<br>
+ * - Not verified if it's possible to send concatenated SMS<br>
+ * - Doesn't support a complete DCS. Only UCS2, 7bit, 8bit and
+ *   SMS class 0 or 1<br>
+ * - Cannot set validity period
  *
  * @author Markus Eriksson
  * @version 1.0
@@ -47,9 +51,16 @@ public class ClickatellTransport implements SmsTransport
     private String mySessionId = null;
 
     /**
-     *
-     * @param theProps
-     * @throws SmsException
+     * Initializes the transport
+     * <p>
+     * It expects the following properties in theProps param:
+     * <pre>
+     * smsj.clickatell.username - clickatell username
+     * smsj.clickatell.password - clickatell password
+     * smsj.clickatell.apiid    - clickatell apiid
+     * </pre>
+     * @param theProps Properties to initialize the library
+     * @throws SmsException If not given the needed params
      */
     public void init(Properties theProps) throws SmsException
     {
@@ -66,23 +77,19 @@ public class ClickatellTransport implements SmsTransport
     }
 
     /**
-     * Command:
-     * http://api.clickatell.com/http/auth?api_id=xxxx&user=xxxx&password=xxxx
+     * Sends an auth command to clickatell to get an session id that
+     * can be used later.
      *
-     * Response:
-     * OK: session id
-     * or
-     * ERR: Error number
-     *
-     * @throws SmsException
+     * @throws SmsException If we fail to authenticate to clickatell or if
+     * we fail to connect.
      */
     public void connect() throws SmsException
     {
+        String response = null;
+        MessageFormat responseFormat = new MessageFormat("{0}: {1}");
         String requestString = MessageFormat.format(
                 "http://api.clickatell.com/http/auth?api_id={0}&user={1}&password={2}",
                 new Object[] { myApiId, myUsername, myPassword });
-
-        MessageFormat responseFormat = new MessageFormat("{0}: {1}");
 
         try
         {
@@ -93,7 +100,8 @@ public class ClickatellTransport implements SmsTransport
                 new BufferedReader(new InputStreamReader(requestURL.openStream()));
 
             // Read response
-            String response = responseReader.readLine();
+            response = responseReader.readLine();
+            responseReader.close();
 
             // Parse response
             Object[] objs = responseFormat.parse(response);
@@ -103,19 +111,16 @@ public class ClickatellTransport implements SmsTransport
                 // Store session id
                 mySessionId = (String)objs[1];
             }
-            else if ( "ERR".equalsIgnoreCase((String)objs[0]) )
-            {
-                String clickatellError = (String) objs[1];
-                throw new SmsException("Clickatell error. Error " + clickatellError);
-            }
             else
             {
-                throw new SmsException("Unexpected answer from Clickatell. : " + response);
+                // ERR
+                String errorMsg = (String) objs[1];
+                throw new SmsException("Clickatell error. Error " + errorMsg);
             }
         }
         catch (ParseException ex)
         {
-            throw new SmsException(ex.getMessage());
+            throw new SmsException("Unexpected response from Clickatell. : " + response);
         }
         catch (MalformedURLException ex)
         {
@@ -128,24 +133,17 @@ public class ClickatellTransport implements SmsTransport
     }
 
     /**
-     * Command:
-     * http://api.clickatell.com/http/sendmsg?session_id=xxxx&
-     *
-     * Response Single Message:
-     * ID: apiMsgId
-     * Response Multiple Messages:
-     * ID: apiMsgId To: xxxxxx
-     * ID: apiMsgId To: xxxxxx
-     * or
-     * ERR: Error number
+     * Sends an sendmsg command to clickatell
      *
      * @param thePdu
      * @param theDestination
      * @param theSender
-     * @throws SmsException
+     * @throws SmsException If clickatell sends an error message, unexpected
+     * response or if  we fail to connect.
      */
     public void send(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender) throws SmsException
     {
+        String response = null;
         MessageFormat responseFormat = new MessageFormat("{0}: {1}");
         String requestString;
         String ud;
@@ -161,21 +159,27 @@ public class ClickatellTransport implements SmsTransport
             throw new SmsException("Must connect before sending");
         }
 
+        //
+        // Generate request URL
+        //
         if (thePdu.getUserDataHeaders() == null)
         {
-            switch (thePdu.getDataCodingScheme())
+            //
+            // Message without UDH
+            //
+            switch (SmsDcsUtil.getAlphabet(thePdu.getDataCodingScheme()))
             {
-            case SmsConstants.DCS_DEFAULT_8BIT:
+            case SmsConstants.ALPHABET_8BIT:
                 throw new SmsException("Clickatell API cannot send 8 bit encoded messages without UDH");
 
-            case SmsConstants.DCS_DEFAULT_UCS2:
+            case SmsConstants.ALPHABET_UCS2:
                 ud = SmsPduUtil.bytesToHexString(thePdu.getUserData());
                 requestString = MessageFormat.format(
                     "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&text={3}&unicode=1",
                     new Object[] { mySessionId, theDestination.getAddress(), theSender.getAddress(), ud });
                 break;
 
-            case SmsConstants.DCS_DEFAULT_7BIT:
+            case SmsConstants.ALPHABET_GSM:
                 String msg = SmsPduUtil.readSeptets(thePdu.getUserData(), thePdu.getUserDataLength());
                 msg = URLEncoder.encode(msg);
                 requestString = MessageFormat.format(
@@ -189,9 +193,12 @@ public class ClickatellTransport implements SmsTransport
         }
         else
         {
+            //
+            // Message Contains UDH
+            //
             switch (thePdu.getDataCodingScheme())
             {
-            case SmsConstants.DCS_DEFAULT_8BIT:
+            case SmsConstants.ALPHABET_8BIT:
                 ud = SmsPduUtil.bytesToHexString(thePdu.getUserData());
                 udh = SmsPduUtil.bytesToHexString(thePdu.getUserDataHeaders());
                 requestString = MessageFormat.format(
@@ -199,7 +206,7 @@ public class ClickatellTransport implements SmsTransport
                     new Object[] { mySessionId, theDestination.getAddress(), theSender.getAddress(), udh, ud });
                 break;
 
-            case SmsConstants.DCS_DEFAULT_UCS2:
+            case SmsConstants.ALPHABET_UCS2:
                 ud = SmsPduUtil.bytesToHexString(thePdu.getUserData());
                 udh = SmsPduUtil.bytesToHexString(thePdu.getUserDataHeaders());
                 requestString = MessageFormat.format(
@@ -207,7 +214,7 @@ public class ClickatellTransport implements SmsTransport
                     new Object[] { mySessionId, theDestination.getAddress(), theSender.getAddress(), udh, ud });
                 break;
 
-            case SmsConstants.DCS_DEFAULT_7BIT:
+            case SmsConstants.ALPHABET_GSM:
                 String msg = SmsPduUtil.readSeptets(thePdu.getUserData(), thePdu.getUserDataLength());
                 msg = URLEncoder.encode(msg);
                 udh = SmsPduUtil.bytesToHexString(thePdu.getUserDataHeaders());
@@ -221,6 +228,9 @@ public class ClickatellTransport implements SmsTransport
             }
         }
 
+        //
+        // Send request to clickatell
+        //
         try
         {
             URL requestURL = new URL(requestString);
@@ -230,11 +240,27 @@ public class ClickatellTransport implements SmsTransport
                 new BufferedReader(new InputStreamReader(requestURL.openStream()));
 
             // Read response
-            String response;
-            while ( (response = responseReader.readLine()) != null)
+            response = responseReader.readLine();
+            responseReader.close();
+
+            // Parse response
+            Object[] objs = responseFormat.parse(response);
+
+            if ( "ID".equalsIgnoreCase((String)objs[0]) )
             {
-                System.out.println(response);
+                // Could do something with this, we just ignore it.
+                String msgId = (String)objs[1];
             }
+            else
+            {
+                // ERR
+                String errorMsg = (String) objs[1];
+                throw new SmsException("Clickatell error. Error " + errorMsg);
+            }
+        }
+        catch (ParseException ex)
+        {
+            throw new SmsException("Unexpected response from Clickatell. : " + response);
         }
         catch (MalformedURLException ex)
         {
@@ -246,6 +272,14 @@ public class ClickatellTransport implements SmsTransport
         }
     }
 
+    /**
+     * Sends many SMS
+     *
+     * @param thePdus
+     * @param theDestination
+     * @param theSender
+     * @throws SmsException
+     */
     public void send(SmsPdu[] thePdus, SmsAddress theDestination, SmsAddress theSender) throws SmsException
     {
         if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
@@ -260,12 +294,17 @@ public class ClickatellTransport implements SmsTransport
     }
 
     /**
+     * Sends a ping command to clickatell.
+     * <p>
+     * Currently not implemented.
+     * <pre>
      * Command:
      * http://api.clickatell.com/http/ping?session_id=xxx
      * Response:
      * OK:
      * or
      * ERR: Error number
+     * </pre>
      *
      * @throws SmsException
      */
@@ -275,6 +314,13 @@ public class ClickatellTransport implements SmsTransport
         throw new java.lang.UnsupportedOperationException("Method ping() not yet implemented.");
     }
 
+    /**
+     * Disconnect from clickatell
+     * <p>
+     * Not needed for the clickatell API
+     *
+     * @throws SmsException Never
+     */
     public void disconnect() throws SmsException
     {
     }
