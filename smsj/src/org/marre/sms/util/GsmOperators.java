@@ -40,127 +40,110 @@ import java.io.*;
 /**
  * Contains MCC and MNC definitions for various GSM operators.
  * <p>
- * <b>Note!</b> This is not a complete list.
+ * TODO: Test this!
  *
  * @author Markus Eriksson
  * @version 1.0
  */
 public final class GsmOperators
 {
-    // SE - TELIA
-    public static final int   SE_TELIA_MCC = 240;
-    public static final int   SE_TELIA_MNC = 1;
-    public static final int[] SE_TELIA_MCC_MNC = {SE_TELIA_MCC, SE_TELIA_MNC};
-
-    // SE - COMVIQ
-    public static final int   SE_COMVIQ_MCC = 240;
-    public static final int   SE_COMVIQ_MNC = 7;
-    public static final int[] SE_COMVIQ_MCC_MNC = {SE_COMVIQ_MCC, SE_COMVIQ_MNC};
-
-    // SE - EUROPOLITAN
-    public static final int   SE_EUROPOLITAN_MCC = 240;
-    public static final int   SE_EUROPOLITAN_MNC = 8;
-    public static final int[] SE_EUROPOLITAN_MCC_MNC = {SE_EUROPOLITAN_MCC, SE_EUROPOLITAN_MNC};
-
-    // FI - RADIOLINJA
-    public static final int   FI_RADIOLINJA_MCC = 244;
-    public static final int   FI_RADIOLINJA_MNC = 5;
-    public static final int[] FI_RADIOLINJA_MCC_MNC = {FI_RADIOLINJA_MCC, FI_RADIOLINJA_MNC};
-
-    // FI - SONERA
-    public static final int   FI_SONERA_MCC = 244;
-    public static final int   FI_SONERA_MNC = 91;
-    public static final int[] FI_SONERA_MCC_MNC = {FI_SONERA_MCC, FI_SONERA_MNC};
-
-	// GER - T-Mobil D1
-    public static final int   GER_TMOBIL_MCC = 262;
-    public static final int   GER_TMOBIL_MNC = 01;
-    public static final int[] GER_TMOBIL_MCC_MNC = {GER_TMOBIL_MCC, GER_TMOBIL_MNC};
-
-	// GER - Vodafone D2
-    public static final int   GER_VODAFONED2_MCC = 262;
-    public static final int   GER_VODAFONED2_MNC = 01;
-    public static final int[] GER_VODAFONED2_MCC_MNC = {GER_VODAFONED2_MCC, GER_VODAFONED2_MNC};
-
-	// IT - TIM (Telecom Italia Mobile)
-    public static final int   IT_TIM_MCC = 222;
-    public static final int   IT_TIM_MNC = 01;
-    public static final int[] IT_TIM_MCC_MNC = {IT_TIM_MCC, IT_TIM_MNC};
-
-	// IT - VODAFONE OMNITEL
-    public static final int   IT_VODAFONE_MCC = 222;
-    public static final int   IT_VODAFONE_MNC = 10;
-    public static final int[] IT_VODAFONE_MCC_MNC = {IT_VODAFONE_MCC, IT_VODAFONE_MNC};
-        
-	// IT - WIND
-    public static final int   IT_WIND_MCC = 222;
-    public static final int   IT_WIND_MNC = 88;
-    public static final int[] IT_WIND_MCC_MNC = {IT_WIND_MCC, IT_WIND_MNC};
-    
-	// IT - BLU (Legacy)
-    public static final int   IT_BLU_MCC = 222;
-    public static final int   IT_BLU_MNC = 98;
-    public static final int[] IT_BLU_MCC_MNC = {IT_BLU_MCC, IT_BLU_MNC};    
+    private static Properties myMccMncProp = new Properties();
 
     /**
-     * Returns the Mcc and Mnc number for the given number, if the area code is in the property file
-     * @param mccmncProp  The property file
-     * @param intReceiverNr the receivers number in international format (e.g. +49172..)
+     * Returns the Mcc and Mnc number for the given operator
+     * 
+     * @param mccmncProp The property file
+     * @param country the countrycode for the country (e.g. "se", "fi")
+     * @param operator the receivers number in international format (e.g. +49172..)
      * @return
      */
-    public static int[] getMCC_MNC(Properties mccmncProp, String intReceiverNr)
+    public static int[] getMCC_MNC(Properties mccmncProp, String country, String operator)
     {
-        //Check the first seven or less charakters
-        int i=7;
-        String operator="";
         int[] ret = {0,0};
-        //Find operator
-        while ((i>2)&&(operator.equals("")))
+        
+        String mccStr = mccmncProp.getProperty(country + "." + operator + ".mcc");
+        String mncStr = mccmncProp.getProperty(country + "." + operator + ".mnc");
+
+        if ((mccStr != null) && (mncStr != null))
         {
-            operator=mccmncProp.getProperty(intReceiverNr.substring(0, i), "");
-            i--;
+            ret[0] = Integer.valueOf(mccStr).intValue();
+            ret[1] = Integer.valueOf(mncStr).intValue();
         }
-        //Find MCC and MNC
-        if (!operator.equals(""))
-        {
-            String mccmnc=mccmncProp.getProperty(operator, "0,0");
-            ret[0]=Integer.valueOf(mccmnc.substring(0,mccmnc.indexOf(","))).intValue();
-            ret[1]=Integer.valueOf(mccmnc.substring(mccmnc.indexOf(",")+1)).intValue();
-        }
+
         return ret;
     }
 
     /**
-     * Returns the Mcc and Mnc number for the given number, if the area code is in the property file
-     * @param propFileName  The property filename
-     * @param intReceiverNr the receivers number in international format (e.g. +49172..)
+     * Returns the Mcc and Mnc number for the given operator.
+     * The property file is loaded as resource mccmnc.prop
+     * 
+     * @param country the receivers number in international format (e.g. +49172..)
+     * @param operator the receivers number in international format (e.g. +49172..)
      * @return
      */
-    public static int[] getMCC_MNC(String propFileName, String intReceiverNr)
-      throws IOException
+    public static int[] getMCC_MNC(String country, String operator)
     {
-        Properties prop = new Properties();
-        prop.load(new FileInputStream(propFileName));
-        return getMCC_MNC(prop, intReceiverNr);
+        return getMCC_MNC(myMccMncProp, country, operator);
     }
 
     /**
-     * Returns the Mcc and Mnc number for the given number, if the area code is in the property file.
-     * The property file is loaded as resource mccmnc.prop
-     * @param intReceiverNr the receivers number in international format (e.g. +49172..)
-     * @return
-     */
-    public static int[] getMCC_MNC(String intReceiverNr)
-      throws IOException
+     * Builds a default mcc mnc list that is used if it failed to
+     * load the "mccmnc.prop" file.
+     */    
+    private static void defaultMccMnc()
     {
-        Properties prop = new Properties();
+        myMccMncProp.setProperty("se.telia.mcc",       "240");        
+        myMccMncProp.setProperty("se.telia.mnc",       "1");        
+        myMccMncProp.setProperty("se.comviq.mcc",      "240");        
+        myMccMncProp.setProperty("se.comviq.mnc",      "7");        
+        myMccMncProp.setProperty("se.europolitan.mcc", "240");        
+        myMccMncProp.setProperty("se.europolitan.mnc", "8");   
+        myMccMncProp.setProperty("se.vodafone.mcc",    "240");        
+        myMccMncProp.setProperty("se.vodafone.mnc",    "8");   
+        
+        myMccMncProp.setProperty("fi.radiolinja.mcc",  "244");        
+        myMccMncProp.setProperty("fi.radiolinja.mnc",  "5");        
+        myMccMncProp.setProperty("fi.sonera.mcc",      "244");        
+        myMccMncProp.setProperty("fi.sonera.mnc",      "91");
+        
+        myMccMncProp.setProperty("de.tmobil.mcc",      "262");        
+        myMccMncProp.setProperty("de.tmobil.mnc",      "1");        
+        myMccMncProp.setProperty("de.vodafone.mcc",    "262");        
+        myMccMncProp.setProperty("de.vodafone.mnc",    "1");
+                        
+        myMccMncProp.setProperty("it.tim.mcc",         "222");        
+        myMccMncProp.setProperty("it.tim.mnc",         "1");
+        myMccMncProp.setProperty("it.vodafone.mcc",    "222");        
+        myMccMncProp.setProperty("it.vodafone.mnc",    "10");
+        myMccMncProp.setProperty("it.wind.mcc",        "222");        
+        myMccMncProp.setProperty("it.wind.mnc",        "88");
+        myMccMncProp.setProperty("it.blu.mcc",         "222");        
+        myMccMncProp.setProperty("it.blu.mnc",         "98");
+    }
+
+    private static void readMccMncFromResource(String resourceName)
+    {
         ClassLoader cl = GsmOperators.class.getClassLoader();
-        InputStream inst = cl.getResourceAsStream("mccmnc.prop");
-        if (inst==null)
+        InputStream in = cl.getResourceAsStream(resourceName);
+        
+        if (in != null)
         {
-            throw new FileNotFoundException ("Could not load resource mccmnc.prop");
+            try
+            {
+                myMccMncProp.load(in);
+            }
+            catch (IOException ex)
+            {
+                // TODO: Log this
+
+                // Load default values
+                defaultMccMnc();
+            }
         }
-        prop.load(inst);
-        return getMCC_MNC(prop, intReceiverNr);
+    }
+    
+    static 
+    {
+        readMccMncFromResource("mccmnc.prop");
     }
 }
