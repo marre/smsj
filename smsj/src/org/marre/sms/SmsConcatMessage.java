@@ -160,7 +160,7 @@ public class SmsConcatMessage extends SmsAbstractMessage
         }
         catch (IOException ioe)
         {
-            // Shouldn't happen.
+            ioe.printStackTrace();
         }
 
         return baos.toByteArray();
