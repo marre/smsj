@@ -40,29 +40,24 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * Service Indication WAP Push message
- * <p>
- * It will support the setting of "content-type" and "X-Wap-Application-Id",
- * no other headers will be supported.
+ * Simple Service Indication WAP Push message.
+ *
+ * A class that makes it possible to send simple SI push messages containing an URL and a message.
  *
  * @author Markus Eriksson
  * @version 1.0
  */
-
 public class WapSiPushMessage extends WapPushMessage
 {
-    private SIPush push = null;
-
     public WapSiPushMessage(String uri, String message)
     {
         super();
 
-        push = new SIPush(uri, message);
-
-        createSiPush();
+        SIPush push = new SIPush(uri, message);
+        createSiPush(push);
     }
 
-    protected void createSiPush()
+    protected void createSiPush(SIPush push)
     {
         ByteArrayOutputStream pushMsg = new ByteArrayOutputStream();
 
@@ -77,6 +72,5 @@ public class WapSiPushMessage extends WapPushMessage
         }
 
         createMessage(pushMsg.toByteArray(), "application/vnd.wap.sic", "x-wap-application:wml.ua", null);
-
     }
 }

@@ -37,156 +37,101 @@ package org.marre.sms.wap;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.marre.util.StringUtil;
 import org.marre.wap.MmsConstants;
 import org.marre.wap.MmsHeaderEncoder;
 
 /**
- * MMS WAP Push message
- * <p>
+ * MMS notification message.
  *
  * @author Lincoln Spiteri
  * @version $Id$
  */
+public class MmsPushMessage extends WapPushMessage
+{
+    private static final int DEFAULT_TRANSACTION_ID_LENGTH = 5;
+    private static final long DEFAULT_EXPIRY = 3*24*60*60; // 3 days
+    
+	protected String myContentLocation = null;
+	protected String myFrom = null;
+	protected String mySubject = null;
+	protected int myMessageClassId = MmsConstants.X_MMS_MESSAGE_CLASS_ID_PERSONAL;
+	protected String myTransactionId = null;
+	protected long mySize = 0;
+	protected long myExpiry = 0;
 
-public class MmsPushMessage extends WapPushMessage {
-
-	String uri;
-	String from;
-	String to;
-	String subject;
-	String	messageClass;
-	int transactionId;
-	int size;
-	int expiry;
-	
-	
-	public MmsPushMessage(String uri) {
-		
+	public MmsPushMessage(String theContentLocation)
+    {
 		super();
-		this.uri = uri;
-		subject = "";
-		from = "";
-		to = "";
-		transactionId = 0;
-		size = 0;
-		expiry = 1000;
-		messageClass = "personal";
+
+		myContentLocation = theContentLocation;        
+        myTransactionId = StringUtil.randString(DEFAULT_TRANSACTION_ID_LENGTH);
+        myExpiry = DEFAULT_EXPIRY;
 	}
 
 	public void createMmsPush()
 	{
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-			try 
-			{
-				// X-Mms-Message-Type (m-notification-ind)
-				MmsHeaderEncoder.writeHeaderXMmsMessageType(baos, "m-notification-ind");
-				MmsHeaderEncoder.writeHeaderXMmsTransactionId(baos, String.valueOf(transactionId));
-				MmsHeaderEncoder.writeHeaderXMmsMmsVersion(baos, "1.0");
-				
-				if (from.length() != 0)
-				{
-					MmsHeaderEncoder.writeHeaderFrom(baos, from);
-				}
-				
-				if (subject.length() != 0)
-				{
-					MmsHeaderEncoder.writeHeaderSubject(baos, subject);
-				}
-
-				MmsHeaderEncoder.writeHeaderXMmsMessageClass(baos, messageClass);
-				MmsHeaderEncoder.writeHeaderXMmsMessageSize(baos, size);
-				MmsHeaderEncoder.writeHeaderXMmsExpiry(baos, expiry, MmsConstants.EXPIRY_TIME_RELATIVE);
-				MmsHeaderEncoder.writeHeaderContentLocation(baos, uri);
-
-				baos.close();
-			}
-			catch (IOException e)
-			{
-				// Should not happen	
-			}
-		
-			createMessage(baos.toByteArray(), "application/vnd.wap.mms-message", "x-wap-application:mms.ua", null);
-	}
-	
-	public String getMessageClass() 
-	{
-			return messageClass;
+        try 
+        {
+            // X-Mms-Message-Type (m-notification-ind)
+            MmsHeaderEncoder.writeHeaderXMmsMessageType(baos, MmsConstants.X_MMS_MESSAGE_TYPE_ID_M_NOTIFICATION_IND);
+            MmsHeaderEncoder.writeHeaderXMmsTransactionId(baos, myTransactionId);
+            MmsHeaderEncoder.writeHeaderXMmsMmsVersion(baos, MmsConstants.X_MMS_MMS_VERSION_ID_1_0);
+            
+            if (myFrom.length() > 0)
+            {
+                MmsHeaderEncoder.writeHeaderFrom(baos, myFrom);
+            }
+            
+            if (mySubject.length() > 0)
+            {
+                MmsHeaderEncoder.writeHeaderSubject(baos, mySubject);
+            }
+            
+            MmsHeaderEncoder.writeHeaderXMmsMessageClass(baos, myMessageClassId);
+            MmsHeaderEncoder.writeHeaderXMmsMessageSize(baos, mySize);
+            MmsHeaderEncoder.writeHeaderXMmsExpiryRelative(baos, myExpiry);
+            MmsHeaderEncoder.writeHeaderContentLocation(baos, myContentLocation);
+            
+            baos.close();
+        }
+        catch (IOException e)
+        {
+            // Should not happen, we are writing to an ByteArray	
+        }
+        
+        createMessage(baos.toByteArray(), "application/vnd.wap.mms-message", "x-wap-application:mms.ua", null);
 	}
 
-	public int getSize() 
+	public void setMessageClass(int messageClassId)
 	{
-			return size;
+        myMessageClassId = messageClassId;
 	}
 
-	public String getSubject() 
+	public void setSize(long theSize)
 	{
-			return subject;
+        mySize = theSize;
 	}
 
-	public String getTo() 
+	public void setSubject(String theSubject)
 	{
-			return to;
+        mySubject = theSubject;
 	}
 
-	public String getUri() 
+	public void setExpiry(int i)
 	{
-			return uri;
-	}
-
-	public void setMessageClass(String s) 
-	{
-			messageClass = s;
-	}
-
-	public void setSize(int i) 
-	{
-			size = i;
-	}
-
-	public void setSubject(String string) 
-	{
-			subject = string;
-	}
-
-	public void setTo(String string) 
-	{
-			to = string;
-	}
-
-	public void setUri(String string) 
-	{
-			uri = string;
-	}
-
-	public int getExpiry() 
-	{
-			return expiry;
-	}
-
-	public String getFrom() 
-	{
-			return from;
-	}
-
-	public int getTransactionId() 
-	{
-			return transactionId;
-	}
-
-	public void setExpiry(int i) 
-	{
-			expiry = i;
+        myExpiry = i;
 	}
 
 	public void setFrom(String string) 
 	{
-			from = string;
+        myFrom = string;
 	}
 
-	public void setTransactionId(int i) 
+	public void setTransactionId(String transactionId)
 	{
-			transactionId = i;
+        myTransactionId = transactionId;
 	}
-
 }
