@@ -32,6 +32,13 @@ import org.marre.sms.util.SmsUdhUtil;
  */
 public class SmsTextMessage extends SmsConcatMessage
 {
+    public SmsTextMessage(String theMsg, int theAlphabet, byte theMessageClass)
+    {
+        this(theMsg, theAlphabet);
+        int dcs = getDataCodingScheme() | 0x10 | theMessageClass;
+        setDataCodingScheme((byte)(dcs & 0xff));
+    }
+ 
     public SmsTextMessage(String theMsg, int theAlphabet)
     {
         try
