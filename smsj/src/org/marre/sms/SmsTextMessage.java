@@ -25,7 +25,7 @@ import org.marre.sms.util.SmsPduUtil;
 import org.marre.sms.util.SmsUdhUtil;
 
 /**
- * SmsTextMessag
+ * SmsTextMessage
  *
  * @author Markus Eriksson
  * @version 1.0
@@ -43,6 +43,11 @@ public class SmsTextMessage implements SmsMessage
         myAlphabet = theAlphabet;
     }
 
+    /**
+     * Creates an SmsTextMessage with default 7Bit GSM Alphabet
+     *
+     * @param theMsg The message
+     */
     public SmsTextMessage(String theMsg)
     {
         this(theMsg, SmsConstants.ALPHABET_GSM);
@@ -105,7 +110,7 @@ public class SmsTextMessage implements SmsMessage
                 // Set user data header
                 smsPdus[i].setUserDataHeaders(
                             new SmsUdhElement[] {
-                                SmsUdhUtil.getConcatUdh(refno, nSms, i)
+                                SmsUdhUtil.get8BitConcatUdh(refno, nSms, i)
                             });
             }
         }
