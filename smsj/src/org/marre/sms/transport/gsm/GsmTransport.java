@@ -42,6 +42,7 @@ import org.marre.sms.SmsConstants;
  * than the sending phone's phonenumber.</i>
  *
  * @todo Validity period
+ * @todo Clean up the support for messages with UDH
  *
  * @author Markus Eriksson
  * @version 1.0
@@ -83,10 +84,9 @@ public class GsmTransport implements SmsTransport
         throws SmsException
     {
         byte ud[] = thePdu.getUserData();
-        int udLength = thePdu.getUserDataLength();
         byte udh[] = thePdu.getUserDataHeader();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(160);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(161);
 
         if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
         {
@@ -95,9 +95,23 @@ public class GsmTransport implements SmsTransport
 
         try
         {
+            int nUdhBits = 0;
+            int nUdBits = 0;
+
+            // udLength can be in septets or octets
+            int udLength = 0;
+
+            int nUdhBytes = 0;
+            int nFillBits = 0;
+
+            int tpUdl = 0;
+
+            int nTotalBytes = 0;
+
             // Use default SMSC
             baos.write(0x00);
 
+            // UDH?
             if( (udh == null) || (udh.length == 0) )
             {
                 // TP-Message-Type-Indicator = SUBMIT
@@ -110,6 +124,11 @@ public class GsmTransport implements SmsTransport
             }
             else
             {
+                nUdhBytes = udh.length;
+
+                // +1 is for the size header...
+                nUdhBits = (nUdhBytes + 1) * 8;
+
                 // TP-Message-Type-Indicator = SUBMIT
                 // TP-Reject-Duplicates = ON
                 // TP-Validity-Period-Format = No field
@@ -117,6 +136,51 @@ public class GsmTransport implements SmsTransport
                 // TP-User-Data-Header = Yes
                 // TP-Reply-Path = No
                 baos.write(0x41);
+            }
+
+            if (thePdu.getDataCodingScheme() == 0x00)
+            {
+                // GSM CHARSET
+
+                // UD length in septets
+                udLength = (ud.length * 8) / 7;
+
+                int nUdhSeptets = nUdhBits / 7;
+                if ( (nUdhBits % 7) > 0)
+                {
+                    nUdhSeptets += 1;
+                }
+                int nTotalBits = udLength * 7 + nFillBits + udh.length * 8;
+
+                tpUdl = udLength + nUdhSeptets;
+                nUdBits = udLength * 7;
+                nFillBits = 7 - (nUdhBits % 7);
+
+                nTotalBytes = nTotalBits / 8;
+                if (nTotalBits % 8 > 0)
+                {
+                    nTotalBytes += 1;
+                }
+            }
+            else if (thePdu.getDataCodingScheme() == 0x04)
+            {
+                // 8BIT
+                udLength = ud.length;
+                // +1 For the UDH Length
+                tpUdl = ud.length + nUdhBytes + 1;
+                nUdBits = udLength * 8;
+                nFillBits = 0;
+                nTotalBytes = tpUdl - 1;
+            }
+            else if (thePdu.getDataCodingScheme() == 0x08)
+            {
+                // UCS2...
+                udLength = ud.length;
+                // +1 For the UDH Length
+                tpUdl = ud.length + nUdhBytes + 1;
+                nUdBits = udLength * 8;
+                nFillBits = 0;
+                nTotalBytes = tpUdl - 1;
             }
 
             // TP-Message-Reference
@@ -152,6 +216,7 @@ public class GsmTransport implements SmsTransport
             // TP-VP - Optional
             // Probably not needed
 
+            // UDH?
             if( (udh == null) || (udh.length == 0) )
             {
                 // 1 Integer
@@ -168,19 +233,24 @@ public class GsmTransport implements SmsTransport
                 // 1 Integer
                 // TP-UDL
                 // UDL includes the length of UDH
-                baos.write(udLength + udh.length);
+                baos.write(tpUdl);
 
                 // User Data header length
-                // FIXME: BUG! Should be in septets, not bytes!!
-                baos.write(udh.length);
+                // In octets minus eventual fill bits
+                baos.write(nUdhBytes);
+
+                // The whole UD PDU
+                byte fullUd[] = new byte[139];
 
                 // n octets
                 // TP-UDH
-                baos.write(udh);
+                System.arraycopy(udh, 0, fullUd, 0, nUdhBytes);
 
                 // n octets
                 // TP-UD
-                baos.write(ud);
+                SmsPduUtil.arrayCopy(ud, 0, fullUd, nUdhBytes, nFillBits, nUdBits);
+
+                baos.write(fullUd, 0, nTotalBytes);
             }
             baos.close();
         }
