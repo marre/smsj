@@ -64,7 +64,7 @@ public class SmsSender
      * @param theProps Properties to initialize the transport with
      * @throws SmsException
      */
-    SmsSender(String theTransport, Properties theProps)
+    public SmsSender(String theTransport, Properties theProps)
         throws SmsException
     {
         myTransport = SmsTransportManager.getTransport(theTransport, theProps);
