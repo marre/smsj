@@ -221,9 +221,122 @@ public class SmsConstants
     /** Message with no specific message class (Often handled as an class 1 SMS) */
     public static final byte MSG_CLASS_UNKNOWN = 4;
 
+    /** DCS 7 BIT GMS alphabet */
     public static final byte DCS_DEFAULT_7BIT = 0x00;
+    /** DCS 8 BIT GSM alphabet */
     public static final byte DCS_DEFAULT_8BIT = 0x04;
+    /** DCS UNICODE alphabet */
     public static final byte DCS_DEFAULT_UCS2 = 0x08;
+
+    /** EMS - Left aligned text */
+    public static final byte EMS_TEXT_ALIGN_LEFT = 0x00;
+    /** EMS - Centered text */
+    public static final byte EMS_TEXT_ALIGN_CENTER = 0x01;
+    /** EMS - Right aligned text */
+    public static final byte EMS_TEXT_ALIGN_RIGHT = 0x02;
+    /** EMS - Default alignment (language dependent) */
+    public static final byte EMS_TEXT_ALIGN_DEFAULT = 0x03;
+
+    /** EMS - Normal size font */
+    public static final byte EMS_TEXT_SIZE_NORMAL = 0x00;
+    /** EMS - Large size font */
+    public static final byte EMS_TEXT_SIZE_LARGE = 0x04;
+    /** EMS - Small size font */
+    public static final byte EMS_TEXT_SIZE_SMALL = 0x08;
+
+    /** EMS - Normal size font */
+    public static final int EMS_TEXT_STYLE_BOLD = 0x10;
+    /** EMS - Large size font */
+    public static final int EMS_TEXT_STYLE_ITALIC = 0x20;
+    /** EMS - Small size font */
+    public static final int EMS_TEXT_STYLE_UNDERLINED = 0x40;
+    /** EMS - Small size font */
+    public static final int EMS_TEXT_STYLE_STRIKETHROUGH = 0x80;
+
+    /** EMS - Color black */
+    public static final byte EMS_TEXT_COLOR_BLACK = 0x00;
+    /** EMS - Color dark grey */
+    public static final byte EMS_TEXT_COLOR_DARK_GREY = 0x01;
+    /** EMS - Color dark red */
+    public static final byte EMS_TEXT_COLOR_DARK_RED = 0x02;
+    /** EMS - Color dark yellow */
+    public static final byte EMS_TEXT_COLOR_DARK_YELLOW = 0x03;
+    /** EMS - Color dark green */
+    public static final byte EMS_TEXT_COLOR_DARK_GREEN = 0x04;
+    /** EMS - Color dark cyan */
+    public static final byte EMS_TEXT_COLOR_DARK_CYAN = 0x05;
+    /** EMS - Color dark blue */
+    public static final byte EMS_TEXT_COLOR_DARK_BLUE = 0x06;
+    /** EMS - Color dark magenta */
+    public static final byte EMS_TEXT_COLOR_DARK_MAGENTA = 0x07;
+    /** EMS - Color grey */
+    public static final byte EMS_TEXT_COLOR_GREY = 0x08;
+    /** EMS - Color white */
+    public static final byte EMS_TEXT_COLOR_WHITE = 0x09;
+    /** EMS - Color bright red */
+    public static final byte EMS_TEXT_COLOR_BRIGHT_RED = 0x0A;
+    /** EMS - Color bright yellow */
+    public static final byte EMS_TEXT_COLOR_BRIGHT_YELLOW = 0x0B;
+    /** EMS - Color bright green */
+    public static final byte EMS_TEXT_COLOR_BRIGHT_GREEN = 0x0C;
+    /** EMS - Color bright cyan */
+    public static final byte EMS_TEXT_COLOR_BRIGHT_CYAN = 0x0D;
+    /** EMS - Color bright blue */
+    public static final byte EMS_TEXT_COLOR_BRIGHT_BLUE = 0x0E;
+    /** EMS - Color bright magenta */
+    public static final byte EMS_TEXT_COLOR_BRIGHT_MAGENTA = 0x0F;
+
+    /** EMS - Predefined sound - Chimes high */
+    public static final byte EMS_PREDEFINED_SOUND_CHIMES_HIGH = 0x00;
+    /** EMS - Predefined sound - Chimes low */
+    public static final byte EMS_PREDEFINED_SOUND_CHIMES_LOW = 0x01;
+    /** EMS - Predefined sound - Ding */
+    public static final byte EMS_PREDEFINED_SOUND_DING = 0x02;
+    /** EMS - Predefined sound - TaDa */
+    public static final byte EMS_PREDEFINED_SOUND_TADA = 0x03;
+    /** EMS - Predefined sound - Notify */
+    public static final byte EMS_PREDEFINED_SOUND_NOTIFY = 0x04;
+    /** EMS - Predefined sound - Drum */
+    public static final byte EMS_PREDEFINED_SOUND_DRUM = 0x05;
+    /** EMS - Predefined sound - Claps */
+    public static final byte EMS_PREDEFINED_SOUND_CLAPS = 0x06;
+    /** EMS - Predefined sound - FanFar */
+    public static final byte EMS_PREDEFINED_SOUND_FANFAR = 0x07;
+    /** EMS - Predefined sound - Chord high */
+    public static final byte EMS_PREDEFINED_SOUND_CHORD_HIGH = 0x08;
+    /** EMS - Predefined sound - Chord low */
+    public static final byte EMS_PREDEFINED_SOUND_CHORD_LOW = 0x09;
+
+    /** EMS - Predefined animation - I am ironic, flirty */
+    public static final byte EMS_PREDEFINED_ANIM_IRONIC = 0x00;
+    /** EMS - Predefined animation - I am glad */
+    public static final byte EMS_PREDEFINED_ANIM_GLAD = 0x01;
+    /** EMS - Predefined animation - I am sceptic */
+    public static final byte EMS_PREDEFINED_ANIM_SCEPTIC = 0x02;
+    /** EMS - Predefined animation - I am sad */
+    public static final byte EMS_PREDEFINED_ANIM_SAD = 0x03;
+    /** EMS - Predefined animation - WOW! */
+    public static final byte EMS_PREDEFINED_ANIM_WOW = 0x04;
+    /** EMS - Predefined animation - I am crying */
+    public static final byte EMS_PREDEFINED_ANIM_CRYING = 0x05;
+    /** EMS - Predefined animation - I am winking */
+    public static final byte EMS_PREDEFINED_ANIM_WINKING = 0x06;
+    /** EMS - Predefined animation - I am lughing */
+    public static final byte EMS_PREDEFINED_ANIM_LAUGHING = 0x07;
+    /** EMS - Predefined animation - I am indifferent */
+    public static final byte EMS_PREDEFINED_ANIM_INDIFFERENT = 0x08;
+    /** EMS - Predefined animation - In love/Kissing */
+    public static final byte EMS_PREDEFINED_ANIM_LOVE = 0x09;
+    /** EMS - Predefined animation - I am confused */
+    public static final byte EMS_PREDEFINED_ANIM_CONFUSED = 0x0A;
+    /** EMS - Predefined animation - Tounge hanging out */
+    public static final byte EMS_PREDEFINED_ANIM_TOUNGE = 0x0B;
+    /** EMS - Predefined animation - I am angry */
+    public static final byte EMS_PREDEFINED_ANIM_ANGRY = 0x0C;
+    /** EMS - Predefined animation - Wearing glasses */
+    public static final byte EMS_PREDEFINED_ANIM_GLASSES = 0x0D;
+    /** EMS - Predefined animation - Devil */
+    public static final byte EMS_PREDEFINED_ANIM_DEVIL = 0x0E;
 
     private SmsConstants()
     {
