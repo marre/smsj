@@ -39,7 +39,7 @@ import java.util.*;
 import java.io.*;
 import javax.comm.*;
 
-import org.apache.commons.logging.*;
+import org.marre.util.*;
 
 import org.marre.sms.util.SmsPduUtil;
 import org.marre.sms.util.SmsDcsUtil;
@@ -77,8 +77,6 @@ import org.marre.sms.SmsConstants;
  */
 public class GsmTransport implements SmsTransport, SerialPortEventListener
 {
-    static Log myLog = LogFactory.getLog(GsmTransport.class);
-
     private String mySerialPortName;
     private SerialPort mySerialPort;
     private OutputStream myOutStream;
@@ -125,7 +123,6 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
                     try {
                         mySerialPort = (SerialPort) portId.open(GsmTransport.class.getName(), 3000);
                     } catch (PortInUseException e) {
-                        myLog.error("Port "+mySerialPortName+" already open.", e);
                        throw new SmsException("Port "+mySerialPortName+" already open.");
                     }
                 }
@@ -134,7 +131,6 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
 
         /* port not found */
         if(mySerialPort == null) {
-            myLog.error("Port " + mySerialPortName + " does not exist.");
             throw new SmsException("Port " + mySerialPortName + " does not exist.");
         }
 
@@ -147,7 +143,6 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
         catch (IOException e)
         {
             mySerialPort.close();
-            myLog.error("Cannot open streams", e);
             throw new SmsException("Cannot open streams.");
         }
 
@@ -207,11 +202,9 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
         }
         catch (UnsupportedCommOperationException e) {
             mySerialPort.close();
-            myLog.error("Cannot initialize the port", e);
             throw new SmsException("Cannot initialize the port");
         }
         catch (TooManyListenersException e){
-            myLog.error("Failed to add listener to serial port", e);
             throw new SmsException ("Failed to add listener to serial port");
         }
         /* Start a thread for handling comminication with the terminal */
@@ -226,7 +219,6 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
         }
         catch (SmsException e)
         {
-            myLog.error("Cannot connect the GSM phone");
             throw new SmsException("Cannot connect the GSM phone");
         }
 
@@ -242,7 +234,6 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
         }
         catch (SmsException e)
         {
-            myLog.error("GSM phone cannot send short messages");
             throw new SmsException("GSM phone cannot send short messages");
         }
 
@@ -256,7 +247,6 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
         }
         catch (SmsException e)
         {
-            myLog.error("Error while initializing the GSM phone");
             throw new SmsException("Error while initializing the GSM phone");
         }
     }
@@ -400,12 +390,11 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
         }
         catch (IOException ex)
         {
-            myLog.error(ex.getMessage(), ex);
             throw new SmsException(ex.getMessage());
         }
 
-        myLog.debug("PDU : " + SmsPduUtil.bytesToHexString(baos.toByteArray()));
-        myLog.debug("Length : " + baos.size());
+        //myLog.debug("PDU : " + StringUtil.bytesToHexString(baos.toByteArray()));
+        //myLog.debug("Length : " + baos.size());
 
         sendStream(baos);
     }
@@ -535,12 +524,11 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
         }
         catch (IOException ex)
         {
-            myLog.error(ex.getMessage(), ex);
             throw new SmsException(ex.getMessage());
         }
 
-        myLog.debug("PDU : " + SmsPduUtil.bytesToHexString(baos.toByteArray()));
-        myLog.debug("Length : " + baos.size());
+//        myLog.debug("PDU : " + StringUtil.bytesToHexString(baos.toByteArray()));
+//        myLog.debug("Length : " + baos.size());
 
         sendStream(baos);
     }
@@ -552,8 +540,8 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
         sendCmd("AT", NOT_OK_RETRY);
         //Send message
         sendCmd("AT+CMGS=" + (baos.size() - 1), NOT_OK_WAIT);
-        sendCmd(SmsPduUtil.bytesToHexString(baos.toByteArray()) + "\032", NOT_OK_WAIT);
-        myLog.debug(myPortMessage);
+        sendCmd(StringUtil.bytesToHexString(baos.toByteArray()) + "\032", NOT_OK_WAIT);
+        //myLog.debug(myPortMessage);
     }
 
     private int sendCmd(String cmd, int waitStatus)
@@ -576,7 +564,7 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
           }
           catch (InterruptedException e)
           {
-            myLog.error("Thread.sleep interrupted", e);
+            //myLog.error("Thread.sleep interrupted", e);
           }
           ret = myPortStatus;
         }
@@ -586,12 +574,10 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
         }
         if (i==TRIES+1)
         {
-            myLog.error("Communication to GSM phone failed.\n Command: " + cmd);
             throw new SmsException("Communication to GSM phone failed.");
         }
         if (ret==MSG_ERROR)
         {
-            myLog.error("Error while executing command: " + cmd);
             throw new SmsException("Error while executing command: " + cmd);
         }
 
@@ -606,18 +592,18 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
             try {
                 myOutStream.write((cmd + LINEFEED).getBytes());
             } catch (IOException e) {
-                myLog.error("Fehler", e);
+                //myLog.error("Fehler", e);
             }
 
             /* wait for response from device */
             try {
                 myPortStatusLock.wait(1500); // millis
             } catch (InterruptedException e) {
-                myLog.error("Fehler", e);
+                //myLog.error("Fehler", e);
             }
 
             if(myPortStatus != MSG_OK) {
-                myLog.debug("port not ok "+myPortStatus+","+cmd);
+                //myLog.debug("port not ok "+myPortStatus+","+cmd);
             }
         }
         return myPortStatus;
