@@ -240,4 +240,15 @@ public class SmsUdhUtil
 
         return new SmsUdhElement(SmsConstants.UDH_IEI_EMS_TEXT_FORMATTING, udh);
     }
+    
+    public static final SmsUdhElement getEmsUserDefinedSoundUdh(byte[] theIMelody) {
+        int iMelodyLength = theIMelody.length;
+        byte[] udh = new byte[2 + iMelodyLength];
+        udh[0] = (byte) 0x00;
+        System.arraycopy(theIMelody, 0, udh, 1, iMelodyLength);
+        
+        return new SmsUdhElement(SmsConstants.UDH_IEI_EMS_USER_DEFINED_SOUND, udh);
+    }
+    
+    
 }
