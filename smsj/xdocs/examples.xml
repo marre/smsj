@@ -2,17 +2,17 @@
 <document>
     <properties>
         <title>Examples</title>
-        <author email="c95men at users.sourceforge.net ">Markus Eriksson</author>
+        <author email="c95men at users.sourceforge.net">Markus Eriksson</author>
     </properties>
     <body>
         <section name="Table of Contents">
-            <blockquote>
-				Simple examples.
-            </blockquote>
             <p>
                 <ol>
                     <li>
                         <a href="#Using SmsSender">Using SmsSender</a>
+                    </li>
+                    <li>
+                        <a href="#Using the low level API">Using the low level API</a>
                     </li>
                 </ol>
             </p>
@@ -20,13 +20,56 @@
 		
         <section name="Using SmsSender">
             <p>
-				Simple example using the <code>SmsSender</code> class:
-                <source><![CDATA[SmsSender sender = SmsSender.getClickatellSender("username", "password", "apiid");
-// "441111111" is the destination number
-// "443333333" is the sender number
-sender.sendTextSms("Just a sample SMS", "441111111", "443333333");
-sender.close();]]></source>
+				The easiest way to send an SMS is by using the <code>SmsSender</code> class. It contains factory methods
+				like <code>getClickatellSender</code> and <code>getGsmSender</code> that creates a connection towards
+				the sms gateway. It also contains some methods like <code>sendTextSms</code> and
+				<code>sendWapSiPush</code> that makes it easy to send these types of messages.
+				<br />
+				Example: You want to send a simple text message using the clickatell sms gateway.
+                <source><![CDATA[// Send SMS with clickatell
+SmsSender smsSender = SmsSender.getClickatellSender("username", "password", "apiid");
+// The message that you want to send.
+String msg = "A sample SMS.";
+// International number to reciever without leading "+"
+String reciever = "461234";
+// Number of sender (not supported on all transports)
+String sender = "461235";
+smsSender.sendTextSms(msg, reciever, sender);
+smsSender.close();]]></source>
             </p>
         </section>
+		
+        <section name="Using the low level API">
+            <p>
+				The other way to send a message is by first loading a transport using the 
+				<code>SmsTransportManager</code> and then create a message using one of the
+				<code>SmsMessage</code> classes.
+				<br />
+				Example: You want to send a simple text message using the clickatell sms gateway.
+                <source><![CDATA[// The username, password and apiid is sent to the clickatell transport
+// in a Properties				
+Properties props = new Properties();
+
+props.setProperty("smsj.clickatell.username", theUsername);
+props.setProperty("smsj.clickatell.password", thePassword);
+props.setProperty("smsj.clickatell.apiid", theApiId);
+
+// Load the clickatell transport
+SmsTransport transport = SmsTransportManager.getTransport("org.marre.sms.transport.clickatell.ClickatellTransport", theProps);
+
+// Connect to clickatell
+transport.connect();
+
+// Create the sms message
+SmsTextMessage textMessage = new SmsTextMessage("A sample SMS.");
+
+// Send the sms to "461234" from "461235"
+transport.send(textMessage, new SmsAddress("461234"), new SmsAddress("461235"));
+				
+// Disconnect from clickatell
+transport.disconnect();]]></source>
+            </p>
+        </section>
+		
     </body>
 </document>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faqs title="Frequently Asked Questions">
+
+  <part id="general">
+    <title>General</title>
+   
+    <faq id="whats-smsj">
+      <question>
+        What is smsj?
+      </question>
+      <answer>
+        <p>It's a Java API that allows you to send SMS messages.</p>
+      </answer>
+    </faq>
+
+    <faq id="can-it-send-wap-push">
+      <question>
+        Can it send wap Push messages?
+      </question>
+      <answer>
+        <p>Yes. The easiest way is to use <code>SmsSender.sendWapSiPushMsg()</code>.</p>
+      </answer>
+    </faq>
+  
+    <faq id="can-it-send-mms-notification-messages">
+      <question>
+        Can it send a mms notification message?
+      </question>
+      <answer>
+        <p>Yes.</p>
+      </answer>
+    </faq>
+  </part>
+  
+  <part id="install">
+    <title>Installation</title>
+   
+    <faq id="using-gsm-phone">
+      <question>
+        How do I send a message using a gsm phone?
+      </question>
+      <answer>
+        <p>Install the javacomm api from sun.</p>
+      </answer>
+    </faq>
+  </part>  
+  
+  <part id="related">
+    <title>Related API:s</title>
+   
+    <faq id="what-about-wma">
+      <question>
+        What is the difference between smsj and WMA (Wireless Messaging API (WMA); JSR 120, JSR 205)?
+      </question>
+      <answer>
+        <p>WMA is targeted towards J2ME.</p>
+      </answer>
+    </faq>
+	
+    <faq id="what-about-jsr212">
+      <question>
+        What is the difference between smsj and jsr212 (SAMS)?
+      </question>
+      <answer>
+        <p>smsj is targeted to create different types of messages. jsr212 is more focused on the sending part.</p>
+      </answer>
+    </faq>	
+  </part>  
+  
+</faqs>
