@@ -456,6 +456,9 @@ public class ClickatellTransport implements SmsTransport
         {
             switch (ex.getErrId())
             {
+            // 858141 : Clickatell is not sending "Session id expired"
+            // they are using "Authentication failed" instead
+            case ClickatellException.ERROR_AUTH_FAILED:
             case ClickatellException.ERROR_SESSION_ID_EXPIRED:
                 // Try to get a new session id
                 connect();
