@@ -60,7 +60,8 @@ public class StringUtil
         {
             for(int i=0; i < stringTable.length; i++)
             {
-                if (stringTable[i].equals(text))
+                if ( (stringTable[i] != null) && 
+                     (stringTable[i].equals(text)) )
                 {
                     return i;
                 }
