@@ -102,14 +102,14 @@ public class SmsTextMessage implements SmsMessage
                 setUserData(smsPdus[i], myMsg.substring(msgStart, msgEnd));
 
                 // Set user data header
-                byte[] udh = new byte[5];
-                udh[0] = SmsConstants.UDH_IEI_CONCATENATED_8BIT;
-                udh[1] = 3;
-                udh[2] = (byte) (refno & 0xff);
-                udh[3] = (byte) (nSms & 0xff);
-                udh[4] = (byte) (i & 0xff);
+                byte[] udh = new byte[3];
+                udh[0] = (byte) (refno & 0xff);
+                udh[1] = (byte) (nSms & 0xff);
+                udh[2] = (byte) (i & 0xff);
 
-                smsPdus[i].setUserDataHeader(udh);
+                smsPdus[i].setUserDataHeaders(new SmsUdhIei[] {
+                            new SmsUdhIei(SmsConstants.UDH_IEI_CONCATENATED_8BIT, udh)
+                    });
             }
         }
 

@@ -18,6 +18,9 @@
 */
 package org.marre.sms;
 
+import java.io.*;
+import java.util.*;
+
 public class SmsPdu
 {
     protected SmsDcs myDcs = null;
@@ -25,27 +28,42 @@ public class SmsPdu
     /** Length of myUd, can be in octets or septets */
     protected int myUdLength = 0;
 
+    protected SmsUdhIei[] myUdhElements = null;
     protected byte myUd[] = null;
-    protected byte myUdh[] = null;
 
     public SmsPdu()
     {
     }
 
-    public SmsPdu(byte[] theUdh, byte[] theUd, int theUdLength, SmsDcs theDcs)
+    public SmsPdu(SmsUdhIei[] theUdhIeis, byte[] theUd, int theUdLength, SmsDcs theDcs)
     {
-        setUserDataHeader(theUdh);
+        setUserDataHeaders(theUdhIeis);
         setUserData(theUd, theUdLength, theDcs);
     }
 
-    public void setUserDataHeader(byte[] theUdh)
+    public void setUserDataHeaders(SmsUdhIei[] theUdhElements)
     {
-        myUdh = theUdh;
+        myUdhElements = theUdhElements;
     }
 
-    public byte[] getUserDataHeader()
+    public byte[] getUserDataHeaders()
     {
-        return myUdh;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(100);
+
+        try
+        {
+            for(int i=0; i < myUdhElements.length; i++)
+            {
+                myUdhElements[i].writeTo(baos);
+            }
+        }
+        catch (IOException ioe)
+        {
+            // Shouldn't happen.
+            throw new RuntimeException("Failed to write to ByteArrayOutputStream");
+        }
+
+        return baos.toByteArray();
     }
 
     public void setUserData(byte[] theUd, int theUdLength, SmsDcs theDcs)
