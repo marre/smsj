@@ -48,6 +48,11 @@ public class SmsPdu
 
     public byte[] getUserDataHeaders()
     {
+        if ( myUdhElements == null)
+        {
+            return null;
+        }
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream(100);
 
         try
