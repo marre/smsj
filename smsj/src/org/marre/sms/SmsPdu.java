@@ -29,8 +29,6 @@ import java.util.*;
  */
 public class SmsPdu
 {
-    protected byte myDcs = 0x00;
-
     /** Length of myUd, can be in octets or septets */
     protected int myUdLength = 0;
 
@@ -52,10 +50,10 @@ public class SmsPdu
      * @param theUdLength
      * @param theDcs
      */
-    public SmsPdu(SmsUdhElement[] theUdhIeis, byte[] theUd, int theUdLength, byte theDcs)
+    public SmsPdu(SmsUdhElement[] theUdhIeis, byte[] theUd, int theUdLength)
     {
         setUserDataHeaders(theUdhIeis);
-        setUserData(theUd, theUdLength, theDcs);
+        setUserData(theUd, theUdLength);
     }
 
     /**
@@ -106,11 +104,10 @@ public class SmsPdu
      * @param theUdLength
      * @param theDcs
      */
-    public void setUserData(byte[] theUd, int theUdLength, byte theDcs)
+    public void setUserData(byte[] theUd, int theUdLength)
     {
         myUd = theUd;
         myUdLength = theUdLength;
-        myDcs = theDcs;
     }
 
     /**
@@ -135,18 +132,5 @@ public class SmsPdu
     public int getUserDataLength()
     {
         return myUdLength;
-    }
-
-    /**
-     * Returns the DCS field
-     * <p>
-     * Use org.marre.sms.util.SmsDcsUtil to parse the information in the
-     * DCS field.
-     *
-     * @return the DCS
-     */
-    public byte getDataCodingScheme()
-    {
-        return myDcs;
     }
 }

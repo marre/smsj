@@ -168,12 +168,13 @@ public class ClickatellTransport implements SmsTransport
      * Sends an sendmsg command to clickatell
      *
      * @param thePdu
+     * @param theDcs
      * @param theDestination
      * @param theSender
      * @throws SmsException If clickatell sends an error message, unexpected
      * response or if  we fail to connect.
      */
-    public void send(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender) throws SmsException
+    public void send(SmsPdu thePdu, byte theDcs, SmsAddress theDestination, SmsAddress theSender) throws SmsException
     {
         String response = null;
         MessageFormat responseFormat = new MessageFormat("{0}: {1}");
@@ -200,7 +201,7 @@ public class ClickatellTransport implements SmsTransport
             //
             // Message without UDH
             //
-            switch (SmsDcsUtil.getAlphabet(thePdu.getDataCodingScheme()))
+            switch (SmsDcsUtil.getAlphabet(theDcs))
             {
             case SmsConstants.DCS_DEFAULT_8BIT:
                 throw new SmsException("Clickatell API cannot send 8 bit encoded messages without UDH");
@@ -229,7 +230,7 @@ public class ClickatellTransport implements SmsTransport
             //
             // Message Contains UDH
             //
-            switch (thePdu.getDataCodingScheme())
+            switch (theDcs)
             {
             case SmsConstants.DCS_DEFAULT_8BIT:
                 ud = SmsPduUtil.bytesToHexString(thePdu.getUserData());
@@ -262,7 +263,7 @@ public class ClickatellTransport implements SmsTransport
         }
 
         // CLASS_0 message?
-        if (SmsDcsUtil.getMessageClass(thePdu.getDataCodingScheme()) == SmsConstants.MSG_CLASS_0)
+        if (SmsDcsUtil.getMessageClass(theDcs) == SmsConstants.MSG_CLASS_0)
         {
             requestString += "&msg_type=SMS_FLASH";
         }
@@ -314,21 +315,30 @@ public class ClickatellTransport implements SmsTransport
     /**
      * Sends many SMS
      *
-     * @param thePdus
+     * @todo If all messages are 7bit encoded we should check if the only UDH
+     * field is the concatenation UDH. We should then send it as one message
+     * to clickatell...
+     *
+     * @param theMessage
      * @param theDestination
      * @param theSender
      * @throws SmsException
      */
-    public void send(SmsPdu[] thePdus, SmsAddress theDestination, SmsAddress theSender) throws SmsException
+    public void send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender)
+        throws SmsException
     {
+        SmsPdu msgPdu[] = null;
+
         if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
         {
             throw new SmsException("Cannot sent SMS to an ALPHANUMERIC address");
         }
 
-        for(int i=0; i < thePdus.length; i++)
+        msgPdu = theMessage.getPdus();
+
+        for(int i=0; i < msgPdu.length; i++)
         {
-            send(thePdus[i], theDestination, theSender);
+            send(msgPdu[i], theMessage.getDataCodingScheme(), theDestination, theSender);
         }
     }
 

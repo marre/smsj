@@ -18,10 +18,30 @@
 */
 package org.marre.sms;
 
-import org.marre.sms.transport.SmsTransport;
-
-public interface SmsMessage
+public abstract class SmsAbstractMessage implements SmsMessage
 {
-    public byte getDataCodingScheme();
-    public SmsPdu[] getPdus();
+    protected byte myDcs = 0x00;
+
+    /**
+     * Returns the DCS field
+     * <p>
+     * Use org.marre.sms.util.SmsDcsUtil to parse the information in the
+     * DCS field.
+     *
+     * @return the DCS
+     */
+    public byte getDataCodingScheme()
+    {
+        return myDcs;
+    }
+
+    /**
+     * Set the DCS field
+     *
+     * @param theDcs The new DCS field
+     */
+    public void setDataCodingScheme(byte theDcs)
+    {
+        myDcs = theDcs;
+    }
 }

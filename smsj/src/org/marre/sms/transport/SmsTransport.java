@@ -20,7 +20,7 @@ package org.marre.sms.transport;
 
 import java.util.Properties;
 
-import org.marre.sms.SmsPdu;
+import org.marre.sms.SmsMessage;
 import org.marre.sms.SmsAddress;
 import org.marre.sms.SmsException;
 
@@ -54,26 +54,14 @@ public interface SmsTransport
     public void connect() throws SmsException;
 
     /**
-     * Sends a single SMS to the given destination
+     * Sends an SmsMessage to the given destination
      *
-     * @param thePdu The PDU to send
+     * @param theMessage The Message to send
      * @param theDestination Destination address
      * @param theSender Sender
      * @throws SmsException
      */
-    public void send(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender) throws SmsException;
-
-    /**
-     * Sends an array of SMS to the reciever.
-     * <p>
-     * Often implemented as a for loop calling the other send() method
-     *
-     * @param thePdus The array of SmsPdus to send
-     * @param theDestination Destination address
-     * @param theSender Sender
-     * @throws SmsException
-     */
-    public void send(SmsPdu thePdus[], SmsAddress theDestination, SmsAddress theSender) throws SmsException;
+    public void send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException;
 
     /**
      * Sends a "ping" to the SMSC (or phone, or service, or...)

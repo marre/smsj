@@ -224,6 +224,26 @@ public class SmsPduUtil
     }
 
     /**
+     * Conversts a byte to a string with hex values.
+     *
+     * @param theByte Byte to convert
+     * @return the encoded string
+     */
+    public static String byteToHexString(byte theByte)
+    {
+        StringBuffer hexStrBuff = new StringBuffer(2);
+
+        String hexByteStr = Integer.toHexString(theByte & 0xff).toUpperCase();
+        if (hexByteStr.length() == 1)
+        {
+            hexStrBuff.append("0");
+        }
+        hexStrBuff.append(hexByteStr);
+
+        return hexStrBuff.toString();
+    }
+
+    /**
      * Converts a string of hex characters to a byte array
      *
      * @param theHexString The hex string to read

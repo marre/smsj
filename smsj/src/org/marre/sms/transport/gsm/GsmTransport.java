@@ -26,6 +26,7 @@ import org.marre.sms.util.SmsDcsUtil;
 import org.marre.sms.transport.SmsTransport;
 import org.marre.sms.SmsPdu;
 import org.marre.sms.SmsAddress;
+import org.marre.sms.SmsMessage;
 import org.marre.sms.SmsException;
 import org.marre.sms.SmsConstants;
 
@@ -70,51 +71,49 @@ public class GsmTransport implements SmsTransport
         // Connect serial port
     }
 
-    public void send(SmsPdu thePdus[], SmsAddress theDestination, SmsAddress theSender)
-        throws SmsException
-    {
-        if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
-        {
-            throw new SmsException("Cannot sent SMS to an ALPHANUMERIC address");
-        }
-
-        for(int i=0; i < thePdus.length; i++)
-        {
-            send(thePdus[i], theDestination, theSender);
-        }
-    }
-
     /**
      * Sends the SMS message to the given recipients.
      * <p>
      * Note: The sending address is ignored for the GSM transport.
      *
-     * @param thePdu The message pdu to send
+     * @param theMessage The message to send
      * @param theDestination The reciever
      * @param theSender The sending address, ignored
      * @throws SmsException Thrown if we fail to send the SMS
      */
-    public void send(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender)
+    public void send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender)
         throws SmsException
     {
-        byte dcs = thePdu.getDataCodingScheme();
+        SmsPdu msgPdu[] = null;
 
         if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
         {
             throw new SmsException("Cannot sent SMS to an ALPHANUMERIC address");
         }
 
-        if (SmsDcsUtil.getAlphabet(dcs) == SmsConstants.ALPHABET_GSM)
+        msgPdu = theMessage.getPdus();
+
+        for(int i=0; i < msgPdu.length; i++)
         {
-            sendSeptetEncodedPdu(thePdu, theDestination, theSender);
-        }
-        else
-        {
-            sendOctetEncodedPdu(thePdu, theDestination, theSender);
+            byte dcs = theMessage.getDataCodingScheme();
+
+            if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
+            {
+                throw new SmsException("Cannot sent SMS to an ALPHANUMERIC address");
+            }
+
+            if (SmsDcsUtil.getAlphabet(dcs) == SmsConstants.ALPHABET_GSM)
+            {
+                sendSeptetEncodedPdu(msgPdu[i], dcs, theDestination, theSender);
+            }
+            else
+            {
+                sendOctetEncodedPdu(msgPdu[i], dcs, theDestination, theSender);
+            }
         }
     }
 
-    private void sendOctetEncodedPdu(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender)
+    private void sendOctetEncodedPdu(SmsPdu thePdu, byte theDcs, SmsAddress theDestination, SmsAddress theSender)
         throws SmsException
     {
         byte ud[] = thePdu.getUserData();
@@ -172,7 +171,7 @@ public class GsmTransport implements SmsTransport
             baos.write(0x00);
 
             // TP-DCS
-            baos.write(thePdu.getDataCodingScheme());
+            baos.write(theDcs);
 
             // 1 octet/ 7 octets
             // TP-VP - Optional
@@ -218,7 +217,7 @@ public class GsmTransport implements SmsTransport
         System.out.println("Length : " + baos.size());
     }
 
-    private void sendSeptetEncodedPdu(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender)
+    private void sendSeptetEncodedPdu(SmsPdu thePdu, byte theDcs, SmsAddress theDestination, SmsAddress theSender)
         throws SmsException
     {
         byte ud[] = thePdu.getUserData();
@@ -303,7 +302,7 @@ public class GsmTransport implements SmsTransport
 
             // TP-DCS
             // UCS, septets, language, SMS class...
-            baos.write(thePdu.getDataCodingScheme());
+            baos.write(theDcs);
 
             // TP-VP - Optional
             // Probably not needed

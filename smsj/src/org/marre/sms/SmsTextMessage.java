@@ -30,7 +30,7 @@ import org.marre.sms.util.SmsUdhUtil;
  * @author Markus Eriksson
  * @version 1.0
  */
-public class SmsTextMessage implements SmsMessage
+public class SmsTextMessage extends SmsAbstractMessage
 {
     private static final Random myRnd = new Random();
 
@@ -123,7 +123,6 @@ public class SmsTextMessage implements SmsMessage
         try
         {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
-            byte dcs = 0x00;
             // udLength can be in septets or octets depending on alphabet
             int udLength = 0;
 
@@ -132,26 +131,26 @@ public class SmsTextMessage implements SmsMessage
             case SmsConstants.ALPHABET_GSM:
                 SmsPduUtil.writeSeptets(baos, theMsg);
                 // 7-bit encoding, No message class, No compression
-                dcs = SmsConstants.DCS_DEFAULT_7BIT;
+                setDataCodingScheme(SmsConstants.DCS_DEFAULT_7BIT);
                 udLength = theMsg.length();
                 break;
             case SmsConstants.ALPHABET_8BIT:
                 baos.write(theMsg.getBytes("ISO-8859-1"));
                 // 8bit data encoding, No message class, No compression
-                dcs = SmsConstants.DCS_DEFAULT_8BIT;
+                setDataCodingScheme(SmsConstants.DCS_DEFAULT_8BIT);
                 udLength = theMsg.length();
                 break;
             case SmsConstants.ALPHABET_UCS2:
                 baos.write(theMsg.getBytes("UTF-16BE"));
                 // 16 bit UCS2 encoding, No message class, No compression
-                dcs = SmsConstants.DCS_DEFAULT_UCS2;
+                setDataCodingScheme(SmsConstants.DCS_DEFAULT_UCS2);
                 udLength = theMsg.length() * 2;
                 break;
             }
 
             baos.close();
 
-            thePdu.setUserData(baos.toByteArray(), udLength, dcs);
+            thePdu.setUserData(baos.toByteArray(), udLength);
         }
         catch (UnsupportedEncodingException ex)
         {

@@ -137,28 +137,7 @@ public class SmsSender
     public void sendTextSms(String theMsg, String theDest, String theSender)
         throws SmsException
     {
-        sendTextSms(theMsg, theDest, theSender, -1, SmsConstants.ALPHABET_GSM);
-    }
-
-    /**
-     * Sends an ordinary SMS to the given recipient.
-     * <p>
-     * - Will send the message with the GSM charset (~160 chars/SMS)<br>
-     *
-     * @param theMsg Message to send
-     * @param theDest Destination number (international format without leading +)
-     * Ex. 44546754235
-     * @param theSender Destination number (international format without leading +).
-     * Can also be an alphanumerical string. Ex "SMSJ". (not supported by all
-     * transports).
-     * @param theMaxSms Will not send message if the resulting message is longer
-     * than this number of SMS
-     * @throws SmsException
-     */
-    public void sendTextSms(String theMsg, String theDest, String theSender,  int theMaxSms)
-        throws SmsException
-    {
-        sendTextSms(theMsg, theDest, theSender, theMaxSms, SmsConstants.ALPHABET_GSM);
+        sendTextSms(theMsg, theDest, theSender, SmsConstants.ALPHABET_GSM);
     }
 
     /**
@@ -178,28 +157,7 @@ public class SmsSender
     public void sendUnicodeTextSms(String theMsg, String theDest, String theSender)
         throws SmsException
     {
-        sendTextSms(theMsg, theDest, theSender, -1, SmsConstants.ALPHABET_UCS2);
-    }
-
-    /**
-     * Sends an ordinary SMS to the given recipient.
-     * <p>
-     * - Will send the message with the UCS2 charset (~70 chars/SMS)<br>
-     *
-     * @param theMsg Message to send
-     * @param theDest Destination number (international format without leading +)
-     * Ex. 44546754235
-     * @param theSender Destination number (international format without leading +).
-     * Can also be an alphanumerical string. Ex "SMSJ". (not supported by all
-     * transports).
-     * @param theMaxSms Will not send message if the resulting message is longer
-     * than this number of SMS
-     * @throws SmsException
-     */
-    public void sendUnicodeTextSms(String theMsg, String theDest, String theSender, int theMaxSms)
-        throws SmsException
-    {
-        sendTextSms(theMsg, theDest, theSender, theMaxSms, SmsConstants.ALPHABET_UCS2);
+        sendTextSms(theMsg, theDest, theSender, SmsConstants.ALPHABET_UCS2);
     }
 
     /**
@@ -212,23 +170,14 @@ public class SmsSender
      * @param theAlphabet Alphabet to use. Can be any of SmsConstants.ALPHABET_*
      * @throws SmsException
      */
-    private void sendTextSms(String theMsg, String theDest, String theSender, int theMaxSms, int theAlphabet)
+    private void sendTextSms(String theMsg, String theDest, String theSender, int theAlphabet)
         throws SmsException
     {
-        SmsPdu msgPdus[];
         SmsTextMessage textMessage = new SmsTextMessage(theMsg, theAlphabet);
-
-        msgPdus = textMessage.getPdus();
-
-        if (    (theMaxSms != -1)
-             && (msgPdus.length > theMaxSms) )
-        {
-            throw new SmsException("The given message is to long to fit in " + theMaxSms + " SMS.");
-        }
 
         // FIXME: Currently it is a bit stupid and always reconnects...
         myTransport.connect();
-        myTransport.send(msgPdus, new SmsAddress(theDest), new SmsAddress(theSender));
+        myTransport.send(textMessage, new SmsAddress(theDest), new SmsAddress(theSender));
         myTransport.disconnect();
     }
 

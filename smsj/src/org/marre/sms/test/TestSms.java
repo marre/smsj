@@ -61,7 +61,7 @@ public class TestSms
         SmsAddress sender = new SmsAddress("+1234567890");
         SmsAddress reciever = new SmsAddress("+9876543210");
 
-        transport.send(msg.getPdus(), reciever, sender);
+        transport.send(msg, reciever, sender);
     }
 
     public static void testClickatellTransport()
@@ -77,10 +77,13 @@ public class TestSms
         String reciever = props.getProperty("reciever");
 
         smsSender.sendTextSms("Testing testing.", reciever, sender);
+//        smsSender.sendTextSms("Det har meddelandet ar mer an 160 tecken och borde darfor bli skickat i tva omgangar. Nu ar ju 160 tecken ganska langt och jag lite fantasilos sa det blir bara en massa trams!", reciever, sender);
+//        smsSender.sendUnicodeTextSms("Detta är ett lite längre UNICODE meddelande. ÅÄÖÅÄÖ. Undrar vad clickatell gör med den... Den pajjar det säkert...", reciever, sender);
+
         smsSender.close();
         smsSender = null;
     }
-
+/*
     public static void testPush()
         throws Exception
     {
@@ -104,7 +107,7 @@ public class TestSms
         transport.connect();
         transport.send(pushPdu, reciever, sender);
     }
-
+*/
     public static void testAddress()
         throws Exception
     {
