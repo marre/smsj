@@ -34,9 +34,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.transport.ucp;
 
-import java.util.*;
-import java.io.*;
-
 import org.marre.util.*;
 
 /**

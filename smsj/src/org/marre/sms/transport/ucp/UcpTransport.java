@@ -161,12 +161,12 @@ public class UcpTransport implements SmsTransport
 		UcpUtil util = new UcpUtil();
     	UCPSeries60 ucplogin = new UCPSeries60(UCPSeries60.OP_OPEN_SESSION);
     	ucplogin.setTRN(0x01);
-    	ucplogin.setField(ucplogin.FIELD_OAdC,userid);
-		ucplogin.setField(ucplogin.FIELD_OTON,"6");
-		ucplogin.setField(ucplogin.FIELD_ONPI,"5");
-		ucplogin.setField(ucplogin.FIELD_STYP,"1");
-		ucplogin.setField(ucplogin.FIELD_VERS,"0100");
-		ucplogin.setField(ucplogin.FIELD_PWD,util.encodeInIRA(pwd));				
+    	ucplogin.setField(UCPSeries60.FIELD_OAdC,userid);
+		ucplogin.setField(UCPSeries60.FIELD_OTON,"6");
+		ucplogin.setField(UCPSeries60.FIELD_ONPI,"5");
+		ucplogin.setField(UCPSeries60.FIELD_STYP,"1");
+		ucplogin.setField(UCPSeries60.FIELD_VERS,"0100");
+		ucplogin.setField(UCPSeries60.FIELD_PWD,util.encodeInIRA(pwd));				
     	return ucplogin.getCommand();	
     }
     public byte[] buildSubmit(byte dcs, SmsPdu pdu, boolean moreToSend, SmsAddress dest, SmsAddress sender)
