@@ -19,19 +19,20 @@
 package org.marre.sms;
 
 import java.io.*;
+import java.util.Random;
 
 import org.marre.sms.util.SmsPduUtil;
 
 /**
  * SmsTextMessag
  *
- * @todo Add concatenated msg support
- *
  * @author Markus Eriksson
  * @version 1.0
  */
 public class SmsTextMessage implements SmsMessage
 {
+    private static final Random myRnd = new Random();
+
     private String myMsg = null;
     private int myAlphabet = SmsConstants.TEXT_ALPHABET_GSM;
 
@@ -79,8 +80,7 @@ public class SmsTextMessage implements SmsMessage
         }
         else
         {
-            // FIXME: REFNO
-            int refno = 3;
+            int refno = myRnd.nextInt(256);
             int nSms = msgLength / maxConcatenatedChars;
             if ( (msgLength % maxConcatenatedChars) > 0 )
             {
@@ -122,6 +122,8 @@ public class SmsTextMessage implements SmsMessage
         {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
             byte dcs = 0x00;
+            // udLength can be in septets or octets depending on alphabet
+            int udLength = 0;
 
             switch (myAlphabet)
             {
@@ -129,22 +131,25 @@ public class SmsTextMessage implements SmsMessage
                 SmsPduUtil.writeSeptets(baos, theMsg);
                 // 7-bit encoding, No message class, No compression
                 dcs = (byte)0x00;
+                udLength = theMsg.length();
                 break;
             case SmsConstants.TEXT_ALPHABET_8BIT:
                 baos.write(theMsg.getBytes("ISO-8859-1"));
                 // 8bit data encoding, No message class, No compression
                 dcs = (byte)0x04;
+                udLength = theMsg.length();
                 break;
             case SmsConstants.TEXT_ALPHABET_UCS2:
                 baos.write(theMsg.getBytes("UTF-16BE"));
                 // 16 bit UCS2 encoding, No message class, No compression
                 dcs = (byte)0x08;
+                udLength = theMsg.length() * 2;
                 break;
             }
 
             baos.close();
 
-            thePdu.setUserData(baos.toByteArray(), dcs);
+            thePdu.setUserData(baos.toByteArray(), udLength, dcs);
         }
         catch (UnsupportedEncodingException ex)
         {
