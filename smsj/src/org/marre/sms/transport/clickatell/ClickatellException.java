@@ -38,6 +38,7 @@ class ClickatellException extends Exception
 {
     public static final int ERROR_UNKNOWN = -1;
 
+    public static final int ERROR_AUTH_FAILED = 1;
     public static final int ERROR_SESSION_ID_EXPIRED = 3;
 
     private int myErrId = 0;
