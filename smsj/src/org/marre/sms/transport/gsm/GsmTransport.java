@@ -1,6 +1,7 @@
 /*
     SMS Library for the Java platform
     Copyright (C) 2002  Markus Eriksson
+    Portions Copyright (C) 2002  Boris von Loesch
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -20,6 +21,9 @@ package org.marre.sms.transport.gsm;
 
 import java.util.*;
 import java.io.*;
+import javax.comm.*;
+
+import org.apache.commons.logging.*;
 
 import org.marre.sms.util.SmsPduUtil;
 import org.marre.sms.util.SmsDcsUtil;
@@ -38,6 +42,13 @@ import org.marre.sms.SmsConstants;
  * <br>
  * <pre>
  * <b>sms.gsm.serialport</b> - Serial port where the GSM phone is located. Ex: "COM1"
+ * <b>sms.gsm.bitrate</b> - Bits per second
+ * <b>sms.gsm.bit</b> - Databits
+ * <b>sms.gsm.parity</b> - Parity (N, E, O, M, S)
+ * <b>sms.gsm.stopbits</b> - Stopbits (1, 1.5, 2)
+ * <b>sms.gsm.flowcontrol</b> - FlowControl (XONXOFF, RTSCTS, NONE)
+ * <b>sms.gsm.initcommands</b> - Initialization commands, seperated by ;
+ * <b>
  * </pre>
  * <p>
  * <i>This transport cannot set the sending "address" to anything else
@@ -45,18 +56,120 @@ import org.marre.sms.SmsConstants;
  *
  * @todo Validity period
  *
- * @author Markus Eriksson
- * @version 1.0
+ * @author Markus Eriksson, Boris von Loesch
+ * @version $Id$
  */
-public class GsmTransport implements SmsTransport
+public class GsmTransport implements SmsTransport, SerialPortEventListener
 {
+    static Log myLog = LogFactory.getLog(GsmTransport.class);
+
+    private String mySerialPortName;
+    private SerialPort mySerialPort;
+    private OutputStream myOutStream;
+    private InputStream myInStream;
+    private byte[] myReadBuffer = new byte[1500]; // Buffer for serial input
+    private int myBufferOffset = 0;              // serialEvent
+    private Object myPortStatusLock = new Object();
+    private int myPortStatus = MSG_OK;
+    private String myPortMessage = "";
+    private String[] myInitCmds;
+
+    private int myBitRate, myBit, myStopbits, myParity, myFlowControl;
+
+    private static String LINEFEED="\r";
+
+    private static final int MSG_OK = 1;
+    private static final int MSG_WAIT = 2;
+    private static final int MSG_ERROR = 3;
+    private static final int MSG_WMSG = 4;
+    private static final int TRIES = 5;
+
+    private static final int NOT_OK_NOTHING = 0;
+    private static final int NOT_OK_RETRY = 1;
+    private static final int NOT_OK_WAIT = 2;
+    private static final int NOT_OK_WMSG = 3;
+
     public GsmTransport()
     {
     }
 
-    public void init(Properties theProps)
-        throws SmsException
+    public void init(Properties theProps) throws SmsException
     {
+        mySerialPortName=theProps.getProperty("sms.gsm.serialport", "COM1");
+
+        CommPortIdentifier portId = null;
+        Enumeration portList = CommPortIdentifier.getPortIdentifiers();
+
+        /* find the requested port */
+        while (portList.hasMoreElements()) {
+            portId = (CommPortIdentifier) portList.nextElement();
+            /* Check for serial port */
+            if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+                if (portId.getName().equals(mySerialPortName)) {
+                    try {
+                        mySerialPort = (SerialPort) portId.open(GsmTransport.class.getName(), 3000);
+                    } catch (PortInUseException e) {
+                        myLog.error("Port "+mySerialPortName+" already open.", e);
+                       throw new SmsException("Port "+mySerialPortName+" already open.");
+                    }
+                }
+            }
+        }
+
+        /* port not found */
+        if(mySerialPort == null) {
+            myLog.error("Port "+mySerialPortName+" does not exist.");
+            throw new SmsException("Port "+mySerialPortName+" does not exist.");
+        }
+
+        /* Open streams to the port */
+        try {
+            myOutStream = mySerialPort.getOutputStream();
+            myInStream = mySerialPort.getInputStream();
+        } catch (IOException e) {
+            mySerialPort.close();
+            myLog.error("Cannot open streams", e);
+            throw new SmsException("Cannot open streams.");
+        }
+
+        /* Configure port */
+        myBitRate = Integer.valueOf(theProps.getProperty("sms.gsm.bitrate", "19200")).intValue();
+
+        myBit=SerialPort.DATABITS_8;
+        switch (Integer.valueOf(theProps.getProperty("sms.gsm.myBit", "8")).intValue()){
+            case 5: myBit=SerialPort.DATABITS_5; break;
+            case 6: myBit=SerialPort.DATABITS_6; break;
+            case 7: myBit=SerialPort.DATABITS_7; break;
+            case 8: myBit=SerialPort.DATABITS_8; break;
+        }
+
+        myStopbits=SerialPort.STOPBITS_1;
+        String st = theProps.getProperty("sms.gsm.stopbits", "1");
+        if (st.equals("1")) myStopbits=SerialPort.STOPBITS_1;
+        else if (st.equals("1.5")) myStopbits=SerialPort.STOPBITS_1_5;
+        else if (st.equals("2")) myStopbits=SerialPort.STOPBITS_2;
+
+        myParity=SerialPort.PARITY_NONE;
+        st = theProps.getProperty("sms.gsm.parity", "NONE").toUpperCase();
+        if (st.equals("NONE")) myParity=SerialPort.PARITY_NONE;
+        else if (st.equals("EVEN")) myParity=SerialPort.PARITY_EVEN;
+        else if (st.equals("ODD")) myParity=SerialPort.PARITY_ODD;
+        else if (st.equals("MARK")) myParity=SerialPort.PARITY_MARK;
+        else if (st.equals("SPACE")) myParity=SerialPort.PARITY_SPACE;
+
+
+        myFlowControl=SerialPort.FLOWCONTROL_RTSCTS_IN|SerialPort.FLOWCONTROL_RTSCTS_OUT;
+        st = theProps.getProperty("sms.gsm.flowcontrol", "NONE").toUpperCase();
+        if (st.equals("RTSCTS")) myFlowControl=SerialPort.FLOWCONTROL_RTSCTS_IN|SerialPort.FLOWCONTROL_RTSCTS_OUT;
+        else if (st.equals("XONXOFF")) myFlowControl=SerialPort.FLOWCONTROL_XONXOFF_IN|SerialPort.FLOWCONTROL_XONXOFF_OUT;
+        else if (st.equals("NONE")) myFlowControl=mySerialPort.FLOWCONTROL_NONE;
+
+        StringTokenizer stk = new StringTokenizer(theProps.getProperty("sms.gsm.initcommands", "AT+CMGF=0"));
+        myInitCmds = new String[stk.countTokens()];
+        for (int i=0; stk.hasMoreTokens(); i++)
+        {
+            myInitCmds[i] = stk.nextToken();
+        }
     }
 
     /**
@@ -65,10 +178,69 @@ public class GsmTransport implements SmsTransport
      * @throws SmsException Thrown when the transport fails to communicate
      * with the GSM phone
      */
-    public void connect()
-        throws SmsException
+    public void connect() throws SmsException
     {
-        // Connect serial port
+      try {
+        mySerialPort.setSerialPortParams(myBitRate, myBit, myStopbits, myParity);
+        mySerialPort.setFlowControlMode(myFlowControl);
+        mySerialPort.enableReceiveTimeout(3000);
+        mySerialPort.addEventListener(this);
+        }
+        catch (UnsupportedCommOperationException e) {
+            mySerialPort.close();
+            myLog.error("Cannot initialize the port", e);
+            throw new SmsException("Cannot initialize the port");
+        }
+        catch (TooManyListenersException e){
+            myLog.error("Failed to add listener to serial port", e);
+            throw new SmsException ("Failed to add listener to serial port");
+        }
+        /* Start a thread for handling comminication with the terminal */
+
+        /*Add handler for serial events*/
+        mySerialPort.notifyOnDataAvailable(true);
+
+        // Send AT to GSM phone
+        try
+        {
+            ping();
+        }
+        catch (SmsException e)
+        {
+            myLog.error("Cannot connect the GSM phone");
+            throw new SmsException("Cannot connect the GSM phone");
+        }
+
+        //Can I send sms via the gsm phone?
+        try
+        {
+            sendCmd("AT+CSMS=0", NOT_OK_RETRY);
+            myLog.error(myPortMessage);
+            if (myPortMessage.indexOf("+CMS ERROR")>=0)
+            {
+                // This will be catched below...
+                throw new SmsException("");
+            }
+        }
+        catch (SmsException e)
+        {
+            myLog.error("GSM phone cannot send short messages");
+            throw new SmsException("GSM phone cannot send short messages");
+        }
+
+        //Init Commands
+        try
+        {
+            for (int i=0; i<myInitCmds.length;i++)
+            {
+                sendCmd (myInitCmds[i], NOT_OK_RETRY);
+            }
+        }
+        catch (SmsException e)
+        {
+            myLog.error("Error while initializing the GSM phone");
+            throw new SmsException("Error while initializing the GSM phone");
+        }
     }
 
     /**
@@ -120,7 +292,6 @@ public class GsmTransport implements SmsTransport
         byte udh[] = thePdu.getUserDataHeaders();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream(200);
-
         try
         {
             int nUdBytes = thePdu.getUserDataLength();
@@ -161,9 +332,9 @@ public class GsmTransport implements SmsTransport
             // TP-DA
             // - 1:st octet - length of address (4 bits)
             // - 2:nd octet
-            //   - bit 7 - always 1
-            //   - bit 4-6 - TON
-            //   - bit 0-3 - NPI
+            //   - myBit 7 - always 1
+            //   - myBit 4-6 - TON
+            //   - myBit 0-3 - NPI
             // - n octets - BCD
             writeDestinationAddress(baos, theDestination);
 
@@ -211,10 +382,14 @@ public class GsmTransport implements SmsTransport
         }
         catch (IOException ex)
         {
+            myLog.error(ex.getMessage(), ex);
             throw new SmsException(ex.getMessage());
         }
-        System.out.println("PDU : " + SmsPduUtil.bytesToHexString(baos.toByteArray()));
-        System.out.println("Length : " + baos.size());
+
+        myLog.debug("PDU : " + SmsPduUtil.bytesToHexString(baos.toByteArray()));
+        myLog.debug("Length : " + baos.size());
+
+        sendStream(baos);
     }
 
     private void sendSeptetEncodedPdu(SmsPdu thePdu, byte theDcs, SmsAddress theDestination, SmsAddress theSender)
@@ -291,9 +466,9 @@ public class GsmTransport implements SmsTransport
             // TP-DA
             // - 1:st octet - length of address (4 bits)
             // - 2:nd octet
-            //   - bit 7 - always 1
-            //   - bit 4-6 - TON
-            //   - bit 0-3 - NPI
+            //   - myBit 7 - always 1
+            //   - myBit 4-6 - TON
+            //   - myBit 0-3 - NPI
             // - n octets - BCD
             writeDestinationAddress(baos, theDestination);
 
@@ -342,10 +517,159 @@ public class GsmTransport implements SmsTransport
         }
         catch (IOException ex)
         {
+            myLog.error(ex.getMessage(), ex);
             throw new SmsException(ex.getMessage());
         }
-        System.out.println("PDU : " + SmsPduUtil.bytesToHexString(baos.toByteArray()));
-        System.out.println("Length : " + baos.size());
+
+        myLog.debug("PDU : " + SmsPduUtil.bytesToHexString(baos.toByteArray()));
+        myLog.debug("Length : " + baos.size());
+
+        sendStream(baos);
+    }
+
+    private void sendStream(ByteArrayOutputStream baos)
+        throws SmsException
+    {
+        //Wake up
+        sendCmd("AT", NOT_OK_RETRY);
+        //Send message
+        sendCmd("AT+CMGS=" + (baos.size() - 1), NOT_OK_WAIT);
+        sendCmd(SmsPduUtil.bytesToHexString(baos.toByteArray()) + "\032", NOT_OK_WAIT);
+        myLog.debug(myPortMessage);
+    }
+
+    private int sendCmd(String cmd, int waitStatus)
+        throws SmsException
+    {
+        int ret=MSG_OK;
+        int i=0;
+        //Send Command, until response is not WAIT
+        if (waitStatus == NOT_OK_RETRY)
+        {
+          while(((ret=sendCmd(cmd))==MSG_WAIT)&&(i++<TRIES));
+        }
+        else if (waitStatus==NOT_OK_WAIT)
+        {
+          sendCmd(cmd);
+          while((myPortStatus==MSG_WAIT)&&(i++<TRIES))
+          try
+          {
+            Thread.sleep(500);
+          }
+          catch (InterruptedException e)
+          {
+            myLog.error("Thread.sleep interrupted", e);
+          }
+          ret = myPortStatus;
+        }
+        else
+        {
+            ret = sendCmd(cmd);
+        }
+        if (i==TRIES+1)
+        {
+            myLog.error("Communication to GSM phone failed.\n Command: " + cmd);
+            throw new SmsException("Communication to GSM phone failed.");
+        }
+        if (ret==MSG_ERROR)
+        {
+            myLog.error("Error while executing command: " + cmd);
+            throw new SmsException("Error while executing command: " + cmd);
+        }
+
+        return ret;
+    }
+
+    private int sendCmd (String cmd)
+    {
+        synchronized(myPortStatusLock) {
+            myPortStatus = MSG_WAIT;
+            try {
+                myOutStream.write((cmd + LINEFEED).getBytes());
+            } catch (IOException e) {
+                myLog.error("Fehler", e);
+            }
+
+            /* wait for response from device */
+            try {
+                myPortStatusLock.wait(1500); // millis
+            } catch (InterruptedException e) {
+                myLog.error("Fehler", e);
+            }
+
+            if(myPortStatus != MSG_OK) {
+                myLog.debug("port not ok "+myPortStatus+","+cmd);
+            }
+        }
+        return myPortStatus;
+    }
+
+
+    public void serialEvent(SerialPortEvent event) {
+        switch (event.getEventType()) {
+/*          case SerialPortEvent.BI:System.err.println("Break interrupt");
+          case SerialPortEvent.OE:System.err.println("Overrun error");
+          case SerialPortEvent.FE:System.err.println("Framing error");
+          case SerialPortEvent.PE:System.err.println("Parity error");
+          case SerialPortEvent.CD:System.err.println("Carrier detect");
+          case SerialPortEvent.CTS:System.err.println("Clear to send");
+          case SerialPortEvent.DSR:System.err.println("Data set ready");
+          case SerialPortEvent.RI:System.err.println("Ring ind.");*/
+          case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
+            break;
+
+          case SerialPortEvent.DATA_AVAILABLE:
+            int n;
+            try {
+                while ( (n = myInStream.available()) > 0) {
+                    n = myInStream.read(myReadBuffer, myBufferOffset, n);
+                    myBufferOffset += n;
+                    // linefeed+carriage return detected, line ready
+                    if((myReadBuffer[myBufferOffset-1] == 10) &&
+                       (myReadBuffer[myBufferOffset-2] == 13)) {
+                        String sbuf = new String(myReadBuffer,0,myBufferOffset-2);
+//                        myLog.debug(sbuf);
+                        lineReceived(sbuf);
+                        myBufferOffset = 0;
+                    }
+                    else if (myReadBuffer[myBufferOffset-2] == '>'){
+                        String sbuf = new String(myReadBuffer,0,myBufferOffset);
+                        lineReceived(sbuf);
+                        myBufferOffset = 0;
+                    }
+                }
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
+            break;
+        }
+    }
+
+    private void lineReceived(String buffer) {
+        String response;
+        StringTokenizer st = new StringTokenizer(buffer, "\r\n");
+
+        synchronized(myPortStatusLock) {
+            //scan st line by line
+            while (st.hasMoreTokens()) {
+                response = st.nextToken().trim();
+                if (response.equals("")) {
+                    myPortStatus = MSG_OK;
+                } else if (response.startsWith("OK")) {
+                    myPortStatus = MSG_OK;
+                } else if (response.startsWith(">")) {
+                    myPortStatus = MSG_WMSG;
+                } else if (response.startsWith("ERROR")) {
+                    myPortStatus = MSG_ERROR;
+                } else if (response.startsWith("+CME ERROR") || response.startsWith("+CMS ERROR")) {
+                    myPortStatus = MSG_ERROR;
+                }
+            }
+            //For later use
+            myPortMessage=buffer;
+            myPortStatusLock.notify();
+        }
+        return;
     }
 
     /**
@@ -356,6 +680,7 @@ public class GsmTransport implements SmsTransport
     public void ping()
         throws SmsException
     {
+        sendCmd("AT", NOT_OK_RETRY);
         // PONG
     }
 
@@ -367,7 +692,7 @@ public class GsmTransport implements SmsTransport
     public void disconnect()
         throws SmsException
     {
-        // disconnect
+        mySerialPort.close();
     }
 
     /**
