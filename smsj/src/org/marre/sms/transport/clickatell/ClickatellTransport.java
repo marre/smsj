@@ -33,14 +33,14 @@ import org.marre.sms.util.*;
  * It is developed to use the "Clickatell HTTP API v. 1.63".
  * <p>
  * Known limitations:<br>
- * - Impossible to set the sending address<br>
+ * - Impossible to set the sending address (should work)<br>
  * - Cannot send 8-Bit messages without an UDH<br>
  * - Not verified if it's possible to send concatenated SMS<br>
  * - Doesn't support a complete DCS. Only UCS2, 7bit, 8bit and
- *   SMS class 0 or 1<br>
- * - Cannot set validity period<br>
+ *   SMS class 0 or 1 (cuurently only class 1 messages)<br>
+ * - Cannot set validity period (not done yet)<br>
  * - Doesn't acknowledge the TON or NPI, everything is sent as NPI_ISDN_TELEPHONE
- * and TON_INTERNATIONAL.
+ * and TON_INTERNATIONAL.<br>
  *
  * @author Markus Eriksson
  * @version 1.0
@@ -230,8 +230,6 @@ public class ClickatellTransport implements SmsTransport
                 throw new SmsException("Unsupported data coding scheme");
             }
         }
-
-        System.err.println(requestString);
 
         //
         // Send request to clickatell
