@@ -59,7 +59,7 @@ public class SIPush
     {
         WbxmlWriter writer = new WbxmlWriter(new FileOutputStream("si.wbxml"));
 
-        // TODO: DOCTYPE
+        writer.setDoctype("si", "-//WAPFORUM//DTD SI 1.0//EN", "http://www.wapforum.org/DTD/si.dtd");
 
         writer.setTagTokens(SI_TAG_TOKENS);
         writer.setAttrStartTokens(SI_ATTR_START_TOKENS);

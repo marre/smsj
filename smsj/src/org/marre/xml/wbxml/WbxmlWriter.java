@@ -55,6 +55,8 @@ public class WbxmlWriter implements XmlWriter
     private String myAttrStartTokens[] = null;
     private String myAttrValueTokens[] = null;
 
+    private String myPublicID = null;
+
     public WbxmlWriter(OutputStream os)
     {
         myOs = os;
@@ -75,8 +77,8 @@ public class WbxmlWriter implements XmlWriter
     {
         // WBXML v 0.1
         WspUtil.writeUint8(myOs, 0x01);
-        // "Unknown or missing public identifier."
-        WspUtil.writeUintvar(myOs, 0x01);
+        // Public ID
+        writePublicIdentifier(myOs, myPublicID);
         // Charset - "UTF-8"
         WspUtil.writeUintvar(myOs, WapConstants.MIB_ENUM_UTF_8);
         // String table
@@ -103,7 +105,7 @@ public class WbxmlWriter implements XmlWriter
 
     public void setDoctype(String name, String publicID, String publicURI)
     {
-        // Find id, if not found add as string
+        myPublicID = publicID;
     }
 
     public void addStartElement(String tag)
@@ -254,6 +256,32 @@ public class WbxmlWriter implements XmlWriter
     }
 
     /////////////////////////////////////////////////////////
+
+    private void writePublicIdentifier(OutputStream os, String publicID)
+        throws IOException
+    {
+        if (publicID == null)
+        {
+            // "Unknown or missing public identifier."
+            WspUtil.writeUintvar(os, 0x01);
+        }
+        else
+        {
+            int idx = WspUtil.findString(WbxmlConstants.KNOWN_PUBLIC_DOCTYPES, publicID);
+            if (idx != -1)
+            {
+                // Known ID 
+                idx += 2; // Skip 0 and 1
+                WspUtil.writeUintvar(os, idx);
+            }
+            else
+            {
+                // Unknown ID, add string
+                WspUtil.writeUintvar(os, 0x00); // String reference following
+                writeStrT(os, publicID);
+            }
+        }
+    }
 
     private void writeStrI(OutputStream theOs, String str)
         throws IOException
