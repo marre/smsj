@@ -18,6 +18,10 @@
 */
 package org.marre.sms.wap;
 
+import java.io.*;
+
+import org.apache.commons.logging.*;
+
 import org.marre.sms.*;
 import org.marre.sms.util.*;
 
@@ -32,22 +36,121 @@ import org.marre.sms.util.*;
  */
 public class WapPushMessage extends SmsConcatMessage
 {
+    static Log myLog = LogFactory.getLog(WapPushMessage.class);
+
+    private byte[] myPushMsg;
+
     /**
      * Sends a CL WAP push message OTA with SMS.
-     * <p>
-     * The payload must be a complete WSP encoded WAP push message.
      *
-     * @param thePayload WSP encoded PUSH message
+     * @param thePushMsg The push message
      */
-    public WapPushMessage(byte[] theWspPushMsg)
+    public WapPushMessage(byte[] thePushMsg)
     {
         super(SmsConstants.DCS_DEFAULT_8BIT);
 
-        SmsUdhElement wapPushPortUdh[] = new SmsUdhElement[] {
-            SmsUdhUtil.get16BitApplicationPortUdh(SmsConstants.PORT_WAP_PUSH,
-                                                  SmsConstants.PORT_WAP_WSP)
-        };
+        myPushMsg = thePushMsg;
+    }
 
-        setContent(wapPushPortUdh, theWspPushMsg, theWspPushMsg.length);
+    /**
+     * Creates a CL WAP push message OTA with SMS.
+     *
+     * @param thePushMsg The push message
+     * @param theContentType Content-type of the push
+     * @param theAppId WAP Push Application ID
+     */
+    public WapPushMessage(byte[] thePushMsg, String theContentType, String theAppId)
+    {
+        super(SmsConstants.DCS_DEFAULT_8BIT);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        try
+        {
+            //
+            // WSP HEADER
+            //
+
+            // TID - Transaction ID
+            // FIXME: Should perhaps set TID to something useful?
+            WspUtil.writeUint8(baos, 0x00);
+
+            // Type
+            WspUtil.writeUint8(baos, WapConstants.PDU_TYPE_PUSH);
+
+            //
+            // WAP PUSH FIELDS
+            //
+
+            // Create headers first
+            ByteArrayOutputStream headers = new ByteArrayOutputStream();
+
+            // Content-type
+            WspUtil.writeContentType(headers, theContentType);
+
+            // WAP-HEADERS
+            // There could be more wap headers, but we currently only use
+            // the Application ID
+
+            // App ID
+            if( theAppId != null)
+            {
+                WspUtil.writeWapApplicationId(headers, theAppId);
+            }
+            // Done with the headers...
+            headers.close();
+
+            // Headers created, write headers lenght and headers to baos
+
+            // HeadersLen - Length of Content-type and Headers
+            WspUtil.writeUintvar(baos, headers.size());
+
+            // Headers
+            baos.write(headers.toByteArray());
+
+            // Data
+            baos.write(thePushMsg);
+
+            // Done
+            baos.close();
+        }
+        catch (IOException ex)
+        {
+            myLog.error("Failed to write to bytearrayoutputstream", ex);
+            // Shouldn't happen
+        }
+
+        myPushMsg = baos.toByteArray();
+
+        setContent(
+            new SmsUdhElement[] {
+                SmsUdhUtil.get16BitApplicationPortUdh(SmsConstants.PORT_WAP_PUSH,
+                                                      SmsConstants.PORT_WAP_WSP)
+            },
+            myPushMsg,
+            myPushMsg.length);
+    }
+
+    /**
+     * Sends a CL WAP push message OTA with SMS.
+     *
+     * @param thePushMsg The push message
+     * @param theContentType Content-type of the push
+     */
+    public WapPushMessage(byte[] thePushMsg, String theContentType)
+    {
+        this(thePushMsg, theContentType, null);
+    }
+
+    /**
+     * Returns the wsp encoded wap push message without any SMS headers
+     * <p>
+     * Mostly used for debugging...
+     *
+     * @return
+     */
+    public byte[] getPushMsg()
+    {
+        return myPushMsg;
     }
 }
