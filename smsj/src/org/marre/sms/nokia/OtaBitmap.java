@@ -51,6 +51,28 @@ public class OtaBitmap
 
     private byte myOtaImgData[] = null;
 
+		/**
+		 * Initialise with a raw Ota Bitmap
+		 * @param otaBitmap
+		 */
+		public OtaBitmap(byte[] otaBitmap){
+			
+			if (otaBitmap != null){
+			
+				//Read info field read until no more fields left bit 7 is 0
+				int infoField = otaBitmap[0]; //assume just 1 for now
+				myWidth = otaBitmap[1];
+				myHeight = otaBitmap[2];
+				int depth = otaBitmap[3];
+				
+				int length = otaBitmap.length - 4;
+				myOtaImgData = new byte[length];
+				
+				
+				System.arraycopy(otaBitmap, 4, myOtaImgData, 0, length);
+			}
+		}
+		
     /**
      * Creates an OtaBitmap object from an BufferedImage.
      * <p>
@@ -137,4 +159,33 @@ public class OtaBitmap
 
         return otaBitmap;
     }
+    
+		/**
+		 * @return
+		 */
+		public int getHeight() {
+			return myHeight;
+		}
+
+		/**
+		 * @return
+		 */
+		public int getWidth() {
+			return myWidth;
+		}
+
+		/**
+		 * @param i
+		 */
+		public void setHeight(int i) {
+			myHeight = i;
+		}
+
+		/**
+		 * @param i
+		 */
+		public void setWidth(int i) {
+			myWidth = i;
+		}
+
 }
