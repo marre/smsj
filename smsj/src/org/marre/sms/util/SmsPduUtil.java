@@ -304,36 +304,46 @@ public class SmsPduUtil
         return '?';
     }
 
+    public static final void arrayCopy(
+                        byte[] theSrc, int theSrcStart,
+                        byte[] theDest, int theDestStart, int theLength)
+    {
+        for(int i=0; i < theLength; i++)
+        {
+            theDest[i + theDestStart] = theSrc[i + theSrcStart];
+        }
+    }
+
     /**
      *
      * @param theSrc
      * @param theSrcStart
      * @param theDest
      * @param theDestStart
-     * @param theDestOffset
-     * @param theLength In bits
+     * @param theDestBitOffset
+     * @param theBitLength In bits
      */
     public static final void arrayCopy(
                         byte[] theSrc, int theSrcStart,
-                        byte[] theDest, int theDestStart, int theDestOffset,
-                        int theLength)
+                        byte[] theDest, int theDestStart, int theDestBitOffset,
+                        int theBitLength)
     {
         int c = 0;
-        int nBytes = theLength / 8;
-        int nRestBits = theLength % 8;
+        int nBytes = theBitLength / 8;
+        int nRestBits = theBitLength % 8;
 
         for(int i=0; i < nBytes; i++)
         {
-            c |= ((theSrc[theSrcStart + i] & 0xff) << theDestOffset);
+            c |= ((theSrc[theSrcStart + i] & 0xff) << theDestBitOffset);
             theDest[theDestStart + i] |= (byte) (c & 0xff);
             c >>>= 8;
         }
 
         if (nRestBits > 0)
         {
-            c |= ((theSrc[theSrcStart + nBytes] & 0xff) << theDestOffset);
+            c |= ((theSrc[theSrcStart + nBytes] & 0xff) << theDestBitOffset);
         }
-        if (theDestOffset > 0)
+        if (theDestBitOffset > 0)
         {
             theDest[theDestStart + nBytes] |= c & 0xff;
         }
