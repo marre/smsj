@@ -83,7 +83,7 @@ public class NokiaGroupGraphic extends SmsConcatMessage
         // Payload
         try
         {
-            // Version ("0" - ISO-88591)
+            // Type?
             baos.write(0x30);
             // bitmap
             baos.write(theOtaBitmap);
@@ -100,3 +100,4 @@ public class NokiaGroupGraphic extends SmsConcatMessage
         setContent(udhElements, baos.toByteArray(), baos.size());
     }
 }
+

@@ -116,13 +116,13 @@ public class NokiaOperatorLogo extends SmsConcatMessage
 
         try
         {
-            // Version ("0" - ISO-88591)
+            // Header??
             baos.write(0x30);
             // mcc
             SmsPduUtil.writeBcdNumber(baos, "" + theMcc);
             // mnc
             SmsPduUtil.writeBcdNumber(baos, "" + theMnc);
-            // <lf>
+            // Start of content?
             baos.write(0x0A);
             // bitmap
             baos.write(theOtaBitmap);
