@@ -39,7 +39,7 @@ import java.io.*;
 
 import org.marre.sms.transport.SmsTransport;
 import org.marre.sms.transport.SmsTransportManager;
-
+import org.marre.sms.nokia.*;
 import org.marre.sms.wap.*;
 
 /**
@@ -233,10 +233,10 @@ public class SmsSender
     
     /**
      *
-     * Sends an OTA Bookmark to the given recipient
+     * Sends an OTA Bookmark (Nokia specification) to the given recipient
      * 
      * @param theTitle String with the title of the bookmark
-     * @param theURL String with the url referenced by the bookmark
+     * @param theUri String with the url referenced by the bookmark
      * @param theDest String with the recipient number (international format
      * without leading +)
      * @param theSender String with the sender number. Can also be an
@@ -244,20 +244,20 @@ public class SmsSender
      *
      * @throws SmsException
      */
-    public void sendOTABookmark(String theTitle, String theURL, String theDest,
+    public void sendNokiaBookmark(String theTitle, String theUri, String theDest,
         String theSender)
         throws SmsException 
     {
-        //Liquidterm: add some URL checking
-        //Create xml bookmark definition
-        //Encode in wbxml
-        //Send it
+        NokiaOtaBookmark nokiaBookmark = new NokiaOtaBookmark(theTitle, theUri);
+        SmsAddress sender = new SmsAddress(theSender);
+        SmsAddress reciever = new SmsAddress(theDest);
+        myTransport.send(nokiaBookmark, reciever, sender);
     }
     
     
     /**
      *
-     * Sends a Wap Push SI containing to the given recipient
+     * Sends a Wap Push SI containing to the given recipient (doesn't work yet)
      * 
      * @param theMessage String with the description of the service
      * @param theUri String with the url referenced by the SI
