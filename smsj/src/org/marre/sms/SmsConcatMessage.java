@@ -120,10 +120,10 @@ public class SmsConcatMessage extends SmsAbstractMessage
                 SmsUdhElement[] pduUdhElements = new SmsUdhElement[myUdhElements.length + 1];
 
                 // Add a concat header
-                pduUdhElements[0] = SmsUdhUtil.get8BitConcatUdh(refno, nSms, i);
+                pduUdhElements[0] = SmsUdhUtil.get8BitConcatUdh(refno, nSms, i + 1);
                 for (int j=0; j < myUdhElements.length; j++)
                 {
-                    pduUdhElements[j+1] = myUdhElements[j];
+                    pduUdhElements[j + 1] = myUdhElements[j];
                 }
 
                 smsPdus[i] = createPdu(pduUdhElements, msgOffset, theMaxConcatenatedLength);
