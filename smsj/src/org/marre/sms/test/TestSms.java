@@ -20,10 +20,13 @@ package org.marre.sms.test;
 
 import java.io.*;
 import java.util.*;
+import java.awt.*;
+import java.awt.image.*;
 
 import org.marre.sms.*;
 import org.marre.sms.transport.*;
 import org.marre.sms.util.*;
+import org.marre.sms.nokia.*;
 
 public class TestSms
 {
@@ -78,11 +81,37 @@ public class TestSms
         System.out.println(SmsPduUtil.bytesToHexString(dest));
     }
 
+    public static void testOtaBitmap()
+        throws Exception
+    {
+        BufferedImage img = new BufferedImage(72, 14, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D graphics = img.createGraphics();
+
+//        graphics.drawLine(3,3,10,10);
+//        graphics.drawOval(1, 1, 12, 12);
+//        graphics.draw(new Rectangle(0, 0, 10, 12));
+        graphics.drawString("Anna", 0, 12);
+//        graphics.drawRect(0, 0, 10, 10);
+
+        graphics.dispose();
+        graphics = null;
+
+        OtaBitmap bitmap = new OtaBitmap(img);
+
+        FileOutputStream fos = new FileOutputStream("c:\\temp\\fil.otb");
+        fos.write(bitmap.getBytes());
+        fos.close();
+
+        System.out.println(SmsPduUtil.bytesToHexString(bitmap.getBytes()));
+    }
+
     public static void main(String[] args)
         throws Exception
     {
-        testSeptets();
-        testGsmTransport();
+        testOtaBitmap();
+//        testSeptets();
+//        testGsmTransport();
 //        testAddress();
 //        testArrayCopy();
     }
