@@ -95,7 +95,7 @@ public class SmsWapPushMessage extends SmsConcatMessage
     
     public SmsWapPushMessage(WbxmlDocument thePushMsg)
     {
-        this(thePushMsg, thePushMsg.getContentType());
+        this(thePushMsg, thePushMsg.getWbxmlContentType());
     }
      
     public SmsWapPushMessage(byte[] thePushMsg, MimeContentType theContentType)
@@ -212,6 +212,6 @@ public class SmsWapPushMessage extends SmsConcatMessage
 
     public void setXWapInitiatorURI(String initiatorUri)
     {
-        myPushMsg.addHeader("X-Wap-Application-Id", initiatorUri);
+        myPushMsg.addHeader("X-Wap-Initiator-URI", initiatorUri);
     }
  }
