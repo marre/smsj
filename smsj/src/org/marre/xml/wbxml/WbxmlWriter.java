@@ -103,6 +103,7 @@ public class WbxmlWriter implements XmlWriter
         if (tagIndex >= 0)
         {
             // Known tag
+            tagIndex += 0x05; // Tag token table starts at #5
             myWbxmlBody.write(WbxmlConstants.TOKEN_KNOWN_C | tagIndex);
         }
         else
@@ -120,6 +121,7 @@ public class WbxmlWriter implements XmlWriter
         if (tagIndex >= 0)
         {
             // Known tag
+            tagIndex += 0x05; // Tag token table starts at #5
             myWbxmlBody.write(WbxmlConstants.TOKEN_KNOWN_AC | tagIndex);
         }
         else
@@ -140,6 +142,7 @@ public class WbxmlWriter implements XmlWriter
         if (tagIndex >= 0)
         {
             // Known tag
+            tagIndex += 0x05; // Tag token table starts at #5
             myWbxmlBody.write(WbxmlConstants.TOKEN_KNOWN | tagIndex);
         }
         else
@@ -158,6 +161,7 @@ public class WbxmlWriter implements XmlWriter
         if (tagIndex >= 0)
         {
             // Known tag
+            tagIndex += 0x05; // Tag token table starts at #5
             myWbxmlBody.write(WbxmlConstants.TOKEN_KNOWN_A | tagIndex);
         }
         else
@@ -285,6 +289,7 @@ public class WbxmlWriter implements XmlWriter
             idx = WspUtil.findString(myAttrStartTokens, attribs[i].getType());
             if (idx >= 0)
             {
+                idx += 0x05; // Attr start token table starts at #5
                 myWbxmlBody.write(idx);
             }
             else
@@ -296,6 +301,7 @@ public class WbxmlWriter implements XmlWriter
             // VALUE
             idx = WspUtil.findString(myAttrValueTokens, attribs[i].getValue());
             if(idx >= 0) {
+                idx += 0x85; // Attr value token table starts at 85
                 myWbxmlBody.write (idx);
             } else {
                 myWbxmlBody.write(WbxmlConstants.TOKEN_STR_I);
@@ -312,9 +318,13 @@ public class WbxmlWriter implements XmlWriter
     {
         XmlWriter handler = new WbxmlWriter(new FileOutputStream("demo.wbxml"));
 
-        handler.addEmptyElement("empty");
-        handler.addStartElement("element");
+        handler.addStartElement("element", new XmlAttribute[] { new XmlAttribute("type1", "value1") });
         handler.addCharacters("Some text");
+        handler.addEmptyElement("empty", new XmlAttribute[] { new XmlAttribute("type2", "value2") });
+        handler.addStartElement("element", new XmlAttribute[] { new XmlAttribute("type3", "value3"), new XmlAttribute("type4", "value4") });
+        handler.addEmptyElement("empty", new XmlAttribute[] { new XmlAttribute("type2", "value2") });
+        handler.addEmptyElement("empty", new XmlAttribute[] { new XmlAttribute("type2", "value2") });
+        handler.addEndTag();
         handler.addEndTag();
 
         handler.close();
