@@ -43,12 +43,11 @@ public class SmsPdu
     }
 
     /**
-     * Creates an SMS pdu object
+     * Creates an SMS pdu object.
      *
      * @param theUdhIeis
      * @param theUd
      * @param theUdLength
-     * @param theDcs
      */
     public SmsPdu(SmsUdhElement[] theUdhIeis, byte[] theUd, int theUdLength)
     {
@@ -63,7 +62,9 @@ public class SmsPdu
      */
     public void setUserDataHeaders(SmsUdhElement[] theUdhElements)
     {
-        myUdhElements = theUdhElements;
+        myUdhElements = new SmsUdhElement[theUdhElements.length];
+
+        System.arraycopy(theUdhElements, 0, myUdhElements, 0, theUdhElements.length);
     }
 
     /**
@@ -102,7 +103,6 @@ public class SmsPdu
      *
      * @param theUd
      * @param theUdLength
-     * @param theDcs
      */
     public void setUserData(byte[] theUd, int theUdLength)
     {
