@@ -57,7 +57,7 @@ public class SIPush
     public static void main(String argv[])
         throws Exception
     {
-        WbxmlWriter writer = new WbxmlWriter(new FileOutputStream("si.wbxml"));
+        WbxmlWriter writer = new WbxmlWriter();
 
         writer.setDoctype("si", "-//WAPFORUM//DTD SI 1.0//EN", "http://www.wapforum.org/DTD/si.dtd");
 
@@ -73,7 +73,8 @@ public class SIPush
         writer.addEndTag();
 
         // Write...
-        writer.close();
+        writer.writeTo(new FileOutputStream("si.wbxml"));
+        writer.reset();
     }
 
     private byte[] encodeDateTime(Date theDate)
