@@ -71,4 +71,12 @@ public class MimeMultipartRelated extends MimeMultipart
         }
         return ct;
     }
+    
+    public String toString(){
+    	String s = null;
+    	s = getContentType().toString() + "\n";
+    	s = s + super.toString();
+    	return s;
+    }
 }
+

@@ -37,6 +37,8 @@ package org.marre.mime;
 import java.io.Serializable;
 import java.util.*;
 
+import org.marre.util.StringUtil;
+
 public class MimeBodyPart implements Serializable
 {
     protected byte[] myContent = null;
@@ -131,5 +133,21 @@ public class MimeBodyPart implements Serializable
     public MimeContentType getContentType()
     {
         return myContentType;
+    }
+    
+    public String toString()
+    {
+    		String s;
+    		s = myContentType.toString() + " ...\n";
+    		
+    		Iterator i = myHeaders.iterator();
+    		
+    		while(i.hasNext()){
+    			MimeHeader h = (MimeHeader) i.next();
+    			s = s + h.toString() + "\n";
+    		}
+    		
+    		s = s + StringUtil.bytesToHexString(myContent) + "\n";
+    		return s;
     }
 }

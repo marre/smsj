@@ -119,4 +119,18 @@ public class MimeHeader implements Serializable
     {
         return (MimeHeaderParam) myParams.get(theIndex);
     }
+    
+    public String toString()
+    {
+    	String s = myHeaderName + "=" + myHeaderValue;
+    	
+    	Iterator i = myParams.iterator();
+    	
+    	while (i.hasNext())
+    	{
+    		MimeHeaderParam mhp = (MimeHeaderParam) i.next();
+    		s = mhp.getName() + "=" + mhp.getValue();	
+    	}
+    	return s;	
+    }
 }

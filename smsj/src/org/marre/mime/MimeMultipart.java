@@ -77,4 +77,20 @@ public abstract class MimeMultipart extends MimeBodyPart
     {
         return myParts.size();
     }
+    
+    public String toString()
+    {
+    	String s = "";
+    	
+    	Iterator i = myParts.iterator();
+    	int c = 0;
+    	
+    	while(i.hasNext())
+    	{
+    		MimeBodyPart bodyPart = (MimeBodyPart) i.next();
+    		s = s + bodyPart;
+    	}
+    		
+    	return s;		
+    }
 }
