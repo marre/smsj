@@ -20,6 +20,11 @@ package org.marre.sms.wap;
 
 import java.io.*;
 
+/**
+ *
+ * @author Markus Eriksson
+ * @version @version $Id$
+ */
 public class WspUtil
 {
     private WspUtil()
@@ -32,7 +37,7 @@ public class WspUtil
      * @param theOs Stream to write to
      * @param theValue Value to write
      */
-    private void writeUintvar(OutputStream theOs, long theValue)
+    public void writeUintvar(OutputStream theOs, long theValue)
         throws IOException
     {
         int nOctets = 0;
@@ -59,7 +64,7 @@ public class WspUtil
      * @param theOs Stream to write to
      * @param theValue Value to write
      */
-    private void writeLongInteger(OutputStream theOs, long theValue)
+    public void writeLongInteger(OutputStream theOs, long theValue)
         throws IOException
     {
         int nOctets = 0;
@@ -78,19 +83,99 @@ public class WspUtil
     }
 
     /**
-     * Writes an "encoded string" in pdu format to the given output stream.
+     * Writes an "integer" in wsp format to the given output stream.
+     *
+     * @param theOs
+     * @param theValue
+     */
+    public void writeInteger(OutputStream theOs, long theValue)
+        throws IOException
+    {
+        if (theValue < 128)
+        {
+            writeShortInteger(theOs, (int)theValue);
+        }
+        else
+        {
+            writeLongInteger(theOs, theValue);
+        }
+    }
+
+    /**
+     * Writes a "short integer" in wsp format to the given output stream.
+     *
+     * @param theOs Stream to write to
+     * @param theValue Value to write
+     */
+    public void writeShortInteger(OutputStream theOs, int theValue)
+        throws IOException
+    {
+        theOs.write((byte) (theValue | (byte)0x80));
+    }
+
+    /**
+     * Writes an "extension media" in pdu format to the given output stream.
      * It currently only handles ASCII chars, but should be extended to
      * work with other charsets.
      *
      * @param theOs Stream to write to
      * @param theStr Text to write
      */
-    private void writeEncodedString(OutputStream theOs, String theStr)
+    public void writeExtensionMedia(OutputStream theOs, String theStr)
         throws IOException
     {
-        // TODO: Add support for other charsets
-        theOs.write(theStr.getBytes("US-ASCII"));
+        theOs.write(theStr.getBytes("ISO-8859-1"));
         theOs.write((byte)0x00);
+    }
+
+    public void writeTextString(OutputStream theOs, String theStr)
+        throws IOException
+    {
+        /*
+        Text-string = [Quote] *TEXT End-of-string
+        ; If the first character in the TEXT is in the range of 128-255, a Quote character must precede it.
+        ; Otherwise the Quote character must be omitted. The Quote is not part of the contents.
+        Quote = <Octet 127>
+        End-of-string = <Octet 0>
+        */
+
+        byte strBytes[] = theStr.getBytes("ISO-8859-1");
+
+        if ( (strBytes[0] & 0x7f) > 0x00 )
+        {
+            theOs.write(0x7f);
+        }
+
+        theOs.write(strBytes);
+        theOs.write(0x00);
+    }
+
+    public void writeContentType(OutputStream theOs, String theContentType)
+        throws IOException
+    {
+        int wellKnownContentType = findContentType(theContentType);
+        if (wellKnownContentType == -1)
+        {
+            writeExtensionMedia(theOs, theContentType);
+        }
+        else
+        {
+            writeShortInteger(theOs, wellKnownContentType);
+        }
+    }
+
+    public void writeWapApplicationId(OutputStream theOs, String theAppId)
+        throws IOException
+    {
+        int wellKnownAppId = findPushAppId(theAppId);
+        if (wellKnownAppId == -1)
+        {
+            writeTextString(theOs, theAppId);
+        }
+        else
+        {
+            writeInteger(theOs, wellKnownAppId);
+        }
     }
 
     /**
@@ -136,4 +221,49 @@ public class WspUtil
             return null;
         }
     }
+
+    /**
+     * Finds an WINA "well known" number for the given push app id
+     *
+     * @param theContentType
+     * @return WINA assigned number if found, otherwise -1
+     */
+    public static final int findPushAppId(String thePushAppId)
+    {
+        if (thePushAppId == null)
+        {
+            return -1;
+        }
+
+        for (int i=0; i < WapConstants.CONTENT_TYPES.length; i++)
+        {
+            if (WapConstants.PUSH_APP_IDS[i].equalsIgnoreCase(thePushAppId))
+            {
+                // Found it
+                return i;
+            }
+        }
+
+        // Not found
+        return -1;
+    }
+
+    /**
+     * Returns a push app id from a WINA "well known" number
+     *
+     * @param theContentType
+     * @return Content type or null if not found
+     */
+    public static final String findPushAppId(int thePushAppId)
+    {
+        try
+        {
+            return WapConstants.PUSH_APP_IDS[thePushAppId];
+        }
+        catch (IndexOutOfBoundsException ex)
+        {
+            return null;
+        }
+    }
+
 }
