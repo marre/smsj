@@ -22,21 +22,113 @@ import java.io.ByteArrayOutputStream;
 
 public class SmsAddress
 {
+    private static final String ALLOWED_DIGITS = "+0123456789*#ab";
+
     private int myTon = SmsConstants.TON_INTERNATIONAL;
     private int myNpi = SmsConstants.NPI_ISDN_TELEPHONE;
 
     private String myAddress = null;
 
-    public SmsAddress(String theAddress, int theTon, int theNpi)
+    /**
+     * Creates an SmsAddress object.
+     * <p>
+     * This constructor tries to be intelligent by choosing the correct
+     * NPI and TON from the given address.
+     *
+     * @param theAddress The address
+     * @throws SmsException Thrown if the address is invalid
+     */
+    public SmsAddress(String theAddress)
+        throws SmsException
     {
-        myAddress = theAddress;
-        myTon = theTon;
-        myNpi = theNpi;
+        int npi = SmsConstants.NPI_ISDN_TELEPHONE;
+        int ton = SmsConstants.TON_INTERNATIONAL;
+
+        for(int i=0; i < theAddress.length(); i++)
+        {
+            char ch = theAddress.charAt(i);
+            if (ALLOWED_DIGITS.indexOf(ch) == -1)
+            {
+                ton = SmsConstants.TON_ALPHANUMERIC;
+                npi = SmsConstants.NPI_UNKNOWN;
+                break;
+            }
+        }
+
+        init(theAddress, ton, npi);
     }
 
-    public SmsAddress(String theAddress)
+    /**
+     * Creates an SmsAddress object.
+     * <p>
+     * Max address length is <br>
+     * 20 digits (excluding any initial '+') or<br>
+     * 11 alphanumeric chars (if TON == TON_ALPHANUMERIC).
+     * <p>
+     * If you choose TON_ALPHANUMERIC then the NPI will be set to NPI_UNKNOWN.
+     *
+     * @param theAddress The address
+     * @param theTon The type of number
+     * @param theNpi The number plan indication
+     * @throws SmsException Thrown if the address is invalid
+     */
+    public SmsAddress(String theAddress, int theTon, int theNpi)
+        throws SmsException
     {
-        this(theAddress, SmsConstants.TON_INTERNATIONAL, SmsConstants.NPI_ISDN_TELEPHONE);
+        init(theAddress, theTon, theNpi);
+    }
+
+    private void init(String theAddress, int theTon, int theNpi)
+        throws SmsException
+    {
+        int addressLength;
+
+        if (theAddress == null)
+        {
+            throw new SmsException("Empty address.");
+        }
+
+        myTon = theTon;
+        myAddress = theAddress.trim();
+        addressLength = myAddress.length();
+
+        if (addressLength == 0)
+        {
+            throw new SmsException("Empty address.");
+        }
+
+        if (theTon == SmsConstants.TON_ALPHANUMERIC)
+        {
+            myNpi = SmsConstants.NPI_UNKNOWN;
+
+            if (theAddress.length() > 11)
+            {
+                throw new SmsException("Alphanumeric address can be at most 11 chars.");
+            }
+        }
+        else
+        {
+            myNpi = theNpi;
+
+            if (myAddress.charAt(0) == '+')
+            {
+                addressLength -= 1;
+            }
+
+            if (addressLength > 20)
+            {
+                throw new SmsException("Too long address, Max allowed is 20 digits (excluding any inital '+').");
+            }
+
+            for(int i=0; i < theAddress.length(); i++)
+            {
+                char ch = theAddress.charAt(i);
+                if (ALLOWED_DIGITS.indexOf(ch) == -1)
+                {
+                    throw new SmsException("Invalid digit in address. '" + ch + "'.");
+                }
+            }
+        }
     }
 
     public String getAddress()
