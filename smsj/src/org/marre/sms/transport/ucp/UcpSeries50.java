@@ -106,7 +106,7 @@ public class UcpSeries50 extends UcpMsg
 
     public void addXSer(byte type, byte data)
     {
-        StringBuffer xSerBuff = null;
+        StringBuffer xSerBuff = new StringBuffer();
 
         xSerBuff.append(StringUtil.byteToHexString(type));
         xSerBuff.append("01");
@@ -119,7 +119,7 @@ public class UcpSeries50 extends UcpMsg
 
     public void addXSer(byte type, byte[] data)
     {
-        StringBuffer xSerBuff = null;
+        StringBuffer xSerBuff = new StringBuffer();
 
         xSerBuff.append(StringUtil.byteToHexString(type));
         xSerBuff.append(StringUtil.byteToHexString((byte)(data.length & 0xff)));
