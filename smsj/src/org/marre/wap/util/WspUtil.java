@@ -278,7 +278,7 @@ public class WspUtil
      * @param theContentType
      * @throws IOException
      */
-    public static void writeContentType(OutputStream theOs, MimeContentType theContentType)
+    public static void writeContentType(OutputStream theOs, MimeHeader theContentType)
         throws IOException
     {
         if (theContentType.getParamCount() == 0)
@@ -502,7 +502,7 @@ public class WspUtil
         case WapConstants.HEADER_ID_CONTENT_RANGE:
             break;
         case WapConstants.HEADER_ID_CONTENT_TYPE:
-            writeHeaderContentLocation(theOs, theHeader.getValue());
+            writeHeaderContentType(theOs, theHeader);
             break;
         case WapConstants.HEADER_ID_COOKIE:
             break;
@@ -639,7 +639,7 @@ public class WspUtil
         writeContentType(theOs, theContentType);
     }
 
-    public static void writeHeaderContentType(OutputStream theOs, MimeContentType theContentType)
+    public static void writeHeaderContentType(OutputStream theOs, MimeHeader theContentType)
         throws IOException
     {
         WspUtil.writeShortInteger(theOs, WapConstants.HEADER_ID_CONTENT_TYPE);
@@ -670,49 +670,4 @@ public class WspUtil
             writeInteger(theOs, wellKnownAppId);
         }
     }
-
-    
-
-    
-
-    /**
-     * Returns a contenttype from a WINA assigned content type number
-     *
-     * @param theContentType
-     * @return Content type or null if not found
-     */
-/*
-    public static final String findContentType(int theContentType)
-    {
-        try
-        {
-            return WapConstants.CONTENT_TYPES[theContentType];
-        }
-        catch (IndexOutOfBoundsException ex)
-        {
-            return null;
-        }
-    }
-*/
-    
-
-    /**
-     * Returns a push app id from a WINA "well known" number
-     *
-     * @param theContentType
-     * @return Content type or null if not found
-     */
-/*
-    public static final String findPushAppId(int thePushAppId)
-    {
-        try
-        {
-            return WapConstants.PUSH_APP_IDS[thePushAppId];
-        }
-        catch (IndexOutOfBoundsException ex)
-        {
-            return null;
-        }
-    }
-*/
 }
