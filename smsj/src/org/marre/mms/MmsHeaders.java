@@ -34,10 +34,71 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mms;
 
+import org.marre.util.StringUtil;
+import org.marre.wap.MmsConstants;
 
-public class MmsMessage 
+public class MmsHeaders
 {
-	public MmsMessage()
-	{
-	}
+    private static final int DEFAULT_TRANSACTION_ID_LENGTH = 6;
+    
+    protected int    myMessageTypeId = MmsConstants.X_MMS_MESSAGE_TYPE_ID_M_SEND_REQ;
+    protected String myTransactionId = null;
+    protected int    myVersionId     = MmsConstants.X_MMS_MMS_VERSION_ID_1_0;
+    protected String mySubject       = null;
+    protected String myFrom          = null;
+    
+    public MmsHeaders()
+    {
+        myTransactionId = StringUtil.randString(DEFAULT_TRANSACTION_ID_LENGTH);
+    }
+    
+    public int getMessageType()
+    {
+        return myMessageTypeId;
+    }
+    
+    public void setMessageType(int msgTypeId)
+    {
+        myMessageTypeId = msgTypeId;
+    }
+    
+    public String getTransactionId()
+    {
+        return myTransactionId;
+    }
+    
+    public void setTransactionId(String transactionId)
+    {
+        myTransactionId = transactionId;
+    }
+    
+    public int getVersion()
+    {
+        return myVersionId;
+    }
+    
+    public void setVersion(int versionId)
+    {
+        myVersionId = versionId;
+    }
+    
+    public String getSubject()
+    {
+        return mySubject;
+    }
+    
+    public void setSubject(String subject)
+    {
+        mySubject = subject;
+    }
+    
+    public String getFrom()
+    {
+        return myFrom;
+    }
+    
+    public void setFrom(String from)
+    {
+        myFrom = from;
+    }    
 }

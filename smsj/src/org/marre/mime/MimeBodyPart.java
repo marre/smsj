@@ -57,6 +57,12 @@ public class MimeBodyPart implements Serializable
 
     public void addHeader(String theHeaderName, String theHeaderValue)
     {
+        MimeHeader header = getHeader(theHeaderName);
+        if (header != null)
+        {
+            myHeaders.remove(header);
+            header = null;
+        }
         addHeader(new MimeHeader(theHeaderName, theHeaderValue));
     }
 
@@ -102,6 +108,16 @@ public class MimeBodyPart implements Serializable
         myContentType = theContentType;
     }
 
+    public void setContentId(String theContentId)
+    {
+        addHeader("Content-Id", theContentId);
+    }
+
+    public void setContentLocation(String theContentLocation)
+    {
+        addHeader("Content-Location", theContentLocation);
+    }
+    
     public byte[] getContent()
     {
         return myContent;

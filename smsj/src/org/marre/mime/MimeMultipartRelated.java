@@ -40,7 +40,7 @@ public class MimeMultipartRelated extends MimeMultipart
 
     public MimeMultipartRelated()
     {
-        super("related");
+        super("multipart/related");
     }
 
     public void setStartBodyPart(MimeBodyPart theBodyPart)
@@ -61,15 +61,14 @@ public class MimeMultipartRelated extends MimeMultipart
             MimeHeader startCid = myStartBodyPart.getHeader("content-id");
             
             // Add content-type
-            ct.addParam("type", myStartBodyPart.getContentType().getValue());
+            ct.setParam("type", myStartBodyPart.getContentType().getValue());
             
             // Add start parameter
             if (startCid != null)
             {
-                ct.addParam("start", startCid.getValue());
+                ct.setParam("start", startCid.getValue());
             }
         }
         return ct;
     }
 }
-

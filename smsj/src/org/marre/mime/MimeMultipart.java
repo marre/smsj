@@ -36,7 +36,7 @@ package org.marre.mime;
 
 import java.util.*;
 
-public class MimeMultipart extends MimeBodyPart
+public abstract class MimeMultipart extends MimeBodyPart
 {
     protected List myParts;
 
@@ -45,10 +45,10 @@ public class MimeMultipart extends MimeBodyPart
         myParts = new LinkedList();
     }
 
-    public MimeMultipart(String subtype)
+    public MimeMultipart(String theContentType)
     {
         this();
-        myContentType = new MimeContentType("multipart/" + subtype);
+        myContentType = new MimeContentType(theContentType);
     }
 
     public void addBodyPart(MimeBodyPart theBodyPart)
