@@ -12,9 +12,6 @@
   <inceptionYear>2002</inceptionYear>
   <package>org.marre</package>
 
-  <!-- Gump integration -->
-  <!-- <gumpRepositoryId>jakarta</gumpRepositoryId> -->
-
   <description>
     This library allows you to send SMS (GSM) from the Java platform.
     The intention is to create a high level api and a pluggable transport layer.
@@ -42,43 +39,14 @@
 
   <versions>
     <version>
-      <id>1.0-SNAPSHOT</id>
-      <name>1.0-SNAPSHOT</name>
+      <id>SNAPSHOT</id>
+      <name>SNAPSHOT</name>
       <tag>HEAD</tag>
     </version>
   </versions>
 
-<!--
-  <mailingLists>
-    <mailingList>
-      <name>Maven User List</name>
-      <subscribe>
-        users-subscribe@maven.apache.org
-      </subscribe>
-      <unsubscribe>
-        users-unsubscribe@maven.apache.org
-      </unsubscribe>
-      <archive>
-        http://www.mail-archive.com/users@maven.apache.org/
-      </archive>
-    </mailingList>
-    <mailingList>
-      <name>Maven Developer List</name>
-      <subscribe>
-        dev-subscribe@maven.apache.org
-      </subscribe>
-      <unsubscribe>
-        dev-unsubscribe@maven.apache.org
-      </unsubscribe>
-      <archive>
-        http://www.mail-archive.com/dev@maven.apache.org/
-      </archive>
-    </mailingList>
-  </mailingLists>
--->
 
   <developers>
-
     <developer>
       <name>Markus Eriksson</name>
       <id>c95men</id>
@@ -103,55 +71,25 @@
         <type>jar</type>
         <url>http://java.sun.com/products/javacomm/index.jsp</url>
 	</dependency>
-	
-	<!--
-    <dependency>
-      <groupId>bcel</groupId>
-      <artifactId>bcel</artifactId>
-      <version>5.0</version>
-      <url>http://jakarta.apache.org/bcel/</url>
-    </dependency>
 
-    .
-    .
-    .
+	<dependency>
+		<groupId>statcvs</groupId>
+		<artifactId>maven-statcvs-plugin</artifactId>
+		<version>2.5</version>
+		<type>plugin</type>
+	</dependency>	
 
-    <dependency>
-      <groupId>regexp</groupId>
-      <artifactId>regexp</artifactId>
-      <version>1.2</version>
-      <url>http://jakarta.apache.org/regexp/</url>
-    </dependency>
-    
---> 
-   
+	<dependency>
+		<groupId>maven</groupId>
+		<artifactId>maven-clover-plugin</artifactId>
+		<version>1.6</version>
+		<type>plugin</type>
+	</dependency>   
   </dependencies>
 
   <build>
-
-<!--
-    <nagEmailAddress>
-      dev@maven.apache.org
-    </nagEmailAddress>
--->
-
     <sourceDirectory>src</sourceDirectory>
-
     <unitTestSourceDirectory>test/src</unitTestSourceDirectory>
-
-    <aspectSourceDirectory/>
-
-    <!-- Unit test cases -->
-<!--
-    <unitTest>
-      <includes>
-        <include>**/*Test.java</include>
-      </includes>
-      <excludes>
-        <exclude>**/RepositoryTest.java</exclude>
-      </excludes>
-    </unitTest>
--->
               
     <!-- J A R  R E S O U R C E S -->
     <!-- Resources that are packaged up inside the JAR file -->
@@ -173,7 +111,6 @@
 -->    
   </build>
   
-<!--  
   <reports>
     <report>maven-checkstyle-plugin</report>
     <report>maven-changelog-plugin</report>
@@ -185,7 +122,7 @@
     <report>maven-jxr-plugin</report>
     <report>maven-statcvs-plugin</report>
     <report>maven-simian-plugin</report>
+    <report>maven-clover-plugin</report>
   </reports>
--->  
   
 </project>
