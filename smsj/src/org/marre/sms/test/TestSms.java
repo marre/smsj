@@ -83,7 +83,7 @@ public class TestSms
         smsSender.close();
         smsSender = null;
     }
-/*
+
     public static void testPush()
         throws Exception
     {
@@ -92,22 +92,39 @@ public class TestSms
         // Load athentication information from file
         props.load(new FileInputStream("clickatell.props"));
 
-//        SmsTransport transport = SmsTransportManager.getTransport("org.marre.sms.transport.gsm.GsmTransport", props);
-        SmsTransport transport = SmsTransportManager.getTransport("org.marre.sms.transport.clickatell.ClickatellTransport", props);
+        SmsTransport transport = SmsTransportManager.getTransport("org.marre.sms.transport.gsm.GsmTransport", props);
+//        SmsTransport transport = SmsTransportManager.getTransport("org.marre.sms.transport.clickatell.ClickatellTransport", props);
 
         // Create pdu
-        byte data[] = { 0x00, 0x01, 0x02, 0x03 };
+        byte data[] = {
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+        };
         SmsUdhElement udhElements[] = new SmsUdhElement[1];
         udhElements[0] = SmsUdhUtil.get16BitApplicationPortUdh(SmsConstants.PORT_WAP_PUSH, 0);
-        SmsPdu pushPdu = new SmsPdu(udhElements, data, data.length, SmsConstants.DCS_DEFAULT_8BIT);
+
+        SmsConcatMessage pushMsg = new SmsConcatMessage(SmsConstants.DCS_DEFAULT_8BIT, udhElements, data, data.length);
 
         SmsAddress sender = new SmsAddress(props.getProperty("sender"));
         SmsAddress reciever = new SmsAddress(props.getProperty("reciever"));
 
         transport.connect();
-        transport.send(pushPdu, reciever, sender);
+        transport.send(pushMsg, reciever, sender);
+        transport.disconnect();
     }
-*/
+
     public static void testAddress()
         throws Exception
     {
@@ -133,22 +150,21 @@ public class TestSms
         Properties props = new Properties();
         SmsTransport transport = SmsTransportManager.getTransport("org.marre.sms.transport.gsm.GsmTransport", props);
 
-        BufferedImage img = new BufferedImage(72, 13, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage img = new BufferedImage(72, 14, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = img.createGraphics();
 
         graphics.drawString("Testing", 0, 12);
         graphics.dispose();
         graphics = null;
 
-        NolMessage nolMsg = new NolMessage(img, GsmOperators.SE_TELIA_MCC_MNC);
+        NokiaOperatorLogo nolMsg = new NokiaOperatorLogo(img, GsmOperators.SE_TELIA_MCC_MNC);
 
         SmsAddress sender = new SmsAddress("+1234567890");
         SmsAddress reciever = new SmsAddress("+9876543210");
 
-        transport.send(nolMsg.getPdus(), reciever, sender);
+        transport.send(nolMsg, reciever, sender);
     }
 */
-
     public static void testOtaBitmap()
         throws Exception
     {
@@ -178,8 +194,8 @@ public class TestSms
         throws Exception
     {
 //        testNol();
-        testClickatellTransport();
-//        testPush();
+//        testClickatellTransport();
+        testPush();
 //        testOtaBitmap();
 //        testSeptets();
 //        testGsmTransport();
