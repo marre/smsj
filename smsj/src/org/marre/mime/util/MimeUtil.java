@@ -37,6 +37,7 @@ package org.marre.mime.util;
 import java.io.UnsupportedEncodingException;
 
 import org.marre.mime.MimeBodyPart;
+import org.marre.mime.MimeContentType;
 
 public class MimeUtil
 {
@@ -51,8 +52,11 @@ public class MimeUtil
     
     public static final MimeBodyPart createTextBodyPart(String str, String contentType)
     {
+        MimeBodyPart textBodyPart = new MimeBodyPart();
+        MimeContentType ct = new MimeContentType(contentType);
+        ct.setParam("charset", "utf-8");
+        
         byte[] data = null;
-
         try 
         {
             data = str.getBytes("UTF-8");
@@ -62,7 +66,9 @@ public class MimeUtil
             // Shouldn't happen.... UTF-8 is standard...
         }
         
-        return createBinaryBodyPart(data, contentType);
+        textBodyPart.setContent(data, ct);
+        
+        return textBodyPart;
     }
 
     public static final MimeBodyPart createBinaryBodyPart(byte[] content, String contentType)
