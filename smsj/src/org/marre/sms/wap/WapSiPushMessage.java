@@ -34,9 +34,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.wap;
 
-import org.marre.xml.wbxml.WbxmlWriter;
-import org.marre.xml.XmlAttribute;
-import org.marre.wap.WapConstants;
 import org.marre.wap.push.SIPush;
 
 import java.io.ByteArrayOutputStream;
