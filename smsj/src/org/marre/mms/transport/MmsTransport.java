@@ -64,7 +64,7 @@ public interface MmsTransport
      * @param theHeaders Headers
      * @throws MmsException
      */
-    public void send(MmsMessage theMessage, MimeHeader theHeaders) throws MmsException;
+    public void send(MmsMessage theMessage, MimeHeader[] theHeaders) throws MmsException;
 
     /**
      * Disconnects from the MMSC (or phone, or service, or...)
