@@ -52,7 +52,7 @@ public class SmsDcsUtil
         if ( (theDcs & 0xC0) == 0)
         {
             // No message class meaning
-            if ( (theDcs & 0x08) == 0 )
+            if ( (theDcs & 0x10) == 0 )
             {
                 return SmsConstants.MSG_CLASS_UNKNOWN;
             }
