@@ -45,8 +45,6 @@ import org.marre.wap.WapConstants;
 
 public class WbxmlWriter implements XmlWriter
 {
-    private OutputStream myOs = null;
-
     private Map myStringTable = null;
     private ByteArrayOutputStream myStringTableBuf = null;
 
@@ -58,43 +56,46 @@ public class WbxmlWriter implements XmlWriter
 
     private String myPublicID = null;
 
-    public WbxmlWriter(OutputStream os)
+    public WbxmlWriter()
+    	throws IOException
     {
-        myOs = os;
-
-        myWbxmlBody = new ByteArrayOutputStream();
-
-        myStringTable = new HashMap();
-        myStringTableBuf = new ByteArrayOutputStream();
+        reset();
     }
 
+	/**
+	 * @see org.marre.xml.XmlWriter#reset()
+	 */
+	public void reset() 
+		throws IOException
+	{
+		myWbxmlBody = new ByteArrayOutputStream();
+
+		myStringTable = new HashMap();
+		myStringTableBuf = new ByteArrayOutputStream();
+	}
+	
     /**
      * Writes the wbxml to stream
      *
-     * @throws SAXException
+     * @throws IOException
      */
-    public void close()
-        throws IOException
-    {
+	public void writeTo(OutputStream os) 
+		throws IOException
+	{
         // WBXML v 0.1
-        WspUtil.writeUint8(myOs, 0x01);
+        WspUtil.writeUint8(os, 0x01);
         // Public ID
-        writePublicIdentifier(myOs, myPublicID);
+        writePublicIdentifier(os, myPublicID);
         // Charset - "UTF-8"
-        WspUtil.writeUintvar(myOs, WapConstants.MIB_ENUM_UTF_8);
+        WspUtil.writeUintvar(os, WapConstants.MIB_ENUM_UTF_8);
         // String table
-        writeStringTable(myOs);
-
-        // Flush
-        myOs.flush();
+        writeStringTable(os);
 
         // Write body
         myWbxmlBody.close();
-        myWbxmlBody.writeTo(myOs);
+        myWbxmlBody.writeTo(os);
 
-        myOs.flush();
-        myOs.close();
-        myOs = null;
+        os.flush();
     }
 
     /////// XmlWriter
@@ -355,7 +356,7 @@ public class WbxmlWriter implements XmlWriter
     public static void main(String argv[])
         throws Exception
     {
-        XmlWriter handler = new WbxmlWriter(new FileOutputStream("demo.wbxml"));
+        XmlWriter handler = new WbxmlWriter();
 
         handler.addStartElement("element", new XmlAttribute[] { new XmlAttribute("type1", "value1") });
         handler.addCharacters("Some text");
@@ -366,6 +367,6 @@ public class WbxmlWriter implements XmlWriter
         handler.addEndTag();
         handler.addEndTag();
 
-        handler.close();
+        handler.writeTo(new FileOutputStream("demo.wbxml"));
     }
 }

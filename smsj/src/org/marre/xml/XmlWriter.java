@@ -35,6 +35,7 @@
 package org.marre.xml;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 public interface XmlWriter
 {
@@ -52,5 +53,6 @@ public interface XmlWriter
     public void addCharacters(char[] ch, int start, int length) throws IOException;
     public void addCharacters(String str) throws IOException;
 
-    public void close() throws IOException;
+    public void reset() throws IOException;
+	public void writeTo(OutputStream os) throws IOException;
 }
