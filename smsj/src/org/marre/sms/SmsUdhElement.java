@@ -44,8 +44,8 @@ import java.io.*;
  */
 public class SmsUdhElement
 {
-    private int myUdhIei = 0;
-    private byte[] myUdhIeiData = null;
+    protected int myUdhIei = 0;
+    protected byte[] myUdhIeiData = null;
 
     /**
      * Creates an SmsUdhElement
