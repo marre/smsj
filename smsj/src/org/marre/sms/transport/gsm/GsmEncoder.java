@@ -118,7 +118,10 @@ public final class GsmEncoder
                 // +1 is for the UDHL
                 nUdhBits = nUdhBytes * 8;
 
-                nFillBits = 7 - (nUdhBits % 7);
+                if ( (nUdhBits % 7) > 0 )
+                {
+                    nFillBits = 7 - (nUdhBits % 7);
+                }
 
                 // TP-Message-Type-Indicator = SUBMIT
                 // TP-Reject-Duplicates = ON

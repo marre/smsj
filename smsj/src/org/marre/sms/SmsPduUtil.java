@@ -508,9 +508,9 @@ public final class SmsPduUtil
 
         if (nRestBits > 0)
         {
-            c |= ((theSrc[theSrcStart + nBytes] & 0xff) << theDestBitOffset);
+            c |= ((theSrc[theSrcStart + nBytes] & (0xff >> (8-nRestBits))) << theDestBitOffset);
         }
-        if (theDestBitOffset > 0)
+        if ((nRestBits + theDestBitOffset) > 0)
         {
             theDest[theDestStart + nBytes] |= c & 0xff;
         }
