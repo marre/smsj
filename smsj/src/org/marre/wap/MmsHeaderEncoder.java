@@ -37,6 +37,7 @@ package org.marre.wap;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
 
 import org.marre.mime.MimeHeader;
 import org.marre.util.StringUtil;
@@ -62,10 +63,10 @@ public class MmsHeaderEncoder
         switch (wellKnownHeaderId)
         {
             case MmsConstants.HEADER_ID_BCC:
-				MmsHeaderEncoder.writeHeaderBcc(theOs, theHeader.getValue());
+								MmsHeaderEncoder.writeHeaderBcc(theOs, theHeader.getValue());
                 break;
             case MmsConstants.HEADER_ID_CC:
-				MmsHeaderEncoder.writeHeaderCc(theOs, theHeader.getValue());
+								MmsHeaderEncoder.writeHeaderCc(theOs, theHeader.getValue());
                 break;
             case MmsConstants.HEADER_ID_X_MMS_CONTENT_LOCATION:
                 MmsHeaderEncoder.writeHeaderContentLocation(theOs, theHeader.getValue());
@@ -80,28 +81,29 @@ public class MmsHeaderEncoder
             case MmsConstants.HEADER_ID_X_MMS_DELIVERY_TIME:
                 break;
             case MmsConstants.HEADER_ID_X_MMS_EXPIRY:
+								//MmsHeaderEncoder.writeHeaderXMmsExpiry(theOs, theHeader.getValue());
                 break;
             case MmsConstants.HEADER_ID_FROM:
-				MmsHeaderEncoder.writeHeaderFrom(theOs, theHeader.getValue());
+								MmsHeaderEncoder.writeHeaderFrom(theOs, theHeader.getValue());
                 break;
             case MmsConstants.HEADER_ID_X_MMS_MESSAGE_CLASS:
-				MmsHeaderEncoder.writeHeaderXMmsMessageClass(theOs, theHeader.getValue());
+								MmsHeaderEncoder.writeHeaderXMmsMessageClass(theOs, theHeader.getValue());
                 break;
             case MmsConstants.HEADER_ID_MESSAGE_ID:
                 break;
             case MmsConstants.HEADER_ID_X_MMS_MESSAGE_TYPE:
-            	MmsHeaderEncoder.writeHeaderXMmsMessageType(theOs, theHeader.getValue());
+            		MmsHeaderEncoder.writeHeaderXMmsMessageType(theOs, theHeader.getValue());
                 break;
             case MmsConstants.HEADER_ID_X_MMS_MMS_VERSION:
-				MmsHeaderEncoder.writeHeaderXMmsMmsVersion(theOs, theHeader.getValue());
+								MmsHeaderEncoder.writeHeaderXMmsMmsVersion(theOs, theHeader.getValue());
                 break;
             case MmsConstants.HEADER_ID_X_MMS_MESSAGE_SIZE:
                 break;
             case MmsConstants.HEADER_ID_X_MMS_PRIORITY:
-				MmsHeaderEncoder.writeHeaderXMmsPriority(theOs, theHeader.getValue());
+								MmsHeaderEncoder.writeHeaderXMmsPriority(theOs, theHeader.getValue());
                 break;
             case MmsConstants.HEADER_ID_X_MMS_READ_REPLY:
-				MmsHeaderEncoder.writeHeaderXMmsReadReply(theOs, theHeader.getValue());
+								MmsHeaderEncoder.writeHeaderXMmsReadReply(theOs, theHeader.getValue());
                 break;
             case MmsConstants.HEADER_ID_X_MMS_REPORT_ALLOWED:
                 break;
@@ -110,19 +112,19 @@ public class MmsHeaderEncoder
             case MmsConstants.HEADER_ID_X_MMS_RESPONSE_TEXT:
                 break;
             case MmsConstants.HEADER_ID_X_MMS_SENDER_VISIBILITY:
-				MmsHeaderEncoder.writeHeaderXMmsSenderVisibility(theOs, theHeader.getValue());
+								MmsHeaderEncoder.writeHeaderXMmsSenderVisibility(theOs, theHeader.getValue());
                 break;
             case MmsConstants.HEADER_ID_X_MMS_STATUS:
-				MmsHeaderEncoder.writeHeaderXMmsStatus(theOs, theHeader.getValue());
+								MmsHeaderEncoder.writeHeaderXMmsStatus(theOs, theHeader.getValue());
                 break;
             case MmsConstants.HEADER_ID_SUBJECT:
-            	MmsHeaderEncoder.writeHeaderSubject(theOs, theHeader.getValue());
+            		MmsHeaderEncoder.writeHeaderSubject(theOs, theHeader.getValue());
                 break;
             case MmsConstants.HEADER_ID_TO:
-				MmsHeaderEncoder.writeHeaderTo(theOs, theHeader.getValue());
+								MmsHeaderEncoder.writeHeaderTo(theOs, theHeader.getValue());
                 break;
             case MmsConstants.HEADER_ID_X_MMS_TRANSACTION_ID:
-            	MmsHeaderEncoder.writeHeaderXMmsTransactionId(theOs, theHeader.getValue());
+            		MmsHeaderEncoder.writeHeaderXMmsTransactionId(theOs, theHeader.getValue());
                 break;
 
         default:
@@ -133,7 +135,7 @@ public class MmsHeaderEncoder
         }
     }
 
-	/**
+		/**
      * Writes a wsp encoded content-location header as specified in
      * WAP-230-WSP-20010705-a.pdf.
      *
@@ -163,11 +165,11 @@ public class MmsHeaderEncoder
         WspUtil.writeContentType(theOs, theContentType);
     }
     
-	public static void writeEncodedStringValue(OutputStream baos, String theFrom)
+	public static void writeEncodedStringValue(OutputStream baos, String theStringValue)
 		throws IOException 
 	{
 		// TODO: Charset...
-		WspUtil.writeTextString(baos, theFrom);
+		WspUtil.writeTextString(baos, theStringValue);
 	}
 		
 	public static void writeHeaderXMmsMessageType(OutputStream theOs, String theMessageType)
@@ -194,9 +196,18 @@ public class MmsHeaderEncoder
 		WspUtil.writeShortInteger(theOs, 0x10);
 	}
 	
+	public static void writeHeaderDate(OutputStream theOs, Date date) 
+		throws IOException 
+	{
+		WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_DATE);
+		long time = date.getTime();
+		WspUtil.writeLongInteger(theOs, time);		
+	}
+
 	public static void writeHeaderFrom(OutputStream theOs, String theFrom) 
 		throws IOException 
 	{
+				
 		WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_FROM);
 		
 		if (theFrom == null)
@@ -221,6 +232,11 @@ public class MmsHeaderEncoder
 	public static void writeHeaderSubject(OutputStream theOs, String theSubject)
 		throws IOException 
 	{
+		if (theSubject == null)
+		{
+			return;
+		}
+		
 		WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_SUBJECT);
 		MmsHeaderEncoder.writeEncodedStringValue(theOs, theSubject);
 	}
@@ -228,6 +244,12 @@ public class MmsHeaderEncoder
 	public static void writeHeaderTo(OutputStream theOs, String theRecipient)
 		throws IOException 
 	{
+	
+		if (theRecipient == null)
+		{
+			return;	
+		}
+		
 		WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_TO);
 		MmsHeaderEncoder.writeEncodedStringValue(theOs, theRecipient);
 	}
@@ -235,6 +257,12 @@ public class MmsHeaderEncoder
 	public static void writeHeaderCc(OutputStream theOs, String theRecipient)
 		throws IOException 
 	{
+
+		if (theRecipient == null)
+		{
+			return;	
+		}
+
 		WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_CC);
 		MmsHeaderEncoder.writeEncodedStringValue(theOs, theRecipient);
 	}
@@ -242,6 +270,12 @@ public class MmsHeaderEncoder
 	public static void writeHeaderBcc(OutputStream theOs, String theRecipient)
 		throws IOException 
 	{
+
+		if (theRecipient == null)
+		{
+			return;	
+		}
+
 		WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_BCC);
 		MmsHeaderEncoder.writeEncodedStringValue(theOs, theRecipient);
 	}
@@ -249,6 +283,10 @@ public class MmsHeaderEncoder
 	public static void writeHeaderXMmsReadReply(OutputStream theOs, String theReadReply)
 		throws IOException 
 	{
+		if (theReadReply == null){
+			return;	
+		}
+		
 		int readReplyId = StringUtil.findString(MmsConstants.X_MMS_READ_REPLY_NAMES, theReadReply.toLowerCase());
 		
 		if (readReplyId != -1)
@@ -261,6 +299,11 @@ public class MmsHeaderEncoder
 	public static void writeHeaderXMmsPriority(OutputStream theOs, String thePriority)
 		throws IOException 
 	{
+		if (thePriority == null)
+		{
+			return;
+		}
+		
 		int priorityId = StringUtil.findString(MmsConstants.X_MMS_PRIORITY_NAMES, thePriority.toLowerCase());
 
 		if (priorityId != -1)
@@ -285,6 +328,11 @@ public class MmsHeaderEncoder
 	public static void writeHeaderXMmsMessageClass(OutputStream theOs, String theMessageClass)
 		throws IOException 
 	{
+		if (theMessageClass == null)
+		{
+			return;
+		}
+		
 		int messageClassId = StringUtil.findString(MmsConstants.X_MMS_MESSAGE_CLASS_NAMES, theMessageClass.toLowerCase());
 
 		if (messageClassId != -1)
@@ -294,6 +342,40 @@ public class MmsHeaderEncoder
 		}
 	}	
 		
+	public static void writeHeaderXMmsMessageSize(OutputStream theOs, long messageSize)
+		throws IOException 
+	{
+			WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_X_MMS_MESSAGE_SIZE);
+			WspUtil.writeLongInteger(theOs, messageSize);
+	}	
+
+	public static void writeHeaderXMmsExpiry(OutputStream theOs, long interval, boolean absolute)
+		throws IOException 
+	{
+			WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_X_MMS_EXPIRY);
+			
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			
+			if (absolute){
+				
+				WspUtil.writeShortInteger(baos, MmsConstants.ABSOLUTE_TOKEN);	
+				WspUtil.writeTypedValue(baos, WapConstants.WSP_TYPE_DATE_VALUE, String.valueOf(interval));
+			}
+			else 
+			{
+				WspUtil.writeShortInteger(baos, MmsConstants.RELATIVE_TOKEN);
+				WspUtil.writeLongInteger(baos, interval);
+			}
+			
+			baos.close();
+			
+			byte bytes[] = baos.toByteArray();
+			int length = bytes.length;
+			
+			theOs.write((byte) length);
+			theOs.write(bytes);
+	}	
+
 	public static void writeHeaderXMmsSenderVisibility(OutputStream theOs, String theVisibility)
 		throws IOException 
 	{
