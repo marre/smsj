@@ -118,7 +118,7 @@ public class SmsTextMessage implements SmsMessage
         try
         {
             ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
-            SmsDcs dcs = null;
+            byte dcs = 0x00;
             // udLength can be in septets or octets depending on alphabet
             int udLength = 0;
 
@@ -127,19 +127,19 @@ public class SmsTextMessage implements SmsMessage
             case SmsConstants.ALPHABET_GSM:
                 SmsPduUtil.writeSeptets(baos, theMsg);
                 // 7-bit encoding, No message class, No compression
-                dcs = SmsDcs.DEFAULT_7BIT_DCS;
+                dcs = SmsConstants.DCS_DEFAULT_7BIT;
                 udLength = theMsg.length();
                 break;
             case SmsConstants.ALPHABET_8BIT:
                 baos.write(theMsg.getBytes("ISO-8859-1"));
                 // 8bit data encoding, No message class, No compression
-                dcs = SmsDcs.DEFAULT_8BIT_DCS;
+                dcs = SmsConstants.DCS_DEFAULT_8BIT;
                 udLength = theMsg.length();
                 break;
             case SmsConstants.ALPHABET_UCS2:
                 baos.write(theMsg.getBytes("UTF-16BE"));
                 // 16 bit UCS2 encoding, No message class, No compression
-                dcs = SmsDcs.DEFAULT_UCS2_DCS;
+                dcs = SmsConstants.DCS_DEFAULT_UCS2;
                 udLength = theMsg.length() * 2;
                 break;
             }

@@ -23,7 +23,7 @@ import java.util.*;
 
 public class SmsPdu
 {
-    protected SmsDcs myDcs = null;
+    protected byte myDcs = 0x00;
 
     /** Length of myUd, can be in octets or septets */
     protected int myUdLength = 0;
@@ -35,7 +35,7 @@ public class SmsPdu
     {
     }
 
-    public SmsPdu(SmsUdhElement[] theUdhIeis, byte[] theUd, int theUdLength, SmsDcs theDcs)
+    public SmsPdu(SmsUdhElement[] theUdhIeis, byte[] theUd, int theUdLength, byte theDcs)
     {
         setUserDataHeaders(theUdhIeis);
         setUserData(theUd, theUdLength, theDcs);
@@ -66,7 +66,7 @@ public class SmsPdu
         return baos.toByteArray();
     }
 
-    public void setUserData(byte[] theUd, int theUdLength, SmsDcs theDcs)
+    public void setUserData(byte[] theUd, int theUdLength, byte theDcs)
     {
         myUd = theUd;
         myUdLength = theUdLength;
@@ -83,7 +83,7 @@ public class SmsPdu
         return myUdLength;
     }
 
-    public SmsDcs getDataCodingScheme()
+    public byte getDataCodingScheme()
     {
         return myDcs;
     }

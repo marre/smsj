@@ -203,6 +203,10 @@ public class SmsConstants
     /** Message with no specific message class (Often handled as an class 1 SMS) */
     public static final byte MSG_CLASS_UNKNOWN = 4;
 
+    public static final byte DCS_DEFAULT_7BIT = 0x00;
+    public static final byte DCS_DEFAULT_8BIT = 0x04;
+    public static final byte DCS_DEFAULT_UCS2 = 0x08;
+
     private SmsConstants()
     {
     }
