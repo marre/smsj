@@ -22,7 +22,6 @@ public class SmsPdu
 {
     protected byte myDcs = 0;
     protected byte myUd[] = null;
-    protected int myUdLength = 0;
     protected byte myUdh[] = null;
 
     public void setDataCodingScheme(byte theDcs)
@@ -48,27 +47,10 @@ public class SmsPdu
     public void setUserData(byte[] theUd)
     {
         myUd = theUd;
-        myUdLength = theUd.length;
-    }
-
-    public void setUserData(byte[] theUd, int theUdLength)
-    {
-        myUd = theUd;
-        myUdLength = theUdLength;
     }
 
     public byte[] getUserData()
     {
         return myUd;
-    }
-
-    public int getUserDataLength()
-    {
-        return myUdLength;
-    }
-
-    public boolean isValid()
-    {
-        return ((myUd.length + myUdh.length) <= 140);
     }
 }
