@@ -32,7 +32,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.sms.transport.gsm;
+package org.marre.sms.transport.ucp;
 
 import java.util.*;
 import java.io.*;
@@ -50,7 +50,7 @@ public abstract class UcpMsg
 {
     static Log myLog = LogFactory.getLog(UcpMsg.class);
 
-    protected String[] myUcpFields; 
+    protected String[] myUcpFields;
     protected char myOR; // 'O' or 'R'
     protected int myTrn;
     protected byte myOT;
@@ -103,12 +103,12 @@ public abstract class UcpMsg
         StringBuffer command = new StringBuffer(200);
         int length = 0;
 
-	// CALC LENGTH
-        
+        // CALC LENGTH
+
         // length = trn + len + o|r + ot
-	length = 3 + 5 + 2 + 3;
+        length = 3 + 5 + 2 + 3;
         // length += data
-        for(int i=0; i < myUcpFields.length; i++) 
+        for(int i=0; i < myUcpFields.length; i++)
         {
             if (myUcpFields[i] != null)
             {
@@ -135,7 +135,7 @@ public abstract class UcpMsg
         command.append('/');
 
         // DATA
-        for(int i=0; i < myUcpFields.length; i++) 
+        for(int i=0; i < myUcpFields.length; i++)
         {
             if (myUcpFields[i] != null)
             {

@@ -32,7 +32,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.sms.transport.gsm;
+package org.marre.sms.transport.ucp;
 
 import java.util.*;
 import java.io.*;
@@ -129,8 +129,8 @@ public class UcpSeries50 extends UcpMsg
         xSerBuff.append(StringUtil.byteToHexString((byte)(data.length & 0xff)));
         xSerBuff.append(StringUtil.bytesToHexString(data));
 
-        myUcpFields[FIELD_XSer] = (myUcpFields[FIELD_XSer] == null) ? 
-             (xSerBuff.toString()) : 
+        myUcpFields[FIELD_XSer] = (myUcpFields[FIELD_XSer] == null) ?
+             (xSerBuff.toString()) :
              (myUcpFields[FIELD_XSer] + xSerBuff.toString());
     }
 }

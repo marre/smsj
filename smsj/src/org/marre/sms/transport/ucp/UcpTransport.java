@@ -32,7 +32,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.sms.transport.gsm;
+package org.marre.sms.transport.ucp;
 
 import java.util.*;
 import java.io.*;
@@ -128,7 +128,7 @@ theDestination, theSender);
 
         // MT <= 4
         ucpSubmit.setField(UcpSeries50.FIELD_MT, "4");
-        
+
         // XSer = Extra Services
         ucpSubmit.clearXSer();
         ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_DCS, dcs);
@@ -143,7 +143,7 @@ theDestination, theSender);
 
         // TMsg = Msg in hex
         ucpSubmit.setField(UcpSeries50.FIELD_Msg, StringUtil.bytesToHexString(pdu.getUserData()));
-            
+
         // MMS = More messages to send
         if (moreToSend)
         {
