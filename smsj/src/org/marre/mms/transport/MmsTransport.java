@@ -35,7 +35,8 @@
 package org.marre.mms.transport;
 
 import java.util.*;
-import org.marre.mms.*;
+import org.marre.mms.MmsException;
+import org.marre.mime.MimeBodyPart;
 import org.marre.mime.MimeHeader;
 
 public interface MmsTransport
@@ -64,7 +65,7 @@ public interface MmsTransport
      * @param theHeaders Headers
      * @throws MmsException
      */
-    public void send(MmsMessage theMessage, MimeHeader[] theHeaders) throws MmsException;
+    public void send(MimeBodyPart theMessage, MimeHeader[] theHeaders) throws MmsException;
 
     /**
      * Disconnects from the MMSC (or phone, or service, or...)
