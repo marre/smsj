@@ -21,8 +21,6 @@ package org.marre.sms.util;
 import java.util.*;
 import java.io.*;
 
-// TODO: GSM charset
-
 /**
  * Various functions to encode and decode strings
  *
@@ -40,8 +38,6 @@ public class SmsPduUtil
     /**
      * Pack the given string into septets.
      *
-     * @todo Convert to GSM charset
-     *
      * @param theOs Write the septets into this stream
      * @param theMsg The message to encode
      * @throws IOException Thrown when failing to write to theOs
@@ -54,9 +50,9 @@ public class SmsPduUtil
 
         for(int i=0; i < theMsg.length(); i++)
         {
-            char ch = (char)(theMsg.charAt(i) & 0x7f);
+            byte gsmChar = toGsmCharset(theMsg.charAt(i));
 
-            data |= (ch << nBits);
+            data |= (gsmChar << nBits);
             nBits += 7;
 
             while(nBits >= 8)
@@ -77,8 +73,6 @@ public class SmsPduUtil
 
     /**
      * Decodes a 7-bit encoded string from the stream
-     *
-     * @todo GSM charset
      *
      * @param theIs The stream to read from
      * @param theLength Number of decoded chars to read from the stream
@@ -107,7 +101,7 @@ public class SmsPduUtil
 
             while (restBits >= 7)
             {
-                msg.append((char)(rest & 0x7f));
+                msg.append(fromGsmCharset((byte)(rest & 0x7f)));
 
                 rest >>>= 7;
                 restBits -= 7;
@@ -136,19 +130,19 @@ public class SmsPduUtil
             switch(theNumber.charAt(i))
             {
             case '0': bcd |= 0x00; break;
-            case '1': bcd |= 0x01; break;
-            case '2': bcd |= 0x02; break;
-            case '3': bcd |= 0x03; break;
-            case '4': bcd |= 0x04; break;
-            case '5': bcd |= 0x05; break;
-            case '6': bcd |= 0x06; break;
-            case '7': bcd |= 0x07; break;
-            case '8': bcd |= 0x08; break;
-            case '9': bcd |= 0x09; break;
-            case '*': bcd |= 0x0A; break;
-            case '#': bcd |= 0x0B; break;
-            case 'a': bcd |= 0x0C; break;
-            case 'b': bcd |= 0x0E; break;
+            case '1': bcd |= 0x10; break;
+            case '2': bcd |= 0x20; break;
+            case '3': bcd |= 0x30; break;
+            case '4': bcd |= 0x40; break;
+            case '5': bcd |= 0x50; break;
+            case '6': bcd |= 0x60; break;
+            case '7': bcd |= 0x70; break;
+            case '8': bcd |= 0x80; break;
+            case '9': bcd |= 0x90; break;
+            case '*': bcd |= 0xA0; break;
+            case '#': bcd |= 0xB0; break;
+            case 'a': bcd |= 0xC0; break;
+            case 'b': bcd |= 0xE0; break;
             }
 
             n++;
@@ -161,7 +155,7 @@ public class SmsPduUtil
             }
             else
             {
-                bcd <<= 4;
+                bcd >>= 4;
             }
         }
 
@@ -227,4 +221,131 @@ public class SmsPduUtil
 
         return data;
     }
+
+    /**
+     * Convert from the GSM charset to a unicode char
+     *
+     * @param gsmChar The gsm char to convert
+     * @return Unicode representation of the given gsm char
+     */
+    public static final char fromGsmCharset(byte gsmChar)
+    {
+        return GSM_DEFAULT_ALPHABET_TABLE[gsmChar];
+    }
+
+    /**
+     * Convert a unicode char to a GSM char
+     *
+     * @param ch The unicode char to convert
+     * @return GSM representation of the given unicode char
+     */
+    public static final byte toGsmCharset(char ch)
+    {
+        // First check through the GSM charset table
+        for(int i=0; i < GSM_DEFAULT_ALPHABET_TABLE.length; i++)
+        {
+            if (GSM_DEFAULT_ALPHABET_TABLE[i] == ch)
+            {
+                // Found the correct char
+                return (byte) i;
+            }
+        }
+
+        // Alternative chars.
+        for(int i=0; i < GSM_DEFAULT_ALPHABET_ALTERNATIVES.length/2; i+=2)
+        {
+            if (GSM_DEFAULT_ALPHABET_ALTERNATIVES[i*2] == ch)
+            {
+                return (byte) (GSM_DEFAULT_ALPHABET_ALTERNATIVES[i*2 + 1] & 0x7f);
+            }
+        }
+
+        // Couldn't find a valid char
+        return '?';
+    }
+
+    public static final char EXT_TABLE_PREFIX = 0x1B;
+
+    /**
+     * Default alphabet table according to GSM 03.38.
+     *
+     * See http://www.unicode.org/Public/MAPPINGS/ETSI/GSM0338.TXT
+     */
+    public static final char GSM_DEFAULT_ALPHABET_TABLE[] = {
+    //  0 '@', '£', '$', '¥', 'è', 'é', 'ù', 'ì',
+          '@', 163, '$', 165, 232, 233, 249, 236,
+    //  8 'ò', 'Ç',  LF, 'Ø', 'ø',  CR, 'Å', 'å',
+          242, 199,  10, 216, 248,  13, 197, 229,
+    // 16 'delta', '_', 'phi', 'gamma', 'lambda', 'omega', 'pi',  'psi',
+          0x394,   '_', 0x3a6, 0x393,    0x39b,   0x3a9,   0x3a0, 0x3a8,
+    // 24 'sigma', 'theta', 'xi',  'EXT', 'Æ', 'æ', 'ß', 'É',
+          0x3a3,   0x398,   0x39e, 0xa0,  198, 230, 223, 201,
+    // 32 ' ', '!', '"', '#', '¤', '%', '&', ''',
+          ' ', '!', '"', '#', 164, '%', '&', '\'',
+    // 40 '(', ')', '*', '+', ',', '-', '.', '/',
+          '(', ')', '*', '+', ',', '-', '.', '/',
+    // 48 '0', '1', '2', '3', '4', '5', '6', '7',
+          '0', '1', '2', '3', '4', '5', '6', '7',
+    // 56 '8', '9', ':', ';', '<', '=', '>', '?',
+          '8', '9', ':', ';', '<', '=', '>', '?',
+    // 64 '¡', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
+          161, 'A', 'B', 'C', 'D', 'E', 'F', 'G',
+    // 72 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
+          'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
+    // 80 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
+          'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
+    // 88 'X', 'Y', 'Z', 'Ä', 'Ö', 'Ñ', 'Ü', '§',
+          'X', 'Y', 'Z', 196, 214, 209, 220, 167,
+    // 96 '¿', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
+          191, 'a', 'b', 'c', 'd', 'e', 'f', 'g',
+   // 104 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+          'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+   // 112 'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
+          'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
+   // 120 'x', 'y', 'z', 'ä', 'ö', 'ñ', 'ü', 'à',
+          'x', 'y', 'z', 228, 246, 241, 252, 224
+    };
+
+    /**
+     * Some alternative character encodings.
+     *
+     * The table is encoded as pairs with unicode value and gsm charset value.
+     * <br>Ex:
+     * <pre>
+     * char unicode = GSM_DEFAULT_ALPHABET_ALTERNATIVES[i*2];
+     * char gsm = GSM_DEFAULT_ALPHABET_ALTERNATIVES[i*2+1];
+     * </pre>
+     * See http://www.unicode.org/Public/MAPPINGS/ETSI/GSM0338.TXT
+     */
+    public static final char GSM_DEFAULT_ALPHABET_ALTERNATIVES[] =
+    {
+        // LATIN CAPITAL LETTER C WITH CEDILLA (see note above)
+        0x00c7, 0x09,
+        // GREEK CAPITAL LETTER ALPHA
+        0x0391, 0x41,
+        // GREEK CAPITAL LETTER BETA
+        0x0392, 0x42,
+        // GREEK CAPITAL LETTER ETA
+        0x0397, 0x48,
+        // GREEK CAPITAL LETTER IOTA
+        0x0399, 0x49,
+        // GREEK CAPITAL LETTER KAPPA
+        0x039a, 0x4b,
+        // GREEK CAPITAL LETTER MU
+        0x039c, 0x4d,
+        // GREEK CAPITAL LETTER NU
+        0x039d, 0x4e,
+        // GREEK CAPITAL LETTER OMICRON
+        0x039f, 0x4f,
+        // GREEK CAPITAL LETTER RHO
+        0x03a1, 0x50,
+        // GREEK CAPITAL LETTER TAU
+        0x03a4, 0x54,
+        // GREEK CAPITAL LETTER UPSILON
+        0x03a5, 0x55,
+        // GREEK CAPITAL LETTER CHI
+        0x03a7, 0x58,
+        // GREEK CAPITAL LETTER ZETA
+        0x0396, 0x5a
+    };
 }
