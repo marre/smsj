@@ -35,6 +35,7 @@
 package org.marre.mime.encoder.wap;
 
 import org.marre.mime.encoder.MimeEncoder;
+import org.marre.mime.encoder.text.TextMimeEncoder;
 
 import java.io.*;
 
@@ -45,6 +46,8 @@ import org.marre.wap.util.*;
 
 public class WapMimeEncoder implements MimeEncoder
 {
+    private TextMimeEncoder myTextMimeEncoder = new TextMimeEncoder();
+    
     /**
      * Writes an WSP encoded content type header to the given stream.
      * <p>
@@ -60,12 +63,14 @@ public class WapMimeEncoder implements MimeEncoder
     {
         if (theMsg instanceof MimeMultipart)
         {
-            // TODO: Clone content type... We shouldn't change theMsg...
             String ct = theMsg.getContentType().getValue();
+
+            // Convert multipart headers...            
+            // TODO: Clone content type... We shouldn't change theMsg...
             String newCt = WspUtil.convertMultipartContentType(ct);
-            theMsg.getContentType().setValue(newCt);            
+            theMsg.getContentType().setValue(newCt);
         }
-        
+
         WspUtil.writeContentType(theOs, theMsg.getContentType());
     }
 
@@ -84,7 +89,23 @@ public class WapMimeEncoder implements MimeEncoder
     {
         if (theMsg instanceof MimeMultipart)
         {
-            writeMultipart(theOs, (MimeMultipart) theMsg);
+            String ct = theMsg.getContentType().getValue();
+            
+            // Convert multipart headers...            
+            // TODO: Clone content type... We shouldn't change theMsg...
+            String newCt = WspUtil.convertMultipartContentType(ct);
+            theMsg.getContentType().setValue(newCt);
+            
+            if ( newCt.startsWith("application/vnd.wap.multipart.") )
+            {
+                // WSP encoded multipart
+                writeMultipart(theOs, (MimeMultipart) theMsg);
+            }
+            else
+            {
+                // Not WSP encoded
+                // TODO: Write textual "multipart/"
+            }
         }
         else
         {
