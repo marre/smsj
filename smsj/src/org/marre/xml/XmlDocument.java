@@ -37,13 +37,25 @@ package org.marre.xml;
 import java.io.IOException;
 
 /**
+ * Interface for objects that can be represented in xml form.
  * 
  * @author Markus
  * @version $Id$
  */
-
 public interface XmlDocument
 {
+    /**
+     * Returns the content-type of this xml document.
+     * 
+     * @return Content-type. Ex: "text/xml".
+     */
     String getContentType();
+    
+    /**
+     * Writes this object to the given XmlWriter.
+     * 
+     * @param xmlWriter XmlWriter to write to.
+     * @throws IOException Thrown if failed to write to xmlwriter.
+     */
     void writeXmlTo(XmlWriter xmlWriter) throws IOException;
 }

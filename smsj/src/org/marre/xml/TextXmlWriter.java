@@ -35,36 +35,79 @@
 package org.marre.xml;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Stack;
 
-
+/**
+ * XmlWriter that creates text xml documents.
+ * 
+ * NOTE! Not completed yet.
+ *  
+ * @author Markus Eriksson
+ * @version $Id$
+ */
 public class TextXmlWriter implements XmlWriter
 {
+    /**
+     * The writer that is used internally to store the xml document.
+     */
     protected Writer myWriter;
+    
+    /**
+     * Stack of tags. Used by addEndElement to know what tag to add.
+     */
     protected Stack myTagStack;
 
+    /**
+     * Used by addElement to insert a \r\n.
+     */
     protected boolean myCharsAddedBetweenTags = true;
 
+    /**
+     * Constructor.
+     * 
+     * @param writer The writer to write to.
+     */
     public TextXmlWriter(Writer writer)
     {
         myWriter = writer;
     }
 
+    /**
+     * Sets the doctype.
+     * 
+     * @see org.marre.xml.XmlWriter#setDoctype(java.lang.String)
+     */
     public void setDoctype(String publicID)
     {
+        /* TODO: Not implemented yet */
     }
 
+    /**
+     * Sets the doctype.
+     * 
+     * @see org.marre.xml.XmlWriter#setDoctype(java.lang.String, java.lang.String)
+     */
     public void setDoctype(String name, String systemURI)
     {
+        /* TODO: Not implemented yet */
     }
 
+    /**
+     * Sets the doctype.
+     * 
+     * @see org.marre.xml.XmlWriter#setDoctype(java.lang.String, java.lang.String, java.lang.String)
+     */
     public void setDoctype(String name, String publicID, String publicURI)
     {
+        /* TODO: Not implemented yet */
     }
 
+    /**
+     * Adds a start element tag.
+     * 
+     * @see org.marre.xml.XmlWriter#addStartElement(java.lang.String)
+     */
     public void addStartElement(String tag) throws IOException
     {
         if (!myCharsAddedBetweenTags)
@@ -77,11 +120,21 @@ public class TextXmlWriter implements XmlWriter
         myTagStack.push(tag);
     }
 
+    /**
+     *  Adds a start element tag.
+     *
+     * @see org.marre.xml.XmlWriter#addStartElement(java.lang.String, org.marre.xml.XmlAttribute[])
+     */
     public void addStartElement(String tag, XmlAttribute[] attribs) throws IOException
     {
         throw new IOException("Not implemented");
     }
 
+    /**
+     *  Adds an empty start element tag.
+     *
+     * @see org.marre.xml.XmlWriter#addEmptyElement(java.lang.String)
+     */
     public void addEmptyElement(String tag) throws IOException
     {
         if (!myCharsAddedBetweenTags)
@@ -93,46 +146,56 @@ public class TextXmlWriter implements XmlWriter
         myWriter.write("<" + tag + "/>\r\n");
     }
 
+    /**
+     * Adds an empty start element tag with attributes.
+     * 
+     * @see org.marre.xml.XmlWriter#addEmptyElement(java.lang.String, org.marre.xml.XmlAttribute[])
+     */
     public void addEmptyElement(String tag, XmlAttribute[] attribs) throws IOException
     {
         throw new IOException("Not implemented");
     }
 
+    /**
+     * Adds an end tag.
+     * 
+     * @see org.marre.xml.XmlWriter#addEndElement()
+     */
     public void addEndElement() throws IOException
     {
         String tag = (String) myTagStack.pop();
         myWriter.write("</" + tag + ">\r\n");
     }
 
+    /**
+     * Adds characters to the xml document.
+     * 
+     * @see org.marre.xml.XmlWriter#addCharacters(char[], int, int)
+     */
     public void addCharacters(char[] ch, int start, int length) throws IOException
     {
         myCharsAddedBetweenTags = true;
         myWriter.write(ch, start, length);
     }
 
+    /**
+     * Adds a string to the xml document.
+     * 
+     * @see org.marre.xml.XmlWriter#addCharacters(java.lang.String)
+     */
     public void addCharacters(String str) throws IOException
     {
         myCharsAddedBetweenTags = true;
         myWriter.write(str);
     }
 
-    public void reset()
-    {
-        myWriter = new StringWriter(1024);
-        myTagStack = new Stack();
-
-        myCharsAddedBetweenTags = true;
-    }
-
-    public void writeTo(OutputStream os) throws IOException
-    {
-        //TODO: doctype
-        String str = myWriter.toString();
-        os.write(str.getBytes());
-    }
-
+    /**
+     * Flushes the writer.
+     * 
+     * @see org.marre.xml.XmlWriter#flush()
+     */
     public void flush() throws IOException
     {
-        // TODO Auto-generated method stub
+        myWriter.flush();
     }
 }

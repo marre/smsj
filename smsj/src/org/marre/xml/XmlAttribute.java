@@ -34,22 +34,44 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.xml;
 
+/**
+ * Represents an xml attribute.
+ * 
+ * @author Markus Eriksson
+ * @version $Id$
+ */
 public class XmlAttribute
 {
     private String myType;
     private String myValue;
 
+    /**
+     * Creates an XmlAttribute.
+     * 
+     * @param type Type
+     * @param value Value
+     */
     public XmlAttribute(String type, String value)
     {
         myType = type;
         myValue = value;
     }
 
+    /**
+     * Getter for type.
+     * 
+     * @return type
+     */
     public String getType()
     {
         return myType;
     }
 
+    /**
+     * Getter for value.
+     * 
+     * @return value
+     */
     public String getValue()
     {
         return myValue;
