@@ -71,7 +71,7 @@ public class WapConstants
             "multipart/*",
             "multipart/mixed",
             "multipart/form-data",
-            "multipart/byterantes",
+            "multipart/byteranges",
             "multipart/alternative",
             "application/*",
             "application/java-vm",
@@ -156,15 +156,15 @@ public class WapConstants
         "q",
         "charset",
         "level",
-        "type",
+        null,             // "type"
         null,
         null,             // "name"         Deprecated in encoding v1.4
         null,             // "filename"     Deprecated in encoding v1.4
         "differences",
         "padding",
         "type",
-        null,             // "start"        Deprecated in encoding v1.4
-        null,             // "start-info"   Deprecated in encoding v1.4
+        "start",          // "start"        Deprecated in encoding v1.4
+        "start-info",     // "start-info"   Deprecated in encoding v1.4
         null,             // "comment"      Deprecated in encoding v1.4
         null,             // "domain"       Deprecated in encoding v1.4
         "max-age",
@@ -279,7 +279,7 @@ public class WapConstants
     public static final int HEADER_ID_PROFILE = 0x35;
     public static final int HEADER_ID_PROFILE_DIFF = 0x36;
 //    public static final int HEADER_ID_PROFILE_WARNING = 0x37;
-    public static final int HEADER_ID_EXPECT = 0x38;
+    public static final int HEADER_ID_EXPECT = 0x38;   
     public static final int HEADER_ID_TE = 0x39;
     public static final int HEADER_ID_TRAILER = 0x3A;
     public static final int HEADER_ID_ACCEPT_CHARSET = 0x3B;
@@ -314,7 +314,7 @@ public class WapConstants
         "content-language",
         "content-length",
         "content-location",
-        "content-md5",
+        "content-md5",        
         "content-range",        // Deprecated
         "content-type",
         "date",
@@ -350,6 +350,7 @@ public class WapConstants
         "x-wap-content-uri",
         "x-wap-initiator-uri",
         "bearer-indication",
+        "accept-application",
         "push-flag",
         "profile",
         "profile-diff",
