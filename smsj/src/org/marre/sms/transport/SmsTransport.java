@@ -64,15 +64,6 @@ public interface SmsTransport
     public void send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException;
 
     /**
-     * Sends a "ping" to the SMSC (or phone, or service, or...)
-     * <p>
-     * Used to keep the connection alive
-     *
-     * @throws SmsException
-     */
-    public void ping() throws SmsException;
-
-    /**
      * Disconnects from the SMSC (or phone, or service, or...)
      *
      * @throws SmsException
