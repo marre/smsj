@@ -25,20 +25,52 @@ import org.marre.sms.util.SmsPduUtil;
 import org.marre.sms.util.SmsUdhUtil;
 
 /**
- * SmsTextMessage
+ * Represents a text message.
+ * <p>
+ * The text can be sent in unicode (max 70 chars/SMS), 8-bit (max 140 chars/SMS)
+ * or GSM encoding (max 160 chars/SMS).
  *
  * @author Markus Eriksson
- * @version 1.0
+ * @version $Id$
  */
 public class SmsTextMessage extends SmsConcatMessage
 {
+    /**
+     * Creates an SmsTextMessage with the given alphabet and message class
+     * <p>
+     * theAlphabet can be any of:<br>
+     * - SmsConstants.ALPHABET_GSM<br>
+     * - SmsConstants.ALPHABET_8BIT<br>
+     * - SmsConstants.ALPHABET_UCS2<br>
+     * <p>
+     * theMessageClass can be any of:<br>
+     * - SmsConstants.MSG_CLASS_0 (Often called a FLASH message)<br>
+     * - SmsConstants.MSG_CLASS_1<br>
+     * - SmsConstants.MSG_CLASS_2<br>
+     * - SmsConstants.MSG_CLASS_3<br>
+     *
+     * @param theMsg The message
+     * @param theAlphabet The alphabet
+     * @param theMessageClass The messageclass
+     */
     public SmsTextMessage(String theMsg, int theAlphabet, byte theMessageClass)
     {
         this(theMsg, theAlphabet);
         int dcs = getDataCodingScheme() | 0x10 | theMessageClass;
         setDataCodingScheme((byte)(dcs & 0xff));
     }
- 
+
+    /**
+     * Creates an SmsTextMessage with the given alphabet
+     * <p>
+     * theAlphabet can be any of:<br>
+     * - SmsConstants.ALPHABET_GSM<br>
+     * - SmsConstants.ALPHABET_8BIT<br>
+     * - SmsConstants.ALPHABET_UCS2<br>
+     *
+     * @param theMsg The message
+     * @param theAlphabet The alphabet
+     */
     public SmsTextMessage(String theMsg, int theAlphabet)
     {
         try

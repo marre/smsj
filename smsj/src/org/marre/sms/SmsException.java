@@ -18,8 +18,19 @@
 */
 package org.marre.sms;
 
+/**
+ * Exception representing an error in the SMS library
+ *
+ * @author Markus Eriksson
+ * @version $Id$
+ */
 public class SmsException extends Exception
 {
+    /**
+     * Creates an SmsException
+     *
+     * @param theMsg The error message
+     */
     public SmsException(String theMsg)
     {
         super(theMsg);

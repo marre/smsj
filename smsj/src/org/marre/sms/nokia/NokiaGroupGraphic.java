@@ -29,7 +29,9 @@ import org.marre.sms.util.SmsUdhUtil;
 
 /**
  * Nokia Group Graphic (CLI) message
- *
+ * <p>
+ * <b>Note!</b> I haven't been able to verify that this class works since
+ * I don't have access to a phone that can handle Group Graphic.
  * @author Markus Eriksson
  * @version $Id$
  */
@@ -39,7 +41,7 @@ public class NokiaGroupGraphic extends SmsConcatMessage
 
     /**
      * Creates a group graphic SMS message
-     * 
+     *
      * @param theOtaBitmap An OtaBitmap object representing the
      * image to send
      */

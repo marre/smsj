@@ -37,10 +37,10 @@ import org.marre.sms.transport.SmsTransportManager;
  *       SmsSender smsSender = SmsSender.getClickatellSender("username", "password", "apiid");
  *       String msg = "A sample SMS.";
  *       // International number to reciever without leading "+"
- *       String reciever = "464545425463";
+ *       String reciever = "+464545425463";
  *       // Number of sender (not supported on all transports)
- *       String sender = "46534534535";
- *       smsSender.send("A sample SMS.", "+467056565", "+4646464646");
+ *       String sender = "+46534534535";
+ *       smsSender.send("A sample SMS.", reciever, sender);
  *   }
  *   catch (SmsException ex)
  *   {
@@ -49,7 +49,7 @@ import org.marre.sms.transport.SmsTransportManager;
  * </pre>
  *
  * @author Markus Eriksson
- * @version 1.0
+ * @version $Id$
  */
 public class SmsSender
 {
@@ -121,10 +121,29 @@ public class SmsSender
     }
 
     /**
+     * Convenience method to create a SmsSender object that knows how to send
+     * messages with a GSM phone attached to the serial port on your computer.
+     *
+     * @param theSerialPort Serial port where your phone is located. Ex "COM1:"
+     * @return A SmsSender object that uses the GsmTranport to send
+     * messages
+     * @throws SmsException
+     */
+    static public SmsSender getGsmSender(String theSerialPort)
+        throws SmsException
+    {
+        Properties props = new Properties();
+
+        props.setProperty("sms.gsm.serialport", theSerialPort);
+
+        return new SmsSender("org.marre.sms.transport.gsm.GsmTransport", props);
+    }
+
+    /**
      * Sends an ordinary SMS to the given recipient.
      * <p>
      * - No limit on the number of concatenated SMS that this message will use.<br>
-     * - Will send the message with the GSM charset (~160 chars/SMS)<br>
+     * - Will send the message with the GSM charset (Max 160 chars/SMS)<br>
      *
      * @param theMsg Message to send
      * @param theDest Destination number (international format without leading +)
@@ -144,7 +163,7 @@ public class SmsSender
      * Sends an ordinary SMS to the given recipient.
      * <p>
      * - No limit on the number of concatenated SMS that this message will use.<br>
-     * - Will send the message with the UCS2 charset (~70 chars/SMS)<br>
+     * - Will send the message with the UCS2 charset (MAX 70 chars/SMS)<br>
      *
      * @param theMsg Message to send
      * @param theDest Destination number (international format without leading +)

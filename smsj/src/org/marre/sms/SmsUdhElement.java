@@ -20,32 +20,65 @@ package org.marre.sms;
 
 import java.io.*;
 
+/**
+ * Represents an User Data Header Element
+ *
+ * @author Markus Eriksson
+ * @version $Id$
+ */
 public class SmsUdhElement
 {
     private int myUdhIei = 0;
     private byte[] myUdhIeiData = null;
 
+    /**
+     * Creates an SmsUdhElement
+     *
+     * @param theUdhIei
+     * @param theUdhIeiData
+     */
     public SmsUdhElement(int theUdhIei, byte[] theUdhIeiData)
     {
         myUdhIei = theUdhIei;
         myUdhIeiData = theUdhIeiData;
     }
 
+    /**
+     * Returns the total length of this UDH element.
+     * <p>
+     * The length is including the UDH data length and the UDH "header" (2 bytes)
+     * @return the length
+     */
     public int getTotalLength()
     {
         return myUdhIeiData.length + 2;
     }
 
+    /**
+     * Returns the length of the UDH iei data
+     * <p>
+     * The length returned is only the length of the data
+     * @return Length of data
+     */
     public int getUdhIeiDataLength()
     {
         return myUdhIeiData.length;
     }
 
+    /**
+     * Returns the Udh Iei Data excluding the UDH "header"
+     * @return Data
+     */
     public byte[] getUdhIeiData()
     {
         return myUdhIeiData;
     }
 
+    /**
+     * Return the UDH element including the UDH "header" (two bytes)
+     *
+     * @return Data
+     */
     public byte[] getData()
     {
         byte[] allData = new byte[myUdhIeiData.length + 2];
@@ -57,6 +90,12 @@ public class SmsUdhElement
         return allData;
     }
 
+    /**
+     * Writes the UDH element including UDH "header" to the given stream
+     *
+     * @param os Stream to write to
+     * @throws IOException
+     */
     public void writeTo(OutputStream os)
         throws IOException
     {

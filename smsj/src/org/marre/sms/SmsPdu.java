@@ -23,10 +23,14 @@ import java.util.*;
 
 /**
  * Represents an SMS pdu
+ * <p>
+ * A SMS pdu consists of a user data header (UDH) and the actual content often
+ * called user data (UD).
  *
  * @author Markus Eriksson
- * @version 1.0
+ * @version $Id$
  */
+
 public class SmsPdu
 {
     /** Length of myUd, can be in octets or septets */
@@ -45,9 +49,10 @@ public class SmsPdu
     /**
      * Creates an SMS pdu object.
      *
-     * @param theUdhIeis
-     * @param theUd
-     * @param theUdLength
+     * @param theUdhIeis The UDH elements
+     * @param theUd The content
+     * @param theUdLength The length of the content. Can be in octets or septets
+     * depending on the DCS
      */
     public SmsPdu(SmsUdhElement[] theUdhIeis, byte[] theUd, int theUdLength)
     {
@@ -58,7 +63,7 @@ public class SmsPdu
     /**
      * Sets the UDH field
      *
-     * @param theUdhElements
+     * @param theUdhElements The UDH elements
      */
     public void setUserDataHeaders(SmsUdhElement[] theUdhElements)
     {
@@ -108,8 +113,9 @@ public class SmsPdu
     /**
      * Sets the user data field of the message.
      *
-     * @param theUd
-     * @param theUdLength
+     * @param theUd The content
+     * @param theUdLength The length, can be in septets or octets depending on
+     * the DCS
      */
     public void setUserData(byte[] theUd, int theUdLength)
     {

@@ -31,9 +31,11 @@ import org.marre.sms.SmsPdu;
 import org.marre.sms.util.SmsUdhUtil;
 
 /**
- * Nokia Multipart Message format
+ * Baseclass for Nokia Multipart Messages
+ * <p>
+ * Baseclass for messages that rely on the Nokia Multipart Messages
  *
- * @autor Markus Eriksson
+ * @author Markus Eriksson
  * @version $Id$
  */
 abstract class NokiaMultipartMessage extends SmsConcatMessage
@@ -43,7 +45,7 @@ abstract class NokiaMultipartMessage extends SmsConcatMessage
     private LinkedList myParts = new LinkedList();
 
     /**
-     *
+     * Creates a Nokia Multipart Message
      */
     protected NokiaMultipartMessage()
     {
@@ -51,9 +53,10 @@ abstract class NokiaMultipartMessage extends SmsConcatMessage
     }
 
     /**
+     * Adds a part to this multipart message
      *
-     * @param theItemType
-     * @param data
+     * @param theItemType Type
+     * @param data Content
      */
     protected void addMultipart(byte theItemType, byte[] data)
     {
@@ -61,8 +64,11 @@ abstract class NokiaMultipartMessage extends SmsConcatMessage
     }
 
     /**
+     * Builds the pdus for this message
+     * <p>
+     * It relies on SmsConcat message to actually build the different PDU:s
      *
-     * @return
+     * @return PDU:s
      */
     public SmsPdu[] getPdus()
     {

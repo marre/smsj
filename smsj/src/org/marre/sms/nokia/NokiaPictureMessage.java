@@ -24,7 +24,9 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * Nokia Picture message
- *
+ * <p>
+ * <b>Note!</b> I haven't been able to verify if PICTURE_ABOVE_TEXT or
+ * PICTURE_BELOW_TEXT actually works as expected.
  * @author Markus Eriksson
  * @version $Id$
  */
@@ -36,6 +38,7 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
     public static final int PICTURE_BELOW_TEXT = 2;
 
     /**
+     * Creates a Nokia Picture Message
      *
      * @param theBitmap
      * @param theMsg
@@ -46,6 +49,7 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
     }
 
     /**
+     * Creates a Nokia Picture Message
      *
      * @param theBitmap
      * @param theMsg
@@ -56,10 +60,11 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
     }
 
     /**
+     * Creates a Nokia Picture Message
      *
      * @param theBitmap
      * @param theMsg
-     * @param asUnicode
+     * @param asUnicode Set to true if text should be sent as unicode
      */
     public NokiaPictureMessage(OtaBitmap theBitmap, String theMsg, int theOrientation, boolean asUnicode)
     {
@@ -67,10 +72,11 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
     }
 
     /**
+     * Creates a Nokia Picture Message
      *
      * @param theBitmap
      * @param theMsg
-     * @param asUnicode
+     * @param asUnicode Set to true if text should be sent as unicode
      */
     public NokiaPictureMessage(byte[] theBitmap, String theMsg, int theOrientation, boolean asUnicode)
     {
@@ -87,6 +93,7 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
     }
 
     /**
+     * Used internally to add the image
      *
      * @param theBitmap
      */
@@ -96,7 +103,7 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
     }
 
     /**
-     *
+     * Used internally to add the image
      * @param theBitmap
      */
     private void addBitmap(OtaBitmap theBitmap)
@@ -105,6 +112,7 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
     }
 
     /**
+     * Used internally to add text
      *
      * @param theMsg
      * @param asUnicode

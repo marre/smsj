@@ -18,11 +18,28 @@
 */
 package org.marre.sms;
 
-import org.marre.sms.transport.SmsTransport;
-
+/**
+ * Baseclass for the SMS messages
+ *
+ * @author Markus Eriksson
+ * @version $Id$
+ */
 public interface SmsMessage
 {
+    /**
+     * Returns the data coding scheme specified for this message.
+     * <p>
+     * You can use SmsDcsUtil to decode the returned DCS-byte.
+     *
+     * @return A byte representing the DCS
+     */
     public byte getDataCodingScheme();
+
+    /**
+     * Returns the content of this SmsMessage in form of pdus.
+     *
+     * @return Pdus
+     */
     public SmsPdu[] getPdus();
 }
 

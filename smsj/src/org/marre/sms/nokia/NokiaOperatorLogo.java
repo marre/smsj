@@ -95,10 +95,11 @@ public class NokiaOperatorLogo extends SmsConcatMessage
     }
 
     /**
+     * Used internally to set the content
      *
-     * @param theOtaBitmap
-     * @param theMcc
-     * @param theMnc
+     * @param theOtaBitmap OTA bitmap
+     * @param theMcc MCC
+     * @param theMnc MNC
      */
     private void setContent(byte[] theOtaBitmap, int theMcc, int theMnc)
     {
