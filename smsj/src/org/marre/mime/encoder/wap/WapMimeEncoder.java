@@ -45,12 +45,24 @@ import org.marre.wap.util.*;
 
 public class WapMimeEncoder implements MimeEncoder
 {
+    /**
+     * Writes an WSP encoded content type header to the given stream.
+     * <p>
+     * NOTE! It only writes an WSP encoded content-type to the stream.
+     * It does not add the content type header id since that differ from
+     * application to application. Ex: MMS uses 0x04, WAP uses 0x11.
+     *
+     * @param theOs
+     * @param theMsg
+     * @throws IOException
+     */
     public void writeContentType(OutputStream theOs, MimeBodyPart theMsg)
         throws IOException
     {
         WspUtil.writeContentType(theOs, theMsg.getContentType());
     }
 
+    /* NOTE! We need another for MMS */
     public void writeHeaders(OutputStream theOs, MimeBodyPart theMsg)
         throws IOException
     {

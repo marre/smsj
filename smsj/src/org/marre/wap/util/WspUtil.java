@@ -497,6 +497,20 @@ public class WspUtil
         writeTextString(theOs, theContentLocation);
     }
 
+    public static void writeHeaderContentType(OutputStream theOs, String theContentType)
+        throws IOException
+    {
+        WspUtil.writeShortInteger(theOs, WapConstants.HEADER_ID_CONTENT_TYPE);
+        writeContentType(theOs, theContentType);
+    }
+
+    public static void writeHeaderContentType(OutputStream theOs, MimeContentType theContentType)
+        throws IOException
+    {
+        WspUtil.writeShortInteger(theOs, WapConstants.HEADER_ID_CONTENT_TYPE);
+        writeContentType(theOs, theContentType);
+    }
+
     /**
      * Writes a wsp encoded X-Wap-Application-Id header as specified in
      * WAP-230-WSP-20010705-a.pdf.
