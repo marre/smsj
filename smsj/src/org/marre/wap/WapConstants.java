@@ -130,7 +130,9 @@ public class WapConstants
         };
 
     public static final int PDU_TYPE_PUSH = 0x06;
+
     public static final int HEADER_ID_CONTENT_LOCATION = 0x0e;
+    public static final int HEADER_ID_CONTENT_TYPE = 0x11;
     public static final int HEADER_ID_X_WAP_APPLICATION_ID = 0x2f;
     public static final int HEADER_ID_CONTENT_ID = 0x40;
 
