@@ -47,33 +47,37 @@ public class MimeMultipart extends MimeBodyPart
 
     public void addBodyPart(MimeBodyPart theBodyPart)
     {
+        myParts.add(theBodyPart);
     }
 
     public void addBodyPart(MimeBodyPart theBodyPart, int theIndex)
     {
+        myParts.add(theIndex, theBodyPart);
     }
 
     public void removeBodyPart(MimeBodyPart theBodyPart)
     {
+        myParts.remove(theBodyPart);
     }
 
     public void removeBodyPart(int theIndex)
     {
+        myParts.remove(theIndex);
     }
 
-    public MimeBodyPart getBodyPart(int index)
+    public MimeBodyPart getBodyPart(int theIndex)
     {
-        return null;
+        return (MimeBodyPart) myParts.get(theIndex);
     }
 
     public List getBodyParts()
     {
-        return null;
+        return myParts;
     }
 
     public int getBodyPartCount()
     {
-        return 0;
+        return myParts.size();
     }
 }
 

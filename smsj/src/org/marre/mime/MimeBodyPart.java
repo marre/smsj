@@ -40,33 +40,34 @@ import java.util.*;
 public class MimeBodyPart
 {
     protected byte[] myContent = null;
+    protected MimeContentType myContentType = null;
 
-    protected Map myHeaders;
+    protected List myHeaders;
 
     public MimeBodyPart()
     {
-        myHeaders = new HashMap();
+        myHeaders = new LinkedList();
     }
 
     // HEADERS
-    public void setHeader(String theHeaderName, String theHeaderValue)
+    public void addHeader(MimeHeader theHeader)
     {
-        myHeaders.put(theHeaderName, theHeaderValue);
+        myHeaders.add(theHeader);
     }
 
-    public void delHeader(String theHeaderName)
+    public void addHeader(String theHeaderName, String theHeaderValue)
     {
-        myHeaders.remove(theHeaderName);
+        addHeader(new MimeHeader(theHeaderName, theHeaderValue));
     }
 
-    public String getHeader(String theHeaderName)
+    public MimeHeader getHeader(int theIndex)
     {
-        return (String) myHeaders.get(theHeaderName);
+        return (MimeHeader) myHeaders.get(theIndex);
     }
 
-    public List getHeaders()
+    public int getHeaderCount()
     {
-        return null;
+        return myHeaders.size();
     }
 
     // CONTENT
@@ -74,6 +75,14 @@ public class MimeBodyPart
     {
         myContent = new byte[theContent.length];
         System.arraycopy(theContent, 0, myContent, 0, theContent.length);
+        myContentType = new MimeContentType(theContentType);
+    }
+
+    public void setContent(byte[] theContent, MimeContentType theContentType)
+    {
+        myContent = new byte[theContent.length];
+        System.arraycopy(theContent, 0, myContent, 0, theContent.length);
+        myContentType = theContentType;
     }
 
     public byte[] getContent()
@@ -83,7 +92,11 @@ public class MimeBodyPart
 
     public int getContentSize()
     {
-        return 0;
+        return myContent.length;
+    }
+
+    public MimeContentType getContentType()
+    {
+        return myContentType;
     }
 }
-

@@ -35,12 +35,71 @@
 package org.marre.mime.encoder.wap;
 
 import org.marre.mime.encoder.MimeEncoder;
-import java.io.OutputStream;
-import org.marre.mime.MimeBodyPart;
+
+import java.io.*;
+import java.util.*;
+
+import org.marre.mime.*;
+
+import org.marre.wap.util.*;
 
 public class WapMimeEncoder implements MimeEncoder
 {
-    public void writeTo(OutputStream theOs, MimeBodyPart theMsg)
+    public void writeContentType(OutputStream theOs, MimeBodyPart theMsg)
+        throws IOException
     {
+        WspUtil.writeContentType(theOs, theMsg.getContentType());
+    }
+
+    public void writeHeaders(OutputStream theOs, MimeBodyPart theMsg)
+        throws IOException
+    {
+        for (int i=0; i < theMsg.getHeaderCount(); i++)
+        {
+            MimeHeader header = theMsg.getHeader(i);
+            WspUtil.writeHeader(theOs, header);
+        }
+    }
+
+    public void writeData(OutputStream theOs, MimeBodyPart theMsg)
+        throws IOException
+    {
+        if (theMsg instanceof MimeMultipart)
+        {
+            writeMultipart(theOs, (MimeMultipart) theMsg);
+        }
+        else
+        {
+            theOs.write(theMsg.getContent());
+        }
+    }
+
+    // Section 8.5.2 in WAP-230-WSP-20010705
+    private void writeMultipart(OutputStream theOs, MimeMultipart theMultipart)
+        throws IOException
+    {
+        // nEntries
+        WspUtil.writeUintvar(theOs, theMultipart.getBodyPartCount());
+
+        for(int i=0; i < theMultipart.getBodyPartCount(); i++)
+        {
+            MimeBodyPart part = (MimeBodyPart) theMultipart.getBodyPart(i);
+            ByteArrayOutputStream headers = new ByteArrayOutputStream();
+
+            // Generate content-type + headers
+            writeContentType(headers, part);
+            writeHeaders(headers, part);
+            // Done with the headers...
+            headers.close();
+
+            // Length of the content type and headers combined
+            WspUtil.writeUintvar(theOs, headers.size());
+            // Length of the data (content)
+            WspUtil.writeUintvar(theOs, part.getContentSize());
+            // Content type + headers
+            theOs.write(headers.toByteArray());
+            // Data
+            writeData(theOs, part);
+        }
     }
 }

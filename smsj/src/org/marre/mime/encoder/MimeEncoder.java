@@ -39,5 +39,7 @@ import org.marre.mime.*;
 
 public interface MimeEncoder
 {
-    public void writeTo(OutputStream theOs, MimeBodyPart theMsg);
+    public void writeContentType(OutputStream theOs, MimeBodyPart theMsg) throws IOException;
+    public void writeHeaders(OutputStream theOs, MimeBodyPart theMsg) throws IOException;
+    public void writeData(OutputStream theOs, MimeBodyPart theMsg) throws IOException;
 }
