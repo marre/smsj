@@ -103,6 +103,66 @@ public class ClickatellTransport implements SmsTransport
     private String mySessionId = null;
 
     /**
+     * Sends a request to clickatell.
+     *
+     * @param theRequest Request URL to send
+     * @return An array of responses (sessionid or msgid)
+     * @throws ClickatellException
+     */
+    private String[] sendRequest(String theRequest)
+        throws ClickatellException
+    {
+        String response = null;
+        MessageFormat responseFormat = new MessageFormat("{0}: {1}");
+
+        List idList = new LinkedList();
+
+        //
+        // Send request to clickatell
+        //
+        try
+        {
+            URL requestURL = new URL(theRequest);
+
+            // Connect
+            BufferedReader responseReader =
+                new BufferedReader(new InputStreamReader(requestURL.openStream()));
+
+            // Read response
+            while ((response = responseReader.readLine()) != null)
+            {
+                // Parse response
+                Object[] objs = responseFormat.parse(response);
+                if ( "ERR".equalsIgnoreCase((String)objs[0]) )
+                {
+                    // Error message...
+                    String errorNo = (String) objs[1];
+                    throw new ClickatellException("Clickatell error. Error " + errorNo, Integer.parseInt(errorNo));
+                }
+                else
+                {
+                    idList.add((String)objs[1]);
+                }
+            }
+            responseReader.close();
+        }
+        catch (ParseException ex)
+        {
+            throw new ClickatellException("Unexpected response from Clickatell. : " + response, ClickatellException.ERROR_UNKNOWN);
+        }
+        catch (MalformedURLException ex)
+        {
+            throw new ClickatellException(ex.getMessage(), ClickatellException.ERROR_UNKNOWN);
+        }
+        catch (IOException ex)
+        {
+            throw new ClickatellException(ex.getMessage(), ClickatellException.ERROR_UNKNOWN);
+        }
+
+        return (String[]) idList.toArray(new String[0]);
+    }
+
+    /**
      * Initializes the transport
      * <p>
      * It expects the following properties in theProps param:
@@ -137,51 +197,21 @@ public class ClickatellTransport implements SmsTransport
      */
     public void connect() throws SmsException
     {
-        String response = null;
-        MessageFormat responseFormat = new MessageFormat("{0}: {1}");
+        String response[] = null;
         String requestString = MessageFormat.format(
                 "http://api.clickatell.com/http/auth?api_id={0}&user={1}&password={2}",
                 new Object[] { myApiId, myUsername, myPassword });
 
         try
         {
-            URL requestURL = new URL(requestString);
-
-            // Connect
-            BufferedReader responseReader =
-                new BufferedReader(new InputStreamReader(requestURL.openStream()));
-
-            // Read response
-            response = responseReader.readLine();
-            responseReader.close();
-
-            // Parse response
-            Object[] objs = responseFormat.parse(response);
-
-            if ( "OK".equalsIgnoreCase((String)objs[0]) )
-            {
-                // Store session id
-                mySessionId = (String)objs[1];
-            }
-            else
-            {
-                // ERR
-                String errorMsg = (String) objs[1];
-                throw new SmsException("Clickatell error. Error " + errorMsg);
-            }
+            response = sendRequest(requestString);
         }
-        catch (ParseException ex)
-        {
-            throw new SmsException("Unexpected response from Clickatell. : " + response);
-        }
-        catch (MalformedURLException ex)
+        catch (ClickatellException ex)
         {
             throw new SmsException(ex.getMessage());
         }
-        catch (IOException ex)
-        {
-            throw new SmsException(ex.getMessage());
-        }
+
+        mySessionId = response[0];
     }
 
     /**
@@ -195,8 +225,6 @@ public class ClickatellTransport implements SmsTransport
     private void sendConcatMessage(SmsConcatMessage theMsg, SmsAddress theDestination, SmsAddress theSender)
         throws SmsException
     {
-        String response = null;
-        MessageFormat responseFormat = new MessageFormat("{0}: {1}");
         String requestString;
         String ud;
         byte udhData[];
@@ -289,47 +317,35 @@ public class ClickatellTransport implements SmsTransport
 
         myLog.debug("Request -> " + requestString);
 
-        //
         // Send request to clickatell
-        //
         try
         {
-            URL requestURL = new URL(requestString);
-
-            // Connect
-            BufferedReader responseReader =
-                new BufferedReader(new InputStreamReader(requestURL.openStream()));
-
-            // Read response
-            response = responseReader.readLine();
-            responseReader.close();
-
-            // Parse response
-            Object[] objs = responseFormat.parse(response);
-
-            if ( "ID".equalsIgnoreCase((String)objs[0]) )
+            sendRequest(requestString);
+        }
+        catch (ClickatellException ex)
+        {
+            switch (ex.getErrId())
             {
-                // Could do something with this, we just ignore it.
-                String msgId = (String)objs[1];
+            case ClickatellException.ERROR_SESSION_ID_EXPIRED:
+                // Try to get a new session id
+                connect();
+
+                // Retry the request...
+                // OK, this is a bit ugly...
+                try
+                {
+                    sendRequest(requestString);
+                }
+                catch (ClickatellException ex2)
+                {
+                    throw new SmsException(ex2.getMessage());
+                }
+                break;
+
+            case ClickatellException.ERROR_UNKNOWN:
+            default:
+                throw new SmsException(ex.getMessage());
             }
-            else
-            {
-                // ERR
-                String errorMsg = (String) objs[1];
-                throw new SmsException("Clickatell error. Error " + errorMsg);
-            }
-        }
-        catch (ParseException ex)
-        {
-            throw new SmsException("Unexpected response from Clickatell. : " + response);
-        }
-        catch (MalformedURLException ex)
-        {
-            throw new SmsException(ex.getMessage());
-        }
-        catch (IOException ex)
-        {
-            throw new SmsException(ex.getMessage());
         }
     }
 
@@ -345,8 +361,6 @@ public class ClickatellTransport implements SmsTransport
      */
     private void send(SmsPdu thePdu, byte theDcs, SmsAddress theDestination, SmsAddress theSender) throws SmsException
     {
-        String response = null;
-        MessageFormat responseFormat = new MessageFormat("{0}: {1}");
         String requestString;
         String ud;
         byte udhData[];
@@ -439,47 +453,36 @@ public class ClickatellTransport implements SmsTransport
 
         myLog.debug("Request -> " + requestString);
 
-        //
         // Send request to clickatell
-        //
+        // Send request to clickatell
         try
         {
-            URL requestURL = new URL(requestString);
-
-            // Connect
-            BufferedReader responseReader =
-                new BufferedReader(new InputStreamReader(requestURL.openStream()));
-
-            // Read response
-            response = responseReader.readLine();
-            responseReader.close();
-
-            // Parse response
-            Object[] objs = responseFormat.parse(response);
-
-            if ( "ID".equalsIgnoreCase((String)objs[0]) )
+            sendRequest(requestString);
+        }
+        catch (ClickatellException ex)
+        {
+            switch (ex.getErrId())
             {
-                // Could do something with this, we just ignore it.
-                String msgId = (String)objs[1];
+            case ClickatellException.ERROR_SESSION_ID_EXPIRED:
+                // Try to get a new session id
+                connect();
+
+                // Retry the request...
+                // OK, this is a bit ugly...
+                try
+                {
+                    sendRequest(requestString);
+                }
+                catch (ClickatellException ex2)
+                {
+                    throw new SmsException(ex2.getMessage());
+                }
+                break;
+
+            case ClickatellException.ERROR_UNKNOWN:
+            default:
+                throw new SmsException(ex.getMessage());
             }
-            else
-            {
-                // ERR
-                String errorMsg = (String) objs[1];
-                throw new SmsException("Clickatell error. Error " + errorMsg);
-            }
-        }
-        catch (ParseException ex)
-        {
-            throw new SmsException("Unexpected response from Clickatell. : " + response);
-        }
-        catch (MalformedURLException ex)
-        {
-            throw new SmsException(ex.getMessage());
-        }
-        catch (IOException ex)
-        {
-            throw new SmsException(ex.getMessage());
         }
     }
 
