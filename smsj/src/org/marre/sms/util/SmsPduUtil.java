@@ -1,6 +1,7 @@
 /*
     SMS Library for the Java platform
     Copyright (C) 2002  Markus Eriksson
+    Portions Copyright (C) 2002  Boris von Loesch
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -210,21 +211,65 @@ public class SmsPduUtil
     }
 
     /**
-     * Not implemented yet
+     *  Converts bytes to BCD format
      *
-     * @todo Implement
-     *
-     * @param theIs
-     * @param theLength
+     * @param theIs           The byte InputStream
+     * @param theLength       how many
      * @return Decoded number
      */
     public static String readBcdNumber(InputStream theIs, int theLength)
+        throws IOException
     {
-        return null;
+        byte[] arr=new byte[theLength];
+        theIs.read(arr, 0, theLength);
+        return readBcdNumber(arr, 0, theLength);
     }
 
     /**
-     * Conversts a byte array to a string with hex values.
+     * Converts bytes to BCD format
+     *
+     * @param arr             bytearray
+     * @param theLength       how many
+     * @param offset
+     * @return Decoded number
+     */
+    public static String readBcdNumber(byte[] arr, int offset, int theLength)
+    {
+        StringBuffer out=new StringBuffer();
+        for (int i=offset;i<offset+theLength;i++)
+        {
+          int arrb=arr[i];
+          if ((arr[i]&15)<=9)
+          {
+            out.append(""+(arr[i]&15));
+          }
+          if ((arr[i]&15)==0xA)
+          {
+            out.append("*");
+          }
+          if ((arr[i]&15)==0xB)
+          {
+            out.append("#");
+          }
+          arrb=(arrb>>>4);
+          if ((arrb&15)<=9)
+          {
+            out.append(""+(arrb&15));
+          }
+          if ((arrb&15)==0xA)
+          {
+            out.append("*");
+          }
+          if ((arrb&15)==0xB)
+          {
+            out.append("#");
+          }
+        }
+        return out.toString();
+    }
+
+    /**
+     * Converts a byte array to a string with hex values.
      *
      * @param theData Data to convert
      * @return the encoded string
@@ -247,7 +292,7 @@ public class SmsPduUtil
     }
 
     /**
-     * Conversts a byte to a string with hex values.
+     * Converts a byte to a string with hex values.
      *
      * @param theByte Byte to convert
      * @return the encoded string
