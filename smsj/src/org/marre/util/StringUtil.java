@@ -34,10 +34,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.util;
 
-import java.text.StringCharacterIterator;
-import java.util.*;
-import java.io.*;
-
 /**
  * Various functions to encode and decode strings
  *
@@ -135,6 +131,15 @@ public class StringUtil
         return data;
     }
 
+    /**
+     * Method intToString.
+     * 
+     * Converst an integer to nChars characters
+     * 
+     * @param value Integer value
+     * @param nChars Number of chars to represent the "value"
+     * @return String The string representing "value"
+     */
     public static String intToString(int value, int nChars)
     {
         String strValue = Integer.toString(value);
