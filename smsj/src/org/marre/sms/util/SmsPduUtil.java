@@ -59,8 +59,6 @@ public class SmsPduUtil
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
 
-        System.out.println(theMsg);
-            
         try
         {
             writeSeptets(baos, theMsg);
