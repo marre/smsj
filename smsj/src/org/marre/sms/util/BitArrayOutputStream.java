@@ -16,21 +16,25 @@ public class BitArrayOutputStream extends ByteArrayOutputStream
     public BitArrayOutputStream(int size)
     {
         super(size);
-        reset();
+        resetBitCounter();
     }
 
-    public synchronized byte[] taoByteArray()
-        throws IOException
+    public synchronized byte[] toByteArray()
     {
         flushByte();
         return super.toByteArray();
     }
 
+    private synchronized void resetBitCounter()
+    {
+        myBitOffset = 0;
+        myBuffer = 0x00;
+    }
+
     public synchronized void reset()
     {
         super.reset();
-        myBitOffset = 0;
-        myBuffer = 0x00;
+        resetBitCounter();
     }
 
     public synchronized void flushByte()
@@ -38,7 +42,7 @@ public class BitArrayOutputStream extends ByteArrayOutputStream
         if (myBitOffset > 0)
         {
             super.write(myBuffer);
-            reset();
+            resetBitCounter();
         }
     }
 
@@ -63,8 +67,7 @@ public class BitArrayOutputStream extends ByteArrayOutputStream
 
     public synchronized void writeBit( int bit )
     {
-        myBuffer <<= 1;
-        myBuffer |= (bit & 0x01);
+        myBuffer |= ((bit & 0x01) << myBitOffset);
         myBitOffset++;
 
         if (myBitOffset == 8)
@@ -76,6 +79,11 @@ public class BitArrayOutputStream extends ByteArrayOutputStream
     public synchronized void write(int data)
     {
         writeBits(data, 8);
+    }
+
+    public synchronized void write(byte[] data)
+    {
+        writeBits(data, 8 * data.length);
     }
 
     public synchronized void write(byte[] data, int off, int len)
@@ -90,4 +98,3 @@ public class BitArrayOutputStream extends ByteArrayOutputStream
         super.close();
     }
 }
-
