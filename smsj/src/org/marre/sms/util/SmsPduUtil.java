@@ -55,14 +55,14 @@ public class SmsPduUtil
         for(int i=0; i < theMsg.length(); i++)
         {
             char ch = (char)(theMsg.charAt(i) & 0x7f);
+
             data |= (ch << nBits);
             nBits += 7;
 
             while(nBits >= 8)
             {
-                // Write full octet
-                char octet = (char) (data & 0xff);
-                theOs.write(octet);
+                theOs.write((char)(data & 0xff));
+
                 data >>>= 8;
                 nBits -= 8;
             } // while
@@ -95,7 +95,6 @@ public class SmsPduUtil
 
         while(msg.length() < theLength)
         {
-            char ch;
             int data = theIs.read();
 
             if (data == -1)
@@ -103,7 +102,7 @@ public class SmsPduUtil
                 throw new IOException("Unexpected end of stream");
             }
 
-            rest = (data << restBits) | rest;
+            rest |= (data << restBits);
             restBits += 8;
 
             while (restBits >= 7)
