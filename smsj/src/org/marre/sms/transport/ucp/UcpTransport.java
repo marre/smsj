@@ -70,7 +70,7 @@ public class UcpTransport implements SmsTransport
     {
     	//Normaly we sould get the Data from the Props, but temporaly hardCoded
     	String server = "213.61.220.27";
-//    	server="127.0.0.1";
+//    	server="10.2.1.107";
    		int port = 1500;
 //		port = 3000;
     	try {
@@ -218,12 +218,13 @@ public class UcpTransport implements SmsTransport
 					ud = StringUtil.bytesToHexString(pdu.getUserData());
 	                udhData = pdu.getUserDataHeaders();
 	                // Add length of udh
-	                String udh_str = StringUtil.bytesToHexString(new byte[] {(byte) (udhData.length & 0xff)});
+	                String udh_str = StringUtil.bytesToHexString(new byte[] {(byte) (udhData.length )});
 	                udh_str += StringUtil.bytesToHexString(udhData);
 
 					ucpSubmit.setField(UcpSeries50.FIELD_Msg,ud);
 					//Numer of of bits in Transperent Data Message
 					udBits = pdu.getUserDataLength() * ((isSeptets) ? 7 : 8);
+//					udBits = pdu.getUserDataLength();
 					ucpSubmit.setField(UcpSeries50.FIELD_NB,StringUtil.intToString(udBits, 4));
 					// Set message Type fix to 4 
 					ucpSubmit.setField(UcpSeries50.FIELD_MT,"4");
@@ -231,7 +232,6 @@ public class UcpTransport implements SmsTransport
 			        ucpSubmit.clearXSer();
 			        ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_DCS, dcs);
 			        ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_UDH, udhData);
-//					throw new SmsException(" 8Bit Messages are currently not Supportet ");
 					break;
 				case SmsConstants.ALPHABET_UCS2:
 					throw new SmsException(" UCS2 Messages are currently not Supportet ");
@@ -298,6 +298,7 @@ public class UcpTransport implements SmsTransport
 		try {
 			out.write(data);
 			out.flush();
+//			wait(20);
 			byte[] b = new byte[1];
 			if ((b[0] = in.readByte()) != 2) {
 				System.out.println("SendSMS.send: The SMSC sends a bad reply");
@@ -307,11 +308,11 @@ public class UcpTransport implements SmsTransport
 			while ( (b[0] = in.readByte()) != 3) {
 				strBuf.append(new String(b));
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SmsException(e.getMessage());
-		} catch (SmsException e) {
-			throw new SmsException(e.getMessage());
+//		} catch (SmsException e) {
+//			throw new SmsException(e.getMessage());
 		}
 		// Return the String
     	return strBuf.toString();
