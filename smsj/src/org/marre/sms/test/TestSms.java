@@ -24,6 +24,8 @@ import java.util.*;
 import java.awt.*;
 import java.awt.image.*;
 
+import org.marre.util.*;
+
 import org.marre.sms.*;
 import org.marre.sms.transport.*;
 import org.marre.sms.util.*;
@@ -44,7 +46,7 @@ public class TestSms
         String copyString = SmsPduUtil.readSeptets(new ByteArrayInputStream(baos.toByteArray()), testString.length());
 
         System.out.println("Original : " + testString);
-        System.out.println("Septets  : " + SmsPduUtil.bytesToHexString(baos.toByteArray()));
+        System.out.println("Septets  : " + StringUtil.bytesToHexString(baos.toByteArray()));
         System.out.println("Copy     : " + copyString);
     }
 
@@ -134,13 +136,13 @@ public class TestSms
     public static void testArrayCopy()
     {
         String a = "88888888888888888888888888888888888888888888";
-        byte[] src = SmsPduUtil.hexStringToBytes(a);
+        byte[] src = StringUtil.hexStringToBytes(a);
         byte[] dest = new byte[a.length()/2 + 1];
 
         SmsPduUtil.arrayCopy(src, 0, dest, 0, 8, src.length*8);
 
         System.out.println(a);
-        System.out.println(SmsPduUtil.bytesToHexString(dest));
+        System.out.println(StringUtil.bytesToHexString(dest));
     }
 
 /*
@@ -187,15 +189,15 @@ public class TestSms
         fos.write(bitmap.getBytes());
         fos.close();
 
-        System.out.println(SmsPduUtil.bytesToHexString(bitmap.getBytes()));
+        System.out.println(StringUtil.bytesToHexString(bitmap.getBytes()));
     }
 
     public static void main(String[] args)
         throws Exception
     {
 //        testNol();
-//        testClickatellTransport();
-        testPush();
+        testClickatellTransport();
+//        testPush();
 //        testOtaBitmap();
 //        testSeptets();
 //        testGsmTransport();
