@@ -37,6 +37,28 @@ public class SmsPduUtil
     }
 
     /**
+     * Pack the given string into septets
+     *
+     */
+    public static byte[] getSeptets(String theMsg)
+    {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
+
+        try
+        {
+            writeSeptets(baos, theMsg);
+            baos.close();
+        }
+        catch (IOException ex)
+        {
+            // Should not happen...
+            throw new RuntimeException();
+        }
+
+        return baos.toByteArray();
+    }
+
+    /**
      * Pack the given string into septets.
      *
      * @param theOs Write the septets into this stream
