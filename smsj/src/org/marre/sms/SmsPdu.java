@@ -28,20 +28,20 @@ public class SmsPdu
     /** Length of myUd, can be in octets or septets */
     protected int myUdLength = 0;
 
-    protected SmsUdhIei[] myUdhElements = null;
+    protected SmsUdhElement[] myUdhElements = null;
     protected byte myUd[] = null;
 
     public SmsPdu()
     {
     }
 
-    public SmsPdu(SmsUdhIei[] theUdhIeis, byte[] theUd, int theUdLength, SmsDcs theDcs)
+    public SmsPdu(SmsUdhElement[] theUdhIeis, byte[] theUd, int theUdLength, SmsDcs theDcs)
     {
         setUserDataHeaders(theUdhIeis);
         setUserData(theUd, theUdLength, theDcs);
     }
 
-    public void setUserDataHeaders(SmsUdhIei[] theUdhElements)
+    public void setUserDataHeaders(SmsUdhElement[] theUdhElements)
     {
         myUdhElements = theUdhElements;
     }
