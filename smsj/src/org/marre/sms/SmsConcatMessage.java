@@ -105,9 +105,26 @@ public class SmsConcatMessage extends SmsAbstractMessage
      */
     public void setContent(SmsUdhElement[] theUdhElements, byte[] theUd, int theUdLength)
     {
-        myUdhElements = theUdhElements;
-        myUd = theUd;
-        myUdLength = theUdLength;
+        // Clear old data
+        myUdhElements = null;
+        myUd = null;
+        myUdLength = 0;
+
+        if (theUdhElements != null)
+        {
+            myUdhElements = new SmsUdhElement[theUdhElements.length];
+            System.arraycopy(theUdhElements, 0,
+                            myUdhElements, 0,
+                            theUdhElements.length);
+        }
+
+        if (theUd != null)
+        {
+            myUd = new byte[theUd.length];
+            System.arraycopy(theUd, 0,
+                            myUd, 0,
+                            theUd.length);
+        }
     }
 
     /**
