@@ -171,6 +171,8 @@ public class SmsConcatMessage extends SmsAbstractMessage
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream(100);
+				
+				baos.write( (byte) SmsUdhUtil.getUdhLength(myUdhElements));
 
         try
         {
@@ -434,7 +436,7 @@ public class SmsConcatMessage extends SmsAbstractMessage
     {
         SmsPdu[] smsPdus = null;
         int udhLength = SmsUdhUtil.getUdhLength(myUdhElements);
-        int nBytesLeft = 140 - udhLength;
+        int nBytesLeft = 140 - udhLength - 1;
 
         switch(SmsDcsUtil.getAlphabet(myDcs))
         {
