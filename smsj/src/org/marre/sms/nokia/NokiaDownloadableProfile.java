@@ -23,10 +23,7 @@
 package org.marre.sms.nokia;
 
 import java.io.UnsupportedEncodingException;
-
 import org.apache.commons.logging.*;
-
-import org.marre.sms.SmsPdu;
 
 /**
  * Nokia Downloadable Profile
@@ -36,10 +33,11 @@ import org.marre.sms.SmsPdu;
  */
 public class NokiaDownloadableProfile extends NokiaMultipartMessage
 {
-    private static Log myLog = LogFactory.getLog(NokiaPictureMessage.class);
+    private static Log myLog = LogFactory.getLog(NokiaDownloadableProfile.class);
 
     private String myProfileName = null;
     private byte[] myScreenSaver = null;
+    private byte[] myRingingTone = null;
 
     public NokiaDownloadableProfile()
     {
@@ -65,6 +63,11 @@ public class NokiaDownloadableProfile extends NokiaMultipartMessage
         myProfileName = theProfileName;
     }
 
+    public void setRingingTone(byte[] theRingingTone)
+    {
+        myRingingTone = theRingingTone;
+    }
+
     private void addScreenSaver(byte[] theBitmap)
     {
         addMultipart(NokiaPart.ITEM_SCREEN_SAVER, theBitmap);
@@ -82,6 +85,11 @@ public class NokiaDownloadableProfile extends NokiaMultipartMessage
         }
     }
 
+    private void addRingingTone(byte[] theRingingTone)
+    {
+        addMultipart(NokiaPart.ITEM_RINGTONE, theRingingTone);
+    }
+
     protected void buildPdus()
     {
         // Reset message
@@ -96,6 +104,11 @@ public class NokiaDownloadableProfile extends NokiaMultipartMessage
         if (myScreenSaver != null)
         {
             addScreenSaver(myScreenSaver);
+        }
+
+        if (myRingingTone != null)
+        {
+            addRingingTone(myRingingTone);
         }
 
         super.buildPdus();
