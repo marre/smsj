@@ -62,9 +62,16 @@ public class SmsPdu
      */
     public void setUserDataHeaders(SmsUdhElement[] theUdhElements)
     {
-        myUdhElements = new SmsUdhElement[theUdhElements.length];
+        if (theUdhElements!=null)
+        {
+            myUdhElements = new SmsUdhElement[theUdhElements.length];
 
-        System.arraycopy(theUdhElements, 0, myUdhElements, 0, theUdhElements.length);
+            System.arraycopy(theUdhElements, 0, myUdhElements, 0, theUdhElements.length);
+        }
+        else
+        {
+            myUdhElements=null;
+        }
     }
 
     /**
