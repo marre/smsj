@@ -41,21 +41,27 @@ package org.marre.sms;
  */
 public class SmsUserData
 {
+    /** The actual user data. */
     protected byte[] myData;
     
-    /** Length of myData, can be in octets or septets */
+    /** Length of myData, can be in octets or septets. */
     protected int myLength;
     
-    public SmsUserData(byte[] userData, int userDataLength)
+    /** Data Coding Scheme for this user data. */
+    protected byte myDcs;
+    
+    public SmsUserData(byte[] userData, int userDataLength, byte dataCodingScheme)
     {
         myData = userData;
         myLength = userDataLength;
+        myDcs = dataCodingScheme;
     }
     
     public SmsUserData(byte[] userData)
     {
         myData = userData;
         myLength = userData.length;
+        myDcs = SmsConstants.DCS_DEFAULT_8BIT;
     }
     
     public byte[] getData()
@@ -63,7 +69,7 @@ public class SmsUserData
         return myData;
     }
     
-    /*
+    /**
      * Returns the length of the user data field.
      * 
      * This can be in characters or byte depending on the message (DCS). If
@@ -75,5 +81,15 @@ public class SmsUserData
     public int getLength()
     {
         return myLength;
+    }
+    
+    /**
+     * Returns the data coding scheme.
+     * 
+     * @return The dcs
+     */
+    public byte getDcs()
+    {
+        return myDcs;
     }
 }

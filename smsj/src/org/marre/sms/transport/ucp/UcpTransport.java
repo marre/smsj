@@ -142,7 +142,7 @@ public class UcpTransport implements SmsTransport
         }
     }
 
-    public void send(SmsMessage theMessage, SmsAddress theDest, SmsAddress theSender) throws SmsException
+    public String[] send(SmsMessage theMessage, SmsAddress theDest, SmsAddress theSender) throws SmsException
     {
         SmsPdu[] msgPdu = null;
 
@@ -154,12 +154,13 @@ public class UcpTransport implements SmsTransport
         msgPdu = theMessage.getPdus();
         for (int i = 0; i < msgPdu.length; i++)
         {
-            byte dcs = theMessage.getDataCodingScheme();
             boolean moreToSend = (i < (msgPdu.length - 1));
-            byte[] submitCmd = buildSubmit(dcs, msgPdu[i], moreToSend, theDest, theSender);
+            byte[] submitCmd = buildSubmit(msgPdu[i], moreToSend, theDest, theSender);
             String response = sendUcp(submitCmd);
             System.err.println("SMSC response: " + response);
         }
+        
+        return null;
     }
 
     /**
@@ -185,7 +186,7 @@ public class UcpTransport implements SmsTransport
         return ucplogin.getCommand();
     }
 
-    public byte[] buildSubmit(byte dcs, SmsPdu pdu, boolean moreToSend, SmsAddress dest, SmsAddress sender)
+    public byte[] buildSubmit(SmsPdu pdu, boolean moreToSend, SmsAddress dest, SmsAddress sender)
             throws SmsException
     {
         String ud;
@@ -193,7 +194,7 @@ public class UcpTransport implements SmsTransport
         UcpSeries50 ucpSubmit = new UcpSeries50(UcpSeries50.OP_SUBMIT_SHORT_MESSAGE);
 
         byte[] udh = pdu.getUserDataHeaders();
-        boolean isSeptets = (SmsDcsUtil.getAlphabet(dcs) == SmsConstants.ALPHABET_GSM);
+        boolean isSeptets = (SmsDcsUtil.getAlphabet(pdu.getDcs()) == SmsConstants.ALPHABET_GSM);
         int udBits;
 
         // FIXME: TRN
@@ -231,7 +232,7 @@ public class UcpTransport implements SmsTransport
         ucpSubmit.setField(UcpSeries50.FIELD_ADC, dest.getAddress());
         if (pdu.getUserDataHeaders() == null) // Handel Messages without UDH
         {
-            switch (SmsDcsUtil.getAlphabet(dcs))
+            switch (SmsDcsUtil.getAlphabet(pdu.getDcs()))
             {
             case SmsConstants.ALPHABET_GSM:
                 System.out.println("GSM Message without UDH");
@@ -252,7 +253,7 @@ public class UcpTransport implements SmsTransport
                 // Set message Type fix to 4
                 ucpSubmit.setField(UcpSeries50.FIELD_MT, "4");
                 ucpSubmit.clearXSer();
-                ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_DCS, dcs);
+                ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_DCS, pdu.getDcs());
                 break;
             default:
                 throw new SmsException("Unsupported data coding scheme");
@@ -260,7 +261,7 @@ public class UcpTransport implements SmsTransport
         }
         else
         {
-            switch (SmsDcsUtil.getAlphabet(dcs))
+            switch (SmsDcsUtil.getAlphabet(pdu.getDcs()))
             {
             case SmsConstants.ALPHABET_GSM:
                 throw new SmsException("Cannot send 7 bit encoded messages with UDH");
@@ -279,7 +280,7 @@ public class UcpTransport implements SmsTransport
                 ucpSubmit.setField(UcpSeries50.FIELD_MT, "4");
                 // Store the UDH
                 ucpSubmit.clearXSer();
-                ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_DCS, dcs);
+                ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_DCS, pdu.getDcs());
                 ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_UDH, udhData);
                 break;
             case SmsConstants.ALPHABET_UCS2:

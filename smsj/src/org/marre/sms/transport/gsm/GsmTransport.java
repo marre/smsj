@@ -48,6 +48,7 @@ import org.marre.sms.SmsAddress;
 import org.marre.sms.SmsMessage;
 import org.marre.sms.SmsException;
 import org.marre.sms.SmsConstants;
+import org.marre.sms.SmsUserData;
 
 /**
  * An SmsTransport that sends the SMS from an GSM phone that is attached
@@ -147,11 +148,9 @@ public class GsmTransport implements SmsTransport
      * @param theSender The sending address, ignored
      * @throws SmsException Thrown if we fail to send the SMS
      */
-    public void send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender)
-        throws SmsException
+    public String[] send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException
     {
         SmsPdu msgPdu[] = null;
-        byte dcs = theMessage.getDataCodingScheme();
 
         if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
         {
@@ -162,9 +161,11 @@ public class GsmTransport implements SmsTransport
 
         for(int i=0; i < msgPdu.length; i++)
         {
-            byte data[] = GsmEncoder.encodePdu(msgPdu[i], dcs, theDestination, theSender); 
+            byte data[] = GsmEncoder.encodePdu(msgPdu[i], theDestination, theSender); 
             sendSms(data);
         }
+        
+        return null;
     }
 
     private void sendSms(byte[] theBuff)

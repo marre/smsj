@@ -9,9 +9,9 @@ package org.marre.sms.ems;
 import java.util.Random;
 import java.util.StringTokenizer;
 
-import org.marre.sms.SmsAbstractMessage;
 import org.marre.sms.SmsConcatMessage;
 import org.marre.sms.SmsConstants;
+import org.marre.sms.SmsMessage;
 import org.marre.sms.SmsPdu;
 import org.marre.sms.SmsPduUtil;
 import org.marre.sms.SmsUdhElement;
@@ -21,7 +21,7 @@ import org.marre.util.StringUtil;
 /**
  * @author Lincoln Spiteri
  */
-public class EmsIMelody extends SmsAbstractMessage
+public class EmsIMelody implements SmsMessage
 {
     public static final int DATA_LENGTH = 60;
 
@@ -34,7 +34,6 @@ public class EmsIMelody extends SmsAbstractMessage
      */
     public EmsIMelody()
     {
-        setDataCodingScheme(SmsConstants.DCS_DEFAULT_8BIT);
     }
 
     /**
@@ -43,7 +42,6 @@ public class EmsIMelody extends SmsAbstractMessage
      */
     public EmsIMelody(byte[] theRingTone)
     {
-        setDataCodingScheme(SmsConstants.DCS_DEFAULT_8BIT);
         //setContent(theRingTone);
         myData = theRingTone;
 
@@ -180,7 +178,7 @@ public class EmsIMelody extends SmsAbstractMessage
 
             //pduUd = new byte[udBytes];
             //SmsPduUtil.arrayCopy(myUd, udOffset, pduUd, 0, udBytes);
-            smsPdus[i] = new SmsPdu(pduUdhElements, "\n".getBytes(), 1);
+            smsPdus[i] = new SmsPdu(pduUdhElements, "\n".getBytes(), 1, SmsConstants.DCS_DEFAULT_8BIT);
         }
 
         return smsPdus;

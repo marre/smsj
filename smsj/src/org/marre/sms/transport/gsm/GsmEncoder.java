@@ -44,6 +44,7 @@ import org.marre.sms.SmsDcsUtil;
 import org.marre.sms.SmsException;
 import org.marre.sms.SmsPdu;
 import org.marre.sms.SmsPduUtil;
+import org.marre.sms.SmsUserData;
 
 /**
  *
@@ -59,26 +60,27 @@ public final class GsmEncoder
         /* Utility class */
     }
     
-    public static byte[] encodePdu(SmsPdu thePdu, byte theDcs, SmsAddress theDestination, SmsAddress theSender)
+    public static byte[] encodePdu(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender)
         throws SmsException
     {
-        if (SmsDcsUtil.getAlphabet(theDcs) == SmsConstants.ALPHABET_GSM)
+        if (SmsDcsUtil.getAlphabet(thePdu.getDcs()) == SmsConstants.ALPHABET_GSM)
         {
-            return encodeSeptetPdu(thePdu, theDcs, theDestination, theSender);
+            return encodeSeptetPdu(thePdu, theDestination, theSender);
         }
         else
         {
-            return encodeOctetPdu(thePdu, theDcs, theDestination, theSender);
+            return encodeOctetPdu(thePdu, theDestination, theSender);
         }
     }
         
-    private static byte[] encodeSeptetPdu(SmsPdu thePdu, byte theDcs, SmsAddress theDestination, SmsAddress theSender)
+    private static byte[] encodeSeptetPdu(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender)
         throws SmsException
     {
-        byte[] ud = thePdu.getUserData().getData();
+        SmsUserData userData = thePdu.getUserData();
+        byte[] ud = userData.getData();
         byte[] udh = thePdu.getUserDataHeaders();
 
-        int nUdSeptets = thePdu.getUserData().getLength();
+        int nUdSeptets = userData.getLength();
         int nUdBits = 0;
 
         int nUdhBytes = (udh == null) ? 0 : udh.length;
@@ -157,7 +159,7 @@ public final class GsmEncoder
 
             // TP-DCS
             // UCS, septets, language, SMS class...
-            baos.write(theDcs);
+            baos.write(thePdu.getDcs());
 
             // TP-VP - Optional
             // Probably not needed
@@ -198,17 +200,18 @@ public final class GsmEncoder
         return baos.toByteArray();
     }
 
-    private static byte[] encodeOctetPdu(SmsPdu thePdu, byte theDcs, SmsAddress theDestination, SmsAddress theSender)
+    private static byte[] encodeOctetPdu(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender)
         throws SmsException
     {
-        byte[] ud = thePdu.getUserData().getData();
+        SmsUserData userData = thePdu.getUserData();
+        byte[] ud = userData.getData();
         byte[] udh = thePdu.getUserDataHeaders();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream(200);
         
         try
         {
-            int nUdBytes = thePdu.getUserData().getLength();
+            int nUdBytes = userData.getLength();
             int nUdhBytes = (udh == null) ? 0 : udh.length;
             // +1 For the UDH Length
             int tpUdl = nUdBytes + nUdhBytes + 1;
@@ -256,7 +259,7 @@ public final class GsmEncoder
             baos.write(0x00);
 
             // TP-DCS
-            baos.write(theDcs);
+            baos.write(thePdu.getDcs());
 
             // 1 octet/ 7 octets
             // TP-VP - Optional

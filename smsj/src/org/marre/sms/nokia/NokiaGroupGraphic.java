@@ -63,7 +63,6 @@ public class NokiaGroupGraphic extends SmsConcatMessage
      */
     public NokiaGroupGraphic(byte[] theOtaImage)
     {
-        super(SmsConstants.DCS_DEFAULT_8BIT);
         myOtaBitmap = theOtaImage;
     }
 

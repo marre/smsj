@@ -78,7 +78,7 @@ public interface SmsTransport
      * @param theSender Sender
      * @throws SmsException
      */
-    void send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException;
+    String[] send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException;
 
     /**
      * Disconnects from the SMSC (or phone, or service, or...)

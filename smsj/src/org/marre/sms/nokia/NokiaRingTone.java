@@ -44,7 +44,6 @@ public class NokiaRingTone extends SmsConcatMessage
      */
     public NokiaRingTone(byte[] theRingTone)
     {
-        super(SmsConstants.DCS_DEFAULT_8BIT);
         myRingToneData = theRingTone;
     }
 

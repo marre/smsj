@@ -1,6 +1,5 @@
 package org.marre.sms.ems;
 
-import org.marre.sms.SmsAbstractMessage;
 import org.marre.sms.SmsConcatMessage;
 import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsUdhElement;
@@ -18,6 +17,9 @@ import org.marre.sms.nokia.OtaBitmap;
  * ----------------------------------------------------------------------------
  * 
  * $Log$
+ * Revision 1.3  2004/11/18 21:34:54  c95men
+ * Removed SmsAbstractMessage
+ *
  * Revision 1.2  2004/11/02 17:59:58  c95men
  * Major restructuring.
  *

@@ -71,18 +71,15 @@ public class SmsWapPushMessage extends SmsConcatMessage
         
     protected SmsWapPushMessage()
     {
-        setDataCodingScheme(SmsConstants.DCS_DEFAULT_8BIT);
     }
     
     public SmsWapPushMessage(MimeBodyPart thePushMsg)
     {
-        setDataCodingScheme(SmsConstants.DCS_DEFAULT_8BIT);
         myPushMsg = thePushMsg;
     }
     
     public SmsWapPushMessage(WbxmlDocument thePushMsg, MimeContentType theContentType)
     {
-        setDataCodingScheme(SmsConstants.DCS_DEFAULT_8BIT);
         // The current wbxml encoder can only output utf-8
         theContentType.setParam("charset", "utf-8");
         myPushMsg = new MimeBodyPart(buildPushMessage(thePushMsg), theContentType);
@@ -90,7 +87,6 @@ public class SmsWapPushMessage extends SmsConcatMessage
     
     public SmsWapPushMessage(WbxmlDocument thePushMsg, String theContentType)
     {
-        setDataCodingScheme(SmsConstants.DCS_DEFAULT_8BIT);
         MimeContentType ct = new MimeContentType(theContentType);
         // The current wbxml encoder can only output utf-8
         ct.setParam("charset", "utf-8");
@@ -104,13 +100,11 @@ public class SmsWapPushMessage extends SmsConcatMessage
      
     public SmsWapPushMessage(byte[] thePushMsg, MimeContentType theContentType)
     {
-        setDataCodingScheme(SmsConstants.DCS_DEFAULT_8BIT);
         myPushMsg = new MimeBodyPart(thePushMsg, theContentType);
     }
         
     public SmsWapPushMessage(byte[] thePushMsg, String theContentType)
     {
-        setDataCodingScheme(SmsConstants.DCS_DEFAULT_8BIT);
         myPushMsg = new MimeBodyPart(thePushMsg, theContentType);
     }
     

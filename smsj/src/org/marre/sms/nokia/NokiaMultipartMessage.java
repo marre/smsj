@@ -51,7 +51,6 @@ abstract class NokiaMultipartMessage extends SmsConcatMessage
      */
     protected NokiaMultipartMessage()
     {
-        super(SmsConstants.DCS_DEFAULT_8BIT);
     }
 
     /**

@@ -49,6 +49,7 @@ public class SmsTextMessage extends SmsConcatMessage
 {
     protected String myText;
     protected int myAlphabet;
+    protected byte myMessageClass;
     
     /**
      * Creates an SmsTextMessage with the given alphabet and message class.
@@ -70,9 +71,9 @@ public class SmsTextMessage extends SmsConcatMessage
      */
     public SmsTextMessage(String theMsg, int theAlphabet, byte theMessageClass)
     {
-        this(theMsg, theAlphabet);
-        int dcs = getDataCodingScheme() | 0x10 | theMessageClass;
-        setDataCodingScheme((byte) (dcs & 0xff));
+        myText = theMsg;
+        myAlphabet = theAlphabet;
+        myMessageClass = theMessageClass;
     }
 
     /**
@@ -88,8 +89,7 @@ public class SmsTextMessage extends SmsConcatMessage
      */
     public SmsTextMessage(String theMsg, int theAlphabet)
     {
-        myText = theMsg;
-        myAlphabet = theAlphabet;
+        this(theMsg, theAlphabet, SmsConstants.MSG_CLASS_UNKNOWN);
     }
 
     /**
@@ -110,12 +110,13 @@ public class SmsTextMessage extends SmsConcatMessage
         return myText;
     }
 
-    /* (non-Javadoc)
-     * @see org.marre.sms.SmsConcatMessage#getUserData()
-     */
     public SmsUserData getUserData()
     {
         SmsUserData ud;
+        byte dcs;
+        
+        // TODO: MessageClass
+        // int dcs = getDataCodingScheme() | 0x10 | theMessageClass;
         
         try
         {
@@ -123,20 +124,20 @@ public class SmsTextMessage extends SmsConcatMessage
             {
             case SmsConstants.ALPHABET_GSM:
                 // 7-bit encoding, No message class, No compression
-                setDataCodingScheme(SmsConstants.DCS_DEFAULT_7BIT);
-                ud = new SmsUserData(SmsPduUtil.getSeptets(myText), myText.length());
+                dcs = SmsConstants.DCS_DEFAULT_7BIT;
+                ud = new SmsUserData(SmsPduUtil.getSeptets(myText), myText.length(), dcs);
                 break;
                 
             case SmsConstants.ALPHABET_8BIT:
                 // 8bit data encoding, No message class, No compression
-                setDataCodingScheme(SmsConstants.DCS_DEFAULT_8BIT);
-                ud = new SmsUserData(myText.getBytes("ISO-8859-1"), myText.length());
+                dcs = SmsConstants.DCS_DEFAULT_8BIT;
+                ud = new SmsUserData(myText.getBytes("ISO-8859-1"), myText.length(), dcs);
                 break;
                 
             case SmsConstants.ALPHABET_UCS2:
                 // 16 bit UCS2 encoding, No message class, No compression
-                setDataCodingScheme(SmsConstants.DCS_DEFAULT_UCS2);
-                ud = new SmsUserData(myText.getBytes("UTF-16BE"), myText.length() * 2);
+                dcs = SmsConstants.DCS_DEFAULT_UCS2;
+                ud = new SmsUserData(myText.getBytes("UTF-16BE"), myText.length() * 2, dcs);
                 break;
                 
             default:

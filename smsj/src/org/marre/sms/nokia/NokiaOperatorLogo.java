@@ -82,8 +82,6 @@ public class NokiaOperatorLogo extends SmsConcatMessage
      */
     public NokiaOperatorLogo(byte[] theOtaImage, int theMcc, int theMnc)
     {
-        super(SmsConstants.DCS_DEFAULT_8BIT);
-        
         myBitmap = theOtaImage;
         myMcc = theMcc;
         myMnc = theMnc;
@@ -101,8 +99,6 @@ public class NokiaOperatorLogo extends SmsConcatMessage
      */
     public NokiaOperatorLogo(byte[] theOtaImage, int theMcc, int theMnc, boolean discardHeaders)
     {
-        super(SmsConstants.DCS_DEFAULT_8BIT);
-
         myDiscardNokiaHeaders = discardHeaders;
         myBitmap = theOtaImage;
         myMcc = theMcc;

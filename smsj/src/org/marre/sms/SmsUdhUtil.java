@@ -34,6 +34,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 /**
  * Toolkit class for SmsUdhElement objects.
  *
@@ -72,6 +75,42 @@ public final class SmsUdhUtil
         return totLength;
     }
 
+    /**
+     * Returns the whole udh as a byte array.
+     * <p>
+     * The returned UDH is the same as specified when the message was created.
+     * No concat headers are added.
+     * 
+     * TODO: Rename this function. The name is totally wrong.
+     * 
+     * @return the UDH elements as a byte array.
+     */
+    public static byte[] toByteArray(SmsUdhElement[] theUdhElements)
+    {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(100);
+        
+        if (theUdhElements == null)
+        {
+            return null;
+        }
+
+        baos.write((byte) SmsUdhUtil.getTotalSize(theUdhElements));
+
+        try
+        {
+            for (int i = 0; i < theUdhElements.length; i++)
+            {
+                theUdhElements[i].writeTo(baos);
+            }
+        }
+        catch (IOException ioe)
+        {
+            ioe.printStackTrace();
+        }
+
+        return baos.toByteArray();
+    }
+    
     /**
      * Creates a "8Bit concatenated" UDH element using UDH_IEI_CONCATENATED_8BIT
      * <p>

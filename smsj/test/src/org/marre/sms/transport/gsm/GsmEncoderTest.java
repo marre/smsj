@@ -32,40 +32,46 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.sms;
+package org.marre.sms.transport.gsm;
+
+import org.marre.sms.SmsAddress;
+import org.marre.sms.SmsException;
+import org.marre.sms.SmsPdu;
+import org.marre.sms.SmsTextMessage;
+import org.marre.sms.SmsUdhElement;
+import org.marre.sms.SmsUdhUtil;
+import org.marre.util.StringUtil;
+
+import junit.framework.TestCase;
 
 /**
- * Abstract baseclass for SmsMessages that adds common functionality
- * needed for most types of SmsMessages.
- *
+ * 
  * @author Markus Eriksson
  * @version $Id$
  */
-public abstract class SmsAbstractMessage implements SmsMessage
+
+public class GsmEncoderTest extends TestCase
 {
-    protected byte myDcs;
-
-    /**
-     * Returns the DCS field
-     * <p>
-     * Use org.marre.sms.util.SmsDcsUtil to parse the information in the
-     * DCS field.
-     *
-     * @return the DCS
-     */
-    public byte getDataCodingScheme()
+    public void testSeptetEncoder() throws SmsException
     {
-        return myDcs;
-    }
-
-    /**
-     * Set the DCS field
-     *
-     * @param theDcs The new DCS field
-     */
-    public void setDataCodingScheme(byte theDcs)
-    {
-        myDcs = theDcs;
-    }
+        SmsTextMessage textMsg;
+        SmsPdu[] smsPdus;
+        byte[] data;
+     
+        // 160 chars should fit within one SMS
+        textMsg = new SmsTextMessage("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
+        smsPdus = textMsg.getPdus();
+        assertEquals(1, smsPdus.length);
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("000100039121F30000A0B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172B0986C46ABD96EB81C2C269BD16AB61B2E078BC966B49AED86CBC162B219AD66BBE172",
+                     StringUtil.bytesToHexString(data));
+        
+        // 0 chars
+        textMsg = new SmsTextMessage("");
+        smsPdus = textMsg.getPdus();
+        assertEquals(1, smsPdus.length);
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("000100039121F3000000",
+                     StringUtil.bytesToHexString(data));        
+    }    
 }
-

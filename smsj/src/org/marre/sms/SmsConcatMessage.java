@@ -48,14 +48,10 @@ import java.util.Random;
  * @author Markus Eriksson
  * @version $Id$
  */
-public abstract class SmsConcatMessage extends SmsAbstractMessage
+public abstract class SmsConcatMessage implements SmsMessage
 {
     private static Random myRnd = new Random();
 
-/*    
-    protected SmsUserData myUd;
-    protected SmsUdhElement[] myUdhElements;
-*/
     /**
      * Creates an empty SmsConcatMessage.
      */
@@ -65,113 +61,11 @@ public abstract class SmsConcatMessage extends SmsAbstractMessage
     }
 
     /**
-     * Creates an SmsConcatMessage with the given DCS
-     * 
-     * @param theDcs
-     *            Data Coding Scheme to use
-     */
-    protected SmsConcatMessage(byte theDcs)
-    {
-        setDataCodingScheme(theDcs);
-    }
-
-    /**
-     * Creates an SmsConcatMessage
-     * <p>
-     * theUdhElements should not contain any concat udh elements. These will be
-     * added by SmsConcatMessage if needed.
-     * 
-     * @param theDcs
-     *            Data Coding Scheme to use
-     * @param theUdhElements
-     *            The UDH elements to use on all messages
-     * @param theUd
-     *            User Data
-     * @param theUdLength
-     *            The length of the User Data. Can be in septets or octets
-     *            depending on the DCS
-     */
-/*    
-    public SmsConcatMessage(byte theDcs, SmsUdhElement[] theUdhElements, byte[] theUd, int theUdLength)
-    {
-        setDataCodingScheme(theDcs);
-        setContent(theUdhElements, theUd, theUdLength);
-    }
-*/
-    /**
-     * Set content of this message
-     * 
-     * @param theUdhElements
-     *            The UDH elements to use on all messages
-     * @param theUd
-     *            User Data
-     * @param theUdLength
-     *            The length of the User Data. Can be in septets or octets
-     *            depending on the DCS
-     */
-/*    
-    public void setContent(SmsUdhElement[] theUdhElements, byte[] theUd, int theUdLength)
-    {
-        // Clear old data
-        myUdhElements = null;
-        myUd = null;
-
-        if (theUdhElements != null)
-        {
-            myUdhElements = new SmsUdhElement[theUdhElements.length];
-            System.arraycopy(theUdhElements, 0, myUdhElements, 0, theUdhElements.length);
-        }
-
-        if (theUd != null)
-        {
-            myUd = new SmsUserData(theUd, theUdLength);
-        }
-    }
-*/
-    /**
      * Returns the whole UD
      * 
      * @return the UD
      */
     public abstract SmsUserData getUserData();
-
-    /**
-     * Returns the whole udh as a byte array.
-     * <p>
-     * The returned UDH is the same as specified when the message was created.
-     * No concat headers are added.
-     * 
-     * TODO: Rename this function. The name is totally wrong.
-     * 
-     * @return the UDH elements as a byte array.
-     */
-    public byte[] getUserDataHeaders()
-    {
-        SmsUdhElement[] udhElements = getUdhElements();
-        
-        if (udhElements == null)
-        {
-            return null;
-        }
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(100);
-
-        baos.write((byte) SmsUdhUtil.getTotalSize(udhElements));
-
-        try
-        {
-            for (int i = 0; i < udhElements.length; i++)
-            {
-                udhElements[i].writeTo(baos);
-            }
-        }
-        catch (IOException ioe)
-        {
-            ioe.printStackTrace();
-        }
-
-        return baos.toByteArray();
-    }
     
     /**
      * Returns the udh elements
@@ -251,7 +145,7 @@ public abstract class SmsConcatMessage extends SmsAbstractMessage
 
                 pduUd = new byte[udBytes];
                 SmsPduUtil.arrayCopy(theUd.getData(), udOffset, pduUd, 0, udBytes);
-                smsPdus[i] = new SmsPdu(pduUdhElements, pduUd, udLength);
+                smsPdus[i] = new SmsPdu(pduUdhElements, pduUd, udLength, theUd.getDcs());
             }
         }
         return smsPdus;
@@ -325,7 +219,7 @@ public abstract class SmsConcatMessage extends SmsAbstractMessage
 
                 pduUd = new byte[udBytes];
                 SmsPduUtil.arrayCopy(theUd.getData(), udOffset * 2, pduUd, 0, udBytes);
-                smsPdus[i] = new SmsPdu(pduUdhElements, pduUd, udBytes);
+                smsPdus[i] = new SmsPdu(pduUdhElements, pduUd, udBytes, theUd.getDcs());
             }
         }
         return smsPdus;
@@ -399,7 +293,7 @@ public abstract class SmsConcatMessage extends SmsAbstractMessage
                 }
 
                 pduUd = SmsPduUtil.getSeptets(msg.substring(udOffset, udOffset + udLength));
-                smsPdus[i] = new SmsPdu(pduUdhElements, pduUd, udLength);
+                smsPdus[i] = new SmsPdu(pduUdhElements, pduUd, udLength, theUd.getDcs());
             }
         }
         return smsPdus;
@@ -419,9 +313,9 @@ public abstract class SmsConcatMessage extends SmsAbstractMessage
         SmsUserData ud = getUserData();
         SmsUdhElement[] udhElements = getUdhElements();        
         int udhLength = SmsUdhUtil.getTotalSize(udhElements);
-        int nBytesLeft = 140 - udhLength - 1;
+        int nBytesLeft = 140 - udhLength;
 
-        switch (SmsDcsUtil.getAlphabet(myDcs))
+        switch (SmsDcsUtil.getAlphabet(ud.getDcs()))
         {
         case SmsConstants.ALPHABET_GSM:
             smsPdus = createSeptetPdus(udhElements, ud, nBytesLeft);

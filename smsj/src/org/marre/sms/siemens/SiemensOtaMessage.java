@@ -27,7 +27,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Random;
 
-import org.marre.sms.SmsAbstractMessage;
+import org.marre.sms.SmsMessage;
 import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsPdu;
 import org.marre.util.StringUtil;
@@ -37,7 +37,7 @@ import org.marre.util.StringUtil;
  * @author Raphael Borg Ellul Vincenti
  * @version $Id$
  */
-public class SiemensOtaMessage extends SmsAbstractMessage
+public class SiemensOtaMessage implements SmsMessage
 {
     protected int myVersion = 1;
     protected String myName = "";
@@ -70,8 +70,6 @@ public class SiemensOtaMessage extends SmsAbstractMessage
      */
     public SiemensOtaMessage(int version, String name, String type, byte[] content)
     {
-        this.setDataCodingScheme((byte) (SmsConstants.MSG_CLASS_1 | SmsConstants.ALPHABET_8BIT));
-
         this.myVersion = version;
         this.myName = name;
         this.myType = type;
@@ -162,7 +160,7 @@ public class SiemensOtaMessage extends SmsAbstractMessage
     public SmsPdu[] getPdus()
     {
         SmsPdu[] smsPdus = new SmsPdu[myNumberOfPackets];
-
+        byte dcs = (byte) (SmsConstants.MSG_CLASS_1 | SmsConstants.ALPHABET_8BIT);
         for (int i = 0; i < myNumberOfPackets; i++)
         {
 
@@ -180,7 +178,7 @@ public class SiemensOtaMessage extends SmsAbstractMessage
 
             System.arraycopy(myContent, offset, pdu, header.length, myDataSize);
 
-            SmsPdu smsPdu = new SmsPdu(null, pdu, pdu.length);
+            SmsPdu smsPdu = new SmsPdu(null, pdu, pdu.length, dcs);
             smsPdus[i] = smsPdu;
         }
 

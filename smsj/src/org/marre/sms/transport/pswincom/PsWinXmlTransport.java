@@ -52,6 +52,7 @@ import org.marre.sms.SmsMessage;
 import org.marre.sms.SmsPdu;
 import org.marre.sms.SmsPduUtil;
 import org.marre.sms.SmsTextMessage;
+import org.marre.sms.SmsUserData;
 import org.marre.sms.transport.SmsTransport;
 import org.marre.util.StringUtil;
 
@@ -75,27 +76,29 @@ public class PsWinXmlTransport implements SmsTransport
     {
     }
 
-    protected void addMsg(StringWriter theXmlWriter, SmsPdu thePdu, byte theDcs, SmsAddress theDestination,
+    protected void addMsg(StringWriter theXmlWriter, SmsPdu thePdu, SmsAddress theDestination,
             SmsAddress theSender) throws SmsException
     {
+        SmsUserData userData = thePdu.getUserData();
+        
         // <MSG>
         theXmlWriter.write("<MSG>\r\n");
 
-        switch (SmsDcsUtil.getAlphabet(theDcs))
+        switch (SmsDcsUtil.getAlphabet(thePdu.getDcs()))
         {
         case SmsConstants.ALPHABET_UCS2:
             // <OP>9</OP>
             theXmlWriter.write("<OP>9</OP>\r\n");
             // <TEXT>hex-text</TEXT>
             theXmlWriter.write("<TEXT>");
-            theXmlWriter.write(StringUtil.bytesToHexString(thePdu.getUserData().getData()));
+            theXmlWriter.write(StringUtil.bytesToHexString(userData.getData()));
             theXmlWriter.write("</TEXT>\r\n");
             break;
 
         case SmsConstants.ALPHABET_GSM:
             // <TEXT>txt</TEXT>
             theXmlWriter.write("<TEXT>");
-            theXmlWriter.write(SmsPduUtil.readSeptets(thePdu.getUserData().getData(), thePdu.getUserData().getLength()));
+            theXmlWriter.write(SmsPduUtil.readSeptets(userData.getData(), userData.getLength()));
             theXmlWriter.write("</TEXT>\r\n");
             break;
 
@@ -105,7 +108,7 @@ public class PsWinXmlTransport implements SmsTransport
             // <TEXT>udh-and-ud</TEXT>
             theXmlWriter.write("<TEXT>");
             theXmlWriter.write(StringUtil.bytesToHexString(thePdu.getUserDataHeaders())
-                    + StringUtil.bytesToHexString(thePdu.getUserData().getData()));
+                    + StringUtil.bytesToHexString(userData.getData()));
             theXmlWriter.write("</TEXT>\r\n");
             break;
 
@@ -123,7 +126,7 @@ public class PsWinXmlTransport implements SmsTransport
         theXmlWriter.write(theSender.getAddress());
         theXmlWriter.write("</SND>\r\n");
 
-        if (SmsDcsUtil.getMessageClass(theDcs) == SmsConstants.MSG_CLASS_0)
+        if (SmsDcsUtil.getMessageClass(thePdu.getDcs()) == SmsConstants.MSG_CLASS_0)
         {
             // <CLASS>0</CLASS>
             theXmlWriter.write("<CLASS>");
@@ -140,20 +143,20 @@ public class PsWinXmlTransport implements SmsTransport
     {
         // 70 UCS
         // 160 GSM
-
-        byte dcs = theMessage.getDataCodingScheme();
+        
+        SmsUserData userData = theMessage.getUserData();
 
         // <MSG>
         theXmlWriter.write("<MSG>\r\n");
 
-        switch (SmsDcsUtil.getAlphabet(dcs))
+        switch (SmsDcsUtil.getAlphabet(userData.getDcs()))
         {
         case SmsConstants.ALPHABET_UCS2:
             // <OP>9</OP>
             theXmlWriter.write("<OP>9</OP>\r\n");
             // <TEXT>hex-text</TEXT>
             theXmlWriter.write("<TEXT>");
-            theXmlWriter.write(StringUtil.bytesToHexString(theMessage.getUserData().getData()));
+            theXmlWriter.write(StringUtil.bytesToHexString(userData.getData()));
             theXmlWriter.write("</TEXT>\r\n");
             break;
 
@@ -178,7 +181,7 @@ public class PsWinXmlTransport implements SmsTransport
         theXmlWriter.write(theSender.getAddress());
         theXmlWriter.write("</SND>\r\n");
 
-        if (SmsDcsUtil.getMessageClass(dcs) == SmsConstants.MSG_CLASS_0)
+        if (SmsDcsUtil.getMessageClass(userData.getDcs()) == SmsConstants.MSG_CLASS_0)
         {
             // <CLASS>0</CLASS>
             theXmlWriter.write("<CLASS>");
@@ -194,9 +197,6 @@ public class PsWinXmlTransport implements SmsTransport
                               SmsAddress theDestination, SmsAddress theSender)
             throws IOException, SmsException
     {
-        SmsPdu[] msgPdu = theMessage.getPdus();
-        byte dcs = theMessage.getDataCodingScheme();
-
         StringWriter xmlWriter = new StringWriter(1024);
 
         // <?xml version="1.0"?>
@@ -217,9 +217,10 @@ public class PsWinXmlTransport implements SmsTransport
         }
         else
         {
+            SmsPdu[] msgPdu = theMessage.getPdus();
             for (int i = 0; i < msgPdu.length; i++)
             {
-                addMsg(xmlWriter, msgPdu[i], dcs, theDestination, theSender);
+                addMsg(xmlWriter, msgPdu[i], theDestination, theSender);
             }
         }
 
@@ -233,7 +234,7 @@ public class PsWinXmlTransport implements SmsTransport
         theOs.write(xmlDoc.getBytes());
     }
 
-    protected void sendReqToPsWinCom(byte[] theXmlReq) throws IOException
+    protected String[] sendReqToPsWinCom(byte[] theXmlReq) throws IOException
     {
         Socket xmlSocket = new Socket("62.70.71.19", 1111);
 
@@ -249,10 +250,14 @@ public class PsWinXmlTransport implements SmsTransport
         {
             System.err.println(resp);
         }
+        
+        return null;
     }
 
-    public void send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException
+    public String[] send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException
     {
+        String[] msgIds;
+        
         if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
         {
             throw new SmsException("Cannot sent SMS to ALPHANUMERIC address");
@@ -267,12 +272,14 @@ public class PsWinXmlTransport implements SmsTransport
             baos.close();
 
             // Send req
-            sendReqToPsWinCom(baos.toByteArray());
+            msgIds = sendReqToPsWinCom(baos.toByteArray());
         }
         catch (IOException ex)
         {
             throw new SmsException(ex.toString());
         }
+        
+        return msgIds;
     }
 
     public void disconnect() throws SmsException
