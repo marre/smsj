@@ -54,8 +54,9 @@ import org.marre.xml.XmlWriter;
 
 public class NokiaOtaBrowserSettings implements WbxmlDocument
 {    
-    public static final String WBXML_CONTENT_TYPE = "application/x-wap-prov.browser-settings";
-    public static final String XML_CONTENT_TYPE = "application/x-wap-prov.browser-settings";
+    public static final String WBXML_SETTINGS_CONTENT_TYPE = "application/x-wap-prov.browser-settings";
+    public static final String XML_SETTINGS_CONTENT_TYPE = "application/x-wap-prov.browser-settings";
+    public static final String XML_BOOKMARKS_CONTENT_TYPE = "application/x-wap-prov.browser-bookmarks";
         
     public static final String[] OTA_TAG_TOKENS = {
         "CHARACTERISTIC-LIST", // 05
@@ -259,12 +260,12 @@ public class NokiaOtaBrowserSettings implements WbxmlDocument
 
     public String getContentType()
     {
-        return XML_CONTENT_TYPE;
+        return XML_SETTINGS_CONTENT_TYPE;
     }
     
     public String getWbxmlContentType()
     {
-        return WBXML_CONTENT_TYPE;
+        return WBXML_SETTINGS_CONTENT_TYPE;
     }
 
     public XmlWriter getWbxmlWriter(OutputStream os)
