@@ -34,6 +34,23 @@ public class SmsUdhUtil
     {
     }
 
+    public static final int getUdhLength(SmsUdhElement[] theUdhElements)
+    {
+        int totLength = 0;
+
+        if (theUdhElements == null)
+        {
+            return 0;
+        }
+
+        for (int i=0; i < theUdhElements.length; i++)
+        {
+            totLength += theUdhElements[i].getTotalLength();
+        }
+
+        return totLength;
+    }
+
     /**
      * Creates a "8Bit concatenated" UDH element using UDH_IEI_CONCATENATED_8BIT
      * <p>
