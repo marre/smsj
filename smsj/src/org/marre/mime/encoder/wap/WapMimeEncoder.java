@@ -58,6 +58,14 @@ public class WapMimeEncoder implements MimeEncoder
     public void writeContentType(OutputStream theOs, MimeBodyPart theMsg)
         throws IOException
     {
+        if (theMsg instanceof MimeMultipart)
+        {
+            // TODO: Clone content type... We shouldn't change theMsg...
+            String ct = theMsg.getContentType().getValue();
+            String newCt = WspUtil.convertMultipartContentType(ct);
+            theMsg.getContentType().setValue(newCt);            
+        }
+        
         WspUtil.writeContentType(theOs, theMsg.getContentType());
     }
 
@@ -95,6 +103,7 @@ public class WapMimeEncoder implements MimeEncoder
         {
             MimeBodyPart part = (MimeBodyPart) theMultipart.getBodyPart(i);
             ByteArrayOutputStream headers = new ByteArrayOutputStream();
+            ByteArrayOutputStream content = new ByteArrayOutputStream();
 
             // Generate content-type + headers
             writeContentType(headers, part);
@@ -102,14 +111,20 @@ public class WapMimeEncoder implements MimeEncoder
             // Done with the headers...
             headers.close();
 
+            // Generate content...
+            writeData(content, part);
+            content.close();
+
+            // Write data to theOs
+
             // Length of the content type and headers combined
             WspUtil.writeUintvar(theOs, headers.size());
             // Length of the data (content)
-            WspUtil.writeUintvar(theOs, part.getContentSize());
+            WspUtil.writeUintvar(theOs, content.size());
             // Content type + headers
             theOs.write(headers.toByteArray());
             // Data
-            writeData(theOs, part);
+            theOs.write(content.toByteArray());
         }
     }
 }
