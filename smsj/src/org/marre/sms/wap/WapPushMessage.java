@@ -22,6 +22,9 @@ import java.io.*;
 
 import org.apache.commons.logging.*;
 
+import org.marre.wap.*;
+import org.marre.wap.util.*;
+
 import org.marre.sms.*;
 import org.marre.sms.util.*;
 
