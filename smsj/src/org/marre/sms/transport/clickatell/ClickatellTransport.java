@@ -21,10 +21,12 @@ package org.marre.sms.transport.clickatell;
 import java.io.*;
 import java.net.*;
 import java.text.*;
+import java.util.*;
 
-import org.marre.sms.transport.SmsTransport;
-import java.util.Properties;
+import org.apache.commons.logging.*;
+
 import org.marre.sms.*;
+import org.marre.sms.transport.*;
 import org.marre.sms.util.*;
 
 /**
@@ -77,6 +79,8 @@ import org.marre.sms.util.*;
  */
 public class ClickatellTransport implements SmsTransport
 {
+    static Log myLog = LogFactory.getLog(ClickatellTransport.class);
+
     private String myUsername = null;
     private String myPassword = null;
     private String myApiId = null;
@@ -267,7 +271,7 @@ public class ClickatellTransport implements SmsTransport
             requestString += "&msg_type=SMS_FLASH";
         }
 
-        System.err.println(requestString);
+        myLog.debug("Request -> " + requestString);
 
         //
         // Send request to clickatell
@@ -417,7 +421,7 @@ public class ClickatellTransport implements SmsTransport
             requestString += "&msg_type=SMS_FLASH";
         }
 
-        System.err.println(requestString);
+        myLog.debug("Request -> " + requestString);
 
         //
         // Send request to clickatell
