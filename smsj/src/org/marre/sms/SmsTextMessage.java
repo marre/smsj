@@ -144,8 +144,7 @@ public class SmsTextMessage implements SmsMessage
 
             baos.close();
 
-            thePdu.setUserData(baos.toByteArray());
-            thePdu.setDataCodingScheme(dcs);
+            thePdu.setUserData(baos.toByteArray(), dcs);
         }
         catch (UnsupportedEncodingException ex)
         {
