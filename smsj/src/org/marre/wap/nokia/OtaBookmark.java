@@ -66,13 +66,9 @@ public class OtaBookmark
 
     public static final WbxmlWriter getWbxmlWriter()
     {
-        WbxmlWriter writer = new WbxmlWriter();
-
-        writer.setTagTokens(OtaConstants.OTA_TAG_TOKENS);
-        writer.setAttrStartTokens(OtaConstants.OTA_ATTR_START_TOKENS);
-        writer.setAttrValueTokens(OtaConstants.OTA_ATTR_VALUE_TOKENS);
-
-        return writer;
+        return new WbxmlWriter(OtaConstants.OTA_TAG_TOKENS, 
+                               OtaConstants.OTA_ATTR_START_TOKENS, 
+                               OtaConstants.OTA_ATTR_VALUE_TOKENS);
     }
 
     public void writeTo(XmlWriter writer, OutputStream os)
@@ -104,7 +100,7 @@ public class OtaBookmark
 
         try
         {
-            this.writeTo(OtaBookmark.getWbxmlWriter(), baos);
+            writeTo(OtaBookmark.getWbxmlWriter(), baos);
             baos.close();
         }
         catch (IOException e)
@@ -114,7 +110,8 @@ public class OtaBookmark
 
         return baos.toByteArray();
     }
-    
+
+/*    
     public static void main(String argv[])
         throws Exception
     {
@@ -123,6 +120,7 @@ public class OtaBookmark
         System.out.println(fos);
         nbk.writeTo(getWbxmlWriter(), fos);
     }
+*/
 
     public String getUri()
     {
@@ -143,5 +141,4 @@ public class OtaBookmark
     {
         this.myTitle = theTitle;
     }
-
 }

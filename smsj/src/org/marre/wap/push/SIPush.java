@@ -58,11 +58,7 @@ public class SIPush
 
     public static final WbxmlWriter getWbxmlWriter()
     {
-        WbxmlWriter writer = new WbxmlWriter();
-
-        writer.setTagTokens(SI_TAG_TOKENS);
-        writer.setAttrStartTokens(SI_ATTR_START_TOKENS);
-        writer.setAttrValueTokens(SI_ATTR_VALUE_TOKENS);
+        WbxmlWriter writer = new WbxmlWriter(SI_TAG_TOKENS, SI_ATTR_START_TOKENS, SI_ATTR_VALUE_TOKENS);
 
         return writer;
     }
@@ -84,12 +80,14 @@ public class SIPush
         writer.writeTo(os);
     }
 
+/*
     public static void main(String argv[])
         throws Exception
     {
         SIPush push = new SIPush("http://wap.tv4.se/", "TV4 Nyheter");
         push.writeTo(getWbxmlWriter(), new FileOutputStream("si.wbxml"));
     }
+*/
 
     private byte[] encodeDateTime(Date theDate)
     {

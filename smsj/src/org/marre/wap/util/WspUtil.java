@@ -353,8 +353,8 @@ public class WspUtil
 
         case WapConstants.WSP_TYPE_DELTA_SECONDS_VALUE:
             // Integer-Value
-						Integer i = Integer.valueOf(value);
-						writeInteger(os, i.intValue());
+            Integer i = Integer.valueOf(value);
+            writeInteger(os, i.intValue());
             break;
 
         case WapConstants.WSP_TYPE_Q_VALUE:
@@ -482,7 +482,9 @@ public class WspUtil
         {
             return "application/vnd.wap.multipart.related";
         }
-        
-        return ct;
+        else
+        {
+            return ct;
+        }        
     }
 }

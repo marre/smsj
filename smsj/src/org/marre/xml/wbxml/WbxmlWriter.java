@@ -61,6 +61,15 @@ public class WbxmlWriter implements XmlWriter
         reset();
     }
 
+    public WbxmlWriter(String [] theTagTokens, String [] theAttrStrartTokens, String [] theAttrValueTokens)
+    {
+        reset();
+
+        setTagTokens(theTagTokens);
+        setAttrStartTokens(theAttrStrartTokens);
+        setAttrValueTokens(theAttrValueTokens);
+    }
+
 	/**
 	 * @see org.marre.xml.XmlWriter#reset()
 	 */
@@ -250,7 +259,7 @@ public class WbxmlWriter implements XmlWriter
     /**
      * Sets the attribute value tokens
      *
-     * @param theAttrStrartTokens first element in this array defines attribute #05
+     * @param theAttrValueTokens first element in this array defines attribute #05
      */
     public void setAttrValueTokens(String [] theAttrValueTokens)
     {
@@ -360,6 +369,7 @@ public class WbxmlWriter implements XmlWriter
         myWbxmlBody.write(WbxmlConstants.TOKEN_END);
     }
 
+/*
     public static void main(String argv[])
         throws Exception
     {
@@ -376,4 +386,5 @@ public class WbxmlWriter implements XmlWriter
 
         handler.writeTo(new FileOutputStream("demo.wbxml"));
     }
+*/
 }
