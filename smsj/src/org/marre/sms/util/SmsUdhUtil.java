@@ -40,12 +40,12 @@ public class SmsUdhUtil
      * This can be used to create a concatenated SMS.
      *
      * @param theRefNr The reference number of this SMS, must be the same in
-     * all SMS
-     * @param theTotSms Total number of SMS
-     * @param theSeqNr Sequence number
+     * all SMS. Max 255.
+     * @param theTotSms Total number of SMS. Max 255.
+     * @param theSeqNr Sequence number. Max 255.
      * @return A SmsUdhElement
      */
-    public static final SmsUdhElement getConcatUdh(int theRefNr, int theTotSms, int theSeqNr)
+    public static final SmsUdhElement get8BitConcatUdh(int theRefNr, int theTotSms, int theSeqNr)
     {
         byte[] udh = new byte[3];
 
@@ -156,5 +156,55 @@ public class SmsUdhUtil
         udh[3] = (byte) ((theOrigPort >> 8) & 0xff);
 
         return new SmsUdhElement(SmsConstants.UDH_IEI_APP_PORT_16BIT, udh);
+    }
+
+    /**
+     * Creates a "16Bit concatenated" UDH element using UDH_IEI_CONCATENATED_16BIT
+     * <p>
+     * This can be used to create a concatenated SMS.
+     *
+     * @param theRefNr The reference number of this SMS, must be the same in
+     * all SMS. Max 65536
+     * @param theTotSms Total number of SMS. Max 255
+     * @param theSeqNr Sequence number. Max 255
+     * @return A SmsUdhElement
+     */
+    public static final SmsUdhElement get16BitConcatUdh(int theRefNr, int theTotSms, int theSeqNr)
+    {
+        byte[] udh = new byte[4];
+
+        udh[0] = (byte) (theRefNr & 0xff);
+        udh[1] = (byte) ((theRefNr >> 8) & 0xff);
+        udh[2] = (byte) (theTotSms & 0xff);
+        udh[3] = (byte) (theSeqNr  & 0xff);
+
+        return new SmsUdhElement(SmsConstants.UDH_IEI_CONCATENATED_16BIT, udh);
+    }
+
+    /**
+     * Creates a "EMS Text Formatting" UDH element.
+     *
+     * @param theStartPos Start position of the text formatting. This position
+     * is relative to the start of the UD field of the PDU.
+     * @param theFormatLen The number of character to format. If 0 it sets the
+     * default text formatting.
+     * @param theAlignment Can be any of EMS_TEXT_ALIGN_*
+     * @param theFontSize Can be any of EMS_TEXT_SIZE_*
+     * @param theStyle Can be any of EMS_TEXT_STYLE_*
+     * @param theForegroundColor Can be any of EMS_TEXT_COLOR_*
+     * @param theBackgroundColor Can be any of EMS_TEXT_COLOR_*
+     * @return A SmsUdhElement
+     */
+    public static final SmsUdhElement getEmsTextFormattingUdh(int theStartPos, int theFormatLen,
+        byte theAlignment, byte theFontSize, byte theStyle, byte theForegroundColor, byte theBackgroundColor)
+    {
+        byte[] udh = new byte[4];
+
+        udh[0] = (byte) (theStartPos & 0xff);
+        udh[1] = (byte) (theFormatLen & 0xff);
+        udh[2] = (byte) (( (theAlignment & 0x03) | (theFontSize & 0x0C) | (theStyle & 0xF0) ) & 0xff);
+        udh[3] = (byte) (( (theForegroundColor & 0x0f) | (((theBackgroundColor & 0x0f) << 4) & 0xf0) ) & 0xff);
+
+        return new SmsUdhElement(SmsConstants.UDH_IEI_EMS_TEXT_FORMATTING, udh);
     }
 }
