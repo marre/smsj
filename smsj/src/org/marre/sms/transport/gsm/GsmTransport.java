@@ -103,7 +103,7 @@ public class GsmTransport implements SmsTransport
             // 1 Integer
             // TP-DCS
             // UCS, septets, language, SMS class...
-            baos.write(0x00);
+            baos.write(theMsg.getDataCodingScheme());
 
             // 1 octet/ 7 octets
             // TP-VP - Optional
@@ -122,14 +122,13 @@ public class GsmTransport implements SmsTransport
             }
             else
             {
-                // FIXME user data header length when encoded with 7 bit...
-
                 // 1 Integer
                 // TP-UDL
                 // UDL includes the length of UDH
                 baos.write(udLength + udh.length);
 
                 // User Data header length
+                // FIXME: BUG! Should be in septets, not bytes!!
                 baos.write(udh.length);
 
                 // n octets
