@@ -32,12 +32,24 @@ public class WspUtil
     }
 
     /**
+     * Writes a "uint8" in wsp format to the given output stream.
+     *
+     * @param theOs Stream to write to
+     * @param theValue Value to write
+     */
+    public static void writeUint8(OutputStream theOs, int theValue)
+        throws IOException
+    {
+        theOs.write(theValue);
+    }
+
+    /**
      * Writes a "Uintvar" in wsp format to the given output stream.
      *
      * @param theOs Stream to write to
      * @param theValue Value to write
      */
-    public void writeUintvar(OutputStream theOs, long theValue)
+    public static void writeUintvar(OutputStream theOs, long theValue)
         throws IOException
     {
         int nOctets = 0;
@@ -64,7 +76,7 @@ public class WspUtil
      * @param theOs Stream to write to
      * @param theValue Value to write
      */
-    public void writeLongInteger(OutputStream theOs, long theValue)
+    public static void writeLongInteger(OutputStream theOs, long theValue)
         throws IOException
     {
         int nOctets = 0;
@@ -88,7 +100,7 @@ public class WspUtil
      * @param theOs
      * @param theValue
      */
-    public void writeInteger(OutputStream theOs, long theValue)
+    public static void writeInteger(OutputStream theOs, long theValue)
         throws IOException
     {
         if (theValue < 128)
@@ -107,7 +119,7 @@ public class WspUtil
      * @param theOs Stream to write to
      * @param theValue Value to write
      */
-    public void writeShortInteger(OutputStream theOs, int theValue)
+    public static void writeShortInteger(OutputStream theOs, int theValue)
         throws IOException
     {
         theOs.write((byte) (theValue | (byte)0x80));
@@ -121,14 +133,14 @@ public class WspUtil
      * @param theOs Stream to write to
      * @param theStr Text to write
      */
-    public void writeExtensionMedia(OutputStream theOs, String theStr)
+    public static void writeExtensionMedia(OutputStream theOs, String theStr)
         throws IOException
     {
         theOs.write(theStr.getBytes("ISO-8859-1"));
         theOs.write((byte)0x00);
     }
 
-    public void writeTextString(OutputStream theOs, String theStr)
+    public static void writeTextString(OutputStream theOs, String theStr)
         throws IOException
     {
         /*
@@ -141,7 +153,7 @@ public class WspUtil
 
         byte strBytes[] = theStr.getBytes("ISO-8859-1");
 
-        if ( (strBytes[0] & 0x7f) > 0x00 )
+        if ( (strBytes[0] & 0x80) > 0x00 )
         {
             theOs.write(0x7f);
         }
@@ -150,10 +162,19 @@ public class WspUtil
         theOs.write(0x00);
     }
 
-    public void writeContentType(OutputStream theOs, String theContentType)
+    /**
+     * Writes a wsp encoded content-type as specified in
+     * WAP-230-WSP-20010705-a.pdf.
+     *
+     * @param theOs
+     * @param theContentType
+     * @throws IOException
+     */
+    public static void writeContentType(OutputStream theOs, String theContentType)
         throws IOException
     {
         int wellKnownContentType = findContentType(theContentType);
+
         if (wellKnownContentType == -1)
         {
             writeExtensionMedia(theOs, theContentType);
@@ -164,10 +185,21 @@ public class WspUtil
         }
     }
 
-    public void writeWapApplicationId(OutputStream theOs, String theAppId)
+    /**
+     * Writes a wsp encoded X-Wap-Application-Id header as specified in
+     * WAP-230-WSP-20010705-a.pdf.
+     *
+     * @param theOs
+     * @param theAppId
+     * @throws IOException
+     */
+    public static void writeWapApplicationId(OutputStream theOs, String theAppId)
         throws IOException
     {
         int wellKnownAppId = findPushAppId(theAppId);
+
+        WspUtil.writeShortInteger(theOs, WapConstants.HEADER_ID_X_WAP_APPLICATION_ID);
+
         if (wellKnownAppId == -1)
         {
             writeTextString(theOs, theAppId);
@@ -235,7 +267,7 @@ public class WspUtil
             return -1;
         }
 
-        for (int i=0; i < WapConstants.CONTENT_TYPES.length; i++)
+        for (int i=0; i < WapConstants.PUSH_APP_IDS.length; i++)
         {
             if (WapConstants.PUSH_APP_IDS[i].equalsIgnoreCase(thePushAppId))
             {
