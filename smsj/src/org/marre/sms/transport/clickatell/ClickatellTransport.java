@@ -33,14 +33,44 @@ import org.marre.sms.util.*;
  * It is developed to use the "Clickatell HTTP API v. 1.63".
  * <p>
  * Known limitations:<br>
- * - Impossible to set the sending address (should work)<br>
+ * - Impossible to set the sending address (might work with some networks)<br>
  * - Cannot send 8-Bit messages without an UDH<br>
- * - Not verified if it's possible to send concatenated SMS<br>
  * - Doesn't support a complete DCS. Only UCS2, 7bit, 8bit and
- *   SMS class 0 or 1 (cuurently only class 1 messages)<br>
+ *   SMS class 0 or 1.<br>
  * - Cannot set validity period (not done yet)<br>
  * - Doesn't acknowledge the TON or NPI, everything is sent as NPI_ISDN_TELEPHONE
  * and TON_INTERNATIONAL.<br>
+ * <p>
+ * Support matrix:
+ * <table border="1">
+ * <tr>
+ * <td></td>
+ * <td>7-bit</td>
+ * <td>8-bit</td>
+ * <td>UCS2</td>
+ * </tr>
+ * <tr>
+ * <td>CLASS 0</td>
+ * <td>Yes</td>
+ * <td>Yes, with UDH present</td>
+ * <td>Yes</td>
+ * </tr>
+ * <tr>
+ * <td>CLASS 1</td>
+ * <td>Yes</td>
+ * <td>Yes, with UDH present</td>
+ * <td>Yes</td>
+ * </tr>
+ * <tr>
+ * <td>UDH and<br>concatenation</td>
+ * <td>No</td>
+ * <td>Yes</td>
+ * <td>Yes</td>
+ * </tr>
+ * <tr>
+ * <td>ass</td>
+ * </tr>
+ * </table>
  *
  * @author Markus Eriksson
  * @version 1.0
@@ -178,7 +208,7 @@ public class ClickatellTransport implements SmsTransport
             case SmsConstants.DCS_DEFAULT_UCS2:
                 ud = SmsPduUtil.bytesToHexString(thePdu.getUserData());
                 requestString = MessageFormat.format(
-                    "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&text={3}&unicode=1",
+                    "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&text={3}&unicode=1&concat=0",
                     new Object[] { mySessionId, theDestination.getAddress(), theSender.getAddress(), ud });
                 break;
 
@@ -186,7 +216,7 @@ public class ClickatellTransport implements SmsTransport
                 String msg = SmsPduUtil.readSeptets(thePdu.getUserData(), thePdu.getUserDataLength());
                 msg = URLEncoder.encode(msg);
                 requestString = MessageFormat.format(
-                    "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&text={3}",
+                    "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&text={3}&concat=0",
                     new Object[] { mySessionId, theDestination.getAddress(), theSender.getAddress(), msg });
                 break;
 
@@ -208,7 +238,7 @@ public class ClickatellTransport implements SmsTransport
                 udh = SmsPduUtil.bytesToHexString(new byte[] {(byte) (udhData.length & 0xff)});
                 udh += SmsPduUtil.bytesToHexString(udhData);
                 requestString = MessageFormat.format(
-                    "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&udh={3}&text={4}",
+                    "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&udh={3}&text={4}&concat=0",
                     new Object[] { mySessionId, theDestination.getAddress(), theSender.getAddress(), udh, ud });
                 break;
 
@@ -219,7 +249,7 @@ public class ClickatellTransport implements SmsTransport
                 udh = SmsPduUtil.bytesToHexString(new byte[] {(byte) (udhData.length & 0xff)});
                 udh += SmsPduUtil.bytesToHexString(udhData);
                 requestString = MessageFormat.format(
-                    "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&udh={3}&text={4}&unicode=1",
+                    "http://api.clickatell.com/http/sendmsg?session_id={0}&to={1}&from={2}&udh={3}&text={4}&unicode=1&concat=0",
                     new Object[] { mySessionId, theDestination.getAddress(), theSender.getAddress(), udh, ud });
                 break;
 
@@ -229,6 +259,12 @@ public class ClickatellTransport implements SmsTransport
             default:
                 throw new SmsException("Unsupported data coding scheme");
             }
+        }
+
+        // CLASS_0 message?
+        if (SmsDcsUtil.getMessageClass(thePdu.getDataCodingScheme()) == SmsConstants.MSG_CLASS_0)
+        {
+            requestString += "&msg_type=SMS_FLASH";
         }
 
         //
