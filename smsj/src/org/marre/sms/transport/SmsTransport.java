@@ -30,7 +30,7 @@ public interface SmsTransport
 
     public void login(String theUsername, String thePassword) throws SmsException;
 
-    public void sendMessage(SmsMessage theMsg, SmsAddress theDestination, String theSender) throws SmsException;
+    public void sendMessage(SmsMessage theMsg, SmsAddress theDestination, SmsAddress theSender) throws SmsException;
 
     public void ping() throws SmsException;
 
