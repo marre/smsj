@@ -70,7 +70,9 @@ public class UcpTransport implements SmsTransport
     {
     	//Normaly we sould get the Data from the Props, but temporaly hardCoded
     	String server = "213.61.220.27";
-    	int port = 1500;
+//    	server="127.0.0.1";
+   		int port = 1500;
+//		port = 3000;
     	try {
 		    s = new Socket(server, port);
 		    out = new DataOutputStream(s.getOutputStream());
@@ -98,7 +100,7 @@ public class UcpTransport implements SmsTransport
 		System.out.println("SMSC response: " + sendUcp(message));
     }
 
-    public void send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender)
+    public void send(SmsMessage theMessage, SmsAddress theSender, SmsAddress theDestination)
         throws SmsException
     {
         SmsPdu msgPdu[] = null;
@@ -113,8 +115,7 @@ public class UcpTransport implements SmsTransport
         {
             byte dcs = theMessage.getDataCodingScheme();
             boolean moreToSend = (i < (msgPdu.length - 1));
-            byte[] submitCmd = buildSubmit(dcs, msgPdu[i], moreToSend,
-theDestination, theSender);
+            byte[] submitCmd = buildSubmit(dcs, msgPdu[i], moreToSend,theSender,theDestination);
 			System.out.println("SMSC response: " + sendUcp(submitCmd));
         }
     }
@@ -127,7 +128,7 @@ theDestination, theSender);
      *
      */
     public byte[] buildLogin(String userid, String pwd) throws SmsException {
-		StringUtil stu = new StringUtil();
+		UcpUtil util = new UcpUtil();
     	UCPSeries60 ucplogin = new UCPSeries60(UCPSeries60.OP_OPEN_SESSION);
     	ucplogin.setTRN(0x01);
     	ucplogin.setField(ucplogin.FIELD_OAdC,"u0000854");
@@ -135,12 +136,15 @@ theDestination, theSender);
 		ucplogin.setField(ucplogin.FIELD_ONPI,"5");
 		ucplogin.setField(ucplogin.FIELD_STYP,"1");
 		ucplogin.setField(ucplogin.FIELD_VERS,"0100");
-		ucplogin.setField(ucplogin.FIELD_PWD,stu.encodeInIRA("cjSBtqk7"));				
+		ucplogin.setField(ucplogin.FIELD_PWD,util.encodeInIRA("cjSBtqk7"));				
     	return ucplogin.getCommand();	
     }
-    public byte[] buildSubmit(byte dcs, SmsPdu pdu, boolean moreToSend, SmsAddress dest, SmsAddress sender)
+    public byte[] buildSubmit(byte dcs, SmsPdu pdu, boolean moreToSend, SmsAddress sender, SmsAddress dest)
         throws SmsException
     {
+        String ud;
+        byte udhData[];
+        UcpUtil util = new UcpUtil();
         UcpSeries50 ucpSubmit = new UcpSeries50(UcpSeries50.OP_SUBMIT_SHORT_MESSAGE);
 
         byte[] udh = pdu.getUserDataHeaders();
@@ -154,41 +158,99 @@ theDestination, theSender);
         // telephone and TON international, 5039 The OAdC contains an
         // alphanumeric address)
         // OAdC = Address code originator
-        if (dest.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
+        if (sender.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
         {
-            String addr = dest.getAddress();
-            byte septets[] = SmsPduUtil.getSeptets(addr);
+            String addr = sender.getAddress();
+            
+		if (addr.length() > 11) throw new SmsException("Max alphanumeric Originator Address Code length exceded (11)");
+			// Changed by LB. The Alphanumeric Sender was not set correctly
+			String codedaddr = util.encode7bitsIn8(addr);
+			int x = codedaddr.length();
+			StringBuffer sb = new StringBuffer("00");
+			sb.replace(2 - Integer.toHexString(x).toUpperCase().length(), 2,
+	       	Integer.toHexString(x).toUpperCase());
+            
+            ucpSubmit.setField(UcpSeries50.FIELD_OAdC, sb.toString().concat(codedaddr));
             ucpSubmit.setField(UcpSeries50.FIELD_OTOA, "5039");
-            ucpSubmit.setField(UcpSeries50.FIELD_OAdC, StringUtil.bytesToHexString(septets));
+            
         }
         else
         {
             ucpSubmit.setField(UcpSeries50.FIELD_OTOA, "1139");
-            ucpSubmit.setField(UcpSeries50.FIELD_OAdC, dest.getAddress());
+            ucpSubmit.setField(UcpSeries50.FIELD_OAdC, sender.getAddress());
         }
 
         // AdC = Address code recipient for the SM
-        ucpSubmit.setField(UcpSeries50.FIELD_AdC, sender.getAddress());
+        ucpSubmit.setField(UcpSeries50.FIELD_AdC, dest.getAddress());
+		if (pdu.getUserDataHeaders() == null)  // Handel Messages without UDH
+		{
+			switch (SmsDcsUtil.getAlphabet(dcs))
+			{
+				case SmsConstants.ALPHABET_GSM:
+					System.out.println("GSM Message without UDH");
+					ucpSubmit.setField(UcpSeries50.FIELD_MT, "3");
+					String msg = SmsPduUtil.readSeptets(pdu.getUserData(), pdu.getUserDataLength());
+					ucpSubmit.setField(UcpSeries50.FIELD_Msg,util.encodeInIRA(msg));
+					break;
+				case SmsConstants.ALPHABET_8BIT:
+					throw new SmsException(" 8Bit Messages without UDH are not Supported");
+				case SmsConstants.ALPHABET_UCS2:
+					System.out.println("UCS2 Message without UDH");
+					ud = StringUtil.bytesToHexString(pdu.getUserData());
+					ucpSubmit.setField(UcpSeries50.FIELD_Msg,ud);
+					//Numer of of bits in Transperent Data Message
+					udBits = pdu.getUserDataLength() * ((isSeptets) ? 7 : 8);
+					ucpSubmit.setField(UcpSeries50.FIELD_NB,StringUtil.intToString(udBits, 4));
+					// Set message Type fix to 4 
+					ucpSubmit.setField(UcpSeries50.FIELD_MT,"4");
+					ucpSubmit.clearXSer();
+			        ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_DCS, dcs);
+					break;
+            	default:
+                	throw new SmsException("Unsupported data coding scheme");
+			}
+		}else {
+			switch (SmsDcsUtil.getAlphabet(dcs))
+			{
+				case SmsConstants.ALPHABET_GSM:
+	                throw new SmsException("Cannot send 7 bit encoded messages with UDH");
+				case SmsConstants.ALPHABET_8BIT:
+					ud = StringUtil.bytesToHexString(pdu.getUserData());
+	                udhData = pdu.getUserDataHeaders();
+	                // Add length of udh
+	                String udh_str = StringUtil.bytesToHexString(new byte[] {(byte) (udhData.length & 0xff)});
+	                udh_str += StringUtil.bytesToHexString(udhData);
 
-        // MT <= 4
-        ucpSubmit.setField(UcpSeries50.FIELD_MT, "4");
-
-        // XSer = Extra Services
-        ucpSubmit.clearXSer();
-        ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_DCS, dcs);
-        if (udh != null)
-        {
-            ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_UDH, udh);
-        }
-
-        // NB = Number of bits in TMsg
-        udBits = pdu.getUserDataLength() * ((isSeptets) ? 7 : 8);
-        ucpSubmit.setField(UcpSeries50.FIELD_NB, StringUtil.intToString(udBits, 4));
-
-        // TMsg = Msg in hex
-        ucpSubmit.setField(UcpSeries50.FIELD_Msg, StringUtil.bytesToHexString(pdu.getUserData()));
-
-        // MMS = More messages to send
+					ucpSubmit.setField(UcpSeries50.FIELD_Msg,ud);
+					//Numer of of bits in Transperent Data Message
+					udBits = pdu.getUserDataLength() * ((isSeptets) ? 7 : 8);
+					ucpSubmit.setField(UcpSeries50.FIELD_NB,StringUtil.intToString(udBits, 4));
+					// Set message Type fix to 4 
+					ucpSubmit.setField(UcpSeries50.FIELD_MT,"4");
+					// Store the UDH
+			        ucpSubmit.clearXSer();
+			        ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_DCS, dcs);
+			        ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_UDH, udhData);
+//					throw new SmsException(" 8Bit Messages are currently not Supportet ");
+					break;
+				case SmsConstants.ALPHABET_UCS2:
+					throw new SmsException(" UCS2 Messages are currently not Supportet ");
+//					break;
+            	default:
+                	throw new SmsException("Unsupported data coding scheme");
+			}
+		}
+	        // XSer = Extra Services
+//	        ucpSubmit.clearXSer();
+//	        ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_DCS, dcs);
+//	        if (udh != null)
+//			
+//	        // NB = Number of bits in TMsg
+//	        udBits = pdu.getUserDataLength() * ((isSeptets) ? 7 : 8);
+//	        udBits = pdu.getUserDataLength();
+//	        ucpSubmit.setField(UcpSeries50.FIELD_NB, StringUtil.intToString(udBits, 4));
+//	       	ucpSubmit.setField(UcpSeries50.FIELD_Msg, StringUtil.bytesToHexString(pdu.getUserData()));
+//        / MMS = More messages to send
         if (moreToSend)
         {
             ucpSubmit.setField(UcpSeries50.FIELD_MMS, "1");
@@ -228,7 +290,7 @@ theDestination, theSender);
      * @param byte[] of Data
      */
     public String sendUcp(byte[] data) throws SmsException {
-		if(!s.isConnected() || out!=null || in!=null) {
+		if(!s.isConnected() || out==null || in==null) {
 			throw new SmsException("Please Connect first");
 		}
     	System.out.println("SMSC send: " + new String(data,0,data.length));
@@ -242,10 +304,11 @@ theDestination, theSender);
 				throw new SmsException("The SMSC sends a bad reply");
 			}
 			strBuf = new StringBuffer();
-			while ((b[0] = in.readByte()) != 3) {
+			while ( (b[0] = in.readByte()) != 3) {
 				strBuf.append(new String(b));
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
 			throw new SmsException(e.getMessage());
 		} catch (SmsException e) {
 			throw new SmsException(e.getMessage());
