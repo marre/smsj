@@ -36,6 +36,10 @@ package org.marre.sms;
 
 import java.io.*;
 import java.util.Random;
+import java.text.*;
+import java.util.*;
+import java.awt.*;
+import java.awt.image.*;
 
 import org.marre.sms.util.SmsPduUtil;
 import org.marre.sms.util.SmsUdhUtil;

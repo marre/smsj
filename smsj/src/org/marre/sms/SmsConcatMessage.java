@@ -125,6 +125,10 @@ public class SmsConcatMessage extends SmsAbstractMessage
                             myUd, 0,
                             theUd.length);
         }
+        
+        //Liquidterm: I'm unsure if this is conceptually correct, but without this
+        //when I try to send messages, no pdus are created.
+        myUdLength = theUdLength;
     }
 
     /**

@@ -52,6 +52,8 @@ public class SIPush
 
     public SIPush(String uri, String message)
     {
+        myUri = uri;
+        myMessage = message;
     }
 
     public static final WbxmlWriter getWbxmlWriter()
@@ -95,14 +97,14 @@ public class SIPush
 /*
 If used, the attribute value MUST be expressed in a date/time representation based on [ISO8601] as specified in
 [HTML4]. However, SI does not allow use of time zones; the time MUST always be expressed in Co-ordinated
-Universal Time (UTC), a 24-hour timekeeping system (indicated by the “Z”). The format is:
+Universal Time (UTC), a 24-hour timekeeping system (indicated by the ?Z?). The format is:
 YYYY-MM-DDThh:mm:ssZ
-Where: YYYY = 4 digit year (“0000” ... “9999”)
-MM = 2 digit month (“01”=January, “02”=February ... “12”=December)
-DD = 2 digit day (“01”, “02” ... “31”)
+Where: YYYY = 4 digit year (?0000? ... ?9999?)
+MM = 2 digit month (?01?=January, ?02?=February ... ?12?=December)
+DD = 2 digit day (?01?, ?02? ... ?31?)
 hh = 2 digit hour, 24-hour timekeeping system (00 ... 23)
-mm = 2 digit minute (“00” ... “59”)
-ss = 2 digit second (“00” ... “59”)
+mm = 2 digit minute (?00? ... ?59?)
+ss = 2 digit second (?00? ... ?59?)
 Note: T and Z appear literally in the string.
 Example: 1999-04-30T06:40:00Z means 6.40 in the morning UTC on the 30th of April 1999.
 */

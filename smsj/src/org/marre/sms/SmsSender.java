@@ -40,6 +40,8 @@ import java.io.*;
 import org.marre.sms.transport.SmsTransport;
 import org.marre.sms.transport.SmsTransportManager;
 
+import org.marre.sms.wap.*;
+
 /**
  * High level API to the smsj library
  * <p>
@@ -155,7 +157,132 @@ public class SmsSender
 
         return new SmsSender("org.marre.sms.transport.gsm.GsmTransport", props);
     }
+    
+    
+    /**
+     * Convenience method to create a SmsSender object that knows how to send
+     * messages with a UCP SMSC.
+     *
+     * @param theIpHost A string with the ip address or host name of the SMSC
+     * @param theIpPort An integer with the ip port on which the SMSC listens
+     * @param password
+     * @return A SmsSender object that uses the UcpTranport to send messages
+     * @throws SmsException
+     */
+    static public SmsSender getUcpSender(String theIpHost, int theIpPort)
+        throws SmsException
+    {
+        //Liquidterm: strict input checking is done in the UcpTransport class
+        Properties props = new Properties();
+        props.setProperty("smsj.ucp.ip.host", theIpHost);
+        props.setProperty("smsj.ucp.ip.port", Integer.toString(theIpPort));
+        return new SmsSender("org.marre.sms.transport.ucp.UcpTransport", props);
+    }
 
+    
+    /**
+     * Convenience method to create a SmsSender object that knows how to send
+     * messages with a UCP SMSC.
+     *
+     * @param theIpHost A string with the ip address or host name of the SMSC
+     * @param theIpPort An integer with the ip port on which the SMSC listens
+     * @param theUCP60Uid A string containing the UCP60 userid
+     * @param theUCP60Pwd A string containing the UCP60 password
+     * @return A SmsSender object that uses the UcpTranport to send messages
+     * @throws SmsException
+     */
+    static public SmsSender getUcpSender(String theIpHost, int theIpPort,
+        String theUCP60Uid, String theUCP60Pwd)
+        throws SmsException
+    {
+        //Liquidterm: strict input checking is done in the UcpTransport class
+        Properties props = new Properties();
+        props.setProperty("smsj.ucp.ip.host", theIpHost);
+        props.setProperty("smsj.ucp.ip.port", Integer.toString(theIpPort));
+        props.setProperty("smsj.ucp.ucp60.uid", theUCP60Uid);
+        props.setProperty("smsj.ucp.ucp60.password", theUCP60Pwd);
+        return new SmsSender("org.marre.sms.transport.ucp.UcpTransport", props);
+    }
+    
+    
+    /**
+     * Convenience method to create a SmsSender object that knows how to send
+     * messages with a UCP SMSC.
+     *
+     * @param thePropsFilename A string containt a filename with the serialized
+     * Properties object for the transport
+     * @return A SmsSender object that uses the UcpTranport to send messages
+     * @throws SmsException
+     */
+    static public SmsSender getUcpSender(String thePropsFilename)
+        throws SmsException
+    {
+        //Liquidterm: strict input checking is done in the UcpTransport class
+        Properties props = new Properties();
+        try
+        {
+            props.load(new FileInputStream(thePropsFilename));
+        }
+        catch (IOException ex)
+        {
+            throw new SmsException("Couldn't load UCP transport properties " +
+                "from file : " + thePropsFilename);
+        }
+        return new SmsSender("org.marre.sms.transport.ucp.UcpTransport", props);
+    }
+    
+    /**
+     *
+     * Sends an OTA Bookmark to the given recipient
+     * 
+     * @param theTitle String with the title of the bookmark
+     * @param theURL String with the url referenced by the bookmark
+     * @param theDest String with the recipient number (international format
+     * without leading +)
+     * @param theSender String with the sender number. Can also be an
+     * alphanumerical string (not supported by all transports).
+     *
+     * @throws SmsException
+     */
+    public void sendOTABookmark(String theTitle, String theURL, String theDest,
+        String theSender)
+        throws SmsException 
+    {
+        //Liquidterm: add some URL checking
+        //Create xml bookmark definition
+        //Encode in wbxml
+        //Send it
+    }
+    
+    
+    /**
+     *
+     * Sends a Wap Push SI containing to the given recipient
+     * 
+     * @param theMessage String with the description of the service
+     * @param theUri String with the url referenced by the SI
+     * @param theDest String with the recipient number (international format
+     * without leading +)
+     * @param theSender String with the sender number. Can also be an
+     * alphanumerical string (not supported by all transports).
+     *
+     * @throws SmsException
+     */
+    public void sendWapSiPushMsg(String theUri, String theMessage, String theDest,
+        String theSender)
+        throws SmsException 
+    {
+        //Liquidterm: add some URI checking
+        //add checking on url and message length
+        WapSiPushMessage wapSiPushMsg = new WapSiPushMessage(theUri, theMessage);
+        
+        SmsAddress sender = new SmsAddress(theSender);
+        SmsAddress reciever = new SmsAddress(theDest);
+        
+        myTransport.send(wapSiPushMsg, reciever, sender);
+    }
+    
+    
     /**
      * Sends an ordinary SMS to the given recipient.
      * <p>
