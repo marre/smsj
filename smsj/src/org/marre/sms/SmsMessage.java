@@ -18,62 +18,9 @@
 */
 package org.marre.sms;
 
-public class SmsMessage
+import org.marre.sms.transport.SmsTransport;
+
+public interface SmsMessage
 {
-    protected byte myDcs = 0;
-    protected byte myUd[] = null;
-    protected int myUdLength = 0;
-    protected byte myUdh[] = null;
-
-    public void setDataCodingScheme(byte theDcs)
-    {
-        myDcs = theDcs;
-    }
-
-    public byte getDataCodingScheme()
-    {
-        return myDcs;
-    }
-
-    public byte[] getUserDataHeader()
-    {
-        return myUdh;
-    }
-
-    public void setUserDataHeader(byte[] theUdh)
-    {
-        myUdh = theUdh;
-    }
-
-    public void setUserData(byte[] theUd)
-    {
-        myUd = theUd;
-        myUdLength = theUd.length;
-    }
-
-    public void setUserData(byte[] theUd, int theUdLength)
-    {
-        myUd = theUd;
-        myUdLength = theUdLength;
-    }
-
-    public byte[] getUserData()
-    {
-        return myUd;
-    }
-
-    public int getUserDataLength()
-    {
-        return myUdLength;
-    }
-
-    public int getMessageClass()
-    {
-        return SmsConstants.MSG_CLASS_UNKNOWN;
-    }
-
-    public int getUserDataEncoding()
-    {
-        return -1;
-    }
+    public SmsPdu[] getPdus();
 }
