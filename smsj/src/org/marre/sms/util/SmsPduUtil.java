@@ -72,6 +72,29 @@ public class SmsPduUtil
     }
 
     /**
+     * Pack the given string into septets.
+     *
+     * @param theMsg The message to encode
+     * @return Returns a byte array septet encoded
+     * @throws IOException Thrown when failing to write to theOs
+     */
+    public static byte[] createSeptetByteArray(String theMsg)
+    {
+        try
+        {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
+            SmsPduUtil.writeSeptets(baos, theMsg);
+            baos.close();
+            return baos.toByteArray();
+        }
+        catch (IOException ex)
+        {
+            // Should not happen...
+            throw new RuntimeException();
+        }
+    }
+
+    /**
      * Decodes a 7-bit encoded string from the given byte array
      *
      * @param theArray The byte array to read from
