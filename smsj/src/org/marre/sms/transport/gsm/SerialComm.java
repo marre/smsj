@@ -34,6 +34,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.transport.gsm;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -51,6 +54,8 @@ import javax.comm.UnsupportedCommOperationException;
  */
 public class SerialComm
 {
+    private static Log logger = LogFactory.getLog(SerialComm.class);
+
     private static final int DEFAULT_BIT_RATE = 19200;
     private static String APP_NAME = "SMSJ";
     
@@ -147,11 +152,10 @@ public class SerialComm
     public void send(String data) 
         throws IOException
     {
-        // LOG
-        //System.err.println(">> " + data);
+        logger.info(">> " + data);
         
         myOutStream.write(data.getBytes());
-        myOutStream.write("\r\n".getBytes());
+        myOutStream.write("\r".getBytes());
     }
 
     public String readLine() 
@@ -183,10 +187,12 @@ public class SerialComm
             }
         }
 
+        String row = buffer.toString();
+        
         // LOG
-        //System.err.println("<< " + buffer);
+        logger.info("<< " + row);
 
-        return buffer.toString();
+        return row;
     }
     
     public void setBitRate(String theBitRate)
