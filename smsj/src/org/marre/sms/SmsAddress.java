@@ -34,6 +34,11 @@ public class SmsAddress
         myNpi = theNpi;
     }
 
+    public SmsAddress(String theAddress)
+    {
+        this(theAddress, SmsConstants.TON_INTERNATIONAL, SmsConstants.NPI_ISDN_TELEPHONE);
+    }
+
     public String getAddress()
     {
         return myAddress;
