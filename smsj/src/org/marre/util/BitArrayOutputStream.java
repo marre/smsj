@@ -1,4 +1,4 @@
-package org.marre.sms.util;
+package org.marre.util;
 
 import java.io.*;
 
