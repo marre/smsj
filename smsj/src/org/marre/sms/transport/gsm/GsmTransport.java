@@ -23,32 +23,75 @@ import java.io.*;
 
 import org.marre.sms.util.SmsPduUtil;
 import org.marre.sms.transport.SmsTransport;
-import org.marre.sms.SmsMessage;
+import org.marre.sms.SmsPdu;
 import org.marre.sms.SmsAddress;
 import org.marre.sms.SmsException;
 import org.marre.sms.SmsConstants;
 
+/**
+ * An SmsTransport that sends the SMS from an GSM phone that is attached
+ * to the serial port.
+ * <p>
+ * This transport has the following settable parameters:
+ * <br>
+ * <pre>
+ * <b>sms.gsm.serialport</b> - Serial port where the GSM phone is located. Ex: "COM1"
+ * </pre>
+ * <p>
+ * <i>This transport cannot set the sending "address" to anything else
+ * than the sending phone's phonenumber.</i>
+ *
+ * @todo Validity period
+ *
+ * @author Markus Eriksson
+ * @version 1.0
+ */
 public class GsmTransport implements SmsTransport
 {
+    public GsmTransport()
+    {
+    }
+
     public void init(Properties theProps)
         throws SmsException
     {
     }
 
-    public void login(String theUsername, String thePassword)
+    /**
+     * Initializes the communication with the GSM phone.
+     *
+     * @throws SmsException Thrown when the transport fails to communicate
+     * with the GSM phone
+     */
+    public void connect()
         throws SmsException
     {
         // Connect serial port
     }
 
-    public void sendMessage(SmsMessage theMsg, SmsAddress theDestination, SmsAddress theSender)
+    /**
+     * Sends the SMS message to the given recipients.
+     * <p>
+     * Note: The sending address is ignored for the GSM transport.
+     *
+     * @param thePdu The message pdu to send
+     * @param theDestination The reciever
+     * @param theSender The sending address, ignored
+     * @throws SmsException Thrown if we fail to send the SMS
+     */
+    public void send(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender)
         throws SmsException
     {
-        byte ud[] = theMsg.getUserData();
-        int udLength = theMsg.getUserDataLength();
-        byte udh[] = theMsg.getUserDataHeader();
+        byte ud[] = thePdu.getUserData();
+        int udLength = thePdu.getUserDataLength();
+        byte udh[] = thePdu.getUserDataHeader();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream(160);
+
+        if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
+        {
+            throw new SmsException("Cannot sent SMS to an ALPHANUMERIC address");
+        }
 
         try
         {
@@ -103,7 +146,7 @@ public class GsmTransport implements SmsTransport
             // 1 Integer
             // TP-DCS
             // UCS, septets, language, SMS class...
-            baos.write(theMsg.getDataCodingScheme());
+            baos.write(thePdu.getDataCodingScheme());
 
             // 1 octet/ 7 octets
             // TP-VP - Optional
@@ -149,52 +192,65 @@ public class GsmTransport implements SmsTransport
         System.out.println("Length : " + baos.size());
     }
 
+    public void send(SmsPdu thePdus[], SmsAddress theDestination, SmsAddress theSender)
+        throws SmsException
+    {
+        for(int i=0; i < thePdus.length; i++)
+        {
+            send(thePdus[i], theDestination, theSender);
+        }
+    }
+
+
+    /**
+     * Sends a "AT" command to keep the connection alive
+     *
+     * @throws SmsException
+     */
     public void ping()
         throws SmsException
     {
         // PONG
     }
 
-    public void logout()
+    /**
+     * Closes the serial connection to the phone
+     *
+     * @throws SmsException
+     */
+    public void disconnect()
         throws SmsException
     {
         // disconnect
     }
 
+    /**
+     * Writes a destination address to the given stream in the correct format
+     *
+     * @param theOs Stream to write to
+     * @param theDestination Destination address to encode
+     * @throws IOException Thrown if failing to write to the stream
+     */
     private void writeDestinationAddress(OutputStream theOs, SmsAddress theDestination)
-        throws SmsException
+        throws IOException
     {
         String address = theDestination.getAddress();
         int ton = theDestination.getTypeOfNumber();
         int npi = theDestination.getNumberingPlanIdentification();
 
-        try
+        // trim leading + from address
+        if (address.charAt(0) == '+')
         {
-            if (ton == SmsConstants.TON_ALPHANUMERIC)
-            {
-                throw new SmsException("Cannot sent SMS to an ALPHANUMERIC address");
-            }
-            else
-            {
-                // trim leading + from address
-                if (address.charAt(0) == '+')
-                {
-                    address = address.substring(1);
-                }
-
-                // Length in semi octets
-                theOs.write(address.length());
-
-                // Type Of Address
-                theOs.write(0x80 | ton << 4 | npi);
-
-                // BCD encode
-                SmsPduUtil.writeBcdNumber(theOs, address);
-            }
+            address = address.substring(1);
         }
-        catch (IOException ex)
-        {
-            throw new SmsException(ex.getMessage());
-        }
+
+        // Length in semi octets
+        theOs.write(address.length());
+
+        // Type Of Address
+        theOs.write(0x80 | ton << 4 | npi);
+
+        // BCD encode
+        SmsPduUtil.writeBcdNumber(theOs, address);
     }
 }

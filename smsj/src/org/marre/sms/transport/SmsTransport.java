@@ -20,7 +20,7 @@ package org.marre.sms.transport;
 
 import java.util.Properties;
 
-import org.marre.sms.SmsMessage;
+import org.marre.sms.SmsPdu;
 import org.marre.sms.SmsAddress;
 import org.marre.sms.SmsException;
 
@@ -28,11 +28,13 @@ public interface SmsTransport
 {
     public void init(Properties theProps) throws SmsException;
 
-    public void login(String theUsername, String thePassword) throws SmsException;
+    public void connect() throws SmsException;
 
-    public void sendMessage(SmsMessage theMsg, SmsAddress theDestination, SmsAddress theSender) throws SmsException;
+    public void send(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender) throws SmsException;
+
+    public void send(SmsPdu thePdus[], SmsAddress theDestination, SmsAddress theSender) throws SmsException;
 
     public void ping() throws SmsException;
 
-    public void logout() throws SmsException;
+    public void disconnect() throws SmsException;
 }
