@@ -213,6 +213,12 @@ public class SmsConstants
     /** WAP vCalendar */
     public static final int PORT_WAP_VCALENDAR = 9205;
 
+    /** OTA Settings - Browser */
+    public static final int PORT_OTA_SETTINGS_BROWSER = 49999;
+
+    /** OTA Settings - SyncML */
+    public static final int PORT_OTA_SETTINGS_SYNCML = 49996;
+
     /**
      * As defined in GSM 03.38. It contains all characters needed for most
      * Western European languages. It also contains upper case Greek characters.
