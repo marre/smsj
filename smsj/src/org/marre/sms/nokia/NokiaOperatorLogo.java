@@ -37,7 +37,7 @@ import org.marre.sms.util.SmsUdhUtil;
  */
 public class NokiaOperatorLogo extends SmsConcatMessage
 {
-    static Log myLog = LogFactory.getLog(NokiaGroupGraphic.class);
+    static Log myLog = LogFactory.getLog(NokiaOperatorLogo.class);
 
     /**
      *
