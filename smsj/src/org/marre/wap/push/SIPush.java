@@ -48,33 +48,45 @@ public class SIPush
     private Date myExpires = null;
     private String myAction = null;
 
-    private String myContent = null;
+    private String myMessage = null;
 
-    public SIPush()
+    public SIPush(String uri, String message)
     {
     }
 
-    public static void main(String argv[])
-        throws Exception
+    public static final WbxmlWriter getWbxmlWriter()
     {
         WbxmlWriter writer = new WbxmlWriter();
-
-        writer.setDoctype("si", "-//WAPFORUM//DTD SI 1.0//EN", "http://www.wapforum.org/DTD/si.dtd");
 
         writer.setTagTokens(SI_TAG_TOKENS);
         writer.setAttrStartTokens(SI_ATTR_START_TOKENS);
         writer.setAttrValueTokens(SI_ATTR_VALUE_TOKENS);
 
+        return writer;
+    }
+
+    public void writeTo(XmlWriter writer, OutputStream os)
+        throws IOException
+    {
+        writer.reset();
+
+        writer.setDoctype("si", "-//WAPFORUM//DTD SI 1.0//EN", "http://www.wapforum.org/DTD/si.dtd");
+
         writer.addStartElement("si");
         writer.addStartElement("indication", new XmlAttribute[] {
-                                new XmlAttribute("href", "http://www.xyz.com/email/123/abc.wml") });
-        writer.addCharacters("You have 4 new e-mails");
+                                new XmlAttribute("href", myUri) });
+        writer.addCharacters(myMessage);
         writer.addEndTag();
         writer.addEndTag();
 
-        // Write...
-        writer.writeTo(new FileOutputStream("si.wbxml"));
-        writer.reset();
+        writer.writeTo(os);
+    }
+
+    public static void main(String argv[])
+        throws Exception
+    {
+        SIPush push = new SIPush("http://wap.tv4.se/", "TV4 Nyheter");
+        push.writeTo(getWbxmlWriter(), new FileOutputStream("si.wbxml"));
     }
 
     private byte[] encodeDateTime(Date theDate)
@@ -94,6 +106,66 @@ ss = 2 digit second (“00” ... “59”)
 Note: T and Z appear literally in the string.
 Example: 1999-04-30T06:40:00Z means 6.40 in the morning UTC on the 30th of April 1999.
 */
+    }
+
+    public String getUri()
+    {
+        return myUri;
+    }
+
+    public void setUri(String myUri)
+    {
+        this.myUri = myUri;
+    }
+
+    public String getId()
+    {
+        return myId;
+    }
+
+    public void setId(String myId)
+    {
+        this.myId = myId;
+    }
+
+    public Date getCreated()
+    {
+        return myCreated;
+    }
+
+    public void setCreated(Date myCreated)
+    {
+        this.myCreated = myCreated;
+    }
+
+    public Date getExpires()
+    {
+        return myExpires;
+    }
+
+    public void setExpires(Date myExpires)
+    {
+        this.myExpires = myExpires;
+    }
+
+    public String getAction()
+    {
+        return myAction;
+    }
+
+    public void setAction(String myAction)
+    {
+        this.myAction = myAction;
+    }
+
+    public String getMessage()
+    {
+        return myMessage;
+    }
+
+    public void setMessage(String myMessage)
+    {
+        this.myMessage = myMessage;
     }
 
     private static final String [] SI_TAG_TOKENS = {

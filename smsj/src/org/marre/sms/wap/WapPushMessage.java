@@ -56,6 +56,11 @@ public class WapPushMessage extends SmsConcatMessage
 {
     private byte[] myPushMsg;
 
+    protected WapPushMessage()
+    {
+        super(SmsConstants.DCS_DEFAULT_8BIT);
+    }
+
     /**
      * Sends a CL WAP push message OTA with SMS.
      *
@@ -64,7 +69,6 @@ public class WapPushMessage extends SmsConcatMessage
     public WapPushMessage(byte[] thePushMsg)
     {
         super(SmsConstants.DCS_DEFAULT_8BIT);
-
         myPushMsg = thePushMsg;
     }
 
@@ -78,72 +82,7 @@ public class WapPushMessage extends SmsConcatMessage
     public WapPushMessage(byte[] thePushMsg, MimeContentType theContentType, String theAppId)
     {
         super(SmsConstants.DCS_DEFAULT_8BIT);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        try
-        {
-            //
-            // WSP HEADER
-            //
-
-            // TID - Transaction ID
-            // FIXME: Should perhaps set TID to something useful?
-            WspUtil.writeUint8(baos, 0x00);
-
-            // Type
-            WspUtil.writeUint8(baos, WapConstants.PDU_TYPE_PUSH);
-
-            //
-            // WAP PUSH FIELDS
-            //
-
-            // Create headers first
-            ByteArrayOutputStream headers = new ByteArrayOutputStream();
-
-            // Content-type
-            WspUtil.writeContentType(headers, theContentType);
-
-            // WAP-HEADERS
-            // There could be more wap headers, but we currently only use
-            // the Application ID
-
-            // App ID
-            if( theAppId != null)
-            {
-                WspUtil.writeHeaderXWapApplicationId(headers, theAppId);
-            }
-            // Done with the headers...
-            headers.close();
-
-            // Headers created, write headers lenght and headers to baos
-
-            // HeadersLen - Length of Content-type and Headers
-            WspUtil.writeUintvar(baos, headers.size());
-
-            // Headers
-            baos.write(headers.toByteArray());
-
-            // Data
-            baos.write(thePushMsg);
-
-            // Done
-            baos.close();
-        }
-        catch (IOException ex)
-        {
-            // Shouldn't happen
-        }
-
-        myPushMsg = baos.toByteArray();
-
-        setContent(
-            new SmsUdhElement[] {
-                SmsUdhUtil.get16BitApplicationPortUdh(SmsConstants.PORT_WAP_PUSH,
-                                                      SmsConstants.PORT_WAP_WSP)
-            },
-            myPushMsg,
-            myPushMsg.length);
+        createMessage(thePushMsg, theContentType, theAppId);
     }
 
     /**
@@ -155,8 +94,27 @@ public class WapPushMessage extends SmsConcatMessage
      */
     public WapPushMessage(byte[] thePushMsg, String theContentType, String theAppId)
     {
-        super(SmsConstants.DCS_DEFAULT_8BIT);
+        this(thePushMsg, new MimeContentType(theContentType), theAppId);
+    }
 
+    /**
+     * Sends a CL WAP push message OTA with SMS.
+     *
+     * @param thePushMsg The push message
+     * @param theContentType Content-type of the push
+     */
+    public WapPushMessage(byte[] thePushMsg, String theContentType)
+    {
+        this(thePushMsg, theContentType, null);
+    }
+
+    protected void createMessage(byte[] thePushMsg, String theContentType, String theAppId)
+    {
+        this.createMessage(thePushMsg, new MimeContentType(theContentType), theAppId);
+    }
+
+    protected void createMessage(byte[] thePushMsg, MimeContentType theContentType, String theAppId)
+    {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try
@@ -222,17 +180,6 @@ public class WapPushMessage extends SmsConcatMessage
             },
             myPushMsg,
             myPushMsg.length);
-    }
-
-    /**
-     * Sends a CL WAP push message OTA with SMS.
-     *
-     * @param thePushMsg The push message
-     * @param theContentType Content-type of the push
-     */
-    public WapPushMessage(byte[] thePushMsg, String theContentType)
-    {
-        this(thePushMsg, theContentType, null);
     }
 
     /**
