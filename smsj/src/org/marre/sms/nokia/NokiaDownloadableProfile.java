@@ -23,8 +23,6 @@
 package org.marre.sms.nokia;
 
 import java.io.UnsupportedEncodingException;
-import org.apache.commons.logging.*;
-
 /**
  * Nokia Downloadable Profile
  *
@@ -33,8 +31,6 @@ import org.apache.commons.logging.*;
  */
 public class NokiaDownloadableProfile extends NokiaMultipartMessage
 {
-    private static Log myLog = LogFactory.getLog(NokiaDownloadableProfile.class);
-
     private String myProfileName = null;
     private byte[] myScreenSaver = null;
     private byte[] myRingingTone = null;
@@ -81,7 +77,7 @@ public class NokiaDownloadableProfile extends NokiaMultipartMessage
         }
         catch (UnsupportedEncodingException ex)
         {
-            myLog.fatal("Shouldn't happen, 'UTF-16BE' is in the standard", ex);
+            //myLog.fatal("Shouldn't happen, 'UTF-16BE' is in the standard", ex);
         }
     }
 

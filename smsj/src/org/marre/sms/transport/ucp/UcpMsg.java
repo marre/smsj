@@ -37,8 +37,6 @@ package org.marre.sms.transport.ucp;
 import java.util.*;
 import java.io.*;
 
-import org.apache.commons.logging.*;
-
 import org.marre.util.*;
 
 /**
@@ -48,8 +46,6 @@ import org.marre.util.*;
  */
 public abstract class UcpMsg
 {
-    static Log myLog = LogFactory.getLog(UcpMsg.class);
-
     protected String[] myUcpFields;
     protected char myOR; // 'O' or 'R'
     protected int myTrn;

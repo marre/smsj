@@ -36,8 +36,6 @@ package org.marre.sms.wap;
 
 import java.io.*;
 
-import org.apache.commons.logging.*;
-
 import org.marre.wap.*;
 import org.marre.wap.util.*;
 import org.marre.mime.MimeContentType;
@@ -56,8 +54,6 @@ import org.marre.sms.util.*;
  */
 public class WapPushMessage extends SmsConcatMessage
 {
-    static Log myLog = LogFactory.getLog(WapPushMessage.class);
-
     private byte[] myPushMsg;
 
     /**
@@ -136,7 +132,6 @@ public class WapPushMessage extends SmsConcatMessage
         }
         catch (IOException ex)
         {
-            myLog.error("Failed to write to bytearrayoutputstream", ex);
             // Shouldn't happen
         }
 
@@ -215,7 +210,6 @@ public class WapPushMessage extends SmsConcatMessage
         }
         catch (IOException ex)
         {
-            myLog.error("Failed to write to bytearrayoutputstream", ex);
             // Shouldn't happen
         }
 

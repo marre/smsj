@@ -26,8 +26,6 @@ import java.io.*;
 import java.util.LinkedList;
 import java.awt.image.BufferedImage;
 
-import org.apache.commons.logging.*;
-
 import org.marre.sms.util.SmsUdhUtil;
 import org.marre.sms.*;
 
@@ -41,8 +39,6 @@ import org.marre.sms.*;
  */
 abstract class NokiaMultipartMessage extends SmsConcatMessage
 {
-    private static Log myLog = LogFactory.getLog(NokiaMultipartMessage.class);
-
     private boolean isDirty = true;
 
     private LinkedList myParts = new LinkedList();
@@ -117,7 +113,6 @@ abstract class NokiaMultipartMessage extends SmsConcatMessage
         catch (IOException ex)
         {
             // Should not happen!
-            myLog.fatal("Failed to write to ByteArrayOutputStream!", ex);
         }
 
         // Let SmsConcatMessage build the pdus...

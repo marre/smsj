@@ -24,8 +24,6 @@ package org.marre.sms.nokia;
 
 import java.io.*;
 
-import org.apache.commons.logging.*;
-
 import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsConcatMessage;
 import org.marre.sms.SmsUdhElement;
@@ -41,8 +39,6 @@ import org.marre.sms.util.SmsUdhUtil;
  */
 public class NokiaGroupGraphic extends SmsConcatMessage
 {
-    private static Log myLog = LogFactory.getLog(NokiaGroupGraphic.class);
-
     /**
      * Creates a group graphic SMS message
      *
@@ -88,7 +84,6 @@ public class NokiaGroupGraphic extends SmsConcatMessage
         catch (IOException ex)
         {
             // Should not happen!
-            myLog.fatal("Failed to write to ByteArrayOutputStream", ex);
         }
 
         // Let SmsConcatMessage build the pdus...

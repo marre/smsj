@@ -22,8 +22,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.nokia;
 
-import org.apache.commons.logging.*;
-
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -34,8 +32,6 @@ import java.io.UnsupportedEncodingException;
  */
 public class NokiaPictureMessage extends NokiaMultipartMessage
 {
-    private static Log myLog = LogFactory.getLog(NokiaPictureMessage.class);
-
     /**
      * Creates a Nokia Picture Message
      *
@@ -123,7 +119,7 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
         }
         catch (UnsupportedEncodingException ex)
         {
-            myLog.fatal("Shouldn't happen, 'UTF-16BE' and 'ISO-8859-1' is in the standard", ex);
+            //myLog.fatal("Shouldn't happen, 'UTF-16BE' and 'ISO-8859-1' are in the standard", ex);
         }
     }
 }

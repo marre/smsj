@@ -25,8 +25,6 @@ package org.marre.sms.nokia;
 import java.io.*;
 import java.awt.image.BufferedImage;
 
-import org.apache.commons.logging.*;
-
 import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsConcatMessage;
 import org.marre.sms.SmsUdhElement;
@@ -41,8 +39,6 @@ import org.marre.sms.util.SmsUdhUtil;
  */
 public class NokiaOperatorLogo extends SmsConcatMessage
 {
-    private static Log myLog = LogFactory.getLog(NokiaOperatorLogo.class);
-
     /**
      * If set to true it will make the message two bytes shorter
      * to make it possible to fit a 72x14 pixel image in one SMS
@@ -139,7 +135,6 @@ public class NokiaOperatorLogo extends SmsConcatMessage
         catch (IOException ex)
         {
             // Should not happen!
-            myLog.fatal("Failed to write to ByteArrayOutputStream", ex);
         }
 
         setContent(udhElements, baos.toByteArray(), baos.size());

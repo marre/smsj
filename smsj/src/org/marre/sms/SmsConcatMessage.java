@@ -36,7 +36,6 @@ package org.marre.sms;
 
 import java.util.*;
 import java.io.*;
-import org.apache.commons.logging.*;
 import org.marre.sms.util.*;
 
 /**
@@ -54,7 +53,6 @@ import org.marre.sms.util.*;
 public class SmsConcatMessage extends SmsAbstractMessage
 {
     private static final Random myRnd = new Random();
-    private static Log myLog = LogFactory.getLog(SmsConcatMessage.class);
 
     /** Length of myUd, can be in octets or septets */
     protected int myUdLength = 0;
@@ -163,7 +161,6 @@ public class SmsConcatMessage extends SmsAbstractMessage
         catch (IOException ioe)
         {
             // Shouldn't happen.
-            myLog.fatal("Failed to write to ByteArrayOutputStream", ioe);
         }
 
         return baos.toByteArray();

@@ -284,68 +284,6 @@ public class SmsPduUtil
     }
 
     /**
-     * Converts a byte array to a string with hex values.
-     *
-     * @param theData Data to convert
-     * @return the encoded string
-     */
-    public static String bytesToHexString(byte[] theData)
-    {
-        StringBuffer hexStrBuff = new StringBuffer(theData.length*2);
-
-        for(int i=0; i < theData.length; i++)
-        {
-            String hexByteStr = Integer.toHexString(theData[i] & 0xff).toUpperCase();
-            if (hexByteStr.length() == 1)
-            {
-                hexStrBuff.append("0");
-            }
-            hexStrBuff.append(hexByteStr);
-        }
-
-        return hexStrBuff.toString();
-    }
-
-    /**
-     * Converts a byte to a string with hex values.
-     *
-     * @param theByte Byte to convert
-     * @return the encoded string
-     */
-    public static String byteToHexString(byte theByte)
-    {
-        StringBuffer hexStrBuff = new StringBuffer(2);
-
-        String hexByteStr = Integer.toHexString(theByte & 0xff).toUpperCase();
-        if (hexByteStr.length() == 1)
-        {
-            hexStrBuff.append("0");
-        }
-        hexStrBuff.append(hexByteStr);
-
-        return hexStrBuff.toString();
-    }
-
-    /**
-     * Converts a string of hex characters to a byte array
-     *
-     * @param theHexString The hex string to read
-     * @return the resulting byte array
-     */
-    public static byte[] hexStringToBytes(String theHexString)
-    {
-        byte data[] = new byte[theHexString.length()/2];
-
-        for(int i=0; i < data.length; i++)
-        {
-            String a = theHexString.substring(i*2, i*2+2);
-            data[i] = (byte)Integer.parseInt(a, 16);
-        }
-
-        return data;
-    }
-
-    /**
      * Convert from the GSM charset to a unicode char
      *
      * @param gsmChar The gsm char to convert

@@ -39,8 +39,6 @@ import java.io.*;
 
 import org.marre.util.*;
 
-import org.apache.commons.logging.*;
-
 /**
  *
  * @author Markus Eriksson
@@ -48,8 +46,6 @@ import org.apache.commons.logging.*;
  */
 public class UcpSeries50 extends UcpMsg
 {
-    static Log myLog = LogFactory.getLog(UcpSeries50.class);
-
     protected static final int FIELD_AdC = 0;
     protected static final int FIELD_OAdC = 1;
     protected static final int FIELD_AC = 2;

@@ -37,8 +37,6 @@ package org.marre.sms.transport.ucp;
 import java.util.*;
 import java.io.*;
 
-import org.apache.commons.logging.*;
-
 import org.marre.util.StringUtil;
 import org.marre.sms.util.SmsPduUtil;
 import org.marre.sms.util.SmsDcsUtil;
@@ -57,8 +55,6 @@ import org.marre.sms.SmsConstants;
  */
 public class UcpTransport implements SmsTransport
 {
-    static Log myLog = LogFactory.getLog(UcpTransport.class);
-
     public UcpTransport()
     {
     }
