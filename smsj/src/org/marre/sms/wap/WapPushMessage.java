@@ -23,13 +23,23 @@ import org.marre.sms.util.*;
 
 /**
  * Connectionless WAP push message with SMS as bearer.
+ * <p>
+ * It will support the setting of "content-type" and "X-Wap-Application-Id",
+ * no other headers will be supported.
  *
  * @author Markus Eriksson
  * @version 1.0
  */
 public class WapPushMessage extends SmsConcatMessage
 {
-    public WapPushMessage(byte[] thePayload)
+    /**
+     * Sends a CL WAP push message OTA with SMS.
+     * <p>
+     * The payload must be a complete WSP encoded WAP push message.
+     *
+     * @param thePayload WSP encoded PUSH message
+     */
+    public WapPushMessage(byte[] theWspPushMsg)
     {
         super(SmsConstants.DCS_DEFAULT_8BIT);
 
@@ -38,6 +48,6 @@ public class WapPushMessage extends SmsConcatMessage
                                                   SmsConstants.PORT_WAP_WSP)
         };
 
-        setContent(wapPushPortUdh, thePayload, thePayload.length);
+        setContent(wapPushPortUdh, theWspPushMsg, theWspPushMsg.length);
     }
 }
