@@ -32,13 +32,19 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.sms;
+package org.marre;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.marre.wap.nokia.NokiaOtaBookmark;
+import org.marre.sms.SmsAddress;
+import org.marre.sms.SmsConstants;
+import org.marre.sms.SmsException;
+import org.marre.sms.SmsTextMessage;
+import org.marre.sms.SmsTransport;
+import org.marre.sms.SmsTransportManager;
+import org.marre.wap.nokia.NokiaOtaBrowserSettings;
 import org.marre.wap.push.SmsWapPushMessage;
 import org.marre.wap.push.WapSIPush;
 
@@ -349,6 +355,59 @@ public class SmsSender
         myTransport.send(textMessage, new SmsAddress(theDest), new SmsAddress(theSender));
     }
 
+   /**
+    *
+    * Sends an OTA Bookmark (Nokia specification) to the given recipient
+    * 
+    * @param theTitle String with the title of the bookmark
+    * @param theUri String with the url referenced by the bookmark
+    * @param theDest String with the recipient number (international format
+    * without leading +)
+    * @param theSender String with the sender number. Can also be an
+    * alphanumerical string (not supported by all transports).
+    *
+    * @throws SmsException
+    */
+   public void sendNokiaBookmark(String theTitle, String theUri, String theDest, String theSender) throws SmsException 
+   {
+       NokiaOtaBrowserSettings browserSettings = new NokiaOtaBrowserSettings();
+       browserSettings.addBookmark(theTitle, theUri);
+       
+       SmsWapPushMessage wapPushMessage = new SmsWapPushMessage(browserSettings);
+       wapPushMessage.setPushPorts(49154, SmsConstants.PORT_OTA_SETTINGS_BROWSER);
+       
+       SmsAddress sender = new SmsAddress(theSender);
+       SmsAddress reciever = new SmsAddress(theDest);
+       
+       myTransport.send(wapPushMessage, reciever, sender);
+   }
+    
+  /**
+   *
+   * Sends a Wap Push SI containing to the given recipient
+   * 
+   * @param theMessage String with the description of the service
+   * @param theUri String with the url referenced by the SI
+   * @param theDest String with the recipient number
+   * @param theSender String with the sender number. Can also be an
+   * alphanumerical string (not supported by all transports).
+   *
+   * @throws SmsException
+   */
+  public void sendWapSiPushMsg(String theUri, String theMessage, String theDest, String theSender) throws SmsException 
+  {
+      //Liquidterm: add some URI checking
+      //add checking on url and message length
+      WapSIPush siPush = new WapSIPush(theUri, theMessage);
+      
+      SmsWapPushMessage wapPushMessage = new SmsWapPushMessage(siPush);
+      
+      SmsAddress sender = new SmsAddress(theSender);
+      SmsAddress reciever = new SmsAddress(theDest);
+      
+      myTransport.send(wapPushMessage, reciever, sender);
+  }
+   
     /**
      * Call this when you are done with the SmsSender object.
      * <p>
