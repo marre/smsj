@@ -24,7 +24,7 @@
    <!-- Kill all the directories created in prepare -->
    <target name="clean" depends="globals">
       <delete dir="${build}"/>
-      <delete dir="${dist}"/>
+      <!-- <delete dir="${dist}"/> -->
    </target>
    <!-- Prepare target directories -->
    <target name="prepare" depends="clean">
@@ -43,11 +43,6 @@
       <jar jarfile="${dist}/${project}.jar">
          <fileset dir="${build.classes}" includes="**/*.class" excludes="org/marre/sms/test/*"/>
       </jar>
-   </target>
-   <!--Deploys all files in this project-->
-   <target name="deploy" depends="jar" description="Deploys the entire project">
-      <copy todir="${deploydir.jar}" file="${dist}/${project}.jar"/>
-      <copy todir="${deploydir.develop.jar}" file="${dist}/${project}.jar"/>
    </target>
    <!-- Builds Javadoc for this project-->
    <target name="javadoc" depends="compile" description="Creates JavaDoc for this project">
