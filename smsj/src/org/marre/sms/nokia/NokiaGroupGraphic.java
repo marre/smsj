@@ -19,14 +19,12 @@
 package org.marre.sms.nokia;
 
 import java.io.*;
-import java.awt.image.BufferedImage;
 
 import org.apache.commons.logging.*;
 
 import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsConcatMessage;
 import org.marre.sms.SmsUdhElement;
-import org.marre.sms.util.SmsPduUtil;
 import org.marre.sms.util.SmsUdhUtil;
 
 /**
@@ -37,11 +35,13 @@ import org.marre.sms.util.SmsUdhUtil;
  */
 public class NokiaGroupGraphic extends SmsConcatMessage
 {
-    static Log myLog = LogFactory.getLog(NokiaGroupGraphic.class);
+    private static Log myLog = LogFactory.getLog(NokiaGroupGraphic.class);
 
     /**
-     *
-     * @param theOtaBitmap
+     * Creates a group graphic SMS message
+     * 
+     * @param theOtaBitmap An OtaBitmap object representing the
+     * image to send
      */
     public NokiaGroupGraphic(OtaBitmap theOtaBitmap)
     {
@@ -49,6 +49,9 @@ public class NokiaGroupGraphic extends SmsConcatMessage
     }
 
     /**
+     * Creates a group graphic SMS message
+     * <p>
+     * The given byte array must be in the Nokia OTA image format.
      *
      * @param theOtaImage The ota image as a byte-array
      */
@@ -58,10 +61,6 @@ public class NokiaGroupGraphic extends SmsConcatMessage
         setContent(theOtaImage);
     }
 
-    /**
-     *
-     * @param theOtaBitmap
-     */
     private void setContent(byte[] theOtaBitmap)
     {
         SmsUdhElement[] udhElements = new SmsUdhElement[1];
@@ -90,3 +89,4 @@ public class NokiaGroupGraphic extends SmsConcatMessage
         setContent(udhElements, baos.toByteArray(), baos.size());
     }
 }
+
