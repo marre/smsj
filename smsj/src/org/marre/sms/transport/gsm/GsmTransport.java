@@ -95,7 +95,7 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
 
     public void init(Properties theProps) throws SmsException
     {
-        mySerialPortName=theProps.getProperty("sms.gsm.serialport", "COM2");
+        mySerialPortName=theProps.getProperty("sms.gsm.serialport", "COM1");
 
         CommPortIdentifier portId = null;
         Enumeration portList = CommPortIdentifier.getPortIdentifiers();
@@ -556,7 +556,7 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
           while((myPortStatus==MSG_WAIT)&&(i++<TRIES))
           try
           {
-            Thread.sleep(500);
+            Thread.sleep(1500);
           }
           catch (InterruptedException e)
           {
@@ -586,6 +586,7 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
     {
         synchronized(myPortStatusLock) {
             myPortStatus = MSG_WAIT;
+            myPortMessage="";
             try {
                 myOutStream.write((cmd + LINEFEED).getBytes());
             } catch (IOException e) {
@@ -634,7 +635,7 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
                         lineReceived(sbuf);
                         myBufferOffset = 0;
                     }
-                    else if (myReadBuffer[myBufferOffset-2] == '>'){
+                    else if (myBufferOffset>=2&&myReadBuffer[myBufferOffset-2] == '>'){
                         String sbuf = new String(myReadBuffer,0,myBufferOffset);
                         lineReceived(sbuf);
                         myBufferOffset = 0;
@@ -668,7 +669,7 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
                 }
             }
             //For later use
-            myPortMessage=buffer;
+            myPortMessage+="\r\n"+buffer;
             myPortStatusLock.notify();
         }
         return;
