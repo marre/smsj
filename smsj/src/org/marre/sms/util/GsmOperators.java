@@ -96,6 +96,11 @@ public final class GsmOperators
     public static final int   IT_WIND_MCC = 222;
     public static final int   IT_WIND_MNC = 88;
     public static final int[] IT_WIND_MCC_MNC = {IT_WIND_MCC, IT_WIND_MNC};
+    
+	// IT - BLU (Legacy)
+    public static final int   IT_BLU_MCC = 222;
+    public static final int   IT_BLU_MNC = 98;
+    public static final int[] IT_BLU_MCC_MNC = {IT_BLU_MCC, IT_BLU_MNC};    
 
     /**
      * Returns the Mcc and Mnc number for the given number, if the area code is in the property file
