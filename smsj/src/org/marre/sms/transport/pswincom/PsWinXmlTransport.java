@@ -121,10 +121,13 @@ public class PsWinXmlTransport implements SmsTransport
         theXmlWriter.write(theDestination.getAddress());
         theXmlWriter.write("</RCV>\r\n");
 
-        // <SND>434344</SND>
-        theXmlWriter.write("<SND>");
-        theXmlWriter.write(theSender.getAddress());
-        theXmlWriter.write("</SND>\r\n");
+        if (theSender != null)
+        {
+            // <SND>434344</SND>
+            theXmlWriter.write("<SND>");
+            theXmlWriter.write(theSender.getAddress());
+            theXmlWriter.write("</SND>\r\n");
+        }
 
         if (SmsDcsUtil.getMessageClass(thePdu.getDcs()) == SmsConstants.MSG_CLASS_0)
         {
@@ -176,10 +179,13 @@ public class PsWinXmlTransport implements SmsTransport
         theXmlWriter.write(theDestination.getAddress());
         theXmlWriter.write("</RCV>\r\n");
 
-        // <SND>434344</SND>
-        theXmlWriter.write("<SND>");
-        theXmlWriter.write(theSender.getAddress());
-        theXmlWriter.write("</SND>\r\n");
+        if (theSender != null)
+        {
+            // <SND>434344</SND>
+            theXmlWriter.write("<SND>");
+            theXmlWriter.write(theSender.getAddress());
+            theXmlWriter.write("</SND>\r\n");
+        }
 
         if (SmsDcsUtil.getMessageClass(userData.getDcs()) == SmsConstants.MSG_CLASS_0)
         {
@@ -236,7 +242,7 @@ public class PsWinXmlTransport implements SmsTransport
 
     protected String[] sendReqToPsWinCom(byte[] theXmlReq) throws IOException
     {
-        Socket xmlSocket = new Socket("62.70.71.19", 1111);
+        Socket xmlSocket = new Socket("sms.pswin.com", 1111);
 
         // Send request
         OutputStream os = xmlSocket.getOutputStream();
