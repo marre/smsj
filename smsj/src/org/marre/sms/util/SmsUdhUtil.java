@@ -34,8 +34,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.util;
 
+import org.marre.sms.EmsUdhElement;
 import org.marre.sms.SmsUdhElement;
 import org.marre.sms.SmsConstants;
+import org.marre.sms.nokia.OtaBitmap;
 
 /**
  * Toolkit class for SmsUdhElement objects
@@ -241,14 +243,52 @@ public class SmsUdhUtil
         return new SmsUdhElement(SmsConstants.UDH_IEI_EMS_TEXT_FORMATTING, udh);
     }
     
-    public static final SmsUdhElement getEmsUserDefinedSoundUdh(byte[] theIMelody) {
+    /**
+     * 
+     * @param theIMelody
+     * @return
+     */
+    public static final SmsUdhElement getEmsUserDefinedSoundUdh(byte[] theIMelody, int position) {
         int iMelodyLength = theIMelody.length;
-        byte[] udh = new byte[2 + iMelodyLength];
-        udh[0] = (byte) 0x00;
+        byte[] udh = new byte[iMelodyLength + 1];
+        udh[0] = (byte) position;
         System.arraycopy(theIMelody, 0, udh, 1, iMelodyLength);
         
         return new SmsUdhElement(SmsConstants.UDH_IEI_EMS_USER_DEFINED_SOUND, udh);
     }
     
+	 /**
+		* 
+	 	* @param theIMelody
+	 	* @return
+	 	*/
+		public static final SmsUdhElement getEmsUserPromptIndicatorUdh(int numFragments) {
+				byte[] udh = new byte[1];
+				udh[0] = (byte) numFragments;
+				
+				return new SmsUdhElement(SmsConstants.UDH_IEI_EMS_USER_PROMPT, udh);
+		}
     
+	 /**
+	  * 
+	  * @param theIMelody
+	  * @return
+	  */
+	  public static final SmsUdhElement getEmsVariablePictureUdh(OtaBitmap otaBitmap, int position) {
+			
+			byte[] data = otaBitmap.getImageData();
+			int otaBitmapLength = data.length;
+			
+			System.out.println("Len: " + otaBitmapLength);
+			
+			byte[] udh = new byte[otaBitmapLength + 3];
+			
+			udh[0] = (byte) position;
+			udh[1] = (byte) (otaBitmap.getWidth()/8);
+			udh[2] = (byte) otaBitmap.getHeight();
+			
+			System.arraycopy(data, 0, udh, 3, otaBitmapLength);
+        
+			return new SmsUdhElement(SmsConstants.UDH_IEI_EMS_VARIABLE_PICTURE, udh);
+	  }
 }
