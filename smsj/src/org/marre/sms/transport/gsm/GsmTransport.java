@@ -118,15 +118,18 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
 
         /* port not found */
         if(mySerialPort == null) {
-            myLog.error("Port "+mySerialPortName+" does not exist.");
-            throw new SmsException("Port "+mySerialPortName+" does not exist.");
+            myLog.error("Port " + mySerialPortName + " does not exist.");
+            throw new SmsException("Port " + mySerialPortName + " does not exist.");
         }
 
         /* Open streams to the port */
-        try {
+        try
+        {
             myOutStream = mySerialPort.getOutputStream();
             myInStream = mySerialPort.getInputStream();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             mySerialPort.close();
             myLog.error("Cannot open streams", e);
             throw new SmsException("Cannot open streams.");
@@ -136,7 +139,7 @@ public class GsmTransport implements SmsTransport, SerialPortEventListener
         myBitRate = Integer.valueOf(theProps.getProperty("sms.gsm.bitrate", "19200")).intValue();
 
         myBit=SerialPort.DATABITS_8;
-        switch (Integer.valueOf(theProps.getProperty("sms.gsm.myBit", "8")).intValue()){
+        switch (Integer.valueOf(theProps.getProperty("sms.gsm.bit", "8")).intValue()){
             case 5: myBit=SerialPort.DATABITS_5; break;
             case 6: myBit=SerialPort.DATABITS_6; break;
             case 7: myBit=SerialPort.DATABITS_7; break;
