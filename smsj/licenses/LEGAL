@@ -1,0 +1,11 @@
+Please be apprised of the following Legal Notices:
+
+A) If you are going to send messages that uses 
+   "Nokia Smart Messaging" (ie org.marre.sms.nokia.*)
+   you must sign a license agreement with Nokia. You 
+   can currently download the license from:
+   http://www.forum.nokia.com/smsforum/main/1,35452,1_2_5_1,00.html
+
+   Because of this the org.marre.sms.nokia.* subtree is
+   only licensed under the MPL. Not the tripple MPL/LGPL/GPL
+   license as the rest of the library.
