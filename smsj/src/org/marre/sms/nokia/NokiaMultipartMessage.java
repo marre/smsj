@@ -72,9 +72,8 @@ abstract class NokiaMultipartMessage extends SmsConcatMessage
      * <p>
      * It relies on SmsConcat message to actually build the different PDU:s
      *
-     * @return PDU:s
      */
-    public SmsPdu[] getPdus()
+    protected void buildPdus()
     {
         SmsUdhElement[] udhElements = new SmsUdhElement[1];
         ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
@@ -114,6 +113,5 @@ abstract class NokiaMultipartMessage extends SmsConcatMessage
 
         // Let SmsConcatMessage build the pdus...
         setContent(udhElements, baos.toByteArray(), baos.size());
-        return super.getPdus();
     }
 }

@@ -94,6 +94,9 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
             addText(theMsg, asUnicode);
             addBitmap(theBitmap);
         }
+
+        // Finally let the NokiaMultipartMessage build the pdu:s
+        buildPdus();
     }
 
     /**
