@@ -41,16 +41,21 @@ import java.util.Hashtable;
  * @author lbarth
  */
 public class UcpUtil {
+/*
     private Hashtable IRA_Uni = new Hashtable(127, 1.0F);
     private Hashtable Uni_IRA = new Hashtable(127, 1.0F);
+*/
     /**
      * This class isn't intended to be instantiated
      */
+/*
     public UcpUtil()
     {
     	crearTablaConversiones();
     }
-    
+*/
+    // FIXME: Is this the same as StringUtil.bytesToHexString(SmsPduUtil.getSeptets(parString)) ??
+/*
     public String encode7bitsIn8(String parString) {
 	parString = unicode2IRA(parString);
 	StringCharacterIterator sci = new StringCharacterIterator(parString);
@@ -77,14 +82,16 @@ public class UcpUtil {
 	}
 	return salida.toString();
     }
+*/
     
-    
-    public String encodeInIRA(String parString) 
+    // FIXME: Is this the same as StringUtil.toGsmCharset(SmsPduUtil.getSeptets(parString)) ??
+/*
+    public String encodeInIRA(String parString)
     {
 		parString = unicode2IRA(parString);
 		StringCharacterIterator sci = new StringCharacterIterator(parString);
 		String bits = "";
-		for (char c = sci.first(); c != '\uffff'; c = sci.next()) 
+		for (char c = sci.first(); c != '\uffff'; c = sci.next())
 		{
 		    StringBuffer bin = new StringBuffer("00000000");
 		    String binValue = Integer.toBinaryString(c);
@@ -93,7 +100,7 @@ public class UcpUtil {
 		    bits = binValue.concat(bits);
 		}
 		StringBuffer salida = new StringBuffer();
-		for (int x = bits.length() / 8 - 1; x >= 0; x--) 
+		for (int x = bits.length() / 8 - 1; x >= 0; x--)
 		{
 		    StringBuffer hex = new StringBuffer("00");
 		    String cadenaHex
@@ -106,6 +113,8 @@ public class UcpUtil {
 		}
 		return salida.toString();
     }
+*/
+/*
     public String unicode2IRA(String s) {
 	if (s == null)
 	    return null;
@@ -215,5 +224,5 @@ public class UcpUtil {
 	sustituirEnTablas(126, '\u00fc');
 	sustituirEnTablas(127, '\u00e0');
     }
-
+*/
 }

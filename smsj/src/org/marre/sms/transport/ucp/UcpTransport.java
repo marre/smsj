@@ -90,43 +90,56 @@ public class UcpTransport implements SmsTransport
         //Liquidterm: added properties support, aligned some member names to
         //the general coding style of the project
         //TODO: Add properties strict checking
-        String strUCP60Uid, strUCP60Pwd;
+
     	myIpHost = theProps.getProperty("smsj.ucp.ip.host");
         myIpPort = Integer.parseInt(theProps.getProperty("smsj.ucp.ip.port"));
-        strUCP60Uid = theProps.getProperty("smsj.ucp.ucp60.uid");
-        strUCP60Pwd = theProps.getProperty("smsj.ucp.ucp60.password");
-        if (strUCP60Uid == null || strUCP60Pwd == null) {
+        myUCP60Uid = theProps.getProperty("smsj.ucp.ucp60.uid");
+        myUCP60Pwd = theProps.getProperty("smsj.ucp.ucp60.password");
+
+        if (myUCP60Uid == null || myUCP60Pwd == null)
+        {
             myDoUCP60Login = false;
         }
-        else if (strUCP60Uid == "") {
+        else if (myUCP60Uid == "")
+        {
             throw new SmsException("UCP Transport: empty UCP60 username");
         }
-        else {
+        else
+        {
             myDoUCP60Login = true;
         }
             
-        try {
-	    myIpSocket = new Socket(myIpHost, myIpPort);
-	    myIpStreamOut = new DataOutputStream(myIpSocket.getOutputStream());
-	    myIpStreamIn = new DataInputStream(myIpSocket.getInputStream());
-	} catch (UnknownHostException e) {
+        try
+        {
+	        myIpSocket = new Socket(myIpHost, myIpPort);
+            myIpStreamOut = new DataOutputStream(myIpSocket.getOutputStream());
+            myIpStreamIn = new DataInputStream(myIpSocket.getInputStream());
+        }
+        catch (UnknownHostException e)
+        {
             throw new SmsException("UCP Transport: Unknown host " + myIpHost);
-	} catch (IOException e) {
-	    throw new SmsException("UCP Transport: Cannot connect to SMSC at" +
+        }
+        catch (IOException e)
+        {
+	        throw new SmsException("UCP Transport: Cannot connect to SMSC at" +
                 myIpHost + " on port " + String.valueOf(myIpPort));
-	} catch (Exception e) {
+	    }
+        catch (Exception e)
+        {
             throw new SmsException("UCP Transport: Cannot connect to SMSC at" + 
                 myIpHost + " on port " + String.valueOf(myIpPort));
-	}
+        }
     }
 
     public void connect() throws SmsException
     {
     	//Logging into the Remote Host via UCP 60;
         //Add proper failure handling
-        if (myDoUCP60Login) {
-            byte [] message = buildLogin("","");
-            System.out.println("SMSC response: " + sendUcp(message));
+        if (myDoUCP60Login)
+        {
+            byte [] loginCmd = buildLogin(myUCP60Uid, myUCP60Pwd);
+            String response = sendUcp(loginCmd);
+            System.err.println("SMSC response: " + response);
         }
     }
 
@@ -146,7 +159,8 @@ public class UcpTransport implements SmsTransport
             byte dcs = theMessage.getDataCodingScheme();
             boolean moreToSend = (i < (msgPdu.length - 1));
             byte[] submitCmd = buildSubmit(dcs, msgPdu[i], moreToSend,theDest,theSender);
-            System.out.println("SMSC response: " + sendUcp(submitCmd));
+            String response = sendUcp(submitCmd);
+            System.err.println("SMSC response: " + response);
         }
     }
 
@@ -154,27 +168,29 @@ public class UcpTransport implements SmsTransport
      * Building the Login Stream
      * @author Lorenz Barth
      * @throws SmsException
-     * @param userid, pwd
-     *
+     * @param userid
+     * @param pwd
      */
-    public byte[] buildLogin(String userid, String pwd) throws SmsException {
-		UcpUtil util = new UcpUtil();
+    public byte[] buildLogin(String userid, String pwd) throws SmsException
+    {
     	UCPSeries60 ucplogin = new UCPSeries60(UCPSeries60.OP_OPEN_SESSION);
+
     	ucplogin.setTRN(0x01);
-    	ucplogin.setField(UCPSeries60.FIELD_OAdC,userid);
-		ucplogin.setField(UCPSeries60.FIELD_OTON,"6");
-		ucplogin.setField(UCPSeries60.FIELD_ONPI,"5");
-		ucplogin.setField(UCPSeries60.FIELD_STYP,"1");
-		ucplogin.setField(UCPSeries60.FIELD_VERS,"0100");
-		ucplogin.setField(UCPSeries60.FIELD_PWD,util.encodeInIRA(pwd));				
-    	return ucplogin.getCommand();	
+    	ucplogin.setField(UCPSeries60.FIELD_OAdC, userid);
+		ucplogin.setField(UCPSeries60.FIELD_OTON, "6");
+		ucplogin.setField(UCPSeries60.FIELD_ONPI, "5");
+		ucplogin.setField(UCPSeries60.FIELD_STYP, "1");
+		ucplogin.setField(UCPSeries60.FIELD_VERS, "0100");
+		ucplogin.setField(UCPSeries60.FIELD_PWD, StringUtil.bytesToHexString(SmsPduUtil.toGsmCharset(pwd)));
+
+    	return ucplogin.getCommand();
     }
+
     public byte[] buildSubmit(byte dcs, SmsPdu pdu, boolean moreToSend, SmsAddress dest, SmsAddress sender)
         throws SmsException
     {
         String ud;
         byte udhData[];
-        UcpUtil util = new UcpUtil();
         UcpSeries50 ucpSubmit = new UcpSeries50(UcpSeries50.OP_SUBMIT_SHORT_MESSAGE);
 
         byte[] udh = pdu.getUserDataHeaders();
@@ -191,14 +207,16 @@ public class UcpTransport implements SmsTransport
         if (sender.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
         {
             String addr = sender.getAddress();
-            
-		if (addr.length() > 11) throw new SmsException("Max alphanumeric Originator Address Code length exceded (11)");
+    		if (addr.length() > 11)
+            {
+                throw new SmsException("Max alphanumeric Originator Address Code length exceded (11)");
+            }
+
 			// Changed by LB. The Alphanumeric Sender was not set correctly
-			String codedaddr = util.encode7bitsIn8(addr);
+			String codedaddr = StringUtil.bytesToHexString(SmsPduUtil.getSeptets(addr));
 			int x = codedaddr.length();
 			StringBuffer sb = new StringBuffer("00");
-			sb.replace(2 - Integer.toHexString(x).toUpperCase().length(), 2,
-	       	Integer.toHexString(x).toUpperCase());
+			sb.replace(2 - Integer.toHexString(x).toUpperCase().length(), 2, Integer.toHexString(x).toUpperCase());
             
             ucpSubmit.setField(UcpSeries50.FIELD_OAdC, sb.toString().concat(codedaddr));
             ucpSubmit.setField(UcpSeries50.FIELD_OTOA, "5039");
@@ -220,8 +238,8 @@ public class UcpTransport implements SmsTransport
 					System.out.println("GSM Message without UDH");
 					ucpSubmit.setField(UcpSeries50.FIELD_MT, "3");
 					String msg = SmsPduUtil.readSeptets(pdu.getUserData(), pdu.getUserDataLength());
-					ucpSubmit.setField(UcpSeries50.FIELD_Msg,util.encodeInIRA(msg));
-                                        System.out.println(msg.length());
+					ucpSubmit.setField(UcpSeries50.FIELD_Msg, StringUtil.bytesToHexString(SmsPduUtil.toGsmCharset(msg)));
+                    System.out.println(msg.length());
 					break;
 				case SmsConstants.ALPHABET_8BIT:
 					throw new SmsException(" 8Bit Messages without UDH are not Supported");
@@ -240,10 +258,12 @@ public class UcpTransport implements SmsTransport
             	default:
                 	throw new SmsException("Unsupported data coding scheme");
 			}
-		}else {
+		}
+        else
+        {
 			switch (SmsDcsUtil.getAlphabet(dcs))
 			{
-				case SmsConstants.ALPHABET_GSM:
+                case SmsConstants.ALPHABET_GSM:
 	                throw new SmsException("Cannot send 7 bit encoded messages with UDH");
 				case SmsConstants.ALPHABET_8BIT:
 					ud = StringUtil.bytesToHexString(pdu.getUserData());
@@ -255,7 +275,6 @@ public class UcpTransport implements SmsTransport
 					ucpSubmit.setField(UcpSeries50.FIELD_Msg,ud);
 					//Numer of of bits in Transperent Data Message
 					udBits = pdu.getUserDataLength() * ((isSeptets) ? 7 : 8);
-//					udBits = pdu.getUserDataLength();
 					ucpSubmit.setField(UcpSeries50.FIELD_NB,StringUtil.intToString(udBits, 4));
 					// Set message Type fix to 4 
 					ucpSubmit.setField(UcpSeries50.FIELD_MT,"4");
@@ -302,12 +321,16 @@ public class UcpTransport implements SmsTransport
 	 * @throws SmsException
 	 * 
 	 */
-    public void disconnect() throws SmsException {
-    	try {
+    public void disconnect() throws SmsException
+    {
+    	try
+        {
 			myIpStreamOut.close();
 			myIpStreamIn.close();
 			myIpSocket.close();
-    	}catch (Exception e) {
+    	}
+        catch (Exception e)
+        {
 			e.printStackTrace();
 			throw new SmsException(e.getMessage());
 		}
@@ -318,33 +341,44 @@ public class UcpTransport implements SmsTransport
      * the answer, the Answer is returned as a String
      * @author Lorenz Barth
      * @throws SmsException
-     * @param byte[] of Data
+     * @param data of Data
      */
-    public String sendUcp(byte[] data) throws SmsException {
-		if(!myIpSocket.isConnected() || myIpStreamOut==null || myIpStreamIn==null) {
+    public String sendUcp(byte[] data) throws SmsException
+    {
+        if( !myIpSocket.isConnected() || myIpStreamOut == null || myIpStreamIn == null)
+        {
 			throw new SmsException("Please Connect first");
 		}
+
     	System.out.println("SMSC send: " + new String(data,0,data.length));
     	StringBuffer strBuf;
-		try {
+
+		try
+        {
 			myIpStreamOut.write(data);
 			myIpStreamOut.flush();
-//			wait(20);
-			byte[] b = new byte[1];
-			if ((b[0] = myIpStreamIn.readByte()) != 2) {
+
+		    byte[] b = new byte[1];
+
+			if ((b[0] = myIpStreamIn.readByte()) != 2)
+            {
 				System.out.println("SendSMS.send: The SMSC sends a bad reply");
 				throw new SmsException("The SMSC sends a bad reply");
 			}
+
 			strBuf = new StringBuffer();
-			while ( (b[0] = myIpStreamIn.readByte()) != 3) {
+
+			while ( (b[0] = myIpStreamIn.readByte()) != 3)
+            {
 				strBuf.append(new String(b));
 			}
-		} catch (Exception e) {
+		}
+        catch (Exception e)
+        {
 			e.printStackTrace();
 			throw new SmsException(e.getMessage());
-//		} catch (SmsException e) {
-//			throw new SmsException(e.getMessage());
 		}
+
 		// Return the String
     	return strBuf.toString();
     }
