@@ -71,6 +71,20 @@ public class NokiaOperatorLogo extends SmsConcatMessage
         setContent(theOtaImage, theMcc, theMnc);
     }
 
+		/**
+		 * Creates a Nokia Operator Logo message
+		 *
+		 * @param theOtaImage The ota image as a byte array
+		 * @param theMcc GSM Mobile Country Code
+		 * @param theMnc GSM Mobile Network Code
+		 */
+		public NokiaOperatorLogo(byte[] theOtaImage, int theMcc, int theMnc, boolean discardHeaders)
+		{
+				super(SmsConstants.DCS_DEFAULT_8BIT);
+				myDiscardNokiaHeaders = discardHeaders;
+				setContent(theOtaImage, theMcc, theMnc);
+		}
+
     /**
      * Creates a Nokia Operator Logo message
      *
@@ -117,10 +131,17 @@ public class NokiaOperatorLogo extends SmsConcatMessage
                 // Header??
                 baos.write(0x30);
             }
+            
             // mcc
             SmsPduUtil.writeBcdNumber(baos, "" + theMcc);
             // mnc
-            SmsPduUtil.writeBcdNumber(baos, "" + theMnc);
+            if (theMnc < 10){
+            	SmsPduUtil.writeBcdNumber(baos, "0" + theMnc);
+            }
+            else {
+							SmsPduUtil.writeBcdNumber(baos, "" + theMnc);
+            }
+            
             if (! myDiscardNokiaHeaders)
             {
                 // Start of content?
