@@ -110,7 +110,7 @@ public class SmsTextMessage extends SmsAbstractMessage
                 // Set user data header
                 smsPdus[i].setUserDataHeaders(
                             new SmsUdhElement[] {
-                                SmsUdhUtil.get8BitConcatUdh(refno, nSms, i)
+                                SmsUdhUtil.get8BitConcatUdh(refno, nSms, i + 1)
                             });
             }
         }
