@@ -167,17 +167,7 @@ public class GsmTransport implements SmsTransport
         {
             if (ton == SmsConstants.TON_ALPHANUMERIC)
             {
-                // FIXME: Calc not correct
-                int nSemiOctets = address.length() * 7/8 * 2;
-
-                // Length in semi octets
-                theOs.write(nSemiOctets);
-
-                // Type Of Address
-                theOs.write(0x80 | ton << 4 | npi);
-
-                // Address
-                SmsPduUtil.writeSeptets(theOs, address);
+                throw new SmsException("Cannot sent SMS to an ALPHANUMERIC address");
             }
             else
             {
@@ -195,7 +185,6 @@ public class GsmTransport implements SmsTransport
 
                 // BCD encode
                 SmsPduUtil.writeBcdNumber(theOs, address);
-
             }
         }
         catch (IOException ex)
