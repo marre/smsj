@@ -46,6 +46,29 @@ public final class SmsDcsUtil
     }
     
     /**
+     * What group (type of message) is the given dcs.
+     * 
+     * @param theDcs the dcs to test
+     * @return Any of the SmsConstants.DCS_GROUP_ constants.
+     */
+    public static int getGroup(byte theDcs)
+    {
+        if ((theDcs & 0xC0) == 0x00) 
+        {
+            return SmsConstants.DCS_GROUP_GENERAL_DATA_CODING;
+        }
+        
+        switch ((theDcs & 0xF0))
+        {
+        case 0xC0: return SmsConstants.DCS_GROUP_MESSAGE_WAITING_DISCARD;
+        case 0xD0: return SmsConstants.DCS_GROUP_MESSAGE_WAITING_STORE_GSM;
+        case 0xE0: return SmsConstants.DCS_GROUP_MESSAGE_WAITING_STORE_UCS2;
+        case 0xF0: return SmsConstants.DCS_GROUP_DATA_CODING_MESSAGE;
+        default:   return SmsConstants.DCS_GROUP_UNKNOWN;
+        }
+    }
+    
+    /**
      * Get the message class.
      *
      * <pre>
@@ -61,42 +84,38 @@ public final class SmsDcsUtil
      */
     public static int getMessageClass(byte theDcs)
     {
-        if (theDcs == 0x00)
+        switch (getGroup(theDcs))
         {
-            return SmsConstants.MSG_CLASS_UNKNOWN;
-        }
-
-        // General Data Coding Indication
-        if ( (theDcs & 0xC0) == 0)
-        {
-            // No message class meaning
-            if ( (theDcs & 0x10) == 0 )
+        case SmsConstants.DCS_GROUP_GENERAL_DATA_CODING:
+            // General Data Coding Indication
+            if (theDcs == 0x00)
             {
                 return SmsConstants.MSG_CLASS_UNKNOWN;
             }
-
+            
+            switch (theDcs & 0x13)
+            {
+            case 0x10: return SmsConstants.MSG_CLASS_0;
+            case 0x11: return SmsConstants.MSG_CLASS_1;
+            case 0x12: return SmsConstants.MSG_CLASS_2;
+            case 0x13: return SmsConstants.MSG_CLASS_3;
+            default:   return SmsConstants.MSG_CLASS_UNKNOWN;
+            }
+            
+        case SmsConstants.DCS_GROUP_DATA_CODING_MESSAGE:
+            // Data coding/message class
             switch (theDcs & 0x03)
             {
             case 0x00: return SmsConstants.MSG_CLASS_0;
             case 0x01: return SmsConstants.MSG_CLASS_1;
             case 0x02: return SmsConstants.MSG_CLASS_2;
             case 0x03: return SmsConstants.MSG_CLASS_3;
+            default:   return SmsConstants.MSG_CLASS_UNKNOWN;
             }
+            
+        default:
+            return SmsConstants.MSG_CLASS_UNKNOWN;
         }
-
-        // Data coding/message class
-        if ( (theDcs & 0xF0) == 0xF0)
-        {
-            switch (theDcs & 0x03)
-            {
-            case 0x00: return SmsConstants.MSG_CLASS_0;
-            case 0x01: return SmsConstants.MSG_CLASS_1;
-            case 0x02: return SmsConstants.MSG_CLASS_2;
-            case 0x03: return SmsConstants.MSG_CLASS_3;
-            }
-        }
-
-        return SmsConstants.MSG_CLASS_UNKNOWN;
     }
 
     /**
@@ -115,34 +134,41 @@ public final class SmsDcsUtil
      */
     public static int getAlphabet(byte theDcs)
     {
-        if (theDcs == 0x00)
+        switch (getGroup(theDcs))
         {
-            return SmsConstants.ALPHABET_GSM;
-        }
-
-        // General Data Coding Indication
-        if ( (theDcs & 0xC0) == 0)
-        {
+        case SmsConstants.DCS_GROUP_GENERAL_DATA_CODING:
+            // General Data Coding Indication
+            if (theDcs == 0x00)
+            {
+                return SmsConstants.ALPHABET_GSM;
+            }
+            
             switch (theDcs & 0x0C)
             {
             case 0x00: return SmsConstants.ALPHABET_GSM;
             case 0x04: return SmsConstants.ALPHABET_8BIT;
             case 0x08: return SmsConstants.ALPHABET_UCS2;
             case 0x0C: return SmsConstants.ALPHABET_RESERVED;
+            default:   return SmsConstants.ALPHABET_UNKNOWN;
             }
-        }
+            
+        case SmsConstants.DCS_GROUP_MESSAGE_WAITING_STORE_GSM:
+            return SmsConstants.ALPHABET_GSM;
+        
+        case SmsConstants.DCS_GROUP_MESSAGE_WAITING_STORE_UCS2:
+            return SmsConstants.ALPHABET_UCS2;
 
-        // Data coding/message class
-        if ( (theDcs & 0xF0) == 0xF0)
-        {
-            switch (theDcs & 0x02)
+        case SmsConstants.DCS_GROUP_DATA_CODING_MESSAGE:
+            switch (theDcs & 0x04)
             {
             case 0x00: return SmsConstants.ALPHABET_GSM;
-            case 0x02: return SmsConstants.ALPHABET_8BIT;
+            case 0x04: return SmsConstants.ALPHABET_8BIT;
+            default:   return SmsConstants.ALPHABET_UNKNOWN;
             }
-        }
-
-        return SmsConstants.ALPHABET_UNKNOWN;
+        
+        default:
+            return SmsConstants.ALPHABET_UNKNOWN;
+        }        
     }
 
     /**
@@ -157,4 +183,49 @@ public final class SmsDcsUtil
         // General Data Coding Indication, Compressed
         return ((theDcs & 0xE0) == 0x20);
     }
-}
+    
+    public static byte getGeneralDataCodingDcs(boolean compressed, int alphabet, byte messageClass)
+    {
+        byte dcs = 0x00;
+        
+        // Bit 5, if set to 0, indicates the text is uncompressed
+        // Bit 5, if set to 1, indicates the text is compressed using the GSM standard compression
+        // algorithm. (see GSM TS 03.42)
+        if (compressed)
+        {
+            dcs |= 0x20;
+        }
+        
+        // Bits 3 and 2 indicate the alphabet being used, as follows :
+        // Bit3 Bit2 Alphabet:
+        //    0   0  Default alphabet
+        //    0   1  8 bit data
+        //    1   0  UCS2 (16bit) [10]
+        //    1   1  Reserved
+        switch (alphabet)
+        {
+        case SmsConstants.ALPHABET_GSM:      dcs |= 0x00; break; 
+        case SmsConstants.ALPHABET_8BIT:     dcs |= 0x04; break;
+        case SmsConstants.ALPHABET_UCS2:     dcs |= 0x08; break;
+        case SmsConstants.ALPHABET_RESERVED: dcs |= 0x0C; break;
+        
+        case SmsConstants.ALPHABET_UNKNOWN:
+        default:
+            throw new IllegalArgumentException("Invalid alphabet");
+        }
+        
+        switch (messageClass)
+        {
+        case SmsConstants.MSG_CLASS_0:          dcs |= 0x10; break; 
+        case SmsConstants.MSG_CLASS_1:          dcs |= 0x11; break;
+        case SmsConstants.MSG_CLASS_2:          dcs |= 0x12; break;
+        case SmsConstants.MSG_CLASS_3:          dcs |= 0x13; break;
+        case SmsConstants.MSG_CLASS_UNKNOWN:    dcs |= 0x00; break;
+            
+        default:
+            throw new IllegalArgumentException("Invalid message class");
+        }
+                
+        return dcs;
+    }
+ }
