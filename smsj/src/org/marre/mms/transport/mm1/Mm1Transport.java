@@ -34,23 +34,37 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mms.transport.mm1;
 
-import java.io.*;
-import java.net.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Properties;
 
 import org.marre.mime.MimeBodyPart;
 import org.marre.mms.MmsException;
 import org.marre.mms.MmsHeaders;
 import org.marre.mms.transport.MmsTransport;
+import org.marre.util.IOUtil;
+import org.marre.util.StringUtil;
 
 /**
- * 
+ * Sends mms using the mm1 protocol. 
  * 
  * @author Markus Eriksson
  * @version $Id$
  */
 public class Mm1Transport implements MmsTransport
 {
+    private static Log logger = LogFactory.getLog(Mm1Transport.class);
+
+    /** 
+     * Content type for a mms message. 
+     */
     public static final String CONTENT_TYPE_WAP_MMS_MESSAGE = "application/vnd.wap.mms-message";
 
     /**
@@ -72,53 +86,89 @@ public class Mm1Transport implements MmsTransport
     }
 
     /**
+     * The mm1 protocol is connection less so this method is not used.
      * @see org.marre.mms.transport.MmsTransport#connect()
      */
-    public void connect() throws MmsException
+    public void connect()
     {
+        // Empty
     }
 
     /**
+     * Sends the mms.
+     * 
      * @see org.marre.mms.transport.MmsTransport#send(org.marre.mime.MimeBodyPart,
-     *      org.marre.mime.MimeHeader[])
+     *      org.marre.mms.MmsHeaders)
+     *      
+     * @param theMessage message to send
+     * @param theHeaders headers for the message
+     * @throws MmsException if fails to send the message. 
      */
     public void send(MimeBodyPart theMessage, MmsHeaders theHeaders) throws MmsException
     {
         try
         {
             // POST
+            
+            // First create the data so we can find out how large it is
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Mm1Encoder.writeMessageToStream(baos, theMessage, theHeaders);
+            baos.close();
+            
+            if (logger.isDebugEnabled())
+            {
+                String str = StringUtil.bytesToHexString(baos.toByteArray());
+                logger.debug("request [" + str + "]");
+            }
+            
             URL url = new URL(myMmsProxyGatewayAddress);
-            URLConnection urlConn = url.openConnection();
+            HttpURLConnection urlConn = (HttpURLConnection)url.openConnection();
+            
+            urlConn.addRequestProperty("Content-Length", "" + baos.size());
+            urlConn.addRequestProperty("Content-Type", CONTENT_TYPE_WAP_MMS_MESSAGE);
+
             urlConn.setDoOutput(true);
             urlConn.setDoInput(true);
             urlConn.setAllowUserInteraction(false);
+            
+            // Send the data
             OutputStream out = urlConn.getOutputStream();
-
-            Mm1Encoder.writeMessageToStream(out, theMessage, theHeaders);
-
+            baos.writeTo(out);
+            out.flush();
             out.close();
-
+            
+            baos.reset();
+            baos = new ByteArrayOutputStream();
+            
             // Read the response
-            // TODO: Parse the response
             InputStream response = urlConn.getInputStream();
-            int a;
-            while ((a = response.read()) != -1)
+            
+            int responsecode = urlConn.getResponseCode();
+            logger.debug("HTTP response code : " + responsecode);
+            
+            IOUtil.copy(response, baos);
+            baos.close();
+            
+            if (logger.isDebugEnabled())
             {
-                System.err.print((char)a);
-                // Just read
+                String str = StringUtil.bytesToHexString(baos.toByteArray());
+                logger.debug("response [" + str + "]");
             }
-            response.close();
+            // TODO: Parse the response
         }
         catch (IOException ex)
         {
+            logger.fatal("Failed to send mms", ex);
             throw new MmsException(ex.getMessage());
         }
     }
 
     /**
+     * The mm1 protocol is connection less so this method is not used.
      * @see org.marre.mms.transport.MmsTransport#disconnect()
      */
-    public void disconnect() throws MmsException
+    public void disconnect()
     {
+        // Empty
     }
 }
