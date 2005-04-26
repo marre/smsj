@@ -91,7 +91,7 @@ public final class SmsUdhUtil
         
         if (theUdhElements == null)
         {
-            return null;
+            return new byte[0];
         }
 
         baos.write((byte) SmsUdhUtil.getTotalSize(theUdhElements));
@@ -105,7 +105,7 @@ public final class SmsUdhUtil
         }
         catch (IOException ioe)
         {
-            ioe.printStackTrace();
+            throw new RuntimeException(ioe);
         }
 
         return baos.toByteArray();
@@ -172,7 +172,7 @@ public final class SmsUdhUtil
     }
 
     /**
-     * Creates a "Message waiting" UDH element using UDH_IEI_SPECIAL_MESSAGE
+     * Creates a "Message waiting" UDH element using UDH_IEI_SPECIAL_MESSAGE.
      * <p>
      * If more than one type of message is required to be indicated within
      * one SMS message, then multiple "Message waiting" UDH elements must
@@ -366,9 +366,6 @@ public final class SmsUdhUtil
     public static SmsUdhElement getEmsVariablePictureUdh(byte[] bitmap, int width, int height, int position) 
     {
         int otaBitmapLength = bitmap.length;
-        
-        System.out.println("Len: " + otaBitmapLength);
-                
         byte[] udh = new byte[otaBitmapLength + 3];
         
         udh[0] = (byte) position;
