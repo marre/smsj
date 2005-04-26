@@ -35,7 +35,7 @@
 package org.marre.sms;
 
 /**
- * Contains various SMS related constants
+ * Contains various SMS related constants.
  * 
  * @author Markus Eriksson
  * @version $Id$
@@ -87,7 +87,7 @@ public final class SmsConstants
     public static final byte TON_ABBREVIATED = 0x06;
 
     /**
-     * Numbering-Plan-Identification - Unknown
+     * Numbering-Plan-Identification - Unknown.
      */
     public static final byte NPI_UNKNOWN = 0x00;
     /**
@@ -101,262 +101,283 @@ public final class SmsConstants
      */
     public static final byte NPI_DATA = 0x03;
     /**
-     * Numbering-Plan-Identification - Telex
+     * Numbering-Plan-Identification - Telex.
      */
     public static final byte NPI_TELEX = 0x04;
     /**
-     * Numbering-Plan-Identification - National
+     * Numbering-Plan-Identification - National.
      */
     public static final byte NPI_NATIONAL = 0x08;
     /**
-     * Numbering-Plan-Identification - Private
+     * Numbering-Plan-Identification - Private.
      */
     public static final byte NPI_PRIVATE = 0x09;
     /**
-     * Numbering-Plan-Identification - Unknown
+     * Numbering-Plan-Identification - Unknown.
      */
     public static final byte NPI_ERMES = 0x10;
 
-    /** Concatenated short messages, 8-bit reference number */
+    /** Concatenated short messages, 8-bit reference number. */
     public static final byte UDH_IEI_CONCATENATED_8BIT = 0x00;
-    /** Special SMS Message Indication */
+    /** Special SMS Message Indication. */
     public static final byte UDH_IEI_SPECIAL_MESSAGE = 0x01;
-    /** Application port addressing scheme, 8 bit address */
+    /** Application port addressing scheme, 8 bit address. */
     public static final byte UDH_IEI_APP_PORT_8BIT = 0x04;
-    /** Application port addressing scheme, 16 bit address */
+    /** Application port addressing scheme, 16 bit address. */
     public static final byte UDH_IEI_APP_PORT_16BIT = 0x05;
-    /** SMSC Control Parameters */
+    /** SMSC Control Parameters. */
     public static final byte UDH_IEI_SMSC_CONTROL_PARAMS = 0x06;
-    /** UDH Source Indicator */
+    /** UDH Source Indicator. */
     public static final byte UDH_IEI_UDH_SOURCE_INDICATOR = 0x07;
-    /** Concatenated short message, 16-bit reference number */
+    /** Concatenated short message, 16-bit reference number. */
     public static final byte UDH_IEI_CONCATENATED_16BIT = 0x08;
-    /** Wireless Control Message Protocol */
+    /** Wireless Control Message Protocol. */
     public static final byte UDH_IEI_WCMP = 0x09;
 
-    /** Text Formatting (EMS) */
+    /** Text Formatting (EMS). */
     public static final byte UDH_IEI_EMS_TEXT_FORMATTING = 0x0A;
-    /** Predefined Sound (EMS) */
+    /** Predefined Sound (EMS). */
     public static final byte UDH_IEI_EMS_PREDEFINED_SOUND = 0x0B;
-    /** User Defined Sound (iMelody max 128 bytes) (EMS) */
+    /** User Defined Sound (iMelody max 128 bytes) (EMS). */
     public static final byte UDH_IEI_EMS_USER_DEFINED_SOUND = 0x0C;
-    /** Predefined Animation (EMS) */
+    /** Predefined Animation (EMS). */
     public static final byte UDH_IEI_EMS_PREDEFINED_ANIMATION = 0x0D;
-    /** Large Animation (16*16 times 4 = 32*4 =128 bytes) (EMS) */
+    /** Large Animation (16*16 times 4 = 32*4 =128 bytes) (EMS). */
     public static final byte UDH_IEI_EMS_LARGE_ANIMATION = 0x0E;
-    /** Small Animation (8*8 times 4 = 8*4 =32 bytes) (EMS) */
+    /** Small Animation (8*8 times 4 = 8*4 =32 bytes) (EMS). */
     public static final byte UDH_IEI_EMS_SMALL_ANIMATION = 0x0F;
-    /** Large Picture (32*32 = 128 bytes) (EMS) */
+    /** Large Picture (32*32 = 128 bytes) (EMS). */
     public static final byte UDH_IEI_EMS_LARGE_PICTURE = 0x10;
-    /** Small Picture (16*16 = 32 bytes) (EMS) */
+    /** Small Picture (16*16 = 32 bytes) (EMS). */
     public static final byte UDH_IEI_EMS_SMALL_PICTURE = 0x11;
-    /** Variable Picture (EMS) */
+    /** Variable Picture (EMS). */
     public static final byte UDH_IEI_EMS_VARIABLE_PICTURE = 0x12;
-    /** User prompt indicator (EMS) */
+    /** User prompt indicator (EMS). */
     public static final byte UDH_IEI_EMS_USER_PROMPT = 0x13;
-    /** Extended Object (EMS) */
+    /** Extended Object (EMS). */
     public static final byte UDH_IEI_EMS_EXTENDED_OBJECT = 0x14;
-    /** Reused Extended Object (EMS) */
+    /** Reused Extended Object (EMS). */
     public static final byte UDH_IEI_EMS_REUSED_EXTENDED_OBJECT = 0x15;
-    /** Compression Control (EMS) */
+    /** Compression Control (EMS). */
     public static final byte UDH_IEI_EMS_COMPRESSION_CONTROL = 0x16;
 
-    /** RFC 822 E-Mail Header */
+    /** RFC 822 E-Mail Header. */
     public static final byte UDH_IEI_RFC822_EMAIL_HEADER = 0x20;
-    /** Hyperlink format element */
+    /** Hyperlink format element. */
     public static final byte UDH_IEI_HYPERLINK_FORMAT = 0x21;
 
     /* MESSAGE INDICATION TYPES FOR UDH_IEI_SPECIAL_MESSAGE */
 
-    /** UDH_IEI_SPECIAL_MESSAGE type "Voice Message Waiting" */
-    public static final int MESSAGE_WAITING_VOICE = 0x00;
-    /** UDH_IEI_SPECIAL_MESSAGE type "Fax Message Waiting" */
-    public static final int MESSAGE_WAITING_FAX = 0x01;
-    /** UDH_IEI_SPECIAL_MESSAGE type "Electronic Mail Message Waiting" */
-    public static final int MESSAGE_WAITING_EMAIL = 0x02;
+    /** UDH_IEI_SPECIAL_MESSAGE type "Voice Message Waiting". */
+    public static final int UISM_MSG_WAITING_VOICE = 0x00;
+    /** UDH_IEI_SPECIAL_MESSAGE type "Fax Message Waiting". */
+    public static final int UISM_MSG_WAITING_FAX = 0x01;
+    /** UDH_IEI_SPECIAL_MESSAGE type "Electronic Mail Message Waiting". */
+    public static final int UISM_MSG_WAITING_EMAIL = 0x02;
     /**
-     * UDH_IEI_SPECIAL_MESSAGE type "Other Message Waiting (see 3GPP TS 23.038
+     * UDH_IEI_SPECIAL_MESSAGE type "Other Message Waiting". (see 3GPP TS 23.038
      * [9] for definition of 'other')"
      */
-    public static final int MESSAGE_WAITING_OTHER = 0x03;
+    public static final int UISM_MSG_WAITING_OTHER = 0x03;
 
     /* PORT NUMBERS */
 
-    /** WAP Push */
+    /** WAP Push. */
     public static final int PORT_WAP_PUSH = 2948;
 
-    /** Nokia Internet access configuration data */
+    /** Nokia Internet access configuration data. */
     public static final int PORT_NOKIA_IAC = 5503;
-    /** Nokia Ring Tone */
+    /** Nokia Ring Tone. */
     public static final int PORT_NOKIA_RING_TONE = 5505;
-    /** Nokia Operator Logo */
+    /** Nokia Operator Logo. */
     public static final int PORT_NOKIA_OPERATOR_LOGO = 5506;
-    /** Nokia Calling Line Identification Logo */
+    /** Nokia Calling Line Identification Logo. */
     public static final int PORT_NOKIA_CLI_LOGO = 5507;
-    /** Nokia Email notification */
+    /** Nokia Email notification. */
     public static final int PORT_NOKIA_EMAIL_NOTIFICATION = 5512;
-    /** Nokia Multipart Message */
+    /** Nokia Multipart Message. */
     public static final int PORT_NOKIA_MULTIPART_MESSAGE = 5514;
 
-    /** WAP connectionless session service */
+    /** WAP connectionless session service. */
     public static final int PORT_WAP_WSP = 9200;
-    /** WAP session service */
+    /** WAP session service. */
     public static final int PORT_WAP_WSP_WTP = 9201;
 
-    /** WAP vCard */
+    /** WAP vCard. */
     public static final int PORT_WAP_VCARD = 9204;
-    /** WAP vCalendar */
+    /** WAP vCalendar. */
     public static final int PORT_WAP_VCALENDAR = 9205;
 
-    /** OTA Settings - Browser */
+    /** OTA Settings - Browser. */
     public static final int PORT_OTA_SETTINGS_BROWSER = 49999;
 
-    /** OTA Settings - SyncML */
+    /** OTA Settings - SyncML. */
     public static final int PORT_OTA_SETTINGS_SYNCML = 49996;
 
     /**
-     * As defined in GSM 03.38. It contains all characters needed for most
+     * Alphabe as defined in GSM 03.38. It contains all characters needed for most
      * Western European languages. It also contains upper case Greek characters.
      */
     public static final int ALPHABET_GSM = 0;
-    /** ISO 8859-1 (ISO Latin-1) */
+    /** ISO 8859-1 (ISO Latin-1). */
     public static final int ALPHABET_8BIT = 1;
-    /** Unicode UCS-2 */
+    /** Unicode UCS-2. */
     public static final int ALPHABET_UCS2 = 2;
-    /** Reserved */
+    /** Reserved. */
     public static final int ALPHABET_RESERVED = 3;
-    /** Unknown */
+    /** Unknown. */
     public static final int ALPHABET_UNKNOWN = 4;
 
-    /** Class 0 SMS, sometimes called FLASH message */
+    /** Class 0 SMS. Sometimes called FLASH message. */
     public static final byte MSG_CLASS_0 = 0;
-    /** Class 1 SMS. Default meaning: ME-specific */
+    /** Class 1 SMS. Default meaning: ME-specific. */
     public static final byte MSG_CLASS_1 = 1;
-    /** Class 2 SMS, SIM specific message */
+    /** Class 2 SMS, SIM specific message. */
     public static final byte MSG_CLASS_2 = 2;
-    /** Class 3 SMS. Default meaning: TE specific (See GSM TS 07.05) */
+    /** Class 3 SMS. Default meaning: TE specific (See GSM TS 07.05). */
     public static final byte MSG_CLASS_3 = 3;
-    /** Message with no specific message class (Often handled as an class 1 SMS) */
+    /** Message with no specific message class (Often handled as an class 1 SMS). */
     public static final byte MSG_CLASS_UNKNOWN = 4;
 
-    /** DCS 7 BIT GMS alphabet */
-    public static final byte DCS_DEFAULT_7BIT = 0x00;
-    /** DCS 8 BIT GSM alphabet */
-    public static final byte DCS_DEFAULT_8BIT = 0x04;
-    /** DCS UNICODE alphabet */
-    public static final byte DCS_DEFAULT_UCS2 = 0x08;
-
-    /** EMS - Left aligned text */
+    /** Message waiting indication type - voicemail. */
+    public static final byte DCS_MSG_WAITING_VOICEMAIL = 0;
+    /** Message waiting indication type - fax. */
+    public static final byte DCS_MSG_WAITING_FAX = 1;
+    /** Message waiting indication type - email. */
+    public static final byte DCS_MSG_WAITING_EMAIL = 2;
+    /** Message waiting indication type - other. Should not be used. */
+    public static final byte DCS_MSG_WAITING_OTHER = 3;
+    
+    /** Message is not compressed. */
+    public static final byte DCS_COMPRESSION_OFF = 0;
+    /** Message is compressed. */
+    public static final byte DCS_COMPRESSION_ON = 1;
+    
+    /** DCS general data coding indication group. 00xxxxxx. */
+    public static final int DCS_GROUP_GENERAL_DATA_CODING = 0;
+    /** DCS message waiting indication group: discard message. 1100xxxx. */
+    public static final int DCS_GROUP_MESSAGE_WAITING_DISCARD = 1;
+    /** DCS message waiting indication group: store message (gsm). 1101xxxx. */
+    public static final int DCS_GROUP_MESSAGE_WAITING_STORE_GSM = 2;
+    /** DCS message waiting indication group: store message (ucs2). 1110xxxx. */
+    public static final int DCS_GROUP_MESSAGE_WAITING_STORE_UCS2 = 3;
+    /** DCS data coding/message class: 1111xxxx. */
+    public static final int DCS_GROUP_DATA_CODING_MESSAGE = 4;
+    /** DCS group unknown. */
+    public static final int DCS_GROUP_UNKNOWN = 5;
+    
+    /** EMS - Left aligned text. */
     public static final byte EMS_TEXT_ALIGN_LEFT = 0x00;
-    /** EMS - Centered text */
+    /** EMS - Centered text. */
     public static final byte EMS_TEXT_ALIGN_CENTER = 0x01;
-    /** EMS - Right aligned text */
+    /** EMS - Right aligned text. */
     public static final byte EMS_TEXT_ALIGN_RIGHT = 0x02;
-    /** EMS - Default alignment (language dependent) */
+    /** EMS - Default alignment (language dependent). */
     public static final byte EMS_TEXT_ALIGN_DEFAULT = 0x03;
 
-    /** EMS - Normal size font */
+    /** EMS - Normal size font. */
     public static final byte EMS_TEXT_SIZE_NORMAL = 0x00;
-    /** EMS - Large size font */
+    /** EMS - Large size font. */
     public static final byte EMS_TEXT_SIZE_LARGE = 0x04;
-    /** EMS - Small size font */
+    /** EMS - Small size font. */
     public static final byte EMS_TEXT_SIZE_SMALL = 0x08;
 
-    /** EMS - Normal size font */
+    /** EMS - Normal size font. */
     public static final byte EMS_TEXT_STYLE_BOLD = (byte) 0x10;
-    /** EMS - Large size font */
+    /** EMS - Large size font. */
     public static final byte EMS_TEXT_STYLE_ITALIC = (byte) 0x20;
-    /** EMS - Small size font */
+    /** EMS - Small size font. */
     public static final byte EMS_TEXT_STYLE_UNDERLINED = (byte) 0x40;
-    /** EMS - Small size font */
+    /** EMS - Small size font. */
     public static final byte EMS_TEXT_STYLE_STRIKETHROUGH = (byte) 0x80;
 
-    /** EMS - Color black */
+    /** EMS - Color black. */
     public static final byte EMS_TEXT_COLOR_BLACK = 0x00;
-    /** EMS - Color dark grey */
+    /** EMS - Color dark grey. */
     public static final byte EMS_TEXT_COLOR_DARK_GREY = 0x01;
-    /** EMS - Color dark red */
+    /** EMS - Color dark red. */
     public static final byte EMS_TEXT_COLOR_DARK_RED = 0x02;
-    /** EMS - Color dark yellow */
+    /** EMS - Color dark yellow. */
     public static final byte EMS_TEXT_COLOR_DARK_YELLOW = 0x03;
-    /** EMS - Color dark green */
+    /** EMS - Color dark green. */
     public static final byte EMS_TEXT_COLOR_DARK_GREEN = 0x04;
-    /** EMS - Color dark cyan */
+    /** EMS - Color dark cyan. */
     public static final byte EMS_TEXT_COLOR_DARK_CYAN = 0x05;
-    /** EMS - Color dark blue */
+    /** EMS - Color dark blue. */
     public static final byte EMS_TEXT_COLOR_DARK_BLUE = 0x06;
-    /** EMS - Color dark magenta */
+    /** EMS - Color dark magenta. */
     public static final byte EMS_TEXT_COLOR_DARK_MAGENTA = 0x07;
-    /** EMS - Color grey */
+    /** EMS - Color grey. */
     public static final byte EMS_TEXT_COLOR_GREY = 0x08;
-    /** EMS - Color white */
+    /** EMS - Color white. */
     public static final byte EMS_TEXT_COLOR_WHITE = 0x09;
-    /** EMS - Color bright red */
+    /** EMS - Color bright red. */
     public static final byte EMS_TEXT_COLOR_BRIGHT_RED = 0x0A;
-    /** EMS - Color bright yellow */
+    /** EMS - Color bright yellow. */
     public static final byte EMS_TEXT_COLOR_BRIGHT_YELLOW = 0x0B;
-    /** EMS - Color bright green */
+    /** EMS - Color bright green. */
     public static final byte EMS_TEXT_COLOR_BRIGHT_GREEN = 0x0C;
-    /** EMS - Color bright cyan */
+    /** EMS - Color bright cyan. */
     public static final byte EMS_TEXT_COLOR_BRIGHT_CYAN = 0x0D;
-    /** EMS - Color bright blue */
+    /** EMS - Color bright blue. */
     public static final byte EMS_TEXT_COLOR_BRIGHT_BLUE = 0x0E;
-    /** EMS - Color bright magenta */
+    /** EMS - Color bright magenta. */
     public static final byte EMS_TEXT_COLOR_BRIGHT_MAGENTA = 0x0F;
 
-    /** EMS - Predefined sound - Chimes high */
+    /** EMS - Predefined sound - Chimes high. */
     public static final byte EMS_PREDEFINED_SOUND_CHIMES_HIGH = 0x00;
-    /** EMS - Predefined sound - Chimes low */
+    /** EMS - Predefined sound - Chimes low. */
     public static final byte EMS_PREDEFINED_SOUND_CHIMES_LOW = 0x01;
-    /** EMS - Predefined sound - Ding */
+    /** EMS - Predefined sound - Ding. */
     public static final byte EMS_PREDEFINED_SOUND_DING = 0x02;
-    /** EMS - Predefined sound - TaDa */
+    /** EMS - Predefined sound - TaDa. */
     public static final byte EMS_PREDEFINED_SOUND_TADA = 0x03;
-    /** EMS - Predefined sound - Notify */
+    /** EMS - Predefined sound - Notify. */
     public static final byte EMS_PREDEFINED_SOUND_NOTIFY = 0x04;
-    /** EMS - Predefined sound - Drum */
+    /** EMS - Predefined sound - Drum. */
     public static final byte EMS_PREDEFINED_SOUND_DRUM = 0x05;
-    /** EMS - Predefined sound - Claps */
+    /** EMS - Predefined sound - Claps. */
     public static final byte EMS_PREDEFINED_SOUND_CLAPS = 0x06;
-    /** EMS - Predefined sound - FanFar */
+    /** EMS - Predefined sound - FanFar. */
     public static final byte EMS_PREDEFINED_SOUND_FANFAR = 0x07;
-    /** EMS - Predefined sound - Chord high */
+    /** EMS - Predefined sound - Chord high. */
     public static final byte EMS_PREDEFINED_SOUND_CHORD_HIGH = 0x08;
-    /** EMS - Predefined sound - Chord low */
+    /** EMS - Predefined sound - Chord low. */
     public static final byte EMS_PREDEFINED_SOUND_CHORD_LOW = 0x09;
 
-    /** EMS - Predefined animation - I am ironic, flirty */
+    /** EMS - Predefined animation - I am ironic, flirty. */
     public static final byte EMS_PREDEFINED_ANIM_IRONIC = 0x00;
-    /** EMS - Predefined animation - I am glad */
+    /** EMS - Predefined animation - I am glad. */
     public static final byte EMS_PREDEFINED_ANIM_GLAD = 0x01;
-    /** EMS - Predefined animation - I am sceptic */
+    /** EMS - Predefined animation - I am sceptic. */
     public static final byte EMS_PREDEFINED_ANIM_SCEPTIC = 0x02;
-    /** EMS - Predefined animation - I am sad */
+    /** EMS - Predefined animation - I am sad. */
     public static final byte EMS_PREDEFINED_ANIM_SAD = 0x03;
-    /** EMS - Predefined animation - WOW! */
+    /** EMS - Predefined animation - WOW. */
     public static final byte EMS_PREDEFINED_ANIM_WOW = 0x04;
-    /** EMS - Predefined animation - I am crying */
+    /** EMS - Predefined animation - I am crying. */
     public static final byte EMS_PREDEFINED_ANIM_CRYING = 0x05;
-    /** EMS - Predefined animation - I am winking */
+    /** EMS - Predefined animation - I am winking. */
     public static final byte EMS_PREDEFINED_ANIM_WINKING = 0x06;
-    /** EMS - Predefined animation - I am lughing */
+    /** EMS - Predefined animation - I am lughing. */
     public static final byte EMS_PREDEFINED_ANIM_LAUGHING = 0x07;
-    /** EMS - Predefined animation - I am indifferent */
+    /** EMS - Predefined animation - I am indifferent. */
     public static final byte EMS_PREDEFINED_ANIM_INDIFFERENT = 0x08;
-    /** EMS - Predefined animation - In love/Kissing */
+    /** EMS - Predefined animation - In love/Kissing. */
     public static final byte EMS_PREDEFINED_ANIM_LOVE = 0x09;
-    /** EMS - Predefined animation - I am confused */
+    /** EMS - Predefined animation - I am confused. */
     public static final byte EMS_PREDEFINED_ANIM_CONFUSED = 0x0A;
-    /** EMS - Predefined animation - Tounge hanging out */
+    /** EMS - Predefined animation - Tounge hanging out. */
     public static final byte EMS_PREDEFINED_ANIM_TOUNGE = 0x0B;
-    /** EMS - Predefined animation - I am angry */
+    /** EMS - Predefined animation - I am angry. */
     public static final byte EMS_PREDEFINED_ANIM_ANGRY = 0x0C;
-    /** EMS - Predefined animation - Wearing glasses */
+    /** EMS - Predefined animation - Wearing glasses. */
     public static final byte EMS_PREDEFINED_ANIM_GLASSES = 0x0D;
-    /** EMS - Predefined animation - Devil */
+    /** EMS - Predefined animation - Devil. */
     public static final byte EMS_PREDEFINED_ANIM_DEVIL = 0x0E;
 
     private SmsConstants()
     {
+        // Empty
     }
 }
