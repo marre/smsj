@@ -86,6 +86,11 @@ public class GsmTransport implements SmsTransport
     {        
     }
 
+    /**
+     * Initializes this transport.
+     * 
+     * @param theProps 
+     */
     public void init(Properties theProps) throws SmsException
     {
         String portName = theProps.getProperty("sms.gsm.serialport", "COM1");
@@ -101,12 +106,12 @@ public class GsmTransport implements SmsTransport
     
     /**
      * Initializes the communication with the GSM phone.
-     *
+     * 
      * @throws SmsException Thrown when the transport fails to communicate
      * with the GSM phone
      */
     public void connect() 
-        throws SmsException
+        throws SmsException, IOException
     {
         try
         {
@@ -114,31 +119,27 @@ public class GsmTransport implements SmsTransport
             
             // Can I send sms via the gsm phone?
             mySerialComm.send("AT+CSMS=0");
-            if (analyseResponse(RESPONSE_OK) != RESPONSE_OK)
+            if (readResponse(RESPONSE_OK) != RESPONSE_OK)
             {
                 throw new SmsException("AT+CSMS=0 failed");
             }
             
             // Init
             mySerialComm.send("AT+CMGF=0");
-            if (analyseResponse(RESPONSE_OK) != RESPONSE_OK)
+            if (readResponse(RESPONSE_OK) != RESPONSE_OK)
             {
                 throw new SmsException("AT+CMGF=0 failed");            
             }
         }
-        catch (IOException e)
-        {
-            throw new SmsException(e.getMessage());
-        }
         catch (PortInUseException e)
         {
-            throw new SmsException(e.getMessage());
+            throw new SmsException(e);
         }
     }
 
     /**
      * Sends the SMS message to the given recipients.
-     * <p>
+     * 
      * Note: The sending address is ignored for the GSM transport.
      *
      * @param theMessage The message to send
@@ -146,89 +147,65 @@ public class GsmTransport implements SmsTransport
      * @param theSender The sending address, ignored
      * @throws SmsException Thrown if we fail to send the SMS
      */
-    public String[] send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException
+    public String[] send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException, IOException
     {
-        SmsPdu[] msgPdu = null;
-
         if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
         {
             throw new SmsException("Cannot sent SMS to an ALPHANUMERIC address");
         }
 
-        msgPdu = theMessage.getPdus();
-
+        SmsPdu[] msgPdu = theMessage.getPdus();
         for(int i=0; i < msgPdu.length; i++)
         {
             byte[] data = GsmEncoder.encodePdu(msgPdu[i], theDestination, theSender); 
             sendSms(data);
         }
         
-        return null;
+        // TODO: Return a real message id
+        return new String[msgPdu.length];
     }
 
     private void sendSms(byte[] theBuff)
-        throws SmsException
+        throws SmsException, IOException
     {
         String response;
 
-        //Send message
-        try
+        mySerialComm.send("AT+CMGS=" + (theBuff.length - 1));
+        if (readResponse(RESPONSE_CONTINUE) != RESPONSE_CONTINUE)
         {
-            mySerialComm.send("AT+CMGS=" + (theBuff.length - 1));
-            if (analyseResponse(RESPONSE_CONTINUE) != RESPONSE_CONTINUE)
-            {
-                throw new SmsException("AT+CMGS=length failed");            
-            }
-
-            mySerialComm.send(StringUtil.bytesToHexString(theBuff) + "\032");
-            if (analyseResponse(RESPONSE_OK) != RESPONSE_OK)
-            {
-                throw new SmsException("AT+CMGS data failed");            
-            }
+            throw new SmsException("AT+CMGS=length failed");            
         }
-        catch (IOException e)
+
+        mySerialComm.send(StringUtil.bytesToHexString(theBuff) + "\032");
+        if (readResponse(RESPONSE_OK) != RESPONSE_OK)
         {
-            throw new SmsException(e.getMessage());
+            throw new SmsException("AT+CMGS data failed");            
         }
     }
 
     /**
-     * Sends a "AT" command to keep the connection alive
+     * Sends a "AT" command to keep the connection alive.
      *
      * @throws SmsException
      */
     public void ping()
-        throws SmsException
+        throws SmsException, IOException
     {
-        try
-        {
-            mySerialComm.send("AT");
-        }
-        catch (IOException e)
-        {
-            throw new SmsException(e.getMessage());
-        }        
+        mySerialComm.send("AT");
     }
 
     /**
-     * Closes the serial connection to the phone
-     *
+     * Closes the serial connection to the phone.
+     * 
      * @throws SmsException
      */
     public void disconnect()
-        throws SmsException
+        throws SmsException, IOException
     {
-        try
-        {
-            mySerialComm.close();
-        }
-        catch (IOException e)
-        {
-            throw new SmsException(e.getMessage());
-        }        
+        mySerialComm.close();
     }
 
-    private int analyseResponse(int endOnMask)
+    private int readResponse(int endOnMask)
         throws IOException
     {
         int status = 0;

@@ -122,8 +122,8 @@ public class SerialComm
         catch (UnsupportedCommOperationException e)
         {
             mySerialPort.close();
-            mySerialPort = null;
-            throw new IOException(e.getMessage());
+            mySerialPort = null;            
+            throw (IOException)(new IOException(e.getMessage())).initCause(e);
         } 
     }
 

@@ -34,56 +34,68 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.transport;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import org.marre.sms.SmsAddress;
 import org.marre.sms.SmsException;
 import org.marre.sms.SmsMessage;
 
-
 /**
- * Interface for a SMS transport
- * <p>
- * This interface is used for all smsj transports. A good example of
- * implementation of this interface is the GsmTransport or the ClickatellTransport.
- * <p>
- *
+ * Interface for an SMS transport.
+ * 
+ * This interface is used to transfer an smsj message to the sms server.
+ * 
  * @author Markus Eriksson
- * @version 1.0
+ * @version $Id$
  */
 public interface SmsTransport
 {
     /**
-     * Initializes the transport
-     * <p>
-     * Initializes the transport with the given properties.
+     * Initializes the transport.
+     * 
+     * Please see each transport for information on what properties that are available.
      *
-     * @param theProps Properties
-     * @throws SmsException
+     * @param theProps Properties used to configure this transport.
+     * @throws SmsException If there was a problem with the configuration. 
      */
     void init(Properties theProps) throws SmsException;
 
     /**
-     * Connects to the SMSC (or phone, or service, or...)
-     *
-     * @throws SmsException
+     * Connects to the SMS server.
+     * 
+     * @throws SmsException Indicates a sms related problem.
+     * @throws IOException Inidicates a failure to communicate with the SMS server.
      */
-    void connect() throws SmsException;
+    void connect() throws SmsException, IOException;
 
     /**
-     * Sends an SmsMessage to the given destination
+     * Pings the SMS sender.
      *
+     * Should be used to keep the connection alive.
+     * 
+     * @throws SmsException Indicates a sms related problem.
+     * @throws IOException Inidicates a failure to communicate with the SMS server.
+     */
+    public void ping() throws SmsException, IOException;
+    
+    /**
+     * Sends an SmsMessage to the given destination.
+     * 
      * @param theMessage The Message to send
      * @param theDestination Destination address
-     * @param theSender Sender
-     * @throws SmsException
+     * @param theSender Sender address
+     * @return Returns an array of message id:s. It is possible that the message ids are null.
+     * @throws SmsException Indicates a sms related problem.
+     * @throws IOException Inidicates a failure to communicate with the SMS server.
      */
-    String[] send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException;
+    String[] send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException, IOException;
 
     /**
-     * Disconnects from the SMSC (or phone, or service, or...)
-     *
-     * @throws SmsException
+     * Disconnects from the SMS server.
+     * 
+     * @throws SmsException Indicates a sms related problem.
+     * @throws IOException Inidicates a failure to communicate with the SMS server.
      */
-    void disconnect() throws SmsException;
+    void disconnect() throws SmsException, IOException;
 }

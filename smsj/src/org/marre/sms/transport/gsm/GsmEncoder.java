@@ -197,7 +197,7 @@ public final class GsmEncoder
         }
         catch (IOException ex)
         {
-            throw new SmsException(ex.getMessage());
+            throw new SmsException(ex);
         }
 
         return baos.toByteArray();
@@ -299,7 +299,7 @@ public final class GsmEncoder
         }
         catch (IOException ex)
         {
-            throw new SmsException(ex.getMessage());
+            throw new SmsException(ex);
         }
         
         return baos.toByteArray();

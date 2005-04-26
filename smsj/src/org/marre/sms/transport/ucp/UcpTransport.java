@@ -112,28 +112,17 @@ public class UcpTransport implements SmsTransport
         {
             myDoUCP60Login = true;
         }
-
-        try
-        {
-            myIpSocket = new Socket(myIpHost, myIpPort);
-            myIpStreamOut = new DataOutputStream(myIpSocket.getOutputStream());
-            myIpStreamIn = new DataInputStream(myIpSocket.getInputStream());
-        }
-        catch (UnknownHostException e)
-        {
-            throw new SmsException("UCP Transport: Unknown host " + myIpHost);
-        }
-        catch (IOException e)
-        {
-            throw new SmsException("UCP Transport: Cannot connect to SMSC at" + myIpHost + " on port "
-                    + String.valueOf(myIpPort));
-        }
     }
 
-    public void connect() throws SmsException
+    public void connect() throws SmsException, IOException
     {
+        // Connect to the UCP server
+        myIpSocket = new Socket(myIpHost, myIpPort);
+        myIpStreamOut = new DataOutputStream(myIpSocket.getOutputStream());
+        myIpStreamIn = new DataInputStream(myIpSocket.getInputStream());
+        
         //Logging into the Remote Host via UCP 60;
-        //Add proper failure handling
+        //TODO: Add proper failure handling
         if (myDoUCP60Login)
         {
             byte[] loginCmd = buildLogin(myUCP60Uid, myUCP60Pwd);
@@ -142,7 +131,7 @@ public class UcpTransport implements SmsTransport
         }
     }
 
-    public String[] send(SmsMessage theMessage, SmsAddress theDest, SmsAddress theSender) throws SmsException
+    public String[] send(SmsMessage theMessage, SmsAddress theDest, SmsAddress theSender) throws SmsException, IOException
     {
         SmsPdu[] msgPdu = null;
 
@@ -321,19 +310,11 @@ public class UcpTransport implements SmsTransport
      * @throws SmsException
      *  
      */
-    public void disconnect() throws SmsException
+    public void disconnect() throws SmsException, IOException
     {
-        try
-        {
-            myIpStreamOut.close();
-            myIpStreamIn.close();
-            myIpSocket.close();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            throw new SmsException(e.getMessage());
-        }
+        myIpStreamOut.close();
+        myIpStreamIn.close();
+        myIpSocket.close();
     }
 
     /**
@@ -341,11 +322,11 @@ public class UcpTransport implements SmsTransport
      * recives the answer, the Answer is returned as a String.
      * 
      * @author Lorenz Barth
-     * @throws SmsException
      * @param data
-     *            of Data
+     * @throws SmsException
+     * @throws IOException 
      */
-    public String sendUcp(byte[] data) throws SmsException
+    public String sendUcp(byte[] data) throws SmsException, IOException
     {
         if (!myIpSocket.isConnected() || myIpStreamOut == null || myIpStreamIn == null)
         {
@@ -355,30 +336,22 @@ public class UcpTransport implements SmsTransport
         System.out.println("SMSC send: " + new String(data, 0, data.length));
         StringBuffer strBuf;
 
-        try
+        myIpStreamOut.write(data);
+        myIpStreamOut.flush();
+
+        byte[] b = new byte[1];
+
+        if ((b[0] = myIpStreamIn.readByte()) != 2)
         {
-            myIpStreamOut.write(data);
-            myIpStreamOut.flush();
-
-            byte[] b = new byte[1];
-
-            if ((b[0] = myIpStreamIn.readByte()) != 2)
-            {
-                System.out.println("SendSMS.send: The SMSC sends a bad reply");
-                throw new SmsException("The SMSC sends a bad reply");
-            }
-
-            strBuf = new StringBuffer();
-
-            while ((b[0] = myIpStreamIn.readByte()) != 3)
-            {
-                strBuf.append(new String(b));
-            }
+            System.out.println("SendSMS.send: The SMSC sends a bad reply");
+            throw new SmsException("The SMSC sends a bad reply");
         }
-        catch (IOException e)
+
+        strBuf = new StringBuffer();
+
+        while ((b[0] = myIpStreamIn.readByte()) != 3)
         {
-            e.printStackTrace();
-            throw new SmsException(e.getMessage());
+            strBuf.append(new String(b));
         }
 
         // Return the String

@@ -34,6 +34,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mms.transport;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import org.marre.mime.MimeBodyPart;
@@ -54,10 +55,10 @@ public interface MmsTransport
 
     /**
      * Connects to the SMSC (or phone, or service, or...)
-     *
      * @throws MmsException
+     * @throws IOException TODO
      */
-    void connect() throws MmsException;
+    void connect() throws MmsException, IOException;
 
     /**
      * Sends an MmsMessage to the given destination
@@ -65,13 +66,14 @@ public interface MmsTransport
      * @param theMessage The Message to send
      * @param theHeaders Headers
      * @throws MmsException
+     * @throws IOException TODO
      */
-    void send(MimeBodyPart theMessage, MmsHeaders theHeaders) throws MmsException;
+    void send(MimeBodyPart theMessage, MmsHeaders theHeaders) throws MmsException, IOException;
 
     /**
      * Disconnects from the MMSC (or phone, or service, or...)
-     *
      * @throws MmsException
+     * @throws IOException TODO
      */
-    void disconnect() throws MmsException;
+    void disconnect() throws MmsException, IOException;
 }

@@ -42,7 +42,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -69,48 +68,17 @@ import org.marre.util.StringUtil;
 /**
  * An SmsTransport that sends the SMS with clickatell over HTTP.
  * <p>
- * It is developed to use the "Clickatell HTTP API v. 1.63".
+ * It is developed to use the "Clickatell HTTP API v. 2.2.4".
  * <p>
- * Known limitations: <br>- Impossible to set the sending address (might work
- * with some networks) <br>- Cannot send 8-Bit messages without an UDH <br>-
- * Doesn't support a complete DCS. Only UCS2, 7bit, 8bit and SMS class 0 or 1.
- * <br>- Cannot set validity period (not done yet) <br>- Doesn't acknowledge
- * the TON or NPI, everything is sent as NPI_ISDN_TELEPHONE and
- * TON_INTERNATIONAL. <br>
- * <p>
- * Support matrix: <table border="1">
- * <tr>
- * <td></td>
- * <td>7-bit</td>
- * <td>8-bit</td>
- * <td>UCS2</td>
- * </tr>
- * <tr>
- * <td>CLASS 0</td>
- * <td>Yes</td>
- * <td>Yes, with UDH present</td>
- * <td>Yes</td>
- * </tr>
- * <tr>
- * <td>CLASS 1</td>
- * <td>Yes</td>
- * <td>Yes, with UDH present</td>
- * <td>Yes</td>
- * </tr>
- * <tr>
- * <td>UDH and <br>
- * concatenation</td>
- * <td>No</td>
- * <td>Yes</td>
- * <td>Yes</td>
- * </tr>
- * <tr>
- * <td>ass</td>
- * </tr>
- * </table>
+ * 
+ * Known limitations:<br>
+ * - Cannot send 8-Bit messages without an UDH.<br>
+ * - DCS is not supported. Only UCS2, 7bit, 8bit and SMS class 0 or 1.<br>
+ * - Cannot set validity period (not implemented)<br>
+ * - Doesn't acknowledge the TON or NPI, everything is sent as NPI_ISDN_TELEPHONE and TON_INTERNATIONAL.<br>
  * 
  * @author Markus Eriksson
- * @version 1.0
+ * @version $Id$
  */
 public class ClickatellTransport implements SmsTransport
 {
@@ -152,8 +120,9 @@ public class ClickatellTransport implements SmsTransport
      * @param requestString parameters to send
      * @return An array of responses (sessionid or msgid)
      * @throws ClickatellException
+     * @throws IOException
      */
-    private String[] sendRequest(String url, String requestString) throws ClickatellException
+    private String[] sendRequest(String url, String requestString) throws ClickatellException, IOException
     {
         String response = null;
         MessageFormat responseFormat = new MessageFormat("{0}: {1}");
@@ -213,20 +182,12 @@ public class ClickatellTransport implements SmsTransport
             throw new ClickatellException("Unexpected response from Clickatell. : " + response,
                     ClickatellException.ERROR_UNKNOWN);
         }
-        catch (MalformedURLException ex)
-        {
-            throw new ClickatellException(ex.getMessage(), ClickatellException.ERROR_UNKNOWN);
-        }
-        catch (IOException ex)
-        {
-            throw new ClickatellException(ex.getMessage(), ClickatellException.ERROR_UNKNOWN);
-        }
 
         return (String[]) idList.toArray(new String[0]);
     }
 
     private String[] sendRequestWithRetry(String url, String requestString)
-        throws SmsException
+        throws SmsException, IOException
     {
         String[] msgIds;
         
@@ -304,12 +265,12 @@ public class ClickatellTransport implements SmsTransport
     /**
      * Sends an auth command to clickatell to get an session id that can be used
      * later.
-     * 
      * @throws SmsException
      *             If we fail to authenticate to clickatell or if we fail to
      *             connect.
+     * @throws IOException 
      */
-    public void connect() throws SmsException
+    public void connect() throws SmsException, IOException
     {
         String[] response = null;
         String url = myProtocol + "://api.clickatell.com/http/auth";
@@ -325,7 +286,7 @@ public class ClickatellTransport implements SmsTransport
         }
         catch (ClickatellException ex)
         {
-            throw new SmsException(ex.getMessage());
+            throw new SmsException(ex);
         }
 
         mySessionId = response[0];
@@ -442,7 +403,7 @@ public class ClickatellTransport implements SmsTransport
      * @throws SmsException
      */
     private String[] sendConcatMessage(SmsConcatMessage theMsg, SmsAddress theDestination, SmsAddress theSender)
-        throws SmsException
+        throws SmsException, IOException
     {
         String url = myProtocol + "://api.clickatell.com/http/sendmsg";
         SmsUserData userData = theMsg.getUserData();
@@ -457,14 +418,13 @@ public class ClickatellTransport implements SmsTransport
      * Sends an sendmsg command to clickatell.
      * 
      * @param thePdu
-     * @param theDcs
      * @param theDestination
      * @param theSender
      * @throws SmsException
      *             If clickatell sends an error message, unexpected response or
      *             if we fail to connect.
      */
-    private String send(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender) throws SmsException
+    private String send(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender) throws SmsException, IOException
     {
         String url = myProtocol + "://api.clickatell.com/http/sendmsg";
         SmsUserData userData = thePdu.getUserData();
@@ -484,7 +444,7 @@ public class ClickatellTransport implements SmsTransport
      * @throws SmsException
      * @return Message ids
      */
-    public String[] send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException
+    public String[] send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException, IOException
     {
         String[] msgIds;
         
@@ -519,14 +479,40 @@ public class ClickatellTransport implements SmsTransport
 
     /**
      * Disconnect from clickatell.
-     * <p>
+     * 
      * Not needed for the clickatell API
      * 
-     * @throws SmsException
-     *             Never
+     * @throws SmsException Never
+     * @throws IOException Never
      */
-    public void disconnect() throws SmsException
+    public void disconnect() throws SmsException, IOException
     {
         // The clickatell HTTP API is connection less
+    }
+
+    /**
+     * Pings the clickatell service
+     * 
+     * Not needed for the clickatell API
+     * 
+     * @throws SmsException Never
+     * @throws IOException Never
+     */
+    public void ping() throws SmsException, IOException
+    {
+        String[] response = null;
+        String url = myProtocol + "://api.clickatell.com/http/ping";
+        String requestString;
+        
+        requestString = "session_id=" + mySessionId;
+        
+        try
+        {
+            response = sendRequest(url, requestString);
+        }
+        catch (ClickatellException ex)
+        {
+            throw new SmsException(ex);
+        }
     }
 }

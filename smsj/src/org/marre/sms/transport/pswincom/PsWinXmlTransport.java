@@ -72,7 +72,7 @@ public class PsWinXmlTransport implements SmsTransport
         }
     }
 
-    public void connect() throws SmsException
+    public void connect() throws SmsException, IOException
     {
     }
 
@@ -260,9 +260,10 @@ public class PsWinXmlTransport implements SmsTransport
         return null;
     }
 
-    public String[] send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException
+    public String[] send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException, IOException
     {
         String[] msgIds;
+        byte[] xmlReq;
         
         if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
         {
@@ -276,19 +277,27 @@ public class PsWinXmlTransport implements SmsTransport
             // Create xml document
             writeXmlTo(baos, theMessage, theDestination, theSender);
             baos.close();
-
-            // Send req
-            msgIds = sendReqToPsWinCom(baos.toByteArray());
+            
+            xmlReq = baos.toByteArray();
         }
         catch (IOException ex)
         {
-            throw new SmsException(ex.toString());
+            throw new SmsException("Failed to build xml request", ex);
         }
+
+        // Send req
+        msgIds = sendReqToPsWinCom(xmlReq);
         
         return msgIds;
     }
 
-    public void disconnect() throws SmsException
+    public void disconnect() throws SmsException, IOException
     {
+    }
+
+    public void ping() throws SmsException, IOException
+    {
+        // TODO Auto-generated method stub
+        
     }
 }
