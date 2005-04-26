@@ -50,8 +50,8 @@ import org.marre.wap.push.SmsWapPushMessage;
 import org.marre.wap.push.WapSIPush;
 
 /**
- * High level API to the smsj library
- * <p>
+ * High level API to the smsj library.
+ * 
  * If you only need to send some basic SMS messages than you only have to use
  * this API. Ex:
  * 
@@ -94,7 +94,6 @@ public class SmsSender
     public SmsSender(String theTransport, Properties theProps) throws SmsException
     {
         myTransport = SmsTransportManager.getTransport(theTransport, theProps);
-        myTransport.connect();
     }
 
     /**
@@ -307,7 +306,7 @@ public class SmsSender
      *            supported by all transports).
      * @throws SmsException
      */
-    public void sendTextSms(String theMsg, String theDest, String theSender) throws SmsException
+    public void sendTextSms(String theMsg, String theDest, String theSender) throws SmsException, IOException
     {
         sendTextSms(theMsg, theDest, theSender, SmsConstants.ALPHABET_GSM);
     }
@@ -325,7 +324,7 @@ public class SmsSender
      *            Ex. 44546754235
      * @throws SmsException
      */
-    public void sendTextSms(String theMsg, String theDest) throws SmsException
+    public void sendTextSms(String theMsg, String theDest) throws SmsException, IOException
     {
         sendTextSms(theMsg, theDest, null, SmsConstants.ALPHABET_GSM);
     }
@@ -347,7 +346,7 @@ public class SmsSender
      *            supported by all transports).
      * @throws SmsException
      */
-    public void sendUnicodeTextSms(String theMsg, String theDest, String theSender) throws SmsException
+    public void sendUnicodeTextSms(String theMsg, String theDest, String theSender) throws SmsException, IOException
     {
         sendTextSms(theMsg, theDest, theSender, SmsConstants.ALPHABET_UCS2);
     }
@@ -365,7 +364,7 @@ public class SmsSender
      *            Ex. 44546754235
      * @throws SmsException
      */
-    public void sendUnicodeTextSms(String theMsg, String theDest) throws SmsException
+    public void sendUnicodeTextSms(String theMsg, String theDest) throws SmsException, IOException
     {
         sendTextSms(theMsg, theDest, null, SmsConstants.ALPHABET_UCS2);
     }
@@ -385,9 +384,9 @@ public class SmsSender
      *            Alphabet to use. Can be any of SmsConstants.ALPHABET_*
      * @throws SmsException
      */
-    private void sendTextSms(String theMsg, String theDest, String theSender, int theAlphabet) throws SmsException
+    private void sendTextSms(String theMsg, String theDest, String theSender, int theAlphabet) throws SmsException, IOException
     {
-        SmsTextMessage textMessage = new SmsTextMessage(theMsg, theAlphabet);
+        SmsTextMessage textMessage = new SmsTextMessage(theMsg, theAlphabet, SmsConstants.MSG_CLASS_UNKNOWN);
         SmsAddress destAddress = new SmsAddress(theDest);
         SmsAddress senderAddress = null;
 
@@ -398,86 +397,91 @@ public class SmsSender
         
         myTransport.send(textMessage, destAddress, senderAddress);
     }
-
-   /**
-    *
-    * Sends an OTA Bookmark (Nokia specification) to the given recipient
-    * 
-    * @param theTitle String with the title of the bookmark
-    * @param theUri String with the url referenced by the bookmark
-    * @param theDest String with the recipient number (international format
-    * without leading +)
-    * @param theSender String with the sender number. Can also be an
-    * alphanumerical string (not supported by all transports).
-    *
-    * @throws SmsException
-    */
-   public void sendNokiaBookmark(String theTitle, String theUri, String theDest, String theSender) throws SmsException 
-   {
-       NokiaOtaBrowserSettings browserSettings = new NokiaOtaBrowserSettings();
-       browserSettings.addBookmark(theTitle, theUri);
-       
-       SmsWapPushMessage wapPushMessage = new SmsWapPushMessage(browserSettings, "application/x-wap-prov.browser-bookmarks");
-       wapPushMessage.setPorts(49154, SmsConstants.PORT_OTA_SETTINGS_BROWSER);
-       
-       SmsAddress sender = new SmsAddress(theSender);
-       SmsAddress reciever = new SmsAddress(theDest);
-       
-       myTransport.send(wapPushMessage, reciever, sender);
-   }
     
-  /**
-   * Sends a Wap Push SI containing to the given recipient.
-   * 
-   * @param theMessage String with the description of the service
-   * @param theUri String with the url referenced by the SI
-   * @param theDest String with the recipient number
-   *
-   * @throws SmsException
-   */
-  public void sendWapSiPushMsg(String theUri, String theMessage, String theDest) throws SmsException 
-  {
-      //Liquidterm: add some URI checking
-      //add checking on url and message length
-      WapSIPush siPush = new WapSIPush(theUri, theMessage);
-      
-      SmsWapPushMessage wapPushMessage = new SmsWapPushMessage(siPush);
+    /**
+     * 
+     * Sends an OTA Bookmark (Nokia specification) to the given recipient
+     * 
+     * @param theTitle String with the title of the bookmark
+     * @param theUri String with the url referenced by the bookmark
+     * @param theDest String with the recipient number (international format
+     * without leading +)
+     * @param theSender String with the sender number. Can also be an
+     * alphanumerical string (not supported by all transports).
+     *
+     * @throws SmsException
+     */
+    public void sendNokiaBookmark(String theTitle, String theUri, String theDest, String theSender) throws SmsException, IOException
+    {
+        NokiaOtaBrowserSettings browserSettings = new NokiaOtaBrowserSettings();
+        browserSettings.addBookmark(theTitle, theUri);
+           
+        SmsWapPushMessage wapPushMessage = new SmsWapPushMessage(browserSettings, "application/x-wap-prov.browser-bookmarks");
+        wapPushMessage.setPorts(49154, SmsConstants.PORT_OTA_SETTINGS_BROWSER);
+ 
+        SmsAddress sender = new SmsAddress(theSender);
+        SmsAddress reciever = new SmsAddress(theDest);
+
+        myTransport.send(wapPushMessage, reciever, sender);
+    }
+    
+    /**
+     * Sends a Wap Push SI containing to the given recipient.
+     *
+     * @param theMessage String with the description of the service
+     * @param theUri String with the url referenced by the SI
+     * @param theDest String with the recipient number
+     *
+     * @throws SmsException
+     */
+    public void sendWapSiPushMsg(String theUri, String theMessage, String theDest) throws SmsException, IOException
+    {
+        //Liquidterm: add some URI checking
+        //add checking on url and message length
+        WapSIPush siPush = new WapSIPush(theUri, theMessage);
+        
+        SmsWapPushMessage wapPushMessage = new SmsWapPushMessage(siPush);
 //      wapPushMessage.setXWapApplicationId("x-wap-application:*"); 
       
-      SmsAddress reciever = new SmsAddress(theDest);
+        SmsAddress reciever = new SmsAddress(theDest);
       
-      myTransport.send(wapPushMessage, reciever, null);
-  }
+        myTransport.send(wapPushMessage, reciever, null);
+    }
  
   
-  /**
-   * Sends a simple MMS Notification.
-   * 
-   * @param contentLocation Where the mms pdu can be downloaded from.
-   * @param size The size of the message.
-   * @param subject The subject of the message.
-   * @param dest String with the recipient number
-   *
-   * @throws SmsException
-   */
-  public void sendMmsNotification(String contentLocation, long size, String subject, String dest) throws SmsException
-  {
-     SmsMmsNotificationMessage mmsNotification = new SmsMmsNotificationMessage(contentLocation, size);
-     mmsNotification.setSubject(subject);
+    /**
+     * Sends a simple MMS Notification.
+     * 
+     * @param contentLocation Where the mms pdu can be downloaded from.
+     * @param size The size of the message.
+     * @param subject The subject of the message.
+     * @param dest String with the recipient number
+     *
+     * @throws SmsException
+     */
+    public void sendMmsNotification(String contentLocation, long size, String subject, String dest) throws SmsException, IOException
+    {
+        SmsMmsNotificationMessage mmsNotification = new SmsMmsNotificationMessage(contentLocation, size);
+        mmsNotification.setSubject(subject);
      
-     SmsAddress reciever = new SmsAddress(dest);
+        SmsAddress reciever = new SmsAddress(dest);
      
-     myTransport.send(mmsNotification, reciever, null);
- }
+        myTransport.send(mmsNotification, reciever, null);
+    }
  
+    public void connect() throws SmsException, IOException
+    {
+        myTransport.connect();
+    }
+    
     /**
      * Call this when you are done with the SmsSender object.
-     * <p>
+     * 
      * It will free any resources that we have used.
      * 
      * @throws SmsException
      */
-    public void close() throws SmsException
+    public void disconnect() throws SmsException, IOException
     {
         if (myTransport != null)
         {
@@ -486,16 +490,17 @@ public class SmsSender
         }
     }
 
-    // Probably never called. But good to have if the caller forget to close()
+    // Probably never called. But good to have if the caller forget to disconnect()
     protected void finalize() throws Throwable
     {
         // Disconnect transport if the caller forget to close us
         try
         {
-            close();
+            disconnect();
         }
-        catch (SmsException ex)
+        catch (Exception ex)
         {
+            // TODO: Log this
         }
         
         super.finalize();
