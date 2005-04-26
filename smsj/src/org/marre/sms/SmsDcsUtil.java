@@ -35,14 +35,19 @@
 package org.marre.sms;
 
 /**
- * Various functions to decode and encode the DCS byte (Data Coding Scheme)
+ * Various functions to decode and encode the DCS byte (Data Coding Scheme).
  *
+ * @version $Id$
  * @author Markus Eriksson
  */
 public final class SmsDcsUtil
 {
+    /**
+     * Hide the constructor.
+     */
     private SmsDcsUtil()
     {
+        // Empty
     }
     
     /**
@@ -119,7 +124,7 @@ public final class SmsDcsUtil
     }
 
     /**
-     * Get the alphabet
+     * Decodes the given dcs and returns the alphabet.
      *
      * <pre>
      * Return value can be one of:
@@ -129,7 +134,8 @@ public final class SmsDcsUtil
      * - SmsConstants.ALPHABET_RESERVED
      * - SmsConstants.ALPHABET_UNKNOWN
      * </pre>
-     *
+     * 
+     * @param theDcs The dcs to decode. 
      * @return Returns the alphabet. See SmsConstants for valid alphabets.
      */
     public static int getAlphabet(byte theDcs)
@@ -172,10 +178,11 @@ public final class SmsDcsUtil
     }
 
     /**
-     * Is the message compressed using the GSM standard compression algorithm?
-     * <p>
-     * See GSM TS 03.42 for further information
-     *
+     * Is the message compressed using the GSM standard compression algorithm.
+     * 
+     * See GSM TS 03.42 for further information.
+     * 
+     * @param theDcs The dcs to decode
      * @return true if compressed, false otherwise
      */
     public static boolean isCompressed(byte theDcs)
@@ -183,17 +190,51 @@ public final class SmsDcsUtil
         // General Data Coding Indication, Compressed
         return ((theDcs & 0xE0) == 0x20);
     }
+
     
-    public static byte getGeneralDataCodingDcs(boolean compressed, int alphabet, byte messageClass)
+    /**
+     * Builds a general-data-coding dcs (uncompressed).
+     * 
+     * @param alphabet The alphabet. Possible values are SmsConstants.ALPHABET_GSM, SmsConstants.ALPHABET_8BIT and 
+     *                 SmsConstants.ALPHABET_UCS2.
+     * @param messageClass The message class. Possible values are SmsConstants.MSG_CLASS_0, SmsConstants.MSG_CLASS_1, 
+     *                     SmsConstants.MSG_CLASS_2 and SmsConstants.MSG_CLASS_3.
+     * @return A valid general data coding DCS.
+     */
+    public static byte getGeneralDataCodingDcs(int alphabet, byte messageClass)
+    {
+        return getGeneralDataCodingDcs(alphabet, messageClass, SmsConstants.DCS_COMPRESSION_OFF);
+    }
+    
+    /**
+     * Builds a general-data-coding dcs.
+     * 
+     * @param alphabet The alphabet. Possible values are SmsConstants.ALPHABET_GSM, SmsConstants.ALPHABET_8BIT, 
+     *                 SmsConstants.ALPHABET_UCS2 and SmsConstants.ALPHABET_RESERVED. 
+     * @param messageClass The message class. Possible values are SmsConstants.MSG_CLASS_0, SmsConstants.MSG_CLASS_1, 
+     *                     SmsConstants.MSG_CLASS_2 and SmsConstants.MSG_CLASS_3.
+     * @param compressed Sets the compressed bit. Possible values are SmsConstants.DCS_COMPRESSION_OFF and 
+     *                   SmsConstants.DCS_COMPRESSION_ON.
+     * @return A valid general data coding DCS.
+     */
+    public static byte getGeneralDataCodingDcs(int alphabet, byte messageClass, byte compressed)
     {
         byte dcs = 0x00;
         
         // Bit 5, if set to 0, indicates the text is uncompressed
         // Bit 5, if set to 1, indicates the text is compressed using the GSM standard compression
         // algorithm. (see GSM TS 03.42)
-        if (compressed)
+        switch (compressed)
         {
+        case SmsConstants.DCS_COMPRESSION_ON:
             dcs |= 0x20;
+            break;
+        case SmsConstants.DCS_COMPRESSION_OFF:
+            // Do nothing
+            break;
+        
+        default:
+            throw new IllegalArgumentException("Invalid value for compressed");
         }
         
         // Bits 3 and 2 indicate the alphabet being used, as follows :
