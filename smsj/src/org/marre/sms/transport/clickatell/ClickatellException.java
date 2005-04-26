@@ -43,16 +43,10 @@ class ClickatellException extends Exception
 
     private final int myErrId;
 
-    private ClickatellException()
+    ClickatellException(String theMsg, int theErrId, Throwable cause)
     {
-        super();
-        myErrId = 0;
-    }
-
-    private ClickatellException(String theMsg)
-    {
-        super(theMsg);
-        myErrId = 0;
+        super(theMsg, cause);
+        myErrId = theErrId;
     }
 
     ClickatellException(String theMsg, int theErrId)
@@ -60,7 +54,7 @@ class ClickatellException extends Exception
         super(theMsg);
         myErrId = theErrId;
     }
-
+    
     int getErrId()
     {
         return myErrId;

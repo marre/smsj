@@ -35,7 +35,7 @@
 package org.marre.sms;
 
 /**
- * Exception representing an error in the SMS library
+ * Exception representing an error in the SMS library.
  *
  * @author Markus Eriksson
  * @version $Id$
@@ -43,13 +43,34 @@ package org.marre.sms;
 public class SmsException extends Exception
 {
     /**
-     * Creates an SmsException
+     * Creates an SmsException.
      *
-     * @param theMsg The error message
+     * @param msg The error message
      */
-    public SmsException(String theMsg)
+    public SmsException(String msg)
     {
-        super(theMsg);
+        super(msg);
+    }
+    
+    /**
+     * Creates an SmsException.
+     *
+     * @param msg The error message
+     * @param cause Chained exception
+     */
+    public SmsException(String msg, Throwable cause)
+    {
+        super(msg, cause);
+    }
+    
+    /**
+     * Creates an SmsException.
+     *
+     * @param cause Chained exception
+     */
+    public SmsException(Throwable cause)
+    {
+        super(cause);
     }
 }
 
