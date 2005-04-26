@@ -52,7 +52,7 @@ public final class SmsPduUtil
      * See http://www.unicode.org/Public/MAPPINGS/ETSI/GSM0338.TXT
      */
     public static final char[] GSM_DEFAULT_ALPHABET_TABLE = {
-    //  0 '@', '?', '$', '?', '?', '?', '?', '?',
+            //  0 '@', '?', '$', '?', '?', '?', '?', '?',
             '@', 163, '$', 165, 232, 233, 249, 236,
             //  8 '?', '?', LF, '?', '?', CR, '?', '?',
             242, 199, 10, 216, 248, 13, 197, 229,
@@ -100,7 +100,7 @@ public final class SmsPduUtil
      * See http://www.unicode.org/Public/MAPPINGS/ETSI/GSM0338.TXT
      */
     public static final char[] GSM_DEFAULT_ALPHABET_ALTERNATIVES = {
-    // LATIN CAPITAL LETTER C WITH CEDILLA (see note above)
+            // LATIN CAPITAL LETTER C WITH CEDILLA (see note above)
             0x00c7, 0x09,
             // GREEK CAPITAL LETTER ALPHA
             0x0391, 0x41,
@@ -152,7 +152,7 @@ public final class SmsPduUtil
         catch (IOException ex)
         {
             // Should not happen...
-            throw new RuntimeException();
+            throw new RuntimeException(ex);
         }
 
         return baos.toByteArray();
