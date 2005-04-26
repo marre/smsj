@@ -62,10 +62,19 @@ import org.marre.wap.push.WapSIPush;
  *     SmsSender smsSender = SmsSender.getClickatellSender(&quot;username&quot;, &quot;password&quot;, &quot;apiid&quot;);
  *     String msg = &quot;A sample SMS.&quot;;
  *     // International number to reciever without leading &quot;+&quot;
- *     String reciever = &quot;+464545425463&quot;;
+ *     String reciever = &quot;464545425463&quot;;
  *     // Number of sender (not supported on all transports)
- *     String sender = &quot;+46534534535&quot;;
+ *     String sender = &quot;46534534535&quot;;
+ *     // Connect
+ *     smsSender.connect();
+ *     // Send message
  *     smsSender.send(&quot;A sample SMS.&quot;, reciever, sender);
+ *     // Disconnect
+ *     smsSender.disconnect();
+ * }
+ * catch (IOException ex)
+ * {
+ *     ex.printStackTrace();
  * }
  * catch (SmsException ex)
  * {
@@ -469,6 +478,14 @@ public class SmsSender
         myTransport.send(mmsNotification, reciever, null);
     }
  
+    /**
+     * Connect to the server.
+     * 
+     * Must be called before any send method.
+     * 
+     * @throws SmsException
+     * @throws IOException
+     */
     public void connect() throws SmsException, IOException
     {
         myTransport.connect();
@@ -480,6 +497,7 @@ public class SmsSender
      * It will free any resources that we have used.
      * 
      * @throws SmsException
+     * @throws IOException 
      */
     public void disconnect() throws SmsException, IOException
     {
