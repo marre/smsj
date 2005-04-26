@@ -47,9 +47,20 @@ import java.io.*;
  */
 public class SmsTextMessage extends SmsConcatMessage
 {
-    protected String myText;
-    protected int myAlphabet;
-    protected byte myMessageClass;
+    private String myText;
+    private byte myDcs;
+    
+    /**
+     * Creates an SmsTextMessage with the given dcs.
+     * 
+     * @param theMsg The message
+     * @param theDcs The data coding scheme
+     */
+    public SmsTextMessage(String theMsg, byte theDcs)
+    {
+        myText = theMsg;
+        myDcs = theDcs;
+    }
     
     /**
      * Creates an SmsTextMessage with the given alphabet and message class.
@@ -71,25 +82,7 @@ public class SmsTextMessage extends SmsConcatMessage
      */
     public SmsTextMessage(String theMsg, int theAlphabet, byte theMessageClass)
     {
-        myText = theMsg;
-        myAlphabet = theAlphabet;
-        myMessageClass = theMessageClass;
-    }
-
-    /**
-     * Creates an SmsTextMessage with the given alphabet
-     * <p>
-     * theAlphabet can be any of:<br>
-     * - SmsConstants.ALPHABET_GSM<br>
-     * - SmsConstants.ALPHABET_8BIT<br>
-     * - SmsConstants.ALPHABET_UCS2<br>
-     *
-     * @param theMsg The message
-     * @param theAlphabet The alphabet
-     */
-    public SmsTextMessage(String theMsg, int theAlphabet)
-    {
-        this(theMsg, theAlphabet, SmsConstants.MSG_CLASS_UNKNOWN);
+        this(theMsg, SmsDcsUtil.getGeneralDataCodingDcs(theAlphabet, theMessageClass, SmsConstants.DCS_COMPRESSION_OFF));
     }
 
     /**
@@ -99,7 +92,7 @@ public class SmsTextMessage extends SmsConcatMessage
      */
     public SmsTextMessage(String theMsg)
     {
-        this(theMsg, SmsConstants.ALPHABET_GSM);
+        this(theMsg, SmsConstants.ALPHABET_GSM, SmsConstants.MSG_CLASS_UNKNOWN);
     }
     
     /**
@@ -110,34 +103,32 @@ public class SmsTextMessage extends SmsConcatMessage
         return myText;
     }
 
+    /**
+     * Returns the dcs.
+     */
+    public byte getDcs()
+    {
+        return myDcs;
+    }
+    
     public SmsUserData getUserData()
     {
         SmsUserData ud;
-        byte dcs;
-        
-        // TODO: MessageClass
-        // int dcs = getDataCodingScheme() | 0x10 | theMessageClass;
-        
+                
         try
         {
-            switch (myAlphabet)
+            switch (SmsDcsUtil.getAlphabet(myDcs))
             {
             case SmsConstants.ALPHABET_GSM:
-                // 7-bit encoding, No message class, No compression
-                dcs = SmsConstants.DCS_DEFAULT_7BIT;
-                ud = new SmsUserData(SmsPduUtil.getSeptets(myText), myText.length(), dcs);
+                ud = new SmsUserData(SmsPduUtil.getSeptets(myText), myText.length(), myDcs);
                 break;
                 
             case SmsConstants.ALPHABET_8BIT:
-                // 8bit data encoding, No message class, No compression
-                dcs = SmsConstants.DCS_DEFAULT_8BIT;
-                ud = new SmsUserData(myText.getBytes("ISO-8859-1"), myText.length(), dcs);
+                ud = new SmsUserData(myText.getBytes("ISO-8859-1"), myText.length(), myDcs);
                 break;
                 
             case SmsConstants.ALPHABET_UCS2:
-                // 16 bit UCS2 encoding, No message class, No compression
-                dcs = SmsConstants.DCS_DEFAULT_UCS2;
-                ud = new SmsUserData(myText.getBytes("UTF-16BE"), myText.length() * 2, dcs);
+                ud = new SmsUserData(myText.getBytes("UTF-16BE"), myText.length() * 2, myDcs);
                 break;
                 
             default:
@@ -150,7 +141,7 @@ public class SmsTextMessage extends SmsConcatMessage
             // Shouldn't happen. According to the javadoc documentation
             // for JDK 1.3.1 the "UTF-16BE" and "ISO-8859-1" encoding
             // are standard...
-            throw new RuntimeException(ex.getMessage());
+            throw new RuntimeException(ex);
         }
         
         return ud;
