@@ -61,7 +61,7 @@ public class SmsUserData
     {
         myData = userData;
         myLength = userData.length;
-        myDcs = SmsConstants.DCS_DEFAULT_8BIT;
+        myDcs = SmsDcsUtil.getGeneralDataCodingDcs(SmsConstants.ALPHABET_8BIT, SmsConstants.MSG_CLASS_UNKNOWN, SmsConstants.DCS_COMPRESSION_OFF);
     }
     
     public byte[] getData()
