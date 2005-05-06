@@ -38,12 +38,11 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Properties;
 
 import org.marre.sms.SmsAddress;
 import org.marre.sms.SmsConstants;
-import org.marre.sms.SmsDcsUtil;
+import org.marre.sms.SmsDcs;
 import org.marre.sms.SmsException;
 import org.marre.sms.SmsMessage;
 import org.marre.sms.SmsPdu;
@@ -183,7 +182,7 @@ public class UcpTransport implements SmsTransport
         UcpSeries50 ucpSubmit = new UcpSeries50(UcpSeries50.OP_SUBMIT_SHORT_MESSAGE);
 
         byte[] udh = pdu.getUserDataHeaders();
-        boolean isSeptets = (SmsDcsUtil.getAlphabet(pdu.getDcs()) == SmsConstants.ALPHABET_GSM);
+        boolean isSeptets = (pdu.getDcs().getAlphabet() == SmsDcs.ALPHABET_GSM);
         int udBits;
 
         // FIXME: TRN
@@ -221,18 +220,18 @@ public class UcpTransport implements SmsTransport
         ucpSubmit.setField(UcpSeries50.FIELD_ADC, dest.getAddress());
         if (pdu.getUserDataHeaders() == null) // Handel Messages without UDH
         {
-            switch (SmsDcsUtil.getAlphabet(pdu.getDcs()))
+            switch (pdu.getDcs().getAlphabet())
             {
-            case SmsConstants.ALPHABET_GSM:
+            case SmsDcs.ALPHABET_GSM:
                 System.out.println("GSM Message without UDH");
                 ucpSubmit.setField(UcpSeries50.FIELD_MT, "3");
                 String msg = SmsPduUtil.readSeptets(pdu.getUserData().getData(), pdu.getUserData().getLength());
                 ucpSubmit.setField(UcpSeries50.FIELD_MSG, StringUtil.bytesToHexString(SmsPduUtil.toGsmCharset(msg)));
                 System.out.println(msg.length());
                 break;
-            case SmsConstants.ALPHABET_8BIT:
+            case SmsDcs.ALPHABET_8BIT:
                 throw new SmsException(" 8Bit Messages without UDH are not Supported");
-            case SmsConstants.ALPHABET_UCS2:
+            case SmsDcs.ALPHABET_UCS2:
                 System.out.println("UCS2 Message without UDH");
                 ud = StringUtil.bytesToHexString(pdu.getUserData().getData());
                 ucpSubmit.setField(UcpSeries50.FIELD_MSG, ud);
@@ -242,7 +241,7 @@ public class UcpTransport implements SmsTransport
                 // Set message Type fix to 4
                 ucpSubmit.setField(UcpSeries50.FIELD_MT, "4");
                 ucpSubmit.clearXSer();
-                ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_DCS, pdu.getDcs());
+                ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_DCS, pdu.getDcs().getValue());
                 break;
             default:
                 throw new SmsException("Unsupported data coding scheme");
@@ -250,11 +249,11 @@ public class UcpTransport implements SmsTransport
         }
         else
         {
-            switch (SmsDcsUtil.getAlphabet(pdu.getDcs()))
+            switch (pdu.getDcs().getAlphabet())
             {
-            case SmsConstants.ALPHABET_GSM:
+            case SmsDcs.ALPHABET_GSM:
                 throw new SmsException("Cannot send 7 bit encoded messages with UDH");
-            case SmsConstants.ALPHABET_8BIT:
+            case SmsDcs.ALPHABET_8BIT:
                 ud = StringUtil.bytesToHexString(pdu.getUserData().getData());
                 udhData = pdu.getUserDataHeaders();
                 // Add length of udh
@@ -269,10 +268,10 @@ public class UcpTransport implements SmsTransport
                 ucpSubmit.setField(UcpSeries50.FIELD_MT, "4");
                 // Store the UDH
                 ucpSubmit.clearXSer();
-                ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_DCS, pdu.getDcs());
+                ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_DCS, pdu.getDcs().getValue());
                 ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_UDH, udhData);
                 break;
-            case SmsConstants.ALPHABET_UCS2:
+            case SmsDcs.ALPHABET_UCS2:
                 throw new SmsException(" UCS2 Messages are currently not Supportet ");
             default:
                 throw new SmsException("Unsupported data coding scheme");

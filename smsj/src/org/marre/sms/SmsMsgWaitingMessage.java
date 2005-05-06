@@ -35,61 +35,43 @@
 package org.marre.sms;
 
 /**
+ * Represents a "Message Waiting" sms.
+ * 
+ * As described in TS 23.040-650 section 9.2.3.24.2 "Special SMS Message Indication".
  * 
  * @author Markus Eriksson
  * @version $Id$
  */
-public class SmsUserData
+public class SmsMsgWaitingMessage extends SmsTextMessage
 {
-    /** The actual user data. */
-    protected byte[] myData;
+    public static final int TYPE_VOICE = 0;
+    public static final int TYPE_FAX = 1;
+    public static final int TYPE_EMAIL = 2;
+    public static final int TYPE_VIDEO = 3;
     
-    /** Length of myData, can be in octets or septets. */
-    protected int myLength;
+    public static final int OPT_PROFILE_ID_1 = 0x00;
+    public static final int OPT_PROFILE_ID_2 = 0x20;
+    public static final int OPT_PROFILE_ID_3 = 0x40;
+    public static final int OPT_PROFILE_ID_4 = 0x60;
     
-    /** Data Coding Scheme for this user data. */
-    protected SmsDcs myDcs;
+    public static final int OPT_STORE_MSG = 0x80;
     
-    public SmsUserData(byte[] userData, int userDataLength, SmsDcs dataCodingScheme)
+    public SmsMsgWaitingMessage(String theMsg)
     {
-        myData = userData;
-        myLength = userDataLength;
-        myDcs = dataCodingScheme;
+        super(theMsg);
+    }
+
+    public void addMsgWaiting(int type, int count, int options)
+    {
     }
     
-    public SmsUserData(byte[] userData)
+    public SmsUdhElement[] getUdhElements()
     {
-        myData = userData;
-        myLength = userData.length;
-        myDcs = SmsDcs.getGeneralDataCodingDcs(SmsDcs.ALPHABET_8BIT, SmsDcs.MSG_CLASS_UNKNOWN);
+        return super.getUdhElements();
     }
-    
-    public byte[] getData()
+
+    public SmsUserData getUserData()
     {
-        return myData;
-    }
-    
-    /**
-     * Returns the length of the user data field.
-     * 
-     * This can be in characters or byte depending on the message (DCS). If
-     * message is 7 bit coded the length is given in septets. If 8bit or UCS2
-     * the length is in octets.
-     * 
-     * @return The length
-     */
-    public int getLength()
-    {
-        return myLength;
-    }
-    
-    /**
-     * Returns the data coding scheme.
-     * 
-     * @return The dcs
-     */
-    public SmsDcs getDcs()
-    {
-        return myDcs;
+        return super.getUserData();
     }
 }

@@ -46,7 +46,7 @@ import java.util.Properties;
 
 import org.marre.sms.SmsAddress;
 import org.marre.sms.SmsConstants;
-import org.marre.sms.SmsDcsUtil;
+import org.marre.sms.SmsDcs;
 import org.marre.sms.SmsException;
 import org.marre.sms.SmsMessage;
 import org.marre.sms.SmsPdu;
@@ -84,9 +84,9 @@ public class PsWinXmlTransport implements SmsTransport
         // <MSG>
         theXmlWriter.write("<MSG>\r\n");
 
-        switch (SmsDcsUtil.getAlphabet(thePdu.getDcs()))
+        switch (thePdu.getDcs().getAlphabet())
         {
-        case SmsConstants.ALPHABET_UCS2:
+        case SmsDcs.ALPHABET_UCS2:
             // <OP>9</OP>
             theXmlWriter.write("<OP>9</OP>\r\n");
             // <TEXT>hex-text</TEXT>
@@ -95,14 +95,14 @@ public class PsWinXmlTransport implements SmsTransport
             theXmlWriter.write("</TEXT>\r\n");
             break;
 
-        case SmsConstants.ALPHABET_GSM:
+        case SmsDcs.ALPHABET_GSM:
             // <TEXT>txt</TEXT>
             theXmlWriter.write("<TEXT>");
             theXmlWriter.write(SmsPduUtil.readSeptets(userData.getData(), userData.getLength()));
             theXmlWriter.write("</TEXT>\r\n");
             break;
 
-        case SmsConstants.ALPHABET_8BIT:
+        case SmsDcs.ALPHABET_8BIT:
             // <OP>8</OP>
             theXmlWriter.write("<OP>8</OP>\r\n");
             // <TEXT>udh-and-ud</TEXT>
@@ -129,7 +129,7 @@ public class PsWinXmlTransport implements SmsTransport
             theXmlWriter.write("</SND>\r\n");
         }
 
-        if (SmsDcsUtil.getMessageClass(thePdu.getDcs()) == SmsConstants.MSG_CLASS_0)
+        if (thePdu.getDcs().getMessageClass() == SmsDcs.MSG_CLASS_0)
         {
             // <CLASS>0</CLASS>
             theXmlWriter.write("<CLASS>");
@@ -152,9 +152,9 @@ public class PsWinXmlTransport implements SmsTransport
         // <MSG>
         theXmlWriter.write("<MSG>\r\n");
 
-        switch (SmsDcsUtil.getAlphabet(userData.getDcs()))
+        switch (userData.getDcs().getAlphabet())
         {
-        case SmsConstants.ALPHABET_UCS2:
+        case SmsDcs.ALPHABET_UCS2:
             // <OP>9</OP>
             theXmlWriter.write("<OP>9</OP>\r\n");
             // <TEXT>hex-text</TEXT>
@@ -163,7 +163,7 @@ public class PsWinXmlTransport implements SmsTransport
             theXmlWriter.write("</TEXT>\r\n");
             break;
 
-        case SmsConstants.ALPHABET_GSM:
+        case SmsDcs.ALPHABET_GSM:
             // <TEXT>txt</TEXT>
             theXmlWriter.write("<TEXT>");
             theXmlWriter.write(theMessage.getText());
@@ -187,7 +187,7 @@ public class PsWinXmlTransport implements SmsTransport
             theXmlWriter.write("</SND>\r\n");
         }
 
-        if (SmsDcsUtil.getMessageClass(userData.getDcs()) == SmsConstants.MSG_CLASS_0)
+        if (userData.getDcs().getMessageClass() == SmsDcs.MSG_CLASS_0)
         {
             // <CLASS>0</CLASS>
             theXmlWriter.write("<CLASS>");

@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Random;
 
+import org.marre.sms.SmsDcs;
 import org.marre.sms.SmsMessage;
 import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsPdu;
@@ -160,7 +161,7 @@ public class SiemensOtaMessage implements SmsMessage
     public SmsPdu[] getPdus()
     {
         SmsPdu[] smsPdus = new SmsPdu[myNumberOfPackets];
-        byte dcs = (byte) (SmsConstants.MSG_CLASS_1 | SmsConstants.ALPHABET_8BIT);
+        SmsDcs dcs = SmsDcs.getGeneralDataCodingDcs(SmsDcs.ALPHABET_8BIT, SmsDcs.MSG_CLASS_1);
         for (int i = 0; i < myNumberOfPackets; i++)
         {
 

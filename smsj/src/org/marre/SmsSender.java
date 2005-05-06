@@ -40,6 +40,7 @@ import java.util.Properties;
 
 import org.marre.sms.SmsAddress;
 import org.marre.sms.SmsConstants;
+import org.marre.sms.SmsDcs;
 import org.marre.sms.SmsException;
 import org.marre.sms.SmsTextMessage;
 import org.marre.sms.transport.SmsTransport;
@@ -317,7 +318,7 @@ public class SmsSender
      */
     public void sendTextSms(String theMsg, String theDest, String theSender) throws SmsException, IOException
     {
-        sendTextSms(theMsg, theDest, theSender, SmsConstants.ALPHABET_GSM);
+        sendTextSms(theMsg, theDest, theSender, SmsDcs.ALPHABET_GSM);
     }
 
     /**
@@ -335,7 +336,7 @@ public class SmsSender
      */
     public void sendTextSms(String theMsg, String theDest) throws SmsException, IOException
     {
-        sendTextSms(theMsg, theDest, null, SmsConstants.ALPHABET_GSM);
+        sendTextSms(theMsg, theDest, null, SmsDcs.ALPHABET_GSM);
     }
     
     /**
@@ -357,7 +358,7 @@ public class SmsSender
      */
     public void sendUnicodeTextSms(String theMsg, String theDest, String theSender) throws SmsException, IOException
     {
-        sendTextSms(theMsg, theDest, theSender, SmsConstants.ALPHABET_UCS2);
+        sendTextSms(theMsg, theDest, theSender, SmsDcs.ALPHABET_UCS2);
     }
 
     /**
@@ -375,7 +376,7 @@ public class SmsSender
      */
     public void sendUnicodeTextSms(String theMsg, String theDest) throws SmsException, IOException
     {
-        sendTextSms(theMsg, theDest, null, SmsConstants.ALPHABET_UCS2);
+        sendTextSms(theMsg, theDest, null, SmsDcs.ALPHABET_UCS2);
     }
     
     /**
@@ -390,12 +391,12 @@ public class SmsSender
      * @param theMaxSms
      *            Max no of SMS (Set to -1 if "unlimited")
      * @param theAlphabet
-     *            Alphabet to use. Can be any of SmsConstants.ALPHABET_*
+     *            Alphabet to use. Can be any of SmsDcs.ALPHABET_*
      * @throws SmsException
      */
     private void sendTextSms(String theMsg, String theDest, String theSender, int theAlphabet) throws SmsException, IOException
     {
-        SmsTextMessage textMessage = new SmsTextMessage(theMsg, theAlphabet, SmsConstants.MSG_CLASS_UNKNOWN);
+        SmsTextMessage textMessage = new SmsTextMessage(theMsg, theAlphabet, SmsDcs.MSG_CLASS_UNKNOWN);
         SmsAddress destAddress = new SmsAddress(theDest);
         SmsAddress senderAddress = null;
 

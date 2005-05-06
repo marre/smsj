@@ -116,7 +116,7 @@ public final class SmsUdhUtil
      * 
      * @param ud User data
      * @param udh UDH elements
-     * @return
+     * @return true if the message must be concatentated.
      */
     public static boolean isConcat(SmsUserData ud, byte[] udh)
     {
@@ -130,17 +130,17 @@ public final class SmsUdhUtil
             bytesLeft -= udh.length;
         }
 
-        switch (SmsDcsUtil.getAlphabet(ud.getDcs()))
+        switch (ud.getDcs().getAlphabet())
         {
-        case SmsConstants.ALPHABET_GSM:
+        case SmsDcs.ALPHABET_GSM:
             maxChars = (bytesLeft * 8) / 7;
             break;
             
-        case SmsConstants.ALPHABET_UCS2:
+        case SmsDcs.ALPHABET_UCS2:
             maxChars = bytesLeft / 2;
             break;
             
-        case SmsConstants.ALPHABET_8BIT:
+        case SmsDcs.ALPHABET_8BIT:
         default:
             maxChars = bytesLeft;
             break;

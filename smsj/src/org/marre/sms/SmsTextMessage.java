@@ -48,7 +48,7 @@ import java.io.*;
 public class SmsTextMessage extends SmsConcatMessage
 {
     private String myText;
-    private byte myDcs;
+    private SmsDcs myDcs;
     
     /**
      * Creates an SmsTextMessage with the given dcs.
@@ -56,7 +56,7 @@ public class SmsTextMessage extends SmsConcatMessage
      * @param theMsg The message
      * @param theDcs The data coding scheme
      */
-    public SmsTextMessage(String theMsg, byte theDcs)
+    public SmsTextMessage(String theMsg, SmsDcs theDcs)
     {
         myText = theMsg;
         myDcs = theDcs;
@@ -82,7 +82,7 @@ public class SmsTextMessage extends SmsConcatMessage
      */
     public SmsTextMessage(String theMsg, int theAlphabet, byte theMessageClass)
     {
-        this(theMsg, SmsDcsUtil.getGeneralDataCodingDcs(theAlphabet, theMessageClass, SmsConstants.DCS_COMPRESSION_OFF));
+        this(theMsg, SmsDcs.getGeneralDataCodingDcs(theAlphabet, theMessageClass));
     }
 
     /**
@@ -92,7 +92,7 @@ public class SmsTextMessage extends SmsConcatMessage
      */
     public SmsTextMessage(String theMsg)
     {
-        this(theMsg, SmsConstants.ALPHABET_GSM, SmsConstants.MSG_CLASS_UNKNOWN);
+        this(theMsg, SmsDcs.ALPHABET_GSM, SmsDcs.MSG_CLASS_UNKNOWN);
     }
     
     /**
@@ -106,7 +106,7 @@ public class SmsTextMessage extends SmsConcatMessage
     /**
      * Returns the dcs.
      */
-    public byte getDcs()
+    public SmsDcs getDcs()
     {
         return myDcs;
     }
@@ -117,17 +117,17 @@ public class SmsTextMessage extends SmsConcatMessage
                 
         try
         {
-            switch (SmsDcsUtil.getAlphabet(myDcs))
+            switch (myDcs.getAlphabet())
             {
-            case SmsConstants.ALPHABET_GSM:
+            case SmsDcs.ALPHABET_GSM:
                 ud = new SmsUserData(SmsPduUtil.getSeptets(myText), myText.length(), myDcs);
                 break;
                 
-            case SmsConstants.ALPHABET_8BIT:
+            case SmsDcs.ALPHABET_8BIT:
                 ud = new SmsUserData(myText.getBytes("ISO-8859-1"), myText.length(), myDcs);
                 break;
                 
-            case SmsConstants.ALPHABET_UCS2:
+            case SmsDcs.ALPHABET_UCS2:
                 ud = new SmsUserData(myText.getBytes("UTF-16BE"), myText.length() * 2, myDcs);
                 break;
                 

@@ -313,15 +313,15 @@ public abstract class SmsConcatMessage implements SmsMessage
         int udhLength = SmsUdhUtil.getTotalSize(udhElements);
         int nBytesLeft = 140 - udhLength;
 
-        switch (SmsDcsUtil.getAlphabet(ud.getDcs()))
+        switch (ud.getDcs().getAlphabet())
         {
-        case SmsConstants.ALPHABET_GSM:
+        case SmsDcs.ALPHABET_GSM:
             smsPdus = createSeptetPdus(udhElements, ud, nBytesLeft);
             break;
-        case SmsConstants.ALPHABET_UCS2:
+        case SmsDcs.ALPHABET_UCS2:
             smsPdus = createUnicodePdus(udhElements, ud, nBytesLeft);
             break;
-        case SmsConstants.ALPHABET_8BIT:
+        case SmsDcs.ALPHABET_8BIT:
         default:
             smsPdus = createOctalPdus(udhElements, ud, nBytesLeft);
             break;

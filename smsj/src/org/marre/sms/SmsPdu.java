@@ -69,7 +69,7 @@ public class SmsPdu
      *            The length of the content. Can be in octets or septets
      *            depending on the DCS
      */
-    public SmsPdu(SmsUdhElement[] theUdhIeis, byte[] theUd, int theUdLength, byte theDataCodingScheme)
+    public SmsPdu(SmsUdhElement[] theUdhIeis, byte[] theUd, int theUdLength, SmsDcs theDataCodingScheme)
     {
         setUserDataHeaders(theUdhIeis);
         setUserData(theUd, theUdLength, theDataCodingScheme);
@@ -152,7 +152,7 @@ public class SmsPdu
      * @param theDataCodingScheme
      *            The data coding scheme
      */
-    public void setUserData(byte[] theUd, int theUdLength, byte theDataCodingScheme)
+    public void setUserData(byte[] theUd, int theUdLength, SmsDcs theDataCodingScheme)
     {
         myUd = new SmsUserData(theUd, theUdLength, theDataCodingScheme);
     }
@@ -178,7 +178,12 @@ public class SmsPdu
         return myUd;
     }
     
-    public byte getDcs()
+    /**
+     * Returns the dcs.
+     * 
+     * @return dcs
+     */
+    public SmsDcs getDcs()
     {
         return myUd.getDcs();
     }

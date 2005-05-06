@@ -39,8 +39,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.marre.sms.SmsAddress;
-import org.marre.sms.SmsConstants;
-import org.marre.sms.SmsDcsUtil;
+import org.marre.sms.SmsDcs;
 import org.marre.sms.SmsException;
 import org.marre.sms.SmsPdu;
 import org.marre.sms.SmsPduUtil;
@@ -63,7 +62,7 @@ public final class GsmEncoder
     public static byte[] encodePdu(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender)
         throws SmsException
     {
-        if (SmsDcsUtil.getAlphabet(thePdu.getDcs()) == SmsConstants.ALPHABET_GSM)
+        if (thePdu.getDcs().getAlphabet() == SmsDcs.ALPHABET_GSM)
         {
             return encodeSeptetPdu(thePdu, theDestination, theSender);
         }
@@ -162,7 +161,7 @@ public final class GsmEncoder
 
             // TP-DCS
             // UCS, septets, language, SMS class...
-            baos.write(thePdu.getDcs());
+            baos.write(thePdu.getDcs().getValue());
 
             // TP-VP - Optional
             // Probably not needed
@@ -262,7 +261,7 @@ public final class GsmEncoder
             baos.write(0x00);
 
             // TP-DCS
-            baos.write(thePdu.getDcs());
+            baos.write(thePdu.getDcs().getValue());
 
             // 1 octet/ 7 octets
             // TP-VP - Optional
