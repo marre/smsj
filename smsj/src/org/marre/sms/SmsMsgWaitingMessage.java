@@ -34,44 +34,226 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+
 /**
  * Represents a "Message Waiting" sms.
  * 
  * As described in TS 23.040-650 section 9.2.3.24.2 "Special SMS Message Indication".
  * 
+ * On a Sony-Ericsson T610 these messages can be used to display different types of icons in the
+ * notification bar.
+ *  
  * @author Markus Eriksson
  * @version $Id$
  */
 public class SmsMsgWaitingMessage extends SmsTextMessage
 {
+    /** Message waiting type : VOICE */
     public static final int TYPE_VOICE = 0;
+    /** Message waiting type : FAX */
     public static final int TYPE_FAX = 1;
+    /** Message waiting type : EMAIL */
     public static final int TYPE_EMAIL = 2;
+    /** Message waiting type : VIDEO */
     public static final int TYPE_VIDEO = 3;
     
+    private static final int OPT_PROFILE_MASK = 0x03;
+    /** Profile ID 1. (Default) */
     public static final int OPT_PROFILE_ID_1 = 0x00;
-    public static final int OPT_PROFILE_ID_2 = 0x20;
-    public static final int OPT_PROFILE_ID_3 = 0x40;
-    public static final int OPT_PROFILE_ID_4 = 0x60;
+    /** Profile ID 2. */
+    public static final int OPT_PROFILE_ID_2 = 0x01;
+    /** Profile ID 3. */
+    public static final int OPT_PROFILE_ID_3 = 0x02;
+    /** Profile ID 4. */
+    public static final int OPT_PROFILE_ID_4 = 0x03;
     
-    public static final int OPT_STORE_MSG = 0x80;
+    /** Store message in the phone memory. */
+    public static final int OPT_STORE_MSG = 0x04;    
     
-    public SmsMsgWaitingMessage(String theMsg)
+    /**
+     * Represents one message waiting udh.
+     */
+    private class MsgWaiting
     {
-        super(theMsg);
+        int type;
+        int count;
+        int options;
+        
+        private MsgWaiting(int type, int count, int options)
+        {
+            this.type = type;
+            this.count = count;
+            this.options = options;
+        }
     }
-
+    
+    /**
+     * List of MsgWaiting "objects".
+     */
+    protected LinkedList messages_ = new LinkedList();
+    
+    /**
+     * Creates an empty message.
+     */
+    public SmsMsgWaitingMessage()
+    {
+        this("", SmsDcs.ALPHABET_8BIT);
+    }
+    
+    /**
+     * Creates an message with the supplied text (GSM charset).
+     * 
+     * @param text Description of this message.
+     */
+    public SmsMsgWaitingMessage(String text)
+    {
+        this(text, SmsDcs.ALPHABET_GSM);
+    }
+    
+    /**
+     * Creates an message with the supplied text and alphabet.
+     * 
+     * @param text Description of this message
+     * @param alphabet Alphabet to use. Valid values are SmsDcs.ALPHABET_*.
+     */
+    public SmsMsgWaitingMessage(String text, int alphabet)
+    {
+        super(text, SmsDcs.getGeneralDataCodingDcs(alphabet, SmsDcs.MSG_CLASS_UNKNOWN));
+    }
+    
+    /**
+     * Adds a message waiting.
+     * 
+     * @param type Type of message that is waiting. Can be any of TYPE_*.
+     * @param count Number of messages waiting for retrieval.
+     */
+    public void addMsgWaiting(int type, int count)
+    {
+        addMsgWaiting(type, count, 0);
+    }
+    
+    /**
+     * Adds a message waiting.
+     * 
+     * @param type Type of message that is waiting. Can be any of TYPE_*.
+     * @param count Number of messages waiting for retrieval.
+     * @param options Bitfield of OPT_ options.
+     */
     public void addMsgWaiting(int type, int count, int options)
     {
-    }
-    
-    public SmsUdhElement[] getUdhElements()
-    {
-        return super.getUdhElements();
+        // Check input parameters
+        switch (type)
+        {
+        case TYPE_VOICE:
+        case TYPE_FAX:
+        case TYPE_EMAIL:
+        case TYPE_VIDEO:
+            // Valid values
+            break;
+            
+        default:
+            throw new IllegalArgumentException("Invalid type.");
+        }
+        
+        // count can be at most 255.
+        if (count > 255)
+        {
+            count = 255;
+        }
+        
+        messages_.add(new MsgWaiting(type, count, options));
     }
 
-    public SmsUserData getUserData()
+    /**
+     * Creates a "Message waiting" UDH element using UDH_IEI_SPECIAL_MESSAGE.
+     * <p>
+     * If more than one type of message is required to be indicated within
+     * one SMS message, then multiple "Message waiting" UDH elements must
+     * be used.
+     * <p>
+     * <b>Special handling in concatenated messages:</b><br>
+     * <i>
+     * "In the case where this IEI is to be used in a concatenated SM then the
+     * IEI, its associated IEI length and IEI data shall be contained in the
+     * first segment of the concatenated SM. The IEI, its associated IEI length
+     * and IEI data should also be contained in every subsequent segment of the
+     * concatenated SM although this is not mandatory. However, in the case
+     * where these elements are not contained in every subsequent segment of
+     * the concatenated SM and where an out of sequence segment delivery
+     * occurs or where the first segment is not delivered then processing
+     * difficulties may arise at the receiving entity which may result in
+     * the concatenated SM being totally or partially discarded."
+     * </i>
+     *
+     * @param msgWaiting The MsgWaiting to convert
+     * @return A SmsUdhElement
+     */
+    protected SmsUdhElement getMessageWaitingUdh(MsgWaiting msgWaiting)
     {
-        return super.getUserData();
+        byte[] udh = new byte[2];
+
+        // Bit 0 and 1 indicate the basic indication type.
+        // Bit 4, 3 and 2 indicate the extended message indication type.
+        switch (msgWaiting.type)
+        {
+        case TYPE_VOICE: udh[0] = 0x00; break;
+        case TYPE_FAX:   udh[0] = 0x01; break;
+        case TYPE_EMAIL: udh[0] = 0x02; break;
+        case TYPE_VIDEO: udh[0] = 0x07; break;
+
+        default:
+            throw new RuntimeException("Invalid message type.");
+        }
+        
+        // Bit 6 and 5 indicates the profile ID of the Multiple Subscriber Profile.
+        switch (msgWaiting.options & OPT_PROFILE_MASK)
+        {
+        case OPT_PROFILE_ID_1: udh[0] |= 0x00; break;
+        case OPT_PROFILE_ID_2: udh[0] |= 0x20; break;
+        case OPT_PROFILE_ID_3: udh[0] |= 0x40; break;
+        case OPT_PROFILE_ID_4: udh[0] |= 0x60; break;
+            
+        default:
+            throw new RuntimeException("Invalid option.");
+        }
+        
+        // Bit 7 indicates if the message shall be stored.
+        if ((msgWaiting.options & OPT_STORE_MSG) != 0)
+        {
+            udh[0] |= (byte) (0x80);
+        }
+
+        // Octet 2 contains the number of messages waiting
+        udh[1] = (byte) (msgWaiting.count & 0xff);
+
+        return new SmsUdhElement(SmsConstants.UDH_IEI_SPECIAL_MESSAGE, udh);
+    }
+    
+    /**
+     * Builds a udh element for this message.
+     * 
+     * @see org.marre.sms.SmsTextMessage#getUdhElements()
+     */
+    public SmsUdhElement[] getUdhElements()
+    {
+        SmsUdhElement udhElements[] = null;
+        int msgCount = messages_.size();
+        
+        if (msgCount > 0)
+        {
+            udhElements = new SmsUdhElement[messages_.size()];
+            int i = 0;
+         
+            for(Iterator j = messages_.iterator(); j.hasNext(); i++)
+            {
+                MsgWaiting msgWaiting = (MsgWaiting) j.next();
+                udhElements[i] = getMessageWaitingUdh(msgWaiting);
+            }
+            
+        }
+        
+        return udhElements;
     }
 }
