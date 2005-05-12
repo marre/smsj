@@ -47,8 +47,8 @@ import java.io.*;
  */
 public class SmsTextMessage extends SmsConcatMessage
 {
-    private String myText;
-    private SmsDcs myDcs;
+    private String text_;
+    private SmsDcs dcs_;
     
     /**
      * Creates an SmsTextMessage with the given dcs.
@@ -58,8 +58,7 @@ public class SmsTextMessage extends SmsConcatMessage
      */
     public SmsTextMessage(String theMsg, SmsDcs theDcs)
     {
-        myText = theMsg;
-        myDcs = theDcs;
+        setText(theMsg, theDcs);
     }
     
     /**
@@ -100,35 +99,76 @@ public class SmsTextMessage extends SmsConcatMessage
      */
     public String getText()
     {
-        return myText;
+        return text_;
+    }
+    
+    /**
+     * Sets the text.
+     * 
+     * @param text
+     */
+    public void setText(String text)
+    {
+        if (text == null)
+        {
+            throw new IllegalArgumentException("Text cannot be null, use an empty string instead.");
+        }
+        
+        text_ = text;
     }
 
+    /**
+     * Sets the text.
+     * 
+     * @param text
+     */
+    public void setText(String text, SmsDcs dcs)
+    {
+        // Check input for null
+        if (text == null)
+        {
+            throw new IllegalArgumentException("text cannot be null, use an empty string instead.");
+        }
+        
+        if (dcs == null)
+        {
+            throw new IllegalArgumentException("dcs cannot be null.");
+        }
+        
+        text_ = text;
+        dcs_ = dcs;
+    }
+    
     /**
      * Returns the dcs.
      */
     public SmsDcs getDcs()
     {
-        return myDcs;
+        return dcs_;
     }
-    
+
+    /**
+     * Returns the user data.
+     * @return user data
+     */
     public SmsUserData getUserData()
     {
         SmsUserData ud;
-                
+        
         try
         {
-            switch (myDcs.getAlphabet())
+            switch (dcs_.getAlphabet())
             {
             case SmsDcs.ALPHABET_GSM:
-                ud = new SmsUserData(SmsPduUtil.getSeptets(myText), myText.length(), myDcs);
+                ud = new SmsUserData(SmsPduUtil.getSeptets(text_), text_.length(), dcs_);
                 break;
                 
             case SmsDcs.ALPHABET_8BIT:
-                ud = new SmsUserData(myText.getBytes("ISO-8859-1"), myText.length(), myDcs);
+                ud = new SmsUserData(text_.getBytes("ISO-8859-1"), text_.length(), dcs_);
                 break;
                 
             case SmsDcs.ALPHABET_UCS2:
-                ud = new SmsUserData(myText.getBytes("UTF-16BE"), myText.length() * 2, myDcs);
+                ud = new SmsUserData(text_.getBytes("UTF-16BE"), text_.length() * 2, dcs_);
                 break;
                 
             default:
@@ -147,6 +187,9 @@ public class SmsTextMessage extends SmsConcatMessage
         return ud;
     }
 
+    /**
+     * Returns null.
+     */
     public SmsUdhElement[] getUdhElements()
     {
         return null;
