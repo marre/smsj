@@ -47,10 +47,6 @@ public class NokiaRingTone extends SmsPortAddressedMessage
         myRingToneData = theRingTone;
     }
 
-    private void setContent(byte[] theRingTone)
-    {
-    }
-
     public SmsUserData getUserData()
     {
         return new SmsUserData(myRingToneData);
