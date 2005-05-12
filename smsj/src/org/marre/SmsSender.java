@@ -42,6 +42,8 @@ import org.marre.sms.SmsAddress;
 import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsDcs;
 import org.marre.sms.SmsException;
+import org.marre.sms.SmsMessage;
+import org.marre.sms.SmsMsgWaitingMessage;
 import org.marre.sms.SmsTextMessage;
 import org.marre.sms.transport.SmsTransport;
 import org.marre.sms.transport.SmsTransportManager;
@@ -88,46 +90,52 @@ import org.marre.wap.push.WapSIPush;
  */
 public class SmsSender
 {
-    protected SmsTransport myTransport;
+    /**
+     * The sms transport that is used to send the messages.
+     */
+    protected SmsTransport transport_;
 
     /**
      * Creates a SmsSender object by using the given transport and properties.
      * <p>
      * You can also use getClickatellSender(...) to create a SmsSender object
      * 
-     * @param theTransport
+     * @param transport
      *            Classname of the SmsTransport class
-     * @param theProps
+     * @param props
      *            Properties to initialize the transport with
      * @throws SmsException
      */
-    public SmsSender(String theTransport, Properties theProps) throws SmsException
+    public SmsSender(String transport, Properties props) throws SmsException
     {
-        myTransport = SmsTransportManager.getTransport(theTransport, theProps);
+        transport_ = SmsTransportManager.getTransport(transport, props);
     }
 
     /**
      * Convenience method to create a SmsSender object that knows how to send
      * messages with the Clickatell service.
      * 
-     * @param theUsername
+     * @param username
      *            Clickatell username
-     * @param thePassword
+     * @param password
      *            Clickatell password
-     * @param theApiId
+     * @param apiid
      *            Clickatell api-id
+     *            
      * @return A SmsSender object that uses the ClickatellTransport to send
      *         messages
+     *         
      * @throws SmsException
      */
-    public static SmsSender getClickatellSender(String theUsername, String thePassword, String theApiId)
+    public static SmsSender getClickatellSender(String username, String password, String apiid)
             throws SmsException
     {
         Properties props = new Properties();
 
-        props.setProperty("smsj.clickatell.username", theUsername);
-        props.setProperty("smsj.clickatell.password", thePassword);
-        props.setProperty("smsj.clickatell.apiid", theApiId);
+        props.setProperty("smsj.clickatell.username", username);
+        props.setProperty("smsj.clickatell.password", password);
+        props.setProperty("smsj.clickatell.apiid", apiid);
+        props.setProperty("smsj.clickatell.protocol", "https");
 
         return new SmsSender("org.marre.sms.transport.clickatell.ClickatellTransport", props);
     }
@@ -136,26 +144,20 @@ public class SmsSender
      * Convenience method to create a SmsSender object that knows how to send
      * messages with the Clickatell service.
      * 
-     * @param thePropsFilename
+     * @param propsFilename
      *            Filename of a properties file containing properties for the
      *            clickatell transport.
+     *            
      * @return A SmsSender object that uses the ClickatellTransport to send
      *         messages
+     *         
      * @throws SmsException
+     * @throws IOException 
      */
-    public static SmsSender getClickatellSender(String thePropsFilename) throws SmsException
+    public static SmsSender getClickatellSender(String propsFilename) throws SmsException, IOException
     {
         Properties props = new Properties();
-
-        try
-        {
-            props.load(new FileInputStream(thePropsFilename));
-        }
-        catch (IOException ex)
-        {
-            throw new SmsException("Couldn't load clickatell properties from file : " + thePropsFilename);
-        }
-
+        props.load(new FileInputStream(propsFilename));
         return new SmsSender("org.marre.sms.transport.clickatell.ClickatellTransport", props);
     }
 
@@ -163,17 +165,17 @@ public class SmsSender
      * Convenience method to create a SmsSender object that knows how to send
      * messages with a GSM phone attached to the serial port on your computer.
      * 
-     * @param theSerialPort
+     * @param portName
      *            Serial port where your phone is located. Ex "COM1:"
+     *            
      * @return A SmsSender object that uses the GsmTranport to send messages
+     * 
      * @throws SmsException
      */
-    public static SmsSender getGsmSender(String theSerialPort) throws SmsException
+    public static SmsSender getGsmSender(String portName) throws SmsException
     {
         Properties props = new Properties();
-
-        props.setProperty("sms.gsm.serialport", theSerialPort);
-
+        props.setProperty("sms.gsm.serialport", portName);
         return new SmsSender("org.marre.sms.transport.gsm.GsmTransport", props);
     }
 
@@ -181,20 +183,19 @@ public class SmsSender
      * Convenience method to create a SmsSender object that knows how to send
      * messages with a UCP SMSC.
      * 
-     * @param theIpHost
+     * @param address
      *            A string with the ip address or host name of the SMSC
-     * @param theIpPort
+     * @param port
      *            An integer with the ip port on which the SMSC listens
-     * @param password
      * @return A SmsSender object that uses the UcpTranport to send messages
      * @throws SmsException
      */
-    public static SmsSender getUcpSender(String theIpHost, int theIpPort) throws SmsException
+    public static SmsSender getUcpSender(String address, int port) throws SmsException
     {
         //Liquidterm: strict input checking is done in the UcpTransport class
         Properties props = new Properties();
-        props.setProperty("smsj.ucp.ip.host", theIpHost);
-        props.setProperty("smsj.ucp.ip.port", Integer.toString(theIpPort));
+        props.setProperty("smsj.ucp.ip.host", address);
+        props.setProperty("smsj.ucp.ip.port", Integer.toString(port));
         return new SmsSender("org.marre.sms.transport.ucp.UcpTransport", props);
     }
 
@@ -202,26 +203,28 @@ public class SmsSender
      * Convenience method to create a SmsSender object that knows how to send
      * messages with a UCP SMSC.
      * 
-     * @param theIpHost
+     * @param address
      *            A string with the ip address or host name of the SMSC
-     * @param theIpPort
+     * @param port
      *            An integer with the ip port on which the SMSC listens
-     * @param theUCP60Uid
+     * @param ucp60Uid
      *            A string containing the UCP60 userid
-     * @param theUCP60Pwd
+     * @param ucp60Pwd
      *            A string containing the UCP60 password
+     *            
      * @return A SmsSender object that uses the UcpTranport to send messages
+     * 
      * @throws SmsException
      */
-    public static SmsSender getUcpSender(String theIpHost, int theIpPort, String theUCP60Uid, String theUCP60Pwd)
+    public static SmsSender getUcpSender(String address, int port, String ucp60Uid, String ucp60Pwd)
             throws SmsException
     {
         //Liquidterm: strict input checking is done in the UcpTransport class
         Properties props = new Properties();
-        props.setProperty("smsj.ucp.ip.host", theIpHost);
-        props.setProperty("smsj.ucp.ip.port", Integer.toString(theIpPort));
-        props.setProperty("smsj.ucp.ucp60.uid", theUCP60Uid);
-        props.setProperty("smsj.ucp.ucp60.password", theUCP60Pwd);
+        props.setProperty("smsj.ucp.ip.host", address);
+        props.setProperty("smsj.ucp.ip.port", Integer.toString(port));
+        props.setProperty("smsj.ucp.ucp60.uid", ucp60Uid);
+        props.setProperty("smsj.ucp.ucp60.password", ucp60Pwd);
         return new SmsSender("org.marre.sms.transport.ucp.UcpTransport", props);
     }
 
@@ -229,24 +232,19 @@ public class SmsSender
      * Convenience method to create a SmsSender object that knows how to send
      * messages with a UCP SMSC.
      * 
-     * @param thePropsFilename
+     * @param propsFilename
      *            A string containt a filename with the serialized Properties
      *            object for the transport
+     *            
      * @return A SmsSender object that uses the UcpTranport to send messages
+     * 
      * @throws SmsException
+     * @throws IOException 
      */
-    public static SmsSender getUcpSender(String thePropsFilename) throws SmsException
+    public static SmsSender getUcpSender(String propsFilename) throws SmsException, IOException
     {
-        //Liquidterm: strict input checking is done in the UcpTransport class
         Properties props = new Properties();
-        try
-        {
-            props.load(new FileInputStream(thePropsFilename));
-        }
-        catch (IOException ex)
-        {
-            throw new SmsException("Couldn't load UCP transport properties " + "from file : " + thePropsFilename);
-        }
+        props.load(new FileInputStream(propsFilename));
         return new SmsSender("org.marre.sms.transport.ucp.UcpTransport", props);
     }
 
@@ -254,20 +252,20 @@ public class SmsSender
      * Convenience method to create a SmsSender object that knows how to send
      * messages via PSWinComm
      * 
-     * @param theUsername
+     * @param username
      *            PsWinComm username
-     * @param thePassword
+     * @param password
      *            PsWinComm password
      * @return A SmsSender object that uses the PsWinXmlTransport to send
      *         messages
      * @throws SmsException
      */
-    public static SmsSender getPsWinCommXmlSender(String theUsername, String thePassword) throws SmsException
+    public static SmsSender getPsWinCommXmlSender(String username, String password) throws SmsException
     {
         Properties props = new Properties();
 
-        props.setProperty("smsj.pswincom.username", theUsername);
-        props.setProperty("smsj.pswincom.password", thePassword);
+        props.setProperty("smsj.pswincom.username", username);
+        props.setProperty("smsj.pswincom.password", password);
 
         return new SmsSender("org.marre.sms.transport.pswincom.PsWinXmlTransport", props);
     }
@@ -276,67 +274,63 @@ public class SmsSender
      * Convenience method to create a SmsSender object that knows how to send
      * messages via PSWinComm
      * 
-     * @param thePropsFilename
+     * @param propsFilename
      *            Filename of a properties file containing properties for the
      *            pswincomm transport.
+     *            
      * @return A SmsSender object that uses the PsWinXmlTransport to send
      *         messages
+     *         
      * @throws SmsException
+     * @throws IOException 
      */
-    public static SmsSender getPsWinCommXmlSender(String thePropsFilename) throws SmsException
+    public static SmsSender getPsWinCommXmlSender(String propsFilename) throws SmsException, IOException
     {
         Properties props = new Properties();
-
-        try
-        {
-            props.load(new FileInputStream(thePropsFilename));
-        }
-        catch (IOException ex)
-        {
-            throw new SmsException("Couldn't load clickatell properties from file : " + thePropsFilename);
-        }
-
+        props.load(new FileInputStream(propsFilename));
         return new SmsSender("org.marre.sms.transport.pswincom.PsWinXmlTransport", props);
     }
 
     /**
      * Sends an ordinary SMS to the given recipient.
      * 
-     * No limit on the number of concatenated SMS that this message will
-     * use. Will send the message with the GSM charset (Max 160 chars/SMS).
+     * There is no limit on the number of concatenated SMS that this message will
+     * use. It will send the message with the GSM charset (Max 160 chars/SMS).
      * 
-     * @param theMsg
-     *            Message to send
-     * @param theDest
-     *            Destination number (international format without leading +)
-     *            Ex. 44546754235
-     * @param theSender
-     *            Destination number (international format without leading +).
-     *            Can also be an alphanumerical string. Ex "SMSJ". (not
-     *            supported by all transports).
+     * @param text Message to send
+     * @param dest Destination number (international format without leading +).
+     * @param sender Sender number (international format without leading +). Can also be an alphanumerical string like
+     *               "SMSJ". This is property is not supported by all transports.
+     *            
+     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * 
      * @throws SmsException
+     * @throws IOException 
      */
-    public void sendTextSms(String theMsg, String theDest, String theSender) throws SmsException, IOException
+    public String[] sendTextSms(String text, String dest, String sender) throws SmsException, IOException
     {
-        sendTextSms(theMsg, theDest, theSender, SmsDcs.ALPHABET_GSM);
+        SmsTextMessage textMessage = new SmsTextMessage(text, SmsDcs.ALPHABET_GSM, SmsDcs.MSG_CLASS_UNKNOWN);        
+        return sendSms(textMessage, dest, sender);
     }
 
     /**
      * Sends an ordinary SMS to the given recipient.
      * 
-     * No limit on the number of concatenated SMS that this message will
-     * use. Will send the message with the GSM charset (Max 160 chars/SMS).
+     * There is no limit on the number of concatenated SMS that this message will
+     * use. It will send the message with the GSM charset (Max 160 chars/SMS).
      * 
-     * @param theMsg
-     *            Message to send
-     * @param theDest
-     *            Destination number (international format without leading +)
-     *            Ex. 44546754235
+     * @param text Message to send
+     * @param dest Destination number (international format without leading +).
+     *            
+     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * 
      * @throws SmsException
+     * @throws IOException 
      */
-    public void sendTextSms(String theMsg, String theDest) throws SmsException, IOException
+    public String[] sendTextSms(String text, String dest) throws SmsException, IOException
     {
-        sendTextSms(theMsg, theDest, null, SmsDcs.ALPHABET_GSM);
+        SmsTextMessage textMessage = new SmsTextMessage(text, SmsDcs.ALPHABET_GSM, SmsDcs.MSG_CLASS_UNKNOWN);        
+        return sendSms(textMessage, dest, null);
     }
     
     /**
@@ -345,20 +339,20 @@ public class SmsSender
      * No limit on the number of concatenated SMS that this message will
      * use. Will send the message with the UCS2 charset (MAX 70 chars/SMS).
      * 
-     * @param theMsg
-     *            Message to send
-     * @param theDest
-     *            Destination number (international format without leading +)
-     *            Ex. 44546754235
-     * @param theSender
-     *            Destination number (international format without leading +).
-     *            Can also be an alphanumerical string. Ex "SMSJ". (not
-     *            supported by all transports).
+     * @param text Message to send
+     * @param dest Destination number (international format without leading +).
+     * @param sender Sender number (international format without leading +). Can also be an alphanumerical string like
+     *               "SMSJ". This is property is not supported by all transports.
+     *            
+     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * 
      * @throws SmsException
+     * @throws IOException 
      */
-    public void sendUnicodeTextSms(String theMsg, String theDest, String theSender) throws SmsException, IOException
+    public String[] sendUnicodeTextSms(String text, String dest, String sender) throws SmsException, IOException
     {
-        sendTextSms(theMsg, theDest, theSender, SmsDcs.ALPHABET_UCS2);
+        SmsTextMessage textMessage = new SmsTextMessage(text, SmsDcs.ALPHABET_UCS2, SmsDcs.MSG_CLASS_UNKNOWN);        
+        return sendSms(textMessage, dest, sender);
     }
 
     /**
@@ -367,95 +361,64 @@ public class SmsSender
      * No limit on the number of concatenated SMS that this message will
      * use. Will send the message with the UCS2 charset (MAX 70 chars/SMS).
      * 
-     * @param theMsg
-     *            Message to send
-     * @param theDest
-     *            Destination number (international format without leading +)
-     *            Ex. 44546754235
-     * @throws SmsException
-     */
-    public void sendUnicodeTextSms(String theMsg, String theDest) throws SmsException, IOException
-    {
-        sendTextSms(theMsg, theDest, null, SmsDcs.ALPHABET_UCS2);
-    }
-    
-    /**
-     * Used internally to actually send the message
+     * @param text Message to send
+     * @param dest Destination number (international format without leading +).
      * 
-     * @param theMsg
-     *            Message
-     * @param theDest
-     *            Dest phonenumber
-     * @param theSender
-     *            Sending address
-     * @param theMaxSms
-     *            Max no of SMS (Set to -1 if "unlimited")
-     * @param theAlphabet
-     *            Alphabet to use. Can be any of SmsDcs.ALPHABET_*
+     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * 
      * @throws SmsException
+     * @throws IOException 
      */
-    private void sendTextSms(String theMsg, String theDest, String theSender, int theAlphabet) throws SmsException, IOException
+    public String[] sendUnicodeTextSms(String text, String dest) throws SmsException, IOException
     {
-        SmsTextMessage textMessage = new SmsTextMessage(theMsg, theAlphabet, SmsDcs.MSG_CLASS_UNKNOWN);
-        SmsAddress destAddress = new SmsAddress(theDest);
-        SmsAddress senderAddress = null;
-
-        if (theSender != null)
-        {
-            senderAddress = new SmsAddress(theSender);
-        }
-        
-        myTransport.send(textMessage, destAddress, senderAddress);
+        SmsTextMessage textMessage = new SmsTextMessage(text, SmsDcs.ALPHABET_UCS2, SmsDcs.MSG_CLASS_UNKNOWN);        
+        return sendSms(textMessage, dest, null);
     }
     
     /**
      * 
      * Sends an OTA Bookmark (Nokia specification) to the given recipient
      * 
-     * @param theTitle String with the title of the bookmark
-     * @param theUri String with the url referenced by the bookmark
-     * @param theDest String with the recipient number (international format
-     * without leading +)
-     * @param theSender String with the sender number. Can also be an
-     * alphanumerical string (not supported by all transports).
+     * @param title String with the title of the bookmark
+     * @param url String with the url referenced by the bookmark
+     * @param dest Destination number (international format without leading +).
+     * 
+     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
      *
      * @throws SmsException
+     * @throws IOException 
      */
-    public void sendNokiaBookmark(String theTitle, String theUri, String theDest, String theSender) throws SmsException, IOException
+    public String[] sendNokiaBookmark(String title, String url, String dest) throws SmsException, IOException
     {
         NokiaOtaBrowserSettings browserSettings = new NokiaOtaBrowserSettings();
-        browserSettings.addBookmark(theTitle, theUri);
+        browserSettings.addBookmark(title, url);
            
         SmsWapPushMessage wapPushMessage = new SmsWapPushMessage(browserSettings, "application/x-wap-prov.browser-bookmarks");
         wapPushMessage.setPorts(49154, SmsConstants.PORT_OTA_SETTINGS_BROWSER);
  
-        SmsAddress sender = new SmsAddress(theSender);
-        SmsAddress reciever = new SmsAddress(theDest);
-
-        myTransport.send(wapPushMessage, reciever, sender);
+        return sendSms(wapPushMessage, dest, null);
     }
     
     /**
      * Sends a Wap Push SI containing to the given recipient.
      *
-     * @param theMessage String with the description of the service
-     * @param theUri String with the url referenced by the SI
-     * @param theDest String with the recipient number
+     * @param text String with the description of the service
+     * @param url String with the url referenced by the SI
+     * @param dest Destination number (international format without leading +).
+     *            
+     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
      *
      * @throws SmsException
+     * @throws IOException 
      */
-    public void sendWapSiPushMsg(String theUri, String theMessage, String theDest) throws SmsException, IOException
+    public String[] sendWapSiPushMsg(String url, String text, String dest) throws SmsException, IOException
     {
-        //Liquidterm: add some URI checking
-        //add checking on url and message length
-        WapSIPush siPush = new WapSIPush(theUri, theMessage);
+        WapSIPush siPush = new WapSIPush(url, text);
         
         SmsWapPushMessage wapPushMessage = new SmsWapPushMessage(siPush);
-//      wapPushMessage.setXWapApplicationId("x-wap-application:*"); 
-      
-        SmsAddress reciever = new SmsAddress(theDest);
-      
-        myTransport.send(wapPushMessage, reciever, null);
+//      wapPushMessage.setXWapApplicationId("x-wap-application:*");
+        
+        return sendSms(wapPushMessage, dest, null);
     }
  
   
@@ -465,20 +428,107 @@ public class SmsSender
      * @param contentLocation Where the mms pdu can be downloaded from.
      * @param size The size of the message.
      * @param subject The subject of the message.
-     * @param dest String with the recipient number
+     * @param dest Destination number (international format without leading +).
+     *            
+     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
      *
      * @throws SmsException
+     * @throws IOException 
      */
-    public void sendMmsNotification(String contentLocation, long size, String subject, String dest) throws SmsException, IOException
+    public String[] sendMmsNotification(String contentLocation, long size, String subject, String dest) throws SmsException, IOException
     {
         SmsMmsNotificationMessage mmsNotification = new SmsMmsNotificationMessage(contentLocation, size);
         mmsNotification.setSubject(subject);
-     
-        SmsAddress reciever = new SmsAddress(dest);
-     
-        myTransport.send(mmsNotification, reciever, null);
+        
+        return sendSms(mmsNotification, dest, null);
     }
  
+    /**
+     * Sends a voice message waiting message indication.
+     * 
+     * @param count Number of messages waiting. Set to 0 to clear the message waiting flag in the phone.
+     * @param dest Destination number (international format without leading +).
+     *            
+     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * 
+     * @throws SmsException
+     * @throws IOException
+     */
+    public String[] sendMsgWaitingVoice(int count, String dest) throws SmsException, IOException
+    {
+        return sendMsgWaiting(SmsMsgWaitingMessage.TYPE_VOICE, count, dest);
+    }
+    
+    /**
+     * Sends a fax message waiting message indication.
+     * 
+     * @param count Number of messages waiting. Set to 0 to clear the message waiting flag in the phone.
+     * @param dest Destination number (international format without leading +).
+     *            
+     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * 
+     * @throws SmsException
+     * @throws IOException
+     */
+    public String[] sendMsgWaitingFax(int count, String dest) throws SmsException, IOException
+    {
+        return sendMsgWaiting(SmsMsgWaitingMessage.TYPE_FAX, count, dest);
+    }
+    
+    /**
+     * Sends a email message waiting message indication.
+     * 
+     * @param count Number of messages waiting. Set to 0 to clear the message waiting flag in the phone.
+     * @param dest Destination number (international format without leading +).
+     *            
+     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * 
+     * @throws SmsException
+     * @throws IOException
+     */
+    public String[] sendMsgWaitingEmail(int count, String dest) throws SmsException, IOException
+    {
+        return sendMsgWaiting(SmsMsgWaitingMessage.TYPE_EMAIL, count, dest);
+    }
+    
+    private String[] sendMsgWaiting(int type, int count, String dest) throws SmsException, IOException
+    {
+        SmsMsgWaitingMessage msgWaiting = new SmsMsgWaitingMessage();
+        msgWaiting.addMsgWaiting(type, count);
+        
+        return sendSms(msgWaiting, dest, null);
+    }
+    
+    /**
+     * Sends a SmsMessage.
+     * 
+     * @param msg The message to send.
+     * @param dest
+     *            Destination number (international format without leading +)
+     *            Ex. 44546754235
+     * @param sender
+     *            Destination number (international format without leading +).
+     *            Can also be an alphanumerical string. Ex "SMSJ". (not
+     *            supported by all transports).
+     *            
+     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * 
+     * @throws SmsException
+     * @throws IOException
+     */
+    public String[] sendSms(SmsMessage msg, String dest, String sender) throws SmsException, IOException
+    {
+        SmsAddress destAddress = new SmsAddress(dest);
+        SmsAddress senderAddress = null;
+
+        if (sender != null)
+        {
+            senderAddress = new SmsAddress(sender);
+        }
+        
+        return transport_.send(msg, destAddress, senderAddress);
+    }
+    
     /**
      * Connect to the server.
      * 
@@ -489,7 +539,7 @@ public class SmsSender
      */
     public void connect() throws SmsException, IOException
     {
-        myTransport.connect();
+        transport_.connect();
     }
     
     /**
@@ -502,14 +552,17 @@ public class SmsSender
      */
     public void disconnect() throws SmsException, IOException
     {
-        if (myTransport != null)
+        if (transport_ != null)
         {
-            myTransport.disconnect();
-            myTransport = null;
+            transport_.disconnect();
+            transport_ = null;
         }
     }
 
-    // Probably never called. But good to have if the caller forget to disconnect()
+    /**
+     * Probably never called, but good to have if the caller forget to disconnect().
+     * @see java.lang.Object#finalize()
+     */
     protected void finalize() throws Throwable
     {
         // Disconnect transport if the caller forget to close us
@@ -519,7 +572,7 @@ public class SmsSender
         }
         catch (Exception ex)
         {
-            // TODO: Log this
+            // Nothing to do here. The object is gone...
         }
         
         super.finalize();
