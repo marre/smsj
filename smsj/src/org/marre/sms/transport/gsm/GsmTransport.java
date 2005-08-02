@@ -68,6 +68,7 @@ import org.marre.util.StringUtil;
  * than the sending phone's phonenumber.</i>
  *
  * @todo Validity period
+ * TODO: Parse the error code http://www.nowsms.com/discus/messages/1/829.html
  *
  * @author Markus Eriksson, Boris von Loesch
  * @version $Id$
@@ -80,7 +81,7 @@ public class GsmTransport implements SmsTransport
     private static final int RESPONSE_TEXT = 8;
     private static final int RESPONSE_CONTINUE = 16;
     
-    private SerialComm mySerialComm = null;
+    private SerialComm serialComm_ = null;
 
     public GsmTransport()
     {        
@@ -89,19 +90,19 @@ public class GsmTransport implements SmsTransport
     /**
      * Initializes this transport.
      * 
-     * @param theProps 
+     * @param props 
      */
-    public void init(Properties theProps) throws SmsException
+    public void init(Properties props) throws SmsException
     {
-        String portName = theProps.getProperty("sms.gsm.serialport", "COM1");
+        String portName = props.getProperty("sms.gsm.serialport", "COM1");
         
-        mySerialComm = new SerialComm(portName);
+        serialComm_ = new SerialComm(portName);
 
-        mySerialComm.setBitRate(theProps.getProperty("sms.gsm.bitrate", "19200"));
-        mySerialComm.setDataBits(theProps.getProperty("sms.gsm.bit", "8"));
-        mySerialComm.setStopBits(theProps.getProperty("sms.gsm.stopbits", "8"));
-        mySerialComm.setParity(theProps.getProperty("sms.gsm.parity", "NONE"));
-        mySerialComm.setFlowControl(theProps.getProperty("sms.gsm.flowcontrol", "NONE"));
+        serialComm_.setBitRate(props.getProperty("sms.gsm.bitrate", "19200"));
+        serialComm_.setDataBits(props.getProperty("sms.gsm.bit", "8"));
+        serialComm_.setStopBits(props.getProperty("sms.gsm.stopbits", "8"));
+        serialComm_.setParity(props.getProperty("sms.gsm.parity", "NONE"));
+        serialComm_.setFlowControl(props.getProperty("sms.gsm.flowcontrol", "NONE"));
     }
     
     /**
@@ -115,17 +116,17 @@ public class GsmTransport implements SmsTransport
     {
         try
         {
-            mySerialComm.open();
+            serialComm_.open();
             
             // Can I send sms via the gsm phone?
-            mySerialComm.send("AT+CSMS=0");
+            serialComm_.send("AT+CSMS=0");
             if (readResponse(RESPONSE_OK) != RESPONSE_OK)
             {
                 throw new SmsException("AT+CSMS=0 failed");
             }
             
             // Init
-            mySerialComm.send("AT+CMGF=0");
+            serialComm_.send("AT+CMGF=0");
             if (readResponse(RESPONSE_OK) != RESPONSE_OK)
             {
                 throw new SmsException("AT+CMGF=0 failed");            
@@ -170,13 +171,13 @@ public class GsmTransport implements SmsTransport
     {
         String response;
 
-        mySerialComm.send("AT+CMGS=" + (theBuff.length - 1));
+        serialComm_.send("AT+CMGS=" + (theBuff.length - 1));
         if (readResponse(RESPONSE_CONTINUE) != RESPONSE_CONTINUE)
         {
             throw new SmsException("AT+CMGS=length failed");            
         }
 
-        mySerialComm.send(StringUtil.bytesToHexString(theBuff) + "\032");
+        serialComm_.send(StringUtil.bytesToHexString(theBuff) + "\032");
         if (readResponse(RESPONSE_OK) != RESPONSE_OK)
         {
             throw new SmsException("AT+CMGS data failed");            
@@ -191,7 +192,7 @@ public class GsmTransport implements SmsTransport
     public void ping()
         throws SmsException, IOException
     {
-        mySerialComm.send("AT");
+        serialComm_.send("AT");
     }
 
     /**
@@ -202,7 +203,7 @@ public class GsmTransport implements SmsTransport
     public void disconnect()
         throws SmsException, IOException
     {
-        mySerialComm.close();
+        serialComm_.close();
     }
 
     private int readResponse(int endOnMask)
@@ -215,7 +216,7 @@ public class GsmTransport implements SmsTransport
         
         while (true)
         {
-            String response = mySerialComm.readLine();
+            String response = serialComm_.readLine();
         
             status = analyseResponse(response);
             if ((status & endOnMask) != 0)
