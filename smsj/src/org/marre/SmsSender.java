@@ -51,6 +51,7 @@ import org.marre.wap.nokia.NokiaOtaBrowserSettings;
 import org.marre.wap.push.SmsMmsNotificationMessage;
 import org.marre.wap.push.SmsWapPushMessage;
 import org.marre.wap.push.WapSIPush;
+import org.marre.wap.push.WapSLPush;
 
 /**
  * High level API to the smsj library.
@@ -420,7 +421,27 @@ public class SmsSender
         
         return sendSms(wapPushMessage, dest, null);
     }
- 
+
+    /**
+     * Sends a Wap Push SL containing to the given recipient.
+     *
+     * @param url String with the url referenced by the SL
+     *            
+     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     *
+     * @throws SmsException
+     * @throws IOException 
+     */
+    public String[] sendWapSlPushMsg(String url, String dest) throws SmsException, IOException
+    {
+        WapSLPush slPush = new WapSLPush(url);
+        
+        SmsWapPushMessage wapPushMessage = new SmsWapPushMessage(slPush);
+//      wapPushMessage.setXWapApplicationId("x-wap-application:*");
+        
+        return sendSms(wapPushMessage, dest, null);
+    }
+    
   
     /**
      * Sends a simple MMS Notification.
