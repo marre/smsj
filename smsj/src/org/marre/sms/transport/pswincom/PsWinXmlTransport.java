@@ -36,6 +36,7 @@ package org.marre.sms.transport.pswincom;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -43,6 +44,9 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.Socket;
 import java.util.Properties;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.marre.sms.SmsAddress;
 import org.marre.sms.SmsConstants;
@@ -54,8 +58,18 @@ import org.marre.sms.SmsPduUtil;
 import org.marre.sms.SmsTextMessage;
 import org.marre.sms.SmsUserData;
 import org.marre.sms.transport.SmsTransport;
+import org.marre.util.IOUtil;
 import org.marre.util.StringUtil;
+import org.xml.sax.InputSource;
 
+/**
+ * Simple transport for the pswin xml protocol.
+ * 
+ * See http://www.pswin.com/ for more information.
+ * 
+ * @author Markus
+ * @version $Id$
+ */
 public class PsWinXmlTransport implements SmsTransport
 {
     private String myUsername;
@@ -83,6 +97,8 @@ public class PsWinXmlTransport implements SmsTransport
         
         // <MSG>
         theXmlWriter.write("<MSG>\r\n");
+        // <RCPREQ>Y</RCPREQ>
+        theXmlWriter.write("<RCPREQ>Y</RCPREQ>\r\n");
 
         switch (thePdu.getDcs().getAlphabet())
         {
@@ -240,7 +256,7 @@ public class PsWinXmlTransport implements SmsTransport
         theOs.write(xmlDoc.getBytes());
     }
 
-    protected String[] sendReqToPsWinCom(byte[] theXmlReq) throws IOException
+    protected String[] sendReqToPsWinCom(byte[] theXmlReq) throws IOException, SmsException
     {
         Socket xmlSocket = new Socket("sms.pswin.com", 1111);
 
@@ -248,13 +264,17 @@ public class PsWinXmlTransport implements SmsTransport
         OutputStream os = xmlSocket.getOutputStream();
         os.write(theXmlReq);
 
-        // TODO: parse response
+        // Get response
         InputStream is = xmlSocket.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        String resp;
-        while ((resp = reader.readLine()) != null)
+        
+        // Parse response
+        PsWinXmlResponseParser responseParser = new PsWinXmlResponseParser(is);
+        responseParser.parse();
+
+        // Verify that we could logon correctly
+        if (! responseParser.getLogon().equals("OK"))
         {
-            System.err.println(resp);
+            throw new SmsException("Failed to send message: " + responseParser.getReason());
         }
         
         return null;
