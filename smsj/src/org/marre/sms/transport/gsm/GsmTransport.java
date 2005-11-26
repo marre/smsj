@@ -46,20 +46,28 @@ import org.marre.sms.SmsException;
 import org.marre.sms.SmsMessage;
 import org.marre.sms.SmsPdu;
 import org.marre.sms.transport.SmsTransport;
+import org.marre.sms.transport.gsm.commands.MessageFormatSetReq;
+import org.marre.sms.transport.gsm.commands.PduSendMessageReq;
+import org.marre.sms.transport.gsm.commands.PduSendMessageRsp;
+import org.marre.sms.transport.gsm.commands.PingReq;
 import org.marre.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An SmsTransport that sends the SMS from an GSM phone that is attached
  * to the serial port.
  * <p>
- * This transport has the following settable parameters:
+ * This transport supports the following parameters:
  * <br>
  * <pre>
+ * <b>sms.gsm.appname</b> - Application name to use when registering the comport
  * <b>sms.gsm.serialport</b> - Serial port where the GSM phone is located. Ex: "COM1"
  * <b>sms.gsm.bitrate</b> - Bits per second
  * <b>sms.gsm.bit</b> - Databits
  * <b>sms.gsm.parity</b> - Parity (NONE, EVEN, ODD, MARK, SPACE)
  * <b>sms.gsm.stopbits</b> - Stopbits (1, 1.5, 2)
+ * <b>sms.gsm.echo</b> - Is the device echoing the input?
  * <b>sms.gsm.flowcontrol</b> - FlowControl (XONXOFF, RTSCTS, NONE)
  * <b>
  * </pre>
@@ -67,14 +75,15 @@ import org.marre.util.StringUtil;
  * <i>This transport cannot set the sending "address" to anything else
  * than the sending phone's phonenumber.</i>
  *
- * @todo Validity period
- * TODO: Parse the error code http://www.nowsms.com/discus/messages/1/829.html
- *
  * @author Markus Eriksson, Boris von Loesch
  * @version $Id$
  */
 public class GsmTransport implements SmsTransport
 {
+    private static Logger log_ = LoggerFactory.getLogger(SerialComm.class);
+    
+    private static String DEFAULT_SERIAL_PORT_APP_NAME = "SMSJ";
+    
     private static final int RESPONSE_OK = 1;
     private static final int RESPONSE_ERROR = 2;
     private static final int RESPONSE_EMPTY_LINE = 4;
@@ -83,8 +92,13 @@ public class GsmTransport implements SmsTransport
     
     private SerialComm serialComm_ = null;
 
+    /**
+     * Creates a GsmTransport.
+     * 
+     */
     public GsmTransport()
-    {        
+    {
+        // Empty
     }
 
     /**
@@ -92,49 +106,47 @@ public class GsmTransport implements SmsTransport
      * 
      * @param props 
      */
-    public void init(Properties props) throws SmsException
+    public void init(Properties props)
     {
+        String appName = props.getProperty("sms.gsm.appname", DEFAULT_SERIAL_PORT_APP_NAME); 
         String portName = props.getProperty("sms.gsm.serialport", "COM1");
-        
-        serialComm_ = new SerialComm(portName);
+
+        serialComm_ = new SerialComm(appName, portName);
 
         serialComm_.setBitRate(props.getProperty("sms.gsm.bitrate", "19200"));
         serialComm_.setDataBits(props.getProperty("sms.gsm.bit", "8"));
         serialComm_.setStopBits(props.getProperty("sms.gsm.stopbits", "8"));
         serialComm_.setParity(props.getProperty("sms.gsm.parity", "NONE"));
         serialComm_.setFlowControl(props.getProperty("sms.gsm.flowcontrol", "NONE"));
+        serialComm_.setEcho(props.getProperty("sms.gsm.echo", "1").equals("1"));
     }
     
     /**
      * Initializes the communication with the GSM phone.
      * 
-     * @throws SmsException Thrown when the transport fails to communicate
-     * with the GSM phone
+     * @throws SmsException
+     * @throws IOException 
      */
     public void connect() 
         throws SmsException, IOException
     {
         try
         {
+            log_.debug("Open serial port.");
             serialComm_.open();
-            
-            // Can I send sms via the gsm phone?
-            serialComm_.send("AT+CSMS=0");
-            if (readResponse(RESPONSE_OK) != RESPONSE_OK)
-            {
-                throw new SmsException("AT+CSMS=0 failed");
-            }
+            log_.debug("Serial port opened.");
             
             // Init
-            serialComm_.send("AT+CMGF=0");
-            if (readResponse(RESPONSE_OK) != RESPONSE_OK)
-            {
-                throw new SmsException("AT+CMGF=0 failed");            
-            }
+            MessageFormatSetReq messageFormatSetReq = new MessageFormatSetReq(MessageFormatSetReq.MODE_PDU);
+            messageFormatSetReq.send(serialComm_);
         }
-        catch (PortInUseException e)
+        catch (GsmException e)
         {
-            throw new SmsException(e);
+            log_.debug("Close serial port.");
+            serialComm_.close();
+            log_.debug("Serial port closed.");
+            
+            throw new SmsException("Connect failed: " + e.getMessage() + " Last response:" + e.getResponse(), e);
         }
     }
 
@@ -143,110 +155,67 @@ public class GsmTransport implements SmsTransport
      * 
      * Note: The sending address is ignored for the GSM transport.
      *
-     * @param theMessage The message to send
-     * @param theDestination The reciever
-     * @param theSender The sending address, ignored
+     * @param msg The message to send
+     * @param dest The reciever
+     * @param sender The sending address, ignored
+     * @return Returns a local message id
      * @throws SmsException Thrown if we fail to send the SMS
+     * @throws IOException 
      */
-    public String[] send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException, IOException
+    public String send(SmsMessage msg, SmsAddress dest, SmsAddress sender) throws SmsException, IOException
     {
-        if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
+        if (dest.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
         {
             throw new SmsException("Cannot sent SMS to an ALPHANUMERIC address");
         }
 
-        SmsPdu[] msgPdu = theMessage.getPdus();
-        for(int i=0; i < msgPdu.length; i++)
+        try
         {
-            byte[] data = GsmEncoder.encodePdu(msgPdu[i], theDestination, theSender); 
-            sendSms(data);
+            SmsPdu[] msgPdu = msg.getPdus();
+            for(int i=0; i < msgPdu.length; i++)
+            {
+                byte[] data = GsmEncoder.encodePdu(msgPdu[i], dest, sender);
+                PduSendMessageReq sendMessageReq = new PduSendMessageReq(data);
+                PduSendMessageRsp sendMessageRsp = sendMessageReq.send(serialComm_);
+            }
+        }
+        catch (GsmException e)
+        {
+            throw new SmsException("Send failed: " + e.getMessage() + " Last response:" + e.getResponse(), e);
         }
         
         // TODO: Return a real message id
-        return new String[msgPdu.length];
-    }
-
-    private void sendSms(byte[] theBuff)
-        throws SmsException, IOException
-    {
-        String response;
-
-        serialComm_.send("AT+CMGS=" + (theBuff.length - 1));
-        if (readResponse(RESPONSE_CONTINUE) != RESPONSE_CONTINUE)
-        {
-            throw new SmsException("AT+CMGS=length failed");            
-        }
-
-        serialComm_.send(StringUtil.bytesToHexString(theBuff) + "\032");
-        if (readResponse(RESPONSE_OK) != RESPONSE_OK)
-        {
-            throw new SmsException("AT+CMGS data failed");            
-        }
+        return null;
     }
 
     /**
      * Sends a "AT" command to keep the connection alive.
      *
-     * @throws SmsException
+     * @throws IOException 
      */
     public void ping()
-        throws SmsException, IOException
+        throws IOException
     {
-        serialComm_.send("AT");
+        try
+        {
+            PingReq pingReq = new PingReq();
+            pingReq.send(serialComm_);
+        }
+        catch (GsmException e)
+        {
+            String msg = "Ping failed: " + e.getMessage() + 
+                         " Last response: " + e.getResponse();
+            throw (IOException) new IOException(msg).initCause(e);
+        }
     }
 
     /**
      * Closes the serial connection to the phone.
      * 
-     * @throws SmsException
+     * @throws IOException 
      */
     public void disconnect()
-        throws SmsException, IOException
     {
         serialComm_.close();
-    }
-
-    private int readResponse(int endOnMask)
-        throws IOException
-    {
-        int status = 0;
-        
-        // Always stop on error
-        endOnMask |= RESPONSE_ERROR;
-        
-        while (true)
-        {
-            String response = serialComm_.readLine();
-        
-            status = analyseResponse(response);
-            if ((status & endOnMask) != 0)
-            {
-                break;
-            }
-        }
-        
-        return status;
-    }
-    
-    private int analyseResponse(String response)
-    {
-        if (response.startsWith("OK"))
-        {
-            return RESPONSE_OK;
-        }
-        else if (response.startsWith("ERROR"))
-        {
-            return RESPONSE_ERROR;
-        }
-        else if (response.equals(">"))
-        {
-            return RESPONSE_CONTINUE;
-        } 
-        else if (response.length() == 0)
-        {
-            return RESPONSE_EMPTY_LINE;
-        }
-        
-        return RESPONSE_TEXT; 
     }
 }

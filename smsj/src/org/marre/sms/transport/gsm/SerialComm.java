@@ -34,8 +34,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.transport.gsm;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,39 +48,48 @@ import javax.comm.SerialPort;
 import javax.comm.UnsupportedCommOperationException;
 
 /**
- *
+ * Simple Serial port comm.
+ * 
  * @author Markus Eriksson
  * @version $Id$
  */
-public class SerialComm
+public class SerialComm implements GsmComm
 {
-    private static Log logger = LogFactory.getLog(SerialComm.class);
+    private static Logger log_ = LoggerFactory.getLogger(SerialComm.class);
 
     private static final int DEFAULT_BIT_RATE = 19200;
-    private static String APP_NAME = "SMSJ";
     
-    private SerialPort mySerialPort;
-    private OutputStream myOutStream;
-    private InputStream myInStream;
+    private SerialPort serialPort_;
+    private OutputStream serialOs_;
+    private InputStream serialIs_;
 
-    private String myPortName;
-    private int myBitRate;
-    private int myDataBits; 
-    private int myStopBits;
-    private int myParity;
-    private int myFlowControl;
+    private String appName_;
+    private String portName_;
+    private int bitRate_;
+    private int dataBits_; 
+    private int stopBits_;
+    private int parity_;
+    private int flowControl_;
+    private boolean echo_;
 
-    public SerialComm(String thePortName)
+    /**
+     * Constructor.
+     * 
+     * @param portName
+     */
+    public SerialComm(String appName, String portName)
     {
-        myPortName = thePortName;
-        myBitRate = DEFAULT_BIT_RATE;
-        myDataBits = SerialPort.DATABITS_8;
-        myStopBits = SerialPort.STOPBITS_1;
-        myParity = SerialPort.PARITY_NONE;
-        myFlowControl = SerialPort.FLOWCONTROL_NONE;
+        appName_ = appName;
+        portName_ = portName;
+        bitRate_ = DEFAULT_BIT_RATE;
+        dataBits_ = SerialPort.DATABITS_8;
+        stopBits_ = SerialPort.STOPBITS_1;
+        parity_ = SerialPort.PARITY_NONE;
+        flowControl_ = SerialPort.FLOWCONTROL_NONE;
+        echo_ = true;
     }
 
-    public SerialPort openSerialPort(String portName)
+    private SerialPort openSerialPort(String portName)
         throws PortInUseException
     {
         SerialPort serialPort = null;
@@ -95,94 +104,127 @@ public class SerialComm
             if ( (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) &&
                  (portId.getName().equals(portName)) ) 
             {
-                return (SerialPort) portId.open(APP_NAME, 3000);
+                return (SerialPort) portId.open(appName_, 3000);
             }
         }
         
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.marre.sms.transport.gsm.GsmComm#open()
+     */
     public void open() 
-        throws IOException, PortInUseException
+        throws IOException
     {
-        mySerialPort = openSerialPort(myPortName);
-        if (mySerialPort == null)
+        try {
+            serialPort_ = openSerialPort(portName_);
+        } catch (PortInUseException piuEx) {
+            throw (IOException) new IOException(piuEx.getMessage()).initCause(piuEx);
+        }
+
+        if (serialPort_ == null)
         {
-            throw new IOException("Failed to open port");
+            throw new IOException("Failed to open port : " + portName_);
         }
         
         try
         {
-            myOutStream = mySerialPort.getOutputStream();
-            myInStream = mySerialPort.getInputStream();
+            serialOs_ = serialPort_.getOutputStream();
+            serialIs_ = serialPort_.getInputStream();
         
-            mySerialPort.setSerialPortParams(myBitRate, myDataBits, myStopBits, myParity);
-            mySerialPort.setFlowControlMode(myFlowControl);
+            serialPort_.setSerialPortParams(bitRate_, dataBits_, stopBits_, parity_);
+            serialPort_.setFlowControlMode(flowControl_);
         } 
         catch (UnsupportedCommOperationException e)
         {
-            mySerialPort.close();
-            mySerialPort = null;            
+            serialPort_.close();
+            serialPort_ = null;            
             throw (IOException)(new IOException(e.getMessage())).initCause(e);
         } 
     }
 
+    /* (non-Javadoc)
+     * @see org.marre.sms.transport.gsm.GsmComm#close()
+     */
     public void close()
-        throws IOException
     {
-        if (myOutStream != null)
+        if (serialOs_ != null)
         {
-            myOutStream.close();
-            myOutStream = null;
+            try { serialOs_.close(); } catch (Exception ex) { log_.error("serialOs_.close failed", ex); }
         }
         
-        if (myInStream != null)
+        if (serialIs_ != null)
         {
-            myInStream.close();
-            myInStream = null;            
+            try { serialIs_.close(); } catch (Exception ex) { log_.error("serialIs_.close failed", ex); }
         }
         
-        if (mySerialPort != null)
+        if (serialPort_ != null)
         {        
-            mySerialPort.close();
-            mySerialPort = null; 
+            try { serialPort_.close(); } catch (Exception ex) { log_.error("serialPort_.close failed", ex); }
+        }
+        
+        serialOs_ = null;
+        serialIs_ = null;            
+        serialPort_ = null; 
+    }
+
+    /* (non-Javadoc)
+     * @see org.marre.sms.transport.gsm.GsmComm#sendLine(java.lang.String)
+     */
+    public void send(String row) 
+        throws IOException
+    {
+        // TODO: Remove \r\n from log
+        log_.info(">> " + row);
+
+        serialOs_.write(row.getBytes());
+        
+        if (echo_) {
+            String echo = readOneRowOfData(null);
         }
     }
 
-    public void send(String data) 
-        throws IOException
-    {
-        logger.info(">> " + data);
-        
-        myOutStream.write(data.getBytes());
-        myOutStream.write("\r".getBytes());
-    }
-
+    /* (non-Javadoc)
+     * @see org.marre.sms.transport.gsm.GsmComm#readLine()
+     */
     public String readLine() 
         throws IOException
-    {        
+    {
+        return readLine(null);
+    }
+    
+    public String readLine(String find) 
+        throws IOException
+    {
+        return readOneRowOfData(find);
+    }
+    
+    private String readOneRowOfData(String find)
+        throws IOException
+    {
         StringBuffer buffer = new StringBuffer(256);
         int ch;
 
         while (true)
         {
-            ch = myInStream.read();
+            ch = serialIs_.read();
             if ( (ch == -1) ||
-                 (ch == '\r') )
+                 (ch == '\n') )
             {
                 break;
             }
             
-            if ( ch == '\n' )
+            if ( ch == '\r' )
             {
                 continue;
             }
             
             buffer.append((char) ch);
             
-            // Special case : continue data response
-            if ( ch == '>')
-            {
+            if ( (find != null) && 
+                 (find.equals(buffer.toString())) ) {
+                // Found the string we are looking for...
                 break;
             }
         }
@@ -190,63 +232,68 @@ public class SerialComm
         String row = buffer.toString();
         
         // LOG
-        logger.info("<< " + row);
+        log_.info("<< " + row);
 
         return row;
     }
     
     public void setBitRate(String theBitRate)
     {
-        if      ("110".equals(theBitRate))    myBitRate = 110;
-        else if ("134".equals(theBitRate))    myBitRate = 134;
-        else if ("150".equals(theBitRate))    myBitRate = 150;
-        else if ("300".equals(theBitRate))    myBitRate = 300;
-        else if ("600".equals(theBitRate))    myBitRate = 600;
-        else if ("1200".equals(theBitRate))   myBitRate = 1200;
-        else if ("2400".equals(theBitRate))   myBitRate = 2400;
-        else if ("4800".equals(theBitRate))   myBitRate = 4800;
-        else if ("9600".equals(theBitRate))   myBitRate = 9600;
-        else if ("14400".equals(theBitRate))  myBitRate = 14400;
-        else if ("19200".equals(theBitRate))  myBitRate = 19200;
-        else if ("38400".equals(theBitRate))  myBitRate = 38400;
-        else if ("57600".equals(theBitRate))  myBitRate = 57600;
-        else if ("115200".equals(theBitRate)) myBitRate = 115200;
-        else if ("128000".equals(theBitRate)) myBitRate = 128000;
-        else                                  myBitRate = DEFAULT_BIT_RATE;        
+        if      ("110".equals(theBitRate))    bitRate_ = 110;
+        else if ("134".equals(theBitRate))    bitRate_ = 134;
+        else if ("150".equals(theBitRate))    bitRate_ = 150;
+        else if ("300".equals(theBitRate))    bitRate_ = 300;
+        else if ("600".equals(theBitRate))    bitRate_ = 600;
+        else if ("1200".equals(theBitRate))   bitRate_ = 1200;
+        else if ("2400".equals(theBitRate))   bitRate_ = 2400;
+        else if ("4800".equals(theBitRate))   bitRate_ = 4800;
+        else if ("9600".equals(theBitRate))   bitRate_ = 9600;
+        else if ("14400".equals(theBitRate))  bitRate_ = 14400;
+        else if ("19200".equals(theBitRate))  bitRate_ = 19200;
+        else if ("38400".equals(theBitRate))  bitRate_ = 38400;
+        else if ("57600".equals(theBitRate))  bitRate_ = 57600;
+        else if ("115200".equals(theBitRate)) bitRate_ = 115200;
+        else if ("128000".equals(theBitRate)) bitRate_ = 128000;
+        else                                  bitRate_ = DEFAULT_BIT_RATE;        
     }
     
     public void setDataBits(String theDataBits)
     {
-        if      ("5".equals(theDataBits)) myDataBits = SerialPort.DATABITS_5;
-        else if ("6".equals(theDataBits)) myDataBits = SerialPort.DATABITS_6;
-        else if ("7".equals(theDataBits)) myDataBits = SerialPort.DATABITS_7;
-        else if ("8".equals(theDataBits)) myDataBits = SerialPort.DATABITS_8;
-        else                              myDataBits = SerialPort.DATABITS_8;
+        if      ("5".equals(theDataBits)) dataBits_ = SerialPort.DATABITS_5;
+        else if ("6".equals(theDataBits)) dataBits_ = SerialPort.DATABITS_6;
+        else if ("7".equals(theDataBits)) dataBits_ = SerialPort.DATABITS_7;
+        else if ("8".equals(theDataBits)) dataBits_ = SerialPort.DATABITS_8;
+        else                              dataBits_ = SerialPort.DATABITS_8;
     }
 
     public void setFlowControl(String theFlowControl)
     {
-        if      ("RTSCTS".equals(theFlowControl))  myFlowControl = SerialPort.FLOWCONTROL_RTSCTS_IN  | SerialPort.FLOWCONTROL_RTSCTS_OUT;
-        else if ("XONXOFF".equals(theFlowControl)) myFlowControl = SerialPort.FLOWCONTROL_XONXOFF_IN | SerialPort.FLOWCONTROL_XONXOFF_OUT;
-        else if ("NONE".equals(theFlowControl))    myFlowControl = SerialPort.FLOWCONTROL_NONE;
-        else                                       myFlowControl = SerialPort.FLOWCONTROL_NONE;
+        if      ("RTSCTS".equals(theFlowControl))  flowControl_ = SerialPort.FLOWCONTROL_RTSCTS_IN  | SerialPort.FLOWCONTROL_RTSCTS_OUT;
+        else if ("XONXOFF".equals(theFlowControl)) flowControl_ = SerialPort.FLOWCONTROL_XONXOFF_IN | SerialPort.FLOWCONTROL_XONXOFF_OUT;
+        else if ("NONE".equals(theFlowControl))    flowControl_ = SerialPort.FLOWCONTROL_NONE;
+        else                                       flowControl_ = SerialPort.FLOWCONTROL_NONE;
     }
 
     public void setParity(String theParity)
     {
-        if      ("NONE".equals(theParity))  myParity = SerialPort.PARITY_NONE;
-        else if ("EVEN".equals(theParity))  myParity = SerialPort.PARITY_EVEN;
-        else if ("ODD".equals(theParity))   myParity = SerialPort.PARITY_ODD;
-        else if ("MARK".equals(theParity))  myParity = SerialPort.PARITY_MARK;
-        else if ("SPACE".equals(theParity)) myParity = SerialPort.PARITY_SPACE;
-        else                                myParity = SerialPort.PARITY_NONE;
+        if      ("NONE".equals(theParity))  parity_ = SerialPort.PARITY_NONE;
+        else if ("EVEN".equals(theParity))  parity_ = SerialPort.PARITY_EVEN;
+        else if ("ODD".equals(theParity))   parity_ = SerialPort.PARITY_ODD;
+        else if ("MARK".equals(theParity))  parity_ = SerialPort.PARITY_MARK;
+        else if ("SPACE".equals(theParity)) parity_ = SerialPort.PARITY_SPACE;
+        else                                parity_ = SerialPort.PARITY_NONE;
     }
 
     public void setStopBits(String theStopBits)
     {
-        if      ("1".equals(theStopBits))   myStopBits = SerialPort.STOPBITS_1;
-        else if ("1.5".equals(theStopBits)) myStopBits = SerialPort.STOPBITS_1_5;
-        else if ("2".equals(theStopBits))   myStopBits = SerialPort.STOPBITS_2;
-        else                                myStopBits = SerialPort.STOPBITS_1;
+        if      ("1".equals(theStopBits))   stopBits_ = SerialPort.STOPBITS_1;
+        else if ("1.5".equals(theStopBits)) stopBits_ = SerialPort.STOPBITS_1_5;
+        else if ("2".equals(theStopBits))   stopBits_ = SerialPort.STOPBITS_2;
+        else                                stopBits_ = SerialPort.STOPBITS_1;
+    }
+    
+    public void setEcho(boolean echo)
+    {
+        echo_ = echo;
     }
 }

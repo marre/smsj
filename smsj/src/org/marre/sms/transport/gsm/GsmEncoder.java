@@ -46,8 +46,9 @@ import org.marre.sms.SmsPduUtil;
 import org.marre.sms.SmsUserData;
 
 /**
- *
- * @todo Validity period
+ * Builds GSM pdu encoded messages.
+ * 
+ * @todo Add support for validity period.
  *
  * @author Markus Eriksson
  * @version $Id$
@@ -56,9 +57,18 @@ public final class GsmEncoder
 {
     private GsmEncoder()
     {
-        /* Utility class */
+        // Utility class
     }
     
+    /**
+     * Encodes the given sms pdu into a gsm sms pdu.
+     * 
+     * @param thePdu
+     * @param theDestination
+     * @param theSender
+     * @return
+     * @throws SmsException
+     */
     public static byte[] encodePdu(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender)
         throws SmsException
     {
@@ -71,7 +81,16 @@ public final class GsmEncoder
             return encodeOctetPdu(thePdu, theDestination, theSender);
         }
     }
-        
+    
+    /**
+     * Encodes an septet encoded pdu.
+     * 
+     * @param thePdu
+     * @param theDestination
+     * @param theSender
+     * @return
+     * @throws SmsException
+     */
     private static byte[] encodeSeptetPdu(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender)
         throws SmsException
     {
@@ -98,9 +117,6 @@ public final class GsmEncoder
 
         try
         {
-            // Use default SMSC
-            baos.write(0x00);
-
             // UDH?
             if (nUdhBytes == 0)
             {
@@ -133,7 +149,7 @@ public final class GsmEncoder
 
             nUdBits = nUdSeptets * 7;
 
-            nTotalBits = nUdSeptets * 7 + nFillBits + nUdhBits;
+            nTotalBits = nUdBits + nFillBits + nUdhBits;
             nTotalSeptets = nTotalBits / 7;
 
             nTotalBytes = nTotalBits / 8;
@@ -202,6 +218,15 @@ public final class GsmEncoder
         return baos.toByteArray();
     }
 
+    /**
+     * Encodes an octet encoded sms pdu.
+     * 
+     * @param thePdu
+     * @param theDestination
+     * @param theSender
+     * @return
+     * @throws SmsException
+     */
     private static byte[] encodeOctetPdu(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender)
         throws SmsException
     {
@@ -217,9 +242,6 @@ public final class GsmEncoder
             int nUdhBytes = (udh == null) ? 0 : udh.length;
             // +1 For the UDH Length
             int tpUdl = nUdBytes + nUdhBytes + 1;
-
-            // Use default SMSC
-            baos.write(0x00);
 
             // UDH?
             if (nUdhBytes == 0)
