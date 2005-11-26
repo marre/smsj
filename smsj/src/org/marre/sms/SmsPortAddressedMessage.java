@@ -35,21 +35,35 @@
 package org.marre.sms;
 
 /**
+ * Base class for all port adressed messages.
+ * 
+ * It is using a 16 bit port address.
  * 
  * @author Markus
  * @version $Id$
  */
-
 public abstract class SmsPortAddressedMessage extends SmsConcatMessage
 {
     protected int myDestPort;
     protected int myOrigPort;
     
+    /**
+     * Creates a new SmsPortAddressedMessage with the given dest and orig port.
+     * 
+     * @param destPort
+     * @param origPort
+     */
     protected SmsPortAddressedMessage(int destPort, int origPort)
     {
         setPorts(destPort, origPort);
     }
     
+    /**
+     * Sets the dest and orig ports.
+     * 
+     * @param destPort
+     * @param origPort
+     */
     public void setPorts(int destPort, int origPort)
     {
         myDestPort = destPort;
