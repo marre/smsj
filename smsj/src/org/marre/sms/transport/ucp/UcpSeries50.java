@@ -98,7 +98,7 @@ public class UcpSeries50 extends UcpMsg
 
     public void clearXSer()
     {
-        myUcpFields[FIELD_XSER] = null;
+        ucpFields_[FIELD_XSER] = null;
     }
 
     public void addXSer(byte type, byte data)
@@ -109,8 +109,8 @@ public class UcpSeries50 extends UcpMsg
         xSerBuff.append("01");
         xSerBuff.append(StringUtil.byteToHexString(data));
 
-        myUcpFields[FIELD_XSER] = (myUcpFields[FIELD_XSER] == null) ? (xSerBuff.toString())
-                : (myUcpFields[FIELD_XSER] + xSerBuff.toString());
+        ucpFields_[FIELD_XSER] = (ucpFields_[FIELD_XSER] == null) ? (xSerBuff.toString())
+                : (ucpFields_[FIELD_XSER] + xSerBuff.toString());
     }
 
     public void addXSer(byte type, byte[] data)
@@ -122,7 +122,7 @@ public class UcpSeries50 extends UcpMsg
         xSerBuff.append(StringUtil.byteToHexString((byte) (data.length & 0xff)));
         xSerBuff.append(StringUtil.bytesToHexString(data));
 
-        myUcpFields[FIELD_XSER] = (myUcpFields[FIELD_XSER] == null) ? (xSerBuff.toString())
-                : (myUcpFields[FIELD_XSER] + xSerBuff.toString());
+        ucpFields_[FIELD_XSER] = (ucpFields_[FIELD_XSER] == null) ? (xSerBuff.toString())
+                : (ucpFields_[FIELD_XSER] + xSerBuff.toString());
     }
 }

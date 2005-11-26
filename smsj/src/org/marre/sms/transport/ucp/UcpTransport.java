@@ -60,17 +60,15 @@ import org.marre.util.StringUtil;
  */
 public class UcpTransport implements SmsTransport
 {
-    private String myIpHost;
-    private int myIpPort;
-    private String myUCP60Uid;
-    private String myUCP60Pwd;
-    private boolean myDoUCP60Login;
+    private String ucpServerName_;
+    private int ucpServerPort_;
+    private String ucp60Uid_;
+    private String ucp60Pwd_;
+    private boolean doUcp60Login_;
 
-    private Socket myIpSocket;
-    private DataOutputStream myIpStreamOut;
-    private DataInputStream myIpStreamIn;
-
-    //private BufferedReader stdIn;
+    private Socket ucpSocket_;
+    private DataOutputStream ucpOs_;
+    private DataInputStream ucpIs_;
 
     public UcpTransport()
     {
@@ -79,7 +77,7 @@ public class UcpTransport implements SmsTransport
     /**
      * Initializes the class with the properties specified
      * 
-     * @param theProps
+     * @param props
      *            <b>smsj.ucp.ip.host </b>: the ip address or dns name of the
      *            UCP server <br>
      *            <b>smsj.ucp.ip.port </b>: the ip port of the UCP server <br>
@@ -88,49 +86,49 @@ public class UcpTransport implements SmsTransport
      * 
      * @throws SmsException
      */
-    public void init(Properties theProps) throws SmsException
+    public void init(Properties props) throws SmsException
     {
         //Liquidterm: added properties support, aligned some member names to
         //the general coding style of the project
         //TODO: Add properties strict checking
 
-        myIpHost = theProps.getProperty("smsj.ucp.ip.host");
-        myIpPort = Integer.parseInt(theProps.getProperty("smsj.ucp.ip.port"));
-        myUCP60Uid = theProps.getProperty("smsj.ucp.ucp60.uid");
-        myUCP60Pwd = theProps.getProperty("smsj.ucp.ucp60.password");
+        ucpServerName_ = props.getProperty("smsj.ucp.ip.host");
+        ucpServerPort_ = Integer.parseInt(props.getProperty("smsj.ucp.ip.port"));
+        ucp60Uid_ = props.getProperty("smsj.ucp.ucp60.uid");
+        ucp60Pwd_ = props.getProperty("smsj.ucp.ucp60.password");
 
-        if (myUCP60Uid == null || myUCP60Pwd == null)
+        if (ucp60Uid_ == null || ucp60Pwd_ == null)
         {
-            myDoUCP60Login = false;
+            doUcp60Login_ = false;
         }
-        else if ("".equals(myUCP60Uid))
+        else if ("".equals(ucp60Uid_))
         {
             throw new SmsException("UCP Transport: empty UCP60 username");
         }
         else
         {
-            myDoUCP60Login = true;
+            doUcp60Login_ = true;
         }
     }
 
     public void connect() throws SmsException, IOException
     {
         // Connect to the UCP server
-        myIpSocket = new Socket(myIpHost, myIpPort);
-        myIpStreamOut = new DataOutputStream(myIpSocket.getOutputStream());
-        myIpStreamIn = new DataInputStream(myIpSocket.getInputStream());
+        ucpSocket_ = new Socket(ucpServerName_, ucpServerPort_);
+        ucpOs_ = new DataOutputStream(ucpSocket_.getOutputStream());
+        ucpIs_ = new DataInputStream(ucpSocket_.getInputStream());
         
         //Logging into the Remote Host via UCP 60;
         //TODO: Add proper failure handling
-        if (myDoUCP60Login)
+        if (doUcp60Login_)
         {
-            byte[] loginCmd = buildLogin(myUCP60Uid, myUCP60Pwd);
+            byte[] loginCmd = buildLogin(ucp60Uid_, ucp60Pwd_);
             String response = sendUcp(loginCmd);
             System.err.println("SMSC response: " + response);
         }
     }
 
-    public String[] send(SmsMessage theMessage, SmsAddress theDest, SmsAddress theSender) throws SmsException, IOException
+    public String send(SmsMessage msg, SmsAddress theDest, SmsAddress sender) throws SmsException, IOException
     {
         SmsPdu[] msgPdu = null;
 
@@ -139,11 +137,11 @@ public class UcpTransport implements SmsTransport
             throw new SmsException("Cannot sent SMS to ALPHANUMERIC address");
         }
 
-        msgPdu = theMessage.getPdus();
+        msgPdu = msg.getPdus();
         for (int i = 0; i < msgPdu.length; i++)
         {
             boolean moreToSend = (i < (msgPdu.length - 1));
-            byte[] submitCmd = buildSubmit(msgPdu[i], moreToSend, theDest, theSender);
+            byte[] submitCmd = buildSubmit(msgPdu[i], moreToSend, theDest, sender);
             String response = sendUcp(submitCmd);
             System.err.println("SMSC response: " + response);
         }
@@ -311,9 +309,9 @@ public class UcpTransport implements SmsTransport
      */
     public void disconnect() throws SmsException, IOException
     {
-        myIpStreamOut.close();
-        myIpStreamIn.close();
-        myIpSocket.close();
+        ucpOs_.close();
+        ucpIs_.close();
+        ucpSocket_.close();
     }
 
     /**
@@ -327,7 +325,7 @@ public class UcpTransport implements SmsTransport
      */
     public String sendUcp(byte[] data) throws SmsException, IOException
     {
-        if (!myIpSocket.isConnected() || myIpStreamOut == null || myIpStreamIn == null)
+        if (!ucpSocket_.isConnected() || ucpOs_ == null || ucpIs_ == null)
         {
             throw new SmsException("Please Connect first");
         }
@@ -335,12 +333,12 @@ public class UcpTransport implements SmsTransport
         System.out.println("SMSC send: " + new String(data, 0, data.length));
         StringBuffer strBuf;
 
-        myIpStreamOut.write(data);
-        myIpStreamOut.flush();
+        ucpOs_.write(data);
+        ucpOs_.flush();
 
         byte[] b = new byte[1];
 
-        if ((b[0] = myIpStreamIn.readByte()) != 2)
+        if ((b[0] = ucpIs_.readByte()) != 2)
         {
             System.out.println("SendSMS.send: The SMSC sends a bad reply");
             throw new SmsException("The SMSC sends a bad reply");
@@ -348,7 +346,7 @@ public class UcpTransport implements SmsTransport
 
         strBuf = new StringBuffer();
 
-        while ((b[0] = myIpStreamIn.readByte()) != 3)
+        while ((b[0] = ucpIs_.readByte()) != 3)
         {
             strBuf.append(new String(b));
         }

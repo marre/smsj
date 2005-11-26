@@ -34,8 +34,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.transport.clickatell;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -82,7 +82,7 @@ import org.marre.util.StringUtil;
  */
 public class ClickatellTransport implements SmsTransport
 {
-    private static Log log_ = LogFactory.getLog(ClickatellTransport.class);
+    private static Logger log_ = LoggerFactory.getLogger(ClickatellTransport.class);
 
     private String username_;
     private String password_;
@@ -240,17 +240,17 @@ public class ClickatellTransport implements SmsTransport
      *       smsj.clickatell.protocol - http or https
      * </pre>
      * 
-     * @param theProps
+     * @param props
      *            Properties to initialize the library
      * @throws SmsException
      *             If not given the needed params
      */
-    public void init(Properties theProps) throws SmsException
+    public void init(Properties props) throws SmsException
     {
-        username_ = theProps.getProperty("smsj.clickatell.username");
-        password_ = theProps.getProperty("smsj.clickatell.password");
-        apiId_ = theProps.getProperty("smsj.clickatell.apiid");
-        protocol_ = theProps.getProperty("smsj.clickatell.protocol", "http");
+        username_ = props.getProperty("smsj.clickatell.username");
+        password_ = props.getProperty("smsj.clickatell.password");
+        apiId_ = props.getProperty("smsj.clickatell.apiid");
+        protocol_ = props.getProperty("smsj.clickatell.protocol", "http");
         
         if ((username_ == null) || (password_ == null) || (apiId_ == null)) 
         { 
@@ -439,17 +439,17 @@ public class ClickatellTransport implements SmsTransport
     /**
      * Sends an SMS Message.
      * 
-     * @param theMessage
-     * @param theDestination
-     * @param theSender
+     * @param msg
+     * @param dest
+     * @param sender
      * @throws SmsException
      * @return Message ids
      */
-    public String[] send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException, IOException
+    public String send(SmsMessage msg, SmsAddress dest, SmsAddress sender) throws SmsException, IOException
     {
         String[] msgIds;
         
-        if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC) 
+        if (dest.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC) 
         { 
             throw new SmsException("Cannot sent SMS to an ALPHANUMERIC address"); 
         }
@@ -460,22 +460,23 @@ public class ClickatellTransport implements SmsTransport
         }
         
         
-        if (theMessage instanceof SmsConcatMessage)
+        if (msg instanceof SmsConcatMessage)
         {
-            msgIds = sendConcatMessage((SmsConcatMessage) theMessage, theDestination, theSender);
+            msgIds = sendConcatMessage((SmsConcatMessage) msg, dest, sender);
         }
         else
         {
-            SmsPdu[] msgPdu = theMessage.getPdus();
+            SmsPdu[] msgPdu = msg.getPdus();
             msgIds = new String[msgPdu.length];
 
             for (int i = 0; i < msgPdu.length; i++)
             {
-                msgIds[i] = send(msgPdu[i], theDestination, theSender);
+                msgIds[i] = send(msgPdu[i], dest, sender);
             }
         }
         
-        return msgIds;
+        // TODO: Return a real message id
+        return null;
     }
 
     /**

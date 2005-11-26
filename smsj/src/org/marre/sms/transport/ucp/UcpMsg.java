@@ -38,8 +38,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.marre.util.StringUtil;
 
 /**
@@ -53,41 +53,41 @@ public abstract class UcpMsg
     protected static final byte STX = (byte) 0x02;
     protected static final byte ETX = (byte) 0x03;
 
-    private static Log logger = LogFactory.getLog(UcpMsg.class);
+    private static Logger log_ = LoggerFactory.getLogger(UcpMsg.class);
 
-    protected String[] myUcpFields;
-    protected char myOR; // 'O' or 'R'
-    protected int myTrn;
-    protected byte myOT;
+    protected String[] ucpFields_;
+    protected char or_; // 'O' or 'R'
+    protected int trn_;
+    protected byte ot_;
 
     public UcpMsg(int nFields)
     {
-        myUcpFields = new String[nFields];
+        ucpFields_ = new String[nFields];
     }
 
     public void setField(int field, String value)
     {
-        myUcpFields[field] = value;
+        ucpFields_[field] = value;
     }
 
     public String getField(int field)
     {
-        return myUcpFields[field];
+        return ucpFields_[field];
     }
 
     protected void setOR(char or)
     {
-        myOR = or;
+        or_ = or;
     }
 
     protected void setOT(byte ot)
     {
-        myOT = ot;
+        ot_ = ot;
     }
 
     public void setTRN(int trn)
     {
-        myTrn = trn;
+        trn_ = trn;
     }
 
     public byte calcChecksum(String data)
@@ -110,11 +110,11 @@ public abstract class UcpMsg
         // length = trn + len + o|r + ot
         length = 3 + 5 + 2 + 3;
         // length += data
-        for (int i = 0; i < myUcpFields.length; i++)
+        for (int i = 0; i < ucpFields_.length; i++)
         {
-            if (myUcpFields[i] != null)
+            if (ucpFields_[i] != null)
             {
-                length += myUcpFields[i].length();
+                length += ucpFields_[i].length();
             }
             length += 1;
         }
@@ -124,24 +124,24 @@ public abstract class UcpMsg
         // HEADER (TRN/LEN/O|R/OT)
 
         // TRN (2 num char)
-        command.append(StringUtil.intToString(myTrn, 2));
+        command.append(StringUtil.intToString(trn_, 2));
         command.append('/');
         // LEN (5 num char)
         command.append(StringUtil.intToString(length, 5));
         command.append('/');
         // O|R (Char 'O' or 'R')
-        command.append(myOR);
+        command.append(or_);
         command.append('/');
         // OT (2 num char)
-        command.append(StringUtil.intToString(myOT, 2));
+        command.append(StringUtil.intToString(ot_, 2));
         command.append('/');
 
         // DATA
-        for (int i = 0; i < myUcpFields.length; i++)
+        for (int i = 0; i < ucpFields_.length; i++)
         {
-            if (myUcpFields[i] != null)
+            if (ucpFields_[i] != null)
             {
-                command.append(myUcpFields[i]);
+                command.append(ucpFields_[i]);
             }
             command.append('/');
         }
@@ -173,7 +173,7 @@ public abstract class UcpMsg
         }
         catch (IOException ex)
         {
-            logger.debug("getCommand() - Failed to write to an ByteArrayOutputStream!");
+            log_.debug("getCommand() - Failed to write to an ByteArrayOutputStream!");
         }
         return baos.toByteArray();
     }
