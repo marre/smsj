@@ -58,8 +58,11 @@ import org.marre.sms.SmsPduUtil;
 import org.marre.sms.SmsTextMessage;
 import org.marre.sms.SmsUserData;
 import org.marre.sms.transport.SmsTransport;
+import org.marre.sms.transport.clickatell.ClickatellTransport;
 import org.marre.util.IOUtil;
 import org.marre.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 
 /**
@@ -67,65 +70,86 @@ import org.xml.sax.InputSource;
  * 
  * See http://www.pswin.com/ for more information.
  * 
+ * <pre>
+ * Available properties:
+ * smsj.pswincom.username
+ * smsj.pswincom.password
+ * smsj.pswincom.server - server address (default is "sms.pswin.com")
+ * smsj.pswincom.port - port (default is "1111")
+ * </pre>
+ *  
  * @author Markus
  * @version $Id$
  */
 public class PsWinXmlTransport implements SmsTransport
 {
-    private String myUsername;
-    private String myPassword;
+    private static Logger log_ = LoggerFactory.getLogger(PsWinXmlTransport.class);
+    
+    private String username_;
+    private String password_;
+    
+    private String server_;
+    private int port_;
 
-    public void init(Properties theProps) throws SmsException
+    /**
+     * Initializes the pswin transport.
+     * 
+     * @see org.marre.sms.transport.SmsTransport#init(java.util.Properties)
+     */
+    public void init(Properties props) throws SmsException
     {
-        myUsername = theProps.getProperty("smsj.pswincom.username");
-        myPassword = theProps.getProperty("smsj.pswincom.password");
+        username_ = props.getProperty("smsj.pswincom.username");
+        password_ = props.getProperty("smsj.pswincom.password");
+        server_ = props.getProperty("smsj.pswincom.server", "sms.pswin.com");
+        port_ = Integer.parseInt(props.getProperty("smsj.pswincom.port", "1111"));
 
-        if ((myUsername == null) || (myPassword == null))
+        log_.debug("init() : username = " + username_);
+        log_.debug("init() : password = " + password_);
+        log_.debug("init() : server = " + server_);
+        log_.debug("init() : port = " + port_);
+        
+        if ((username_ == null) || (password_ == null))
         {
             throw new SmsException("Incomplete login information for pswincom");
         }
     }
 
-    public void connect() throws SmsException, IOException
+    private void addMsg(StringWriter xmlStringWriter, SmsPdu smsPdu, SmsAddress dest, SmsAddress sender) 
+        throws SmsException
     {
-    }
-
-    protected void addMsg(StringWriter theXmlWriter, SmsPdu thePdu, SmsAddress theDestination,
-            SmsAddress theSender) throws SmsException
-    {
-        SmsUserData userData = thePdu.getUserData();
+        SmsUserData userData = smsPdu.getUserData();
         
         // <MSG>
-        theXmlWriter.write("<MSG>\r\n");
+        xmlStringWriter.write("<MSG>\r\n");
         // <RCPREQ>Y</RCPREQ>
-        theXmlWriter.write("<RCPREQ>Y</RCPREQ>\r\n");
+        xmlStringWriter.write("<RCPREQ>Y</RCPREQ>\r\n");
 
-        switch (thePdu.getDcs().getAlphabet())
+        switch (smsPdu.getDcs().getAlphabet())
         {
         case SmsDcs.ALPHABET_UCS2:
             // <OP>9</OP>
-            theXmlWriter.write("<OP>9</OP>\r\n");
+            xmlStringWriter.write("<OP>9</OP>\r\n");
             // <TEXT>hex-text</TEXT>
-            theXmlWriter.write("<TEXT>");
-            theXmlWriter.write(StringUtil.bytesToHexString(userData.getData()));
-            theXmlWriter.write("</TEXT>\r\n");
+            xmlStringWriter.write("<TEXT>");
+            xmlStringWriter.write(StringUtil.bytesToHexString(userData.getData()));
+            xmlStringWriter.write("</TEXT>\r\n");
             break;
 
         case SmsDcs.ALPHABET_GSM:
             // <TEXT>txt</TEXT>
-            theXmlWriter.write("<TEXT>");
-            theXmlWriter.write(SmsPduUtil.readSeptets(userData.getData(), userData.getLength()));
-            theXmlWriter.write("</TEXT>\r\n");
+            xmlStringWriter.write("<TEXT>");
+            xmlStringWriter.write(SmsPduUtil.readSeptets(userData.getData(), userData.getLength()));
+            xmlStringWriter.write("</TEXT>\r\n");
             break;
 
         case SmsDcs.ALPHABET_8BIT:
             // <OP>8</OP>
-            theXmlWriter.write("<OP>8</OP>\r\n");
+            xmlStringWriter.write("<OP>8</OP>\r\n");
             // <TEXT>udh-and-ud</TEXT>
-            theXmlWriter.write("<TEXT>");
-            theXmlWriter.write(StringUtil.bytesToHexString(thePdu.getUserDataHeaders())
+            xmlStringWriter.write("<TEXT>");
+            xmlStringWriter.write(StringUtil.bytesToHexString(smsPdu.getUserDataHeaders())
                     + StringUtil.bytesToHexString(userData.getData()));
-            theXmlWriter.write("</TEXT>\r\n");
+            xmlStringWriter.write("</TEXT>\r\n");
             break;
 
         default:
@@ -133,57 +157,54 @@ public class PsWinXmlTransport implements SmsTransport
         }
 
         // <RCV>434343434</RCV>
-        theXmlWriter.write("<RCV>");
-        theXmlWriter.write(theDestination.getAddress());
-        theXmlWriter.write("</RCV>\r\n");
+        xmlStringWriter.write("<RCV>");
+        xmlStringWriter.write(dest.getAddress());
+        xmlStringWriter.write("</RCV>\r\n");
 
-        if (theSender != null)
+        if (sender != null)
         {
             // <SND>434344</SND>
-            theXmlWriter.write("<SND>");
-            theXmlWriter.write(theSender.getAddress());
-            theXmlWriter.write("</SND>\r\n");
+            xmlStringWriter.write("<SND>");
+            xmlStringWriter.write(sender.getAddress());
+            xmlStringWriter.write("</SND>\r\n");
         }
 
-        if (thePdu.getDcs().getMessageClass() == SmsDcs.MSG_CLASS_0)
+        if (smsPdu.getDcs().getMessageClass() == SmsDcs.MSG_CLASS_0)
         {
             // <CLASS>0</CLASS>
-            theXmlWriter.write("<CLASS>");
-            theXmlWriter.write("0");
-            theXmlWriter.write("</CLASS>\r\n");
+            xmlStringWriter.write("<CLASS>");
+            xmlStringWriter.write("0");
+            xmlStringWriter.write("</CLASS>\r\n");
         }
 
         // </MSG>
-        theXmlWriter.write("</MSG>\r\n");
+        xmlStringWriter.write("</MSG>\r\n");
     }
 
-    private void addTextMsg(StringWriter theXmlWriter, SmsTextMessage theMessage, SmsAddress theDestination,
-            SmsAddress theSender) throws SmsException
+    private void addTextMsg(StringWriter xmlStringWriter, SmsTextMessage msg, SmsAddress dest, SmsAddress sender) 
+        throws SmsException
     {
-        // 70 UCS
-        // 160 GSM
-        
-        SmsUserData userData = theMessage.getUserData();
+        SmsUserData userData = msg.getUserData();
 
         // <MSG>
-        theXmlWriter.write("<MSG>\r\n");
+        xmlStringWriter.write("<MSG>\r\n");
 
         switch (userData.getDcs().getAlphabet())
         {
         case SmsDcs.ALPHABET_UCS2:
             // <OP>9</OP>
-            theXmlWriter.write("<OP>9</OP>\r\n");
+            xmlStringWriter.write("<OP>9</OP>\r\n");
             // <TEXT>hex-text</TEXT>
-            theXmlWriter.write("<TEXT>");
-            theXmlWriter.write(StringUtil.bytesToHexString(userData.getData()));
-            theXmlWriter.write("</TEXT>\r\n");
+            xmlStringWriter.write("<TEXT>");
+            xmlStringWriter.write(StringUtil.bytesToHexString(userData.getData()));
+            xmlStringWriter.write("</TEXT>\r\n");
             break;
 
         case SmsDcs.ALPHABET_GSM:
             // <TEXT>txt</TEXT>
-            theXmlWriter.write("<TEXT>");
-            theXmlWriter.write(theMessage.getText());
-            theXmlWriter.write("</TEXT>\r\n");
+            xmlStringWriter.write("<TEXT>");
+            xmlStringWriter.write(msg.getText());
+            xmlStringWriter.write("</TEXT>\r\n");
             break;
 
         default:
@@ -191,32 +212,42 @@ public class PsWinXmlTransport implements SmsTransport
         }
 
         // <RCV>434343434</RCV>
-        theXmlWriter.write("<RCV>");
-        theXmlWriter.write(theDestination.getAddress());
-        theXmlWriter.write("</RCV>\r\n");
+        xmlStringWriter.write("<RCV>");
+        xmlStringWriter.write(dest.getAddress());
+        xmlStringWriter.write("</RCV>\r\n");
 
-        if (theSender != null)
+        if (sender != null)
         {
             // <SND>434344</SND>
-            theXmlWriter.write("<SND>");
-            theXmlWriter.write(theSender.getAddress());
-            theXmlWriter.write("</SND>\r\n");
+            xmlStringWriter.write("<SND>");
+            xmlStringWriter.write(sender.getAddress());
+            xmlStringWriter.write("</SND>\r\n");
         }
 
         if (userData.getDcs().getMessageClass() == SmsDcs.MSG_CLASS_0)
         {
             // <CLASS>0</CLASS>
-            theXmlWriter.write("<CLASS>");
-            theXmlWriter.write("0");
-            theXmlWriter.write("</CLASS>\r\n");
+            xmlStringWriter.write("<CLASS>");
+            xmlStringWriter.write("0");
+            xmlStringWriter.write("</CLASS>\r\n");
         }
 
         // </MSG>
-        theXmlWriter.write("</MSG>\r\n");
+        xmlStringWriter.write("</MSG>\r\n");
     }
 
-    protected void writeXmlTo(OutputStream theOs, SmsMessage theMessage, 
-                              SmsAddress theDestination, SmsAddress theSender)
+    /**
+     * Creates a pswin xml document and writes it to the given outputstream.
+     * 
+     * @param os
+     * @param msg
+     * @param dest
+     * @param sender
+     * @throws IOException
+     * @throws SmsException
+     */
+    private void writeXmlTo(OutputStream os, SmsMessage msg, 
+                              SmsAddress dest, SmsAddress sender)
             throws IOException, SmsException
     {
         StringWriter xmlWriter = new StringWriter(1024);
@@ -228,21 +259,21 @@ public class PsWinXmlTransport implements SmsTransport
         // <MSGLST>
         xmlWriter.write("<?xml version=\"1.0\"?>\r\n");
         xmlWriter.write("<SESSION>\r\n");
-        xmlWriter.write("<CLIENT>" + myUsername + "</CLIENT>\r\n");
-        xmlWriter.write("<PW>" + myPassword + "</PW>\r\n");
+        xmlWriter.write("<CLIENT>" + username_ + "</CLIENT>\r\n");
+        xmlWriter.write("<PW>" + password_ + "</PW>\r\n");
         xmlWriter.write("<MSGLST>\r\n");
 
         // <MSG>...</MSG>
-        if (theMessage instanceof SmsTextMessage)
+        if (msg instanceof SmsTextMessage)
         {
-            addTextMsg(xmlWriter, (SmsTextMessage) theMessage, theDestination, theSender);
+            addTextMsg(xmlWriter, (SmsTextMessage) msg, dest, sender);
         }
         else
         {
-            SmsPdu[] msgPdu = theMessage.getPdus();
+            SmsPdu[] msgPdu = msg.getPdus();
             for (int i = 0; i < msgPdu.length; i++)
             {
-                addMsg(xmlWriter, msgPdu[i], theDestination, theSender);
+                addMsg(xmlWriter, msgPdu[i], dest, sender);
             }
         }
 
@@ -253,16 +284,23 @@ public class PsWinXmlTransport implements SmsTransport
 
         // Finally write XML to stream
         String xmlDoc = xmlWriter.toString();
-        theOs.write(xmlDoc.getBytes());
+        os.write(xmlDoc.getBytes());
     }
 
-    protected String[] sendReqToPsWinCom(byte[] theXmlReq) throws IOException, SmsException
+    /**
+     * Sends the given xml request to pswin for processing.
+     * 
+     * @param xmlReq
+     * @throws IOException
+     * @throws SmsException
+     */
+    private void sendReqToPsWinCom(byte[] xmlReq) throws IOException, SmsException
     {
-        Socket xmlSocket = new Socket("sms.pswin.com", 1111);
+        Socket xmlSocket = new Socket(server_, port_);
 
         // Send request
         OutputStream os = xmlSocket.getOutputStream();
-        os.write(theXmlReq);
+        os.write(xmlReq);
 
         // Get response
         InputStream is = xmlSocket.getInputStream();
@@ -276,16 +314,25 @@ public class PsWinXmlTransport implements SmsTransport
         {
             throw new SmsException("Failed to send message: " + responseParser.getReason());
         }
-        
-        return null;
     }
 
-    public String[] send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException, IOException
+    /**
+     * Send.
+     * 
+     * @param msg 
+     * @param dest 
+     * @param sender 
+     * @return Internal message id. 
+     * @throws SmsException 
+     * @throws IOException 
+     * 
+     * @see org.marre.sms.transport.SmsTransport#send()
+     */
+    public String send(SmsMessage msg, SmsAddress dest, SmsAddress sender) throws SmsException, IOException
     {
-        String[] msgIds;
         byte[] xmlReq;
         
-        if (theDestination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
+        if (dest.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
         {
             throw new SmsException("Cannot sent SMS to ALPHANUMERIC address");
         }
@@ -295,7 +342,7 @@ public class PsWinXmlTransport implements SmsTransport
             ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
 
             // Create xml document
-            writeXmlTo(baos, theMessage, theDestination, theSender);
+            writeXmlTo(baos, msg, dest, sender);
             baos.close();
             
             xmlReq = baos.toByteArray();
@@ -306,18 +353,39 @@ public class PsWinXmlTransport implements SmsTransport
         }
 
         // Send req
-        msgIds = sendReqToPsWinCom(xmlReq);
+        sendReqToPsWinCom(xmlReq);
         
-        return msgIds;
+        // TODO: Return an internal message id
+        return null;
     }
 
-    public void disconnect() throws SmsException, IOException
+    /**
+     * Connect.
+     * 
+     * @see org.marre.sms.transport.SmsTransport#connect()
+     */
+    public void connect()
     {
+        // Empty
+    }
+    
+    /**
+     * Disconnect.
+     * 
+     * @see org.marre.sms.transport.SmsTransport#disconnect()
+     */
+    public void disconnect()
+    {
+        // Empty
     }
 
-    public void ping() throws SmsException, IOException
+    /**
+     * Ping.
+     * 
+     * @see org.marre.sms.transport.SmsTransport#ping()
+     */
+    public void ping()
     {
-        // TODO Auto-generated method stub
-        
+        // Empty
     }
 }

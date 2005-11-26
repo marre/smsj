@@ -38,38 +38,31 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.marre.sms.SmsException;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 /**
  * Parses the response from PsWin.
  * 
  * Uses a DOM parser internally. Currently only looking at the LOGIN result. 
  * 
+ * TODO: Rewrite to use SAX instead. We aren't really intrested in the tree structure...
+ * 
  * @author Markus
  * @version $Id$
  */
 public class PsWinXmlResponseParser
 {
-    private static Log log_ = LogFactory.getLog(PsWinXmlResponseParser.class);
-
     protected InputStream xmlInputStream_;
     protected Document respDoc_;
     
