@@ -72,13 +72,14 @@
         <type>jar</type>
         <url>http://java.sun.com/products/javacomm/index.jsp</url>
 	</dependency>
-
+<!--
 	<dependency>
 		<groupId>statcvs</groupId>
 		<artifactId>maven-statcvs-plugin</artifactId>
 		<version>2.5</version>
 		<type>plugin</type>
-	</dependency>	
+	</dependency>
+-->
   </dependencies>	
 
   <build>
@@ -87,22 +88,15 @@
               
     <!-- J A R  R E S O U R C E S -->
     <!-- Resources that are packaged up inside the JAR file -->
-<!--    
     <resources>
       <resource>
-        <directory>${basedir}/src/resources/misc</directory>
+        <directory>${basedir}/src/org/marre/sms/resources</directory>
+        <targetPath>org/marre/sms/resources</targetPath>
         <includes>
-          <include>*.xsd</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>${basedir}/src/resources/logging</directory>
-        <includes>
-          <include>log4j.properties</include>
+          <include>*.properties</include>
         </includes>
       </resource>
     </resources>
--->    
   </build>
   
   <reports>
