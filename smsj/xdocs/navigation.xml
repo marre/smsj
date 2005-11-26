@@ -29,6 +29,7 @@
 
         <menu name="Misc.">
             <item name="CVS Access" href="/cvs-usage.html"/>
+            <item name="Todo" href="/todo.html"/>
         </menu>
     </body>
 </project>

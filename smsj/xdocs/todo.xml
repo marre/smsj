@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+    <properties>
+        <title>Todo list</title>
+        <author email="c95men at users.sourceforge.net">Markus Eriksson</author>
+    </properties>
+    <body>
+        <section name="Introduction">
+            <p>
+				This is a short TODO list with things that should be fixed in smsj. Please let me know if you
+				would like to help out with anything on this list, or if you have something that should be 
+				added to this list.
+			</p>
+        </section>
+        <section name="Update the 7bit charset encoder/decoder">
+            <p>
+                The current 7bit charset encoder/decoder is incomplete. There are some characters that must be
+                encoded as two 7bit characters.
+			</p>
+        </section>
+        <section name="Remove GsmOperators class">
+            <p>
+                Is this class really neccessary? It is not a complete listing anyway...
+			</p>
+        </section>
+        <section name="Create a demo app">
+            <p>
+                There should be a simple demo app. Either a command line tool or a swing application.
+			</p>
+        </section>
+        <section name="Complete the EMS support">
+            <p>
+                The current EMS implementation is only a stub implementation. I created a bunch of classes
+                but never completed the implementation.
+			</p>
+        </section>
+        <section name="Update the UCP transport">
+            <p>
+                The current UCP transport is currently in a bad shape. It should work to submit simple
+                text messages, but I'm unsure if UDH, 8bit and UCS2 messages works. I would really like
+                to have some help here since I don't have access to an UCP server right now.
+			</p>
+        </section>
+        <section name="Complete the MMS part">
+            <p>
+                The MMS part is perhaps 75% done. The API is a bit rough as well.
+			</p>
+        </section>
+        <section name="Add query, cancel and replace to the sms transport API">
+            <p>
+                Should be quite simple to add.
+			</p>
+        </section>
+        <section name="Add an asynchronous transport API">
+            <p>
+                This would really be a boost for smsj. This would make it possible to use smsj in
+                implementations that need to send alot of SMS but at the same time keep track
+                of all messages.
+			</p>
+        </section>
+        <section name="Add support for incoming SMS">
+            <p>
+                This feature is perhaps the most requested feature.
+			</p>
+        </section>
+        <section name="Add OMA DRM encoder.">
+            <p>
+                Add a new MimeMultipart type that can wrap OMA drm files. 
+			</p>
+        </section>
+        <section name="Add tutorial and documentation.">
+            <p>
+                The documentation that is available today is a bit thin. 
+			</p>
+        </section>
+    </body>
+</document>

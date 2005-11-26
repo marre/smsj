@@ -18,7 +18,7 @@
         Can it send wap Push messages?
       </question>
       <answer>
-        <p>Yes. The easiest way is to use <code>SmsSender.sendWapSiPushMsg()</code>.</p>
+        <p>Yes. The easiest way is to use <code>SmsSender.sendWapSiPushMsg()</code> or .<code>SmsSender.sendWapSiPushMsg()</code></p>
       </answer>
     </faq>
   
@@ -27,7 +27,7 @@
         Can it send a mms notification message?
       </question>
       <answer>
-        <p>Yes.</p>
+        <p>Yes. The easiest way is to use <code>SmsSender.sendMmsNotification()</code>.</p>
       </answer>
     </faq>
   </part>
