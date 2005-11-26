@@ -34,8 +34,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mms.transport.mm1;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -60,7 +60,7 @@ import org.marre.util.StringUtil;
  */
 public class Mm1Transport implements MmsTransport
 {
-    private static Log logger = LogFactory.getLog(Mm1Transport.class);
+    private static Logger log_ = LoggerFactory.getLogger(Mm1Transport.class);
 
     /** 
      * Content type for a mms message. 
@@ -89,20 +89,15 @@ public class Mm1Transport implements MmsTransport
      * The mm1 protocol is connection less so this method is not used.
      * @see org.marre.mms.transport.MmsTransport#connect()
      */
-    public void connect() throws IOException
+    public void connect()
     {
         // Empty
     }
 
     /**
-     * Sends the mms.
-     * @throws MmsException if fails to send the message. 
+     * Sends MMS.
      * 
-     * @see org.marre.mms.transport.MmsTransport#send(org.marre.mime.MimeBodyPart,
-     *      org.marre.mms.MmsHeaders)
-     *      
-     * @param theMessage message to send
-     * @param theHeaders headers for the message
+     * @see org.marre.mms.transport.MmsTransport#send(org.marre.mime.MimeBodyPart, org.marre.mms.MmsHeaders)
      */
     public void send(MimeBodyPart theMessage, MmsHeaders theHeaders) throws MmsException, IOException
     {
@@ -113,10 +108,10 @@ public class Mm1Transport implements MmsTransport
         Mm1Encoder.writeMessageToStream(baos, theMessage, theHeaders);
         baos.close();
         
-        if (logger.isDebugEnabled())
+        if (log_.isDebugEnabled())
         {
             String str = StringUtil.bytesToHexString(baos.toByteArray());
-            logger.debug("request [" + str + "]");
+            log_.debug("request [" + str + "]");
         }
         
         URL url = new URL(myMmsProxyGatewayAddress);
@@ -142,15 +137,15 @@ public class Mm1Transport implements MmsTransport
         InputStream response = urlConn.getInputStream();
         
         int responsecode = urlConn.getResponseCode();
-        logger.debug("HTTP response code : " + responsecode);
+        log_.debug("HTTP response code : " + responsecode);
         
         IOUtil.copy(response, baos);
         baos.close();
         
-        if (logger.isDebugEnabled())
+        if (log_.isDebugEnabled())
         {
             String str = StringUtil.bytesToHexString(baos.toByteArray());
-            logger.debug("response [" + str + "]");
+            log_.debug("response [" + str + "]");
         }
         // TODO: Parse the response
     }
