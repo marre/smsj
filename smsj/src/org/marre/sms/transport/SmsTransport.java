@@ -56,10 +56,10 @@ public interface SmsTransport
      * 
      * Please see each transport for information on what properties that are available.
      *
-     * @param theProps Properties used to configure this transport.
+     * @param props Properties used to configure this transport.
      * @throws SmsException If there was a problem with the configuration. 
      */
-    void init(Properties theProps) throws SmsException;
+    void init(Properties props) throws SmsException;
 
     /**
      * Connects to the SMS server.
@@ -77,19 +77,28 @@ public interface SmsTransport
      * @throws SmsException Indicates a sms related problem.
      * @throws IOException Inidicates a failure to communicate with the SMS server.
      */
-    public void ping() throws SmsException, IOException;
+    void ping() throws SmsException, IOException;
     
     /**
      * Sends an SmsMessage to the given destination.
      * 
-     * @param theMessage The Message to send
-     * @param theDestination Destination address
-     * @param theSender Sender address
-     * @return Returns an array of message id:s. It is possible that the message ids are null.
+     * This method returns a local identifier for the message. This messageid can then be used to query the 
+     * status, cancel or replace the sent SMS. The format of the identifier is specific to the SmsTransport 
+     * implementation. The SmsTransport implementation may decide how long the message id is valid. 
+     * 
+     * Depending on the implementation this method is blocking or non-blocking.
+     * 
+     * It is possible that the returned identifier is null. This indicates that the actual transport
+     * doesn't handle message ids.
+     * 
+     * @param msg The Message to send
+     * @param dest Destination address
+     * @param sender Sender address
+     * @return a local identifier for the message.
      * @throws SmsException Indicates a sms related problem.
      * @throws IOException Inidicates a failure to communicate with the SMS server.
      */
-    String[] send(SmsMessage theMessage, SmsAddress theDestination, SmsAddress theSender) throws SmsException, IOException;
+    String send(SmsMessage msg, SmsAddress dest, SmsAddress sender) throws SmsException, IOException;
 
     /**
      * Disconnects from the SMS server.
