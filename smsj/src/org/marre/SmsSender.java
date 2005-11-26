@@ -303,12 +303,12 @@ public class SmsSender
      * @param sender Sender number (international format without leading +). Can also be an alphanumerical string like
      *               "SMSJ". This is property is not supported by all transports.
      *            
-     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * @return Returns a local message id for the sent message. It is possible that the message id is null.
      * 
      * @throws SmsException
      * @throws IOException 
      */
-    public String[] sendTextSms(String text, String dest, String sender) throws SmsException, IOException
+    public String sendTextSms(String text, String dest, String sender) throws SmsException, IOException
     {
         SmsTextMessage textMessage = new SmsTextMessage(text, SmsDcs.ALPHABET_GSM, SmsDcs.MSG_CLASS_UNKNOWN);        
         return sendSms(textMessage, dest, sender);
@@ -323,12 +323,12 @@ public class SmsSender
      * @param text Message to send
      * @param dest Destination number (international format without leading +).
      *            
-     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * @return Returns a local message id for the sent message. It is possible that the message id is null.
      * 
      * @throws SmsException
      * @throws IOException 
      */
-    public String[] sendTextSms(String text, String dest) throws SmsException, IOException
+    public String sendTextSms(String text, String dest) throws SmsException, IOException
     {
         SmsTextMessage textMessage = new SmsTextMessage(text, SmsDcs.ALPHABET_GSM, SmsDcs.MSG_CLASS_UNKNOWN);        
         return sendSms(textMessage, dest, null);
@@ -345,12 +345,12 @@ public class SmsSender
      * @param sender Sender number (international format without leading +). Can also be an alphanumerical string like
      *               "SMSJ". This is property is not supported by all transports.
      *            
-     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * @return Returns a local message id for the sent message. It is possible that the message id is null.
      * 
      * @throws SmsException
      * @throws IOException 
      */
-    public String[] sendUnicodeTextSms(String text, String dest, String sender) throws SmsException, IOException
+    public String sendUnicodeTextSms(String text, String dest, String sender) throws SmsException, IOException
     {
         SmsTextMessage textMessage = new SmsTextMessage(text, SmsDcs.ALPHABET_UCS2, SmsDcs.MSG_CLASS_UNKNOWN);        
         return sendSms(textMessage, dest, sender);
@@ -365,12 +365,12 @@ public class SmsSender
      * @param text Message to send
      * @param dest Destination number (international format without leading +).
      * 
-     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * @return Returns a local message id for the sent message. It is possible that the message id is null.
      * 
      * @throws SmsException
      * @throws IOException 
      */
-    public String[] sendUnicodeTextSms(String text, String dest) throws SmsException, IOException
+    public String sendUnicodeTextSms(String text, String dest) throws SmsException, IOException
     {
         SmsTextMessage textMessage = new SmsTextMessage(text, SmsDcs.ALPHABET_UCS2, SmsDcs.MSG_CLASS_UNKNOWN);        
         return sendSms(textMessage, dest, null);
@@ -384,12 +384,12 @@ public class SmsSender
      * @param url String with the url referenced by the bookmark
      * @param dest Destination number (international format without leading +).
      * 
-     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * @return Returns a local message id for the sent message. It is possible that the message id is null.
      *
      * @throws SmsException
      * @throws IOException 
      */
-    public String[] sendNokiaBookmark(String title, String url, String dest) throws SmsException, IOException
+    public String sendNokiaBookmark(String title, String url, String dest) throws SmsException, IOException
     {
         NokiaOtaBrowserSettings browserSettings = new NokiaOtaBrowserSettings();
         browserSettings.addBookmark(title, url);
@@ -407,12 +407,12 @@ public class SmsSender
      * @param url String with the url referenced by the SI
      * @param dest Destination number (international format without leading +).
      *            
-     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * @return Returns a local message id for the sent message. It is possible that the message id is null.
      *
      * @throws SmsException
      * @throws IOException 
      */
-    public String[] sendWapSiPushMsg(String url, String text, String dest) throws SmsException, IOException
+    public String sendWapSiPushMsg(String url, String text, String dest) throws SmsException, IOException
     {
         WapSIPush siPush = new WapSIPush(url, text);
         
@@ -426,13 +426,14 @@ public class SmsSender
      * Sends a Wap Push SL containing to the given recipient.
      *
      * @param url String with the url referenced by the SL
+     * @param dest Destination number in international format
      *            
-     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * @return Returns a local message id for the sent message. It is possible that the message id is null.
      *
      * @throws SmsException
      * @throws IOException 
      */
-    public String[] sendWapSlPushMsg(String url, String dest) throws SmsException, IOException
+    public String sendWapSlPushMsg(String url, String dest) throws SmsException, IOException
     {
         WapSLPush slPush = new WapSLPush(url);
         
@@ -451,12 +452,12 @@ public class SmsSender
      * @param subject The subject of the message.
      * @param dest Destination number (international format without leading +).
      *            
-     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * @return Returns a local message id for the sent message. It is possible that the message id is null.
      *
      * @throws SmsException
      * @throws IOException 
      */
-    public String[] sendMmsNotification(String contentLocation, long size, String subject, String dest) throws SmsException, IOException
+    public String sendMmsNotification(String contentLocation, long size, String subject, String dest) throws SmsException, IOException
     {
         SmsMmsNotificationMessage mmsNotification = new SmsMmsNotificationMessage(contentLocation, size);
         mmsNotification.setSubject(subject);
@@ -470,12 +471,12 @@ public class SmsSender
      * @param count Number of messages waiting. Set to 0 to clear the message waiting flag in the phone.
      * @param dest Destination number (international format without leading +).
      *            
-     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * @return Returns a local message id for the sent message. It is possible that the message id is null.
      * 
      * @throws SmsException
      * @throws IOException
      */
-    public String[] sendMsgWaitingVoice(int count, String dest) throws SmsException, IOException
+    public String sendMsgWaitingVoice(int count, String dest) throws SmsException, IOException
     {
         return sendMsgWaiting(SmsMsgWaitingMessage.TYPE_VOICE, count, dest);
     }
@@ -486,12 +487,12 @@ public class SmsSender
      * @param count Number of messages waiting. Set to 0 to clear the message waiting flag in the phone.
      * @param dest Destination number (international format without leading +).
      *            
-     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * @return Returns a local message id for the sent message. It is possible that the message id is null.
      * 
      * @throws SmsException
      * @throws IOException
      */
-    public String[] sendMsgWaitingFax(int count, String dest) throws SmsException, IOException
+    public String sendMsgWaitingFax(int count, String dest) throws SmsException, IOException
     {
         return sendMsgWaiting(SmsMsgWaitingMessage.TYPE_FAX, count, dest);
     }
@@ -502,17 +503,17 @@ public class SmsSender
      * @param count Number of messages waiting. Set to 0 to clear the message waiting flag in the phone.
      * @param dest Destination number (international format without leading +).
      *            
-     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * @return Returns a local message id for the sent message. It is possible that the message id is null.
      * 
      * @throws SmsException
      * @throws IOException
      */
-    public String[] sendMsgWaitingEmail(int count, String dest) throws SmsException, IOException
+    public String sendMsgWaitingEmail(int count, String dest) throws SmsException, IOException
     {
         return sendMsgWaiting(SmsMsgWaitingMessage.TYPE_EMAIL, count, dest);
     }
     
-    private String[] sendMsgWaiting(int type, int count, String dest) throws SmsException, IOException
+    private String sendMsgWaiting(int type, int count, String dest) throws SmsException, IOException
     {
         SmsMsgWaitingMessage msgWaiting = new SmsMsgWaitingMessage();
         msgWaiting.addMsgWaiting(type, count);
@@ -532,12 +533,12 @@ public class SmsSender
      *            Can also be an alphanumerical string. Ex "SMSJ". (not
      *            supported by all transports).
      *            
-     * @return Returns an array of message id:s for the sent message. It is possible that the message ids are null.
+     * @return Returns a local message id for the sent message. It is possible that the message id is null.
      * 
      * @throws SmsException
      * @throws IOException
      */
-    public String[] sendSms(SmsMessage msg, String dest, String sender) throws SmsException, IOException
+    public String sendSms(SmsMessage msg, String dest, String sender) throws SmsException, IOException
     {
         SmsAddress destAddress = new SmsAddress(dest);
         SmsAddress senderAddress = null;
