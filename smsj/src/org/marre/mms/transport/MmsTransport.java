@@ -41,6 +41,12 @@ import org.marre.mime.MimeBodyPart;
 import org.marre.mms.MmsException;
 import org.marre.mms.MmsHeaders;
 
+/**
+ * Mms Transport.
+ * 
+ * @author Markus
+ * @version $Id$
+ */
 public interface MmsTransport
 {
     /**
@@ -54,7 +60,7 @@ public interface MmsTransport
     void init(Properties theProps) throws MmsException;
 
     /**
-     * Connects to the SMSC (or phone, or service, or...)
+     * Connects to the MMSC (or phone, or service, or...)
      * @throws MmsException
      * @throws IOException TODO
      */
