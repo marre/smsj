@@ -75,7 +75,7 @@ public class PsWinXmlCleanupReader extends FilterReader
         if (totRead > 0)
         {
             // Found a terminating null, remove it
-            if (cbuf[off + totRead] == 0x00)
+            if (cbuf[off + totRead - 1] == 0x00)
             {
                 totRead--;
             }
