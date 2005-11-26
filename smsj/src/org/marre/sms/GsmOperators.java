@@ -39,21 +39,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Contains MCC and MNC definitions for various GSM operators.
- * <p>
- * TODO: Test this!
+ *
+ * TODO: Is this class really needed?
  *
  * @author Markus Eriksson
- * @version 1.0
+ * @version $Id$
  */
 public final class GsmOperators
 {
-    private static Properties myMccMncProp = new Properties();
+    private static Logger log_ = LoggerFactory.getLogger(GsmOperators.class);
+    
+    private static Properties mccMncProperties_ = new Properties();
 
     private GsmOperators()
     {
-        /* Utility function */
+        // Utility function
     }
     
     /**
@@ -84,73 +89,34 @@ public final class GsmOperators
      * Returns the Mcc and Mnc number for the given operator.
      * The property file is loaded as resource mccmnc.prop
      * 
-     * @param country the receivers number in international format (e.g. +49172..)
+     * @param country the countrycode for the country (e.g. "se", "fi")
      * @param operator the receivers number in international format (e.g. +49172..)
      * @return
      */
     public static int[] getMCC_MNC(String country, String operator)
     {
-        return getMCC_MNC(myMccMncProp, country, operator);
-    }
-
-    /**
-     * Builds a default mcc mnc list that is used if it failed to
-     * load the "mccmnc.prop" file.
-     */    
-    private static void defaultMccMnc()
-    {
-        myMccMncProp.setProperty("se.telia.mcc",       "240");        
-        myMccMncProp.setProperty("se.telia.mnc",       "1");        
-        myMccMncProp.setProperty("se.comviq.mcc",      "240");        
-        myMccMncProp.setProperty("se.comviq.mnc",      "7");        
-        myMccMncProp.setProperty("se.europolitan.mcc", "240");        
-        myMccMncProp.setProperty("se.europolitan.mnc", "8");   
-        myMccMncProp.setProperty("se.vodafone.mcc",    "240");        
-        myMccMncProp.setProperty("se.vodafone.mnc",    "8");   
-        
-        myMccMncProp.setProperty("fi.radiolinja.mcc",  "244");        
-        myMccMncProp.setProperty("fi.radiolinja.mnc",  "5");        
-        myMccMncProp.setProperty("fi.sonera.mcc",      "244");        
-        myMccMncProp.setProperty("fi.sonera.mnc",      "91");
-        
-        myMccMncProp.setProperty("de.tmobil.mcc",      "262");        
-        myMccMncProp.setProperty("de.tmobil.mnc",      "1");        
-        myMccMncProp.setProperty("de.vodafone.mcc",    "262");        
-        myMccMncProp.setProperty("de.vodafone.mnc",    "1");
-                        
-        myMccMncProp.setProperty("it.tim.mcc",         "222");        
-        myMccMncProp.setProperty("it.tim.mnc",         "1");
-        myMccMncProp.setProperty("it.vodafone.mcc",    "222");        
-        myMccMncProp.setProperty("it.vodafone.mnc",    "10");
-        myMccMncProp.setProperty("it.wind.mcc",        "222");        
-        myMccMncProp.setProperty("it.wind.mnc",        "88");
-        myMccMncProp.setProperty("it.blu.mcc",         "222");        
-        myMccMncProp.setProperty("it.blu.mnc",         "98");
+        return getMCC_MNC(mccMncProperties_, country, operator);
     }
 
     private static void readMccMncFromResource(String resourceName)
     {
-        ClassLoader cl = GsmOperators.class.getClassLoader();
-        InputStream in = cl.getResourceAsStream(resourceName);
+        InputStream in = GsmOperators.class.getResourceAsStream(resourceName);
         
         if (in != null)
         {
             try
             {
-                myMccMncProp.load(in);
+                mccMncProperties_.load(in);
             }
             catch (IOException ex)
             {
-                // TODO: Log this
-
-                // Load default values
-                defaultMccMnc();
+                log_.error("Failed to load mcc and mnc properties", ex);
             }
         }
     }
     
     static 
     {
-        readMccMncFromResource("mccmnc.prop");
+        readMccMncFromResource("resources/gsmoperators.properties");
     }
 }
