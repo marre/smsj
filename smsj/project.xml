@@ -27,12 +27,6 @@
 
   <url>http://smsj.sourceforge.net/</url>
   <issueTrackingUrl>http://sourceforge.net/tracker/?group_id=49024</issueTrackingUrl>
-
-  <!--
-  <siteAddress>smsj.sourceforge.net</siteAddress>
-  <siteDirectory>/www/maven.apache.org/</siteDirectory>
-  <distributionDirectory>/www/jakarta.apache.org/builds/jakarta-turbine-maven/</distributionDirectory>
-  -->
   
   <repository>
     <connection> 
@@ -64,9 +58,10 @@
 
   <dependencies>
     <dependency>
-		<groupId>commons-logging</groupId>
-        <artifactId>commons-logging</artifactId>
-        <version>1.0.4</version>
+		<groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>1.0-beta9</version>
+		<url>http://www.slf4j.org/</url>
         <type>jar</type>
 	</dependency>
 
@@ -112,10 +107,10 @@
   
   <reports>
     <report>maven-faq-plugin</report>
-    <report>maven-changelog-plugin</report>
-    <report>maven-statcvs-plugin</report>
+<!--    <report>maven-changelog-plugin</report> -->
+<!--    <report>maven-statcvs-plugin</report> -->
     <report>maven-javadoc-plugin</report>
-    <report>maven-jdepend-plugin</report>
+<!--    <report>maven-jdepend-plugin</report> -->
     <report>maven-junit-report-plugin</report>
     <report>maven-jxr-plugin</report>
   </reports>
