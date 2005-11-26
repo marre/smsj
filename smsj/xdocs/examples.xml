@@ -9,10 +9,7 @@
             <p>
                 <ol>
                     <li>
-                        <a href="#Using SmsSender">Using SmsSender</a>
-                    </li>
-                    <li>
-                        <a href="#Using the low level API">Using the low level API</a>
+                        <a href="#Using SmsSender">Send a text message using SmsSender API</a>
                     </li>
                 </ol>
             </p>
@@ -34,8 +31,9 @@ String msg = "A sample SMS.";
 String reciever = "461234";
 // Number of sender (not supported on all transports)
 String sender = "461235";
-smsSender.sendTextSms(msg, reciever, sender);
-smsSender.close();]]></source>
+smsSender.connect();
+String msgids[] = smsSender.sendTextSms(msg, reciever, sender);
+smsSender.disconnect();]]></source>
             </p>
         </section>
 		
