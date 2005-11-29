@@ -84,6 +84,8 @@ import org.xml.sax.InputSource;
 public class PsWinXmlTransport implements SmsTransport
 {
     private static Logger log_ = LoggerFactory.getLogger(PsWinXmlTransport.class);
+
+    private PsWinXmlResponseParser responseParser_;
     
     private String username_;
     private String password_;
@@ -112,6 +114,8 @@ public class PsWinXmlTransport implements SmsTransport
         {
             throw new SmsException("Incomplete login information for pswincom");
         }
+        
+        responseParser_ = new PsWinXmlResponseParser();
     }
 
     private void addMsg(StringWriter xmlStringWriter, SmsPdu smsPdu, SmsAddress dest, SmsAddress sender) 
@@ -296,23 +300,30 @@ public class PsWinXmlTransport implements SmsTransport
      */
     private void sendReqToPsWinCom(byte[] xmlReq) throws IOException, SmsException
     {
-        Socket xmlSocket = new Socket(server_, port_);
-
-        // Send request
-        OutputStream os = xmlSocket.getOutputStream();
-        os.write(xmlReq);
-
-        // Get response
-        InputStream is = xmlSocket.getInputStream();
+        Socket xmlSocket = null;
+        OutputStream os = null;
+        InputStream is = null;
         
-        // Parse response
-        PsWinXmlResponseParser responseParser = new PsWinXmlResponseParser(is);
-        responseParser.parse();
+        try {
+            xmlSocket = new Socket(server_, port_);
+            // Send request
+            os = xmlSocket.getOutputStream();
+            os.write(xmlReq);
+            // Get response
+            is = xmlSocket.getInputStream();
+            
+            // Parse response
+            PsWinXmlResponse response = responseParser_.parse(is);
 
-        // Verify that we could logon correctly
-        if (! responseParser.getLogon().equals("OK"))
-        {
-            throw new SmsException("Failed to send message: " + responseParser.getReason());
+            // Verify that we could logon correctly
+            if (! response.getLogon().equals("OK"))
+            {
+                throw new SmsException("Failed to send message: " + response.getReason());
+            }
+        } finally {
+            if (os != null) try { os.close(); } catch (Exception e) { /* Ignore */ }
+            if (is != null) try { is.close(); } catch (Exception e) { /* Ignore */ }
+            if (xmlSocket != null) try { xmlSocket.close(); } catch (Exception e) { /* Ignore */ }
         }
     }
 

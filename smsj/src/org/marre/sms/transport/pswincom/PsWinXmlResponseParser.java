@@ -38,123 +38,121 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.LinkedList;
+import java.util.Stack;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.marre.sms.SmsException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Parses the response from PsWin.
  * 
- * Uses a DOM parser internally. Currently only looking at the LOGIN result. 
- * 
- * TODO: Rewrite to use SAX instead. We aren't really intrested in the tree structure...
+ * Uses a SAX parser internally. Currently only looking at the LOGIN result. 
  * 
  * @author Markus
  * @version $Id$
  */
-public class PsWinXmlResponseParser
+public class PsWinXmlResponseParser extends DefaultHandler
 {
-    protected InputStream xmlInputStream_;
-    protected Document respDoc_;
+    private SAXParser saxParser_;
+    private LinkedList stack_;
+    
+    private StringBuffer reasonBuffer_;
+    private StringBuffer logonBuffer_;
     
     /**
      * Creates the response parser.
-     * 
-     * @param xmlInputStream
      */
-    public PsWinXmlResponseParser(InputStream xmlInputStream)
+    public PsWinXmlResponseParser()
     {
-        xmlInputStream_ = xmlInputStream;
+        saxParser_ = getParser();
+        
+        stack_ = new LinkedList();
+        reasonBuffer_ = new StringBuffer();
+        logonBuffer_ = new StringBuffer();
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    protected SAXParser getParser() {
+        try
+        {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setNamespaceAware(false);
+//            factory.setValidating(false);
+            factory.setXIncludeAware(false);
+            return factory.newSAXParser();
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
     }
     
     /**
      * Parses the response.
+     * @param xmlInputStream 
      * 
      * @throws IOException
      * @throws SmsException
      */
-    public void parse() throws IOException, SmsException
+    public PsWinXmlResponse parse(InputStream xmlInputStream) throws IOException, SmsException
     {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        
         try
         {
-            Reader isReader = new InputStreamReader(xmlInputStream_);
-            Reader filterReader = new PsWinXmlCleanupReader(isReader);
+            Reader isReader = new InputStreamReader(xmlInputStream);
+            Reader cleanupReader = new PsWinXmlCleanupReader(isReader);
+
+            // Reset object
+            stack_ = new LinkedList();
+            reasonBuffer_ = new StringBuffer();
+            logonBuffer_ = new StringBuffer();
             
-            // Build DOM
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            respDoc_ = builder.parse( new InputSource(filterReader) );            
-        }
-        catch (ParserConfigurationException ex)
-        {
-            throw new SmsException("Something wrong with xml", ex);
+            saxParser_.parse(new InputSource(cleanupReader), this);
         }
         catch (SAXException ex)
         {
             throw new SmsException("Failed to parse xml response", ex);
         }
-    }
-    
-    /**
-     * Returns the logon result.
-     * 
-     * @return
-     */
-    public String getLogon()
-    {
-        NodeList listOfLogons = respDoc_.getElementsByTagName( "LOGON" );
-        Node logon = listOfLogons.item(0);
-        return getText(logon);
-    }
-    
-    /**
-     * Returns the reason result.
-     * 
-     * @return
-     */
-    public String getReason()
-    {
-        NodeList listOfReasons = respDoc_.getElementsByTagName( "REASON" );
-        Node reason = listOfReasons.item(0);
-        return getText(reason);
-    }
-
-    /**
-     * Returns the text within the given node.
-     * 
-     * @param node
-     * @return
-     */
-    protected String getText(Node node)
-    {
-        StringBuffer strBuff = new StringBuffer();
         
-        if (node.hasChildNodes())
-        {
-            Node child = node.getFirstChild();
-            while (child != null)
-            {
-                if (child.getNodeType() == Node.TEXT_NODE)
-                {
-                    Text childText = (Text)child;
-                    String text = childText.getData();
-                    strBuff.append(text);
-                }
-                child = child.getNextSibling();
-            }
+        return new PsWinXmlResponse(logonBuffer_.toString(), reasonBuffer_.toString());        
+    }
+    
+    public void startElement(String uri, String localName, String qName, Attributes attributes)
+    {
+        stack_.addLast(qName);
+    }
+    
+    public void endElement(String uri, String localName, String qName)
+    {
+        stack_.removeLast();
+    }
+        
+    public void characters(char[] ch, int start, int length)
+    {
+        String topOfStack = (String) stack_.getLast();
+        
+        if ("REASON".equals(topOfStack)) {
+            reasonBuffer_.append(ch, start, length);
+        } else if ("LOGON".equals(topOfStack)) {
+            logonBuffer_.append(ch, start, length);
         }
-        
-        // return null if the string is empty
-        return (strBuff.length() > 0)?strBuff.toString():null;
-    }   
+    }
 }
