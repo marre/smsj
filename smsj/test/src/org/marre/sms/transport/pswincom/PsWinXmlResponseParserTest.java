@@ -56,11 +56,11 @@ public class PsWinXmlResponseParserTest extends TestCase
 
     public void testParseOk() throws Exception
     {
-        PsWinXmlResponseParser parser = new PsWinXmlResponseParser(new ByteArrayInputStream(respOk));
+        PsWinXmlResponseParser parser = new PsWinXmlResponseParser();
+
+        PsWinXmlResponse response = parser.parse(new ByteArrayInputStream(respOk)); 
         
-        parser.parse();
-        
-        assertEquals("OK", parser.getLogon());
-        assertEquals(null, parser.getReason());
+        assertEquals("OK", response.getLogon());
+        assertEquals("", response.getReason());
     }
 }
