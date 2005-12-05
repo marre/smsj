@@ -97,7 +97,7 @@ public class PsWinXmlResponseParser extends DefaultHandler
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(false);
 //            factory.setValidating(false);
-            factory.setXIncludeAware(false);
+//            factory.setXIncludeAware(false);
             return factory.newSAXParser();
         }
         catch (Exception e)
