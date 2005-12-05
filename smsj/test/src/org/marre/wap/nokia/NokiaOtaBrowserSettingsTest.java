@@ -50,6 +50,12 @@ import junit.framework.TestCase;
  */
 public class NokiaOtaBrowserSettingsTest extends TestCase
 {
+    public void testContentType()
+    {
+        NokiaOtaBrowserSettings browserSettings = new NokiaOtaBrowserSettings();
+        assertEquals("application/x-wap-prov.browser-settings", browserSettings.getContentType());
+    }
+    
     public void testWbxmlBrowserBookmark()
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
