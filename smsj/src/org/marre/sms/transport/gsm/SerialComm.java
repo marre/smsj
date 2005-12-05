@@ -120,28 +120,45 @@ public class SerialComm implements GsmComm
         try {
             serialPort_ = openSerialPort(portName_);
         } catch (PortInUseException piuEx) {
+            log_.error("Failed to open serial port", piuEx);
             throw (IOException) new IOException(piuEx.getMessage()).initCause(piuEx);
         }
 
         if (serialPort_ == null)
         {
+            log_.error("Failed to open serial port");
             throw new IOException("Failed to open port : " + portName_);
         }
         
         try
         {
-            serialOs_ = serialPort_.getOutputStream();
-            serialIs_ = serialPort_.getInputStream();
-        
             serialPort_.setSerialPortParams(bitRate_, dataBits_, stopBits_, parity_);
+        } 
+        catch (UnsupportedCommOperationException e)
+        {
+            log_.info("setSerialPortParams failed", e);
+        } 
+
+        try
+        {
             serialPort_.setFlowControlMode(flowControl_);
         } 
         catch (UnsupportedCommOperationException e)
         {
-            serialPort_.close();
-            serialPort_ = null;            
-            throw (IOException)(new IOException(e.getMessage())).initCause(e);
+            log_.info("setFlowControlMode failed", e);
         } 
+        
+        try 
+        {
+            serialOs_ = serialPort_.getOutputStream();
+            serialIs_ = serialPort_.getInputStream();
+        }
+        catch (IOException ex) 
+        {
+            log_.error("Failed to get in and output streams", ex);
+            close();
+            throw ex;
+        }
     }
 
     /* (non-Javadoc)
