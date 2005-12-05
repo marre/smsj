@@ -226,17 +226,18 @@ public class SerialComm implements GsmComm
         while (true)
         {
             ch = serialIs_.read();
-            if ( (ch == -1) ||
-                 (ch == '\n') )
-            {
-                break;
-            }
             
             if ( ch == '\r' )
             {
                 continue;
             }
             
+            if ( (ch == -1) ||
+                 (ch == '\n') )
+            {
+                break;
+            }
+                        
             buffer.append((char) ch);
             
             if ( (find != null) && 
