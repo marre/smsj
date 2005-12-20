@@ -151,15 +151,13 @@ public abstract class SmsConcatMessage implements SmsMessage
 
     private SmsPdu[] createUnicodePdus(SmsUdhElement[] theUdhElements, SmsUserData theUd, int theMaxBytes)
     {
-        int nMaxChars;
         int nMaxConcatChars;
         SmsPdu[] smsPdus = null;
 
         // 8-bit concat header is 6 bytes...
         nMaxConcatChars = (theMaxBytes - 6) / 2;
-        nMaxChars = theMaxBytes / 2;
 
-        if (theUd.getLength() <= nMaxChars)
+        if (theUd.getLength() <= theMaxBytes)
         {
             smsPdus = new SmsPdu[]{new SmsPdu(theUdhElements, theUd)};
         }
