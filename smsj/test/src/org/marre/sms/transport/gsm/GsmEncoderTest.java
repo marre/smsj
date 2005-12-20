@@ -37,13 +37,16 @@ package org.marre.sms.transport.gsm;
 import junit.framework.TestCase;
 
 import org.marre.sms.SmsAddress;
+import org.marre.sms.SmsDcs;
 import org.marre.sms.SmsException;
 import org.marre.sms.SmsMessage;
+import org.marre.sms.SmsMsgWaitingMessage;
 import org.marre.sms.SmsPdu;
 import org.marre.sms.SmsTextMessage;
 import org.marre.sms.SmsUdhElement;
 import org.marre.sms.SmsUdhUtil;
 import org.marre.util.StringUtil;
+import org.marre.wap.push.SmsMmsNotificationMessage;
 
 /**
  * 
@@ -287,6 +290,29 @@ public class GsmEncoderTest extends TestCase
         assertEquals(1, smsPdus.length);
         data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
         assertEquals("0100039121F3000000",
+                     StringUtil.bytesToHexString(data));        
+    }
+    
+    public void testOctetEncoder() throws SmsException
+    {
+        SmsTextMessage msg;
+        SmsPdu[] smsPdus;
+        byte[] data;
+     
+        // 70 chars should fit within one SMS
+        msg = new SmsTextMessage("0123456789012345678901234567890123456789012345678901234567890123456789", SmsDcs.ALPHABET_UCS2, SmsDcs.MSG_CLASS_UNKNOWN);
+        smsPdus = msg.getPdus();
+        assertEquals(1, smsPdus.length);
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("0100039121F300088C0030003100320033003400350036003700380039003000310032003300340035003600370038003900300031003200330034003500360037003800390030003100320033003400350036003700380039003000310032003300340035003600370038003900300031003200330034003500360037003800390030003100320033003400350036003700380039",
+                     StringUtil.bytesToHexString(data));
+                
+        // 0 chars
+        msg = new SmsTextMessage("", SmsDcs.ALPHABET_UCS2, SmsDcs.MSG_CLASS_UNKNOWN);
+        smsPdus = msg.getPdus();
+        assertEquals(1, smsPdus.length);
+        data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
+        assertEquals("0100039121F3000800",
                      StringUtil.bytesToHexString(data));        
     }    
 }
