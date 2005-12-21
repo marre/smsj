@@ -55,6 +55,8 @@ public class PduSendMessageReq
     
     private byte[] smscPdu_;
     private byte[] smsPdu_;
+
+    private boolean endPduWithCr_ = false;
     
     /**
      * Send message in PDU mode using default SMSC.
@@ -62,8 +64,7 @@ public class PduSendMessageReq
      * @param smsPdu pdu for the sms data.
      */
     public PduSendMessageReq(byte[] smsPdu) {
-        smscPdu_ = new byte[] {0x00};
-        smsPdu_ = smsPdu;
+        this(new byte[] {0x00}, smsPdu);
     }
     
     /**
@@ -75,6 +76,16 @@ public class PduSendMessageReq
     public PduSendMessageReq(byte[] smscPdu, byte[] smsPdu) {
         smscPdu_ = smscPdu;
         smsPdu_ = smsPdu;
+    }
+
+    /**
+     * Set this if the send command should add an extra '\r' after
+     * the PDU.
+     * 
+     * @param endPduWithCr
+     */
+    public void setEndPduWithCr(boolean endPduWithCr) {
+        endPduWithCr_ = endPduWithCr;
     }
     
     /**
@@ -98,7 +109,12 @@ public class PduSendMessageReq
         String cmgsPduString = StringUtil.bytesToHexString(smscPdu_) + StringUtil.bytesToHexString(smsPdu_);
         
         log_.debug("Send hexcoded PDU.");
-        comm.send(cmgsPduString + "\032");
+        if (endPduWithCr_) {
+            // It looks like some phones needs an extra '\r' here
+            comm.send(cmgsPduString + "\032\r");
+        } else {
+            comm.send(cmgsPduString + "\032");
+        }
         return readResponse(comm);
     }
     
