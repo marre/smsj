@@ -134,7 +134,7 @@ public class ClickatellTransport implements SmsTransport
         //
         try
         {
-            log_.info("sendRequest: posting : " + requestString + " to " + url);
+            log_.debug("sendRequest: posting : " + requestString + " to " + url);
             
             URL requestURL = new URL(url);
             URLConnection urlConn = requestURL.openConnection();
@@ -171,7 +171,7 @@ public class ClickatellTransport implements SmsTransport
                 }
                 else
                 {
-                    log_.info("sendRequest: Got ID : " + ((String) objs[1]));
+                    log_.debug("sendRequest: Got ID : " + ((String) objs[1]));
                     idList.add((String) objs[1]);
                 }
             }

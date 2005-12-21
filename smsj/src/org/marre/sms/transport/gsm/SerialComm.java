@@ -99,7 +99,7 @@ public class SerialComm implements GsmComm
         {
             CommPortIdentifier portId = (CommPortIdentifier) portList.nextElement();
 
-            log_.info("Port" +
+            log_.debug("Port" +
                     "\n  name : " + portId.getName() +
                     "\n  currentOwner : " + portId.getCurrentOwner() + 
                     "\n  serial : " + (portId.getPortType() == CommPortIdentifier.PORT_SERIAL));
@@ -123,7 +123,7 @@ public class SerialComm implements GsmComm
     {
         try {
             serialPort_ = openSerialPort(portName_);
-            log_.info("Opened port : " + serialPort_);
+            log_.debug("Opened port : " + serialPort_);
         } catch (PortInUseException piuEx) {
             log_.error("Failed to open serial port", piuEx);
             throw (IOException) new IOException(piuEx.getMessage()).initCause(piuEx);
@@ -141,7 +141,7 @@ public class SerialComm implements GsmComm
         } 
         catch (UnsupportedCommOperationException e)
         {
-            log_.info("setSerialPortParams failed", e);
+            log_.warn("setSerialPortParams failed", e);
         } 
 
         try
@@ -150,7 +150,7 @@ public class SerialComm implements GsmComm
         } 
         catch (UnsupportedCommOperationException e)
         {
-            log_.info("setFlowControlMode failed", e);
+            log_.warn("setFlowControlMode failed", e);
         } 
         
         try 
@@ -198,7 +198,7 @@ public class SerialComm implements GsmComm
         throws IOException
     {
         // TODO: Remove \r\n from log
-        log_.info(">> " + row);
+        log_.debug(">> " + row);
 
         serialOs_.write(row.getBytes());
         
@@ -255,7 +255,7 @@ public class SerialComm implements GsmComm
         String row = buffer.toString();
         
         // LOG
-        log_.info("<< " + row);
+        log_.debug("<< " + row);
 
         return row;
     }
