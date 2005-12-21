@@ -306,20 +306,11 @@ public class PsWinXmlTransport implements SmsTransport
         
         try {
             xmlSocket = new Socket(server_, port_);
-            // Send request
             os = xmlSocket.getOutputStream();
-            os.write(xmlReq);
-            // Get response
             is = xmlSocket.getInputStream();
             
-            // Parse response
+            os.write(xmlReq);
             PsWinXmlResponse response = responseParser_.parse(is);
-
-            // Verify that we could logon correctly
-            if (! response.getLogon().equals("OK"))
-            {
-                throw new SmsException("Failed to send message: " + response.getReason());
-            }
         } finally {
             if (os != null) try { os.close(); } catch (Exception e) { /* Ignore */ }
             if (is != null) try { is.close(); } catch (Exception e) { /* Ignore */ }
