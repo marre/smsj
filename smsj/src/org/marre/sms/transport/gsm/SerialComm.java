@@ -90,9 +90,8 @@ public class SerialComm implements GsmComm
     }
 
     private SerialPort openSerialPort(String portName)
-        throws PortInUseException
+        throws PortInUseException, IOException
     {
-        SerialPort serialPort = null;
         Enumeration portList = CommPortIdentifier.getPortIdentifiers();
 
         // find the requested port
@@ -100,6 +99,11 @@ public class SerialComm implements GsmComm
         {
             CommPortIdentifier portId = (CommPortIdentifier) portList.nextElement();
 
+            log_.info("Port" +
+                    "\n  name : " + portId.getName() +
+                    "\n  currentOwner : " + portId.getCurrentOwner() + 
+                    "\n  serial : " + (portId.getPortType() == CommPortIdentifier.PORT_SERIAL));
+            
             // Check for serial port
             if ( (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) &&
                  (portId.getName().equals(portName)) ) 
@@ -107,8 +111,8 @@ public class SerialComm implements GsmComm
                 return (SerialPort) portId.open(appName_, 3000);
             }
         }
-        
-        return null;
+
+        throw new IOException("Port [" + portName + "] not found");
     }
 
     /* (non-Javadoc)
@@ -119,6 +123,7 @@ public class SerialComm implements GsmComm
     {
         try {
             serialPort_ = openSerialPort(portName_);
+            log_.info("Opened port : " + serialPort_);
         } catch (PortInUseException piuEx) {
             log_.error("Failed to open serial port", piuEx);
             throw (IOException) new IOException(piuEx.getMessage()).initCause(piuEx);
