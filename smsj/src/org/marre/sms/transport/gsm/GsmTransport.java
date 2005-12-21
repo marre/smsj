@@ -69,6 +69,7 @@ import org.slf4j.LoggerFactory;
  * <b>sms.gsm.stopbits</b> - Stopbits (1, 1.5, 2)
  * <b>sms.gsm.echo</b> - Is the device echoing the input?
  * <b>sms.gsm.flowcontrol</b> - FlowControl (XONXOFF, RTSCTS, NONE)
+ * <b>sms.gsm.cmgs.sendcr</b> - Set this if the device requires an extra '\r' after the CMGS command.
  * <b>
  * </pre>
  * <p>
@@ -91,6 +92,8 @@ public class GsmTransport implements SmsTransport
     private static final int RESPONSE_CONTINUE = 16;
     
     private SerialComm serialComm_ = null;
+    
+    private boolean cmgsRequiresCr_ = false;
 
     /**
      * Creates a GsmTransport.
@@ -119,6 +122,8 @@ public class GsmTransport implements SmsTransport
         serialComm_.setParity(props.getProperty("sms.gsm.parity", "NONE"));
         serialComm_.setFlowControl(props.getProperty("sms.gsm.flowcontrol", "NONE"));
         serialComm_.setEcho(props.getProperty("sms.gsm.echo", "1").equals("1"));
+        
+        cmgsRequiresCr_ = props.getProperty("sms.gsm.cmgs.sendcr", "0").equals("1");
     }
     
     /**
@@ -176,6 +181,7 @@ public class GsmTransport implements SmsTransport
             {
                 byte[] data = GsmEncoder.encodePdu(msgPdu[i], dest, sender);
                 PduSendMessageReq sendMessageReq = new PduSendMessageReq(data);
+                sendMessageReq.setEndPduWithCr(cmgsRequiresCr_);
                 PduSendMessageRsp sendMessageRsp = sendMessageReq.send(serialComm_);
             }
         }
