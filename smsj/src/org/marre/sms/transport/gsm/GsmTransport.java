@@ -69,7 +69,6 @@ import org.slf4j.LoggerFactory;
  * <b>sms.gsm.stopbits</b> - Stopbits (1, 1.5, 2)
  * <b>sms.gsm.echo</b> - Is the device echoing the input?
  * <b>sms.gsm.flowcontrol</b> - FlowControl (XONXOFF, RTSCTS, NONE)
- * <b>sms.gsm.cmgs.endpduwith</b> - Some phones might need another char than ctrl-z to end the PDU mode.
  * <b>
  * </pre>
  * <p>
@@ -93,8 +92,6 @@ public class GsmTransport implements SmsTransport
     
     private SerialComm serialComm_ = null;
     
-    private String endCmgsWith_ = "1A";
-
     /**
      * Creates a GsmTransport.
      * 
@@ -122,8 +119,6 @@ public class GsmTransport implements SmsTransport
         serialComm_.setParity(props.getProperty("sms.gsm.parity", "NONE"));
         serialComm_.setFlowControl(props.getProperty("sms.gsm.flowcontrol", "NONE"));
         serialComm_.setEcho(props.getProperty("sms.gsm.echo", "1").equals("1"));
-        
-        endCmgsWith_ = props.getProperty("sms.gsm.cmgs.endpduwith", "1A");
     }
     
     /**
@@ -187,7 +182,6 @@ public class GsmTransport implements SmsTransport
             {
                 byte[] data = GsmEncoder.encodePdu(msgPdu[i], dest, sender);
                 PduSendMessageReq sendMessageReq = new PduSendMessageReq(data);
-                sendMessageReq.setEndPduWith(endCmgsWith_);
                 PduSendMessageRsp sendMessageRsp = sendMessageReq.send(serialComm_);
             }
         }
