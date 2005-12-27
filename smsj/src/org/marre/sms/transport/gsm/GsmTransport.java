@@ -69,7 +69,7 @@ import org.slf4j.LoggerFactory;
  * <b>sms.gsm.stopbits</b> - Stopbits (1, 1.5, 2)
  * <b>sms.gsm.echo</b> - Is the device echoing the input?
  * <b>sms.gsm.flowcontrol</b> - FlowControl (XONXOFF, RTSCTS, NONE)
- * <b>sms.gsm.cmgs.sendcr</b> - Set this if the device requires an extra '\r' after the CMGS command.
+ * <b>sms.gsm.cmgs.endpduwith</b> - Some phones might need another char than ctrl-z to end the PDU mode.
  * <b>
  * </pre>
  * <p>
@@ -93,7 +93,7 @@ public class GsmTransport implements SmsTransport
     
     private SerialComm serialComm_ = null;
     
-    private boolean cmgsRequiresCr_ = false;
+    private String endCmgsWith_ = "1A";
 
     /**
      * Creates a GsmTransport.
@@ -123,7 +123,7 @@ public class GsmTransport implements SmsTransport
         serialComm_.setFlowControl(props.getProperty("sms.gsm.flowcontrol", "NONE"));
         serialComm_.setEcho(props.getProperty("sms.gsm.echo", "1").equals("1"));
         
-        cmgsRequiresCr_ = props.getProperty("sms.gsm.cmgs.sendcr", "0").equals("1");
+        endCmgsWith_ = props.getProperty("sms.gsm.cmgs.endpduwith", "1A");
     }
     
     /**
@@ -140,6 +140,12 @@ public class GsmTransport implements SmsTransport
             log_.debug("Open serial port.");
             serialComm_.open();
             log_.debug("Serial port opened.");
+                        
+            // AT-ping
+            PingReq pingReq = new PingReq();
+            pingReq.send(serialComm_);
+            pingReq.send(serialComm_);
+            pingReq.send(serialComm_);
             
             // Init
             MessageFormatSetReq messageFormatSetReq = new MessageFormatSetReq(MessageFormatSetReq.MODE_PDU);
@@ -181,7 +187,7 @@ public class GsmTransport implements SmsTransport
             {
                 byte[] data = GsmEncoder.encodePdu(msgPdu[i], dest, sender);
                 PduSendMessageReq sendMessageReq = new PduSendMessageReq(data);
-                sendMessageReq.setEndPduWithCr(cmgsRequiresCr_);
+                sendMessageReq.setEndPduWith(endCmgsWith_);
                 PduSendMessageRsp sendMessageRsp = sendMessageReq.send(serialComm_);
             }
         }
