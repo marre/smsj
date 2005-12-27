@@ -35,7 +35,6 @@
 package org.marre.sms.transport.gsm.commands;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import org.marre.sms.SmsException;
 import org.marre.sms.transport.gsm.GsmComm;
@@ -56,8 +55,6 @@ public class PduSendMessageReq
     
     private byte[] smscPdu_;
     private byte[] smsPdu_;
-
-    private String endPduWith_ = "\032";
     
     /**
      * Send message in PDU mode using default SMSC.
@@ -65,7 +62,8 @@ public class PduSendMessageReq
      * @param smsPdu pdu for the sms data.
      */
     public PduSendMessageReq(byte[] smsPdu) {
-        this(new byte[] {0x00}, smsPdu);
+        smscPdu_ = new byte[] {0x00};
+        smsPdu_ = smsPdu;
     }
     
     /**
@@ -77,24 +75,6 @@ public class PduSendMessageReq
     public PduSendMessageReq(byte[] smscPdu, byte[] smsPdu) {
         smscPdu_ = smscPdu;
         smsPdu_ = smsPdu;
-    }
-
-    /**
-     * Set this if the send command should add an extra '\r' after
-     * the PDU.
-     * 
-     * @param endPduWithCr
-     */
-    public void setEndPduWith(String endPduWith) {
-        try
-        {
-            endPduWith_ = new String(StringUtil.hexStringToBytes(endPduWith), "ISO-8859-1");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            log_.error("Failed to use iso-8859-1", e);
-            throw new RuntimeException(e);
-        }
     }
     
     /**
@@ -118,26 +98,28 @@ public class PduSendMessageReq
         String cmgsPduString = StringUtil.bytesToHexString(smscPdu_) + StringUtil.bytesToHexString(smsPdu_);
         
         log_.debug("Send hexcoded PDU.");
-        comm.send(cmgsPduString + endPduWith_);
-        
+        comm.send(cmgsPduString + '\032');
         return readResponse(comm);
     }
     
     private PduSendMessageRsp readResponse(GsmComm comm) throws GsmException, IOException 
     {
-        String response = comm.readLine();
-        if (response.startsWith("+CMGS"))
+        while (true)
         {
-            // TODO: Parse message reference
-            return new PduSendMessageRsp(null);
-        } 
-        else if (response.startsWith("+CMS ERROR:"))
-        {
-            throw new GsmException("CMS ERROR", response);
-        } 
-        else
-        {
-            throw new GsmException("Unexpected response", response);
+            String response = comm.readLine();
+            if (response.startsWith("+CMGS"))
+            {
+                // TODO: Parse message reference
+                return new PduSendMessageRsp(null);
+            } 
+            else if (response.startsWith("+CMS ERROR:"))
+            {
+                throw new GsmException("CMS ERROR", response);
+            } 
+            else
+            {
+                throw new GsmException("Unexpected response", response);
+            }
         }
     }
     
