@@ -58,6 +58,7 @@ public class SerialComm implements GsmComm
     private static Logger log_ = LoggerFactory.getLogger(SerialComm.class);
 
     private static final int DEFAULT_BIT_RATE = 19200;
+    private static final int DEFAULT_TIMEOUT = 0;
     
     private SerialPort serialPort_;
     private OutputStream serialOs_;
@@ -70,6 +71,7 @@ public class SerialComm implements GsmComm
     private int stopBits_;
     private int parity_;
     private int flowControl_;
+    private int timeout_;
     private boolean echo_;
 
     /**
@@ -86,6 +88,7 @@ public class SerialComm implements GsmComm
         stopBits_ = SerialPort.STOPBITS_1;
         parity_ = SerialPort.PARITY_NONE;
         flowControl_ = SerialPort.FLOWCONTROL_NONE;
+        timeout_ = DEFAULT_TIMEOUT;
         echo_ = true;
     }
 
@@ -152,6 +155,22 @@ public class SerialComm implements GsmComm
         {
             log_.warn("setFlowControlMode failed", e);
         } 
+
+        if (timeout_ > 0) 
+        {
+            try 
+            {
+                serialPort_.enableReceiveTimeout(timeout_);
+            }
+            catch (UnsupportedCommOperationException e)
+            {
+                log_.warn("enableReceiveTimeout failed", e);
+            }
+        }
+        else 
+        {
+            serialPort_.disableReceiveTimeout();
+        }
         
         try 
         {
@@ -313,6 +332,18 @@ public class SerialComm implements GsmComm
         else if ("1.5".equals(theStopBits)) stopBits_ = SerialPort.STOPBITS_1_5;
         else if ("2".equals(theStopBits))   stopBits_ = SerialPort.STOPBITS_2;
         else                                stopBits_ = SerialPort.STOPBITS_1;
+    }
+    
+    public void setTimeout(String theTimeout)
+    {
+        try 
+        {
+            timeout_ = Integer.valueOf(theTimeout);
+        } 
+        catch (NumberFormatException e)
+        {
+            timeout_ = DEFAULT_TIMEOUT;
+        }
     }
     
     public void setEcho(boolean echo)

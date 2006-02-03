@@ -69,6 +69,7 @@ import org.slf4j.LoggerFactory;
  * <b>sms.gsm.stopbits</b> - Stopbits (1, 1.5, 2)
  * <b>sms.gsm.echo</b> - Is the device echoing the input?
  * <b>sms.gsm.flowcontrol</b> - FlowControl (XONXOFF, RTSCTS, NONE)
+ * <b>sms.gsm.timeout</b> - Timeout to apply when communicating with the device
  * <b>
  * </pre>
  * <p>
@@ -118,6 +119,7 @@ public class GsmTransport implements SmsTransport
         serialComm_.setStopBits(props.getProperty("sms.gsm.stopbits", "8"));
         serialComm_.setParity(props.getProperty("sms.gsm.parity", "NONE"));
         serialComm_.setFlowControl(props.getProperty("sms.gsm.flowcontrol", "NONE"));
+        serialComm_.setTimeout(props.getProperty("sms.gsm.timeout", "0"));
         serialComm_.setEcho(props.getProperty("sms.gsm.echo", "1").equals("1"));
     }
     
