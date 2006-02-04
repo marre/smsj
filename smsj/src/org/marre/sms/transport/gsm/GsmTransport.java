@@ -38,8 +38,6 @@ package org.marre.sms.transport.gsm;
 import java.io.IOException;
 import java.util.Properties;
 
-import javax.comm.PortInUseException;
-
 import org.marre.sms.SmsAddress;
 import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsException;
@@ -50,7 +48,6 @@ import org.marre.sms.transport.gsm.commands.MessageFormatSetReq;
 import org.marre.sms.transport.gsm.commands.PduSendMessageReq;
 import org.marre.sms.transport.gsm.commands.PduSendMessageRsp;
 import org.marre.sms.transport.gsm.commands.PingReq;
-import org.marre.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
