@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PduSendMessageReq
 {
-    private static Logger log_ = LoggerFactory.getLogger(PduSendMessageReq.class);
+    private static Logger log_ = LoggerFactory.getLogger(PduSendMessageReqTest.class);
     
     private byte[] smscPdu_;
     private byte[] smsPdu_;
@@ -101,25 +101,52 @@ public class PduSendMessageReq
         comm.send(cmgsPduString + '\032');
         return readResponse(comm);
     }
-    
+
+    /**
+     * Reads the response from the GSM module.
+     * 
+     * The expected response is:
+     * <pre>
+     * AT+CMGS...
+     * <empty row>
+     * OK...
+     * </pre>
+     * 
+     * @param comm
+     * @return
+     * @throws GsmException
+     * @throws IOException
+     */
     private PduSendMessageRsp readResponse(GsmComm comm) throws GsmException, IOException 
     {
-        while (true)
+        log_.debug("Expecting a single +CMGS response");
+
+        String cmgs = comm.readLine();
+        if (cmgs.startsWith("+CMGS"))
         {
-            String response = comm.readLine();
-            if (response.startsWith("+CMGS"))
-            {
-                // TODO: Parse message reference
-                return new PduSendMessageRsp(null);
-            } 
-            else if (response.startsWith("+CMS ERROR:"))
-            {
-                throw new GsmException("CMS ERROR", response);
-            } 
-            else
-            {
-                throw new GsmException("Unexpected response", response);
+            log_.debug("Expecting a empty row");
+            String empty = comm.readLine();
+            if (empty.trim().length() != 0) {
+                throw new GsmException("AT+CMGF failed.", empty);
             }
+            
+            log_.debug("Expecting a OK");
+            String ok = comm.readLine();
+            log_.debug("Expecting a OK");
+            if (! ok.startsWith("OK")) {
+                throw new GsmException("AT+CMGF failed.", ok);
+            }
+            
+            // TODO: Parse message reference
+            return new PduSendMessageRsp(cmgs);
+        } 
+        else if (cmgs.startsWith("+CMS ERROR:"))
+        {
+            throw new GsmException("CMS ERROR", cmgs);
+        } 
+        else
+        {
+            throw new GsmException("Unexpected response", cmgs);
         }
     }
     
