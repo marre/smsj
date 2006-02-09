@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PduSendMessageReq
 {
-    private static Logger log_ = LoggerFactory.getLogger(PduSendMessageReqTest.class);
+    private static Logger log_ = LoggerFactory.getLogger(PduSendMessageReq.class);
     
     private byte[] smscPdu_;
     private byte[] smsPdu_;
