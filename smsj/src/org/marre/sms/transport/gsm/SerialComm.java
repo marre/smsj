@@ -37,6 +37,7 @@ package org.marre.sms.transport.gsm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -175,7 +176,7 @@ public class SerialComm implements GsmComm
         try 
         {
             serialOs_ = serialPort_.getOutputStream();
-            serialIs_ = serialPort_.getInputStream();
+            serialIs_ = new BufferedInputStream(serialPort_.getInputStream());
         }
         catch (IOException ex) 
         {
@@ -223,6 +224,12 @@ public class SerialComm implements GsmComm
         
         if (echo_) {
             String echo = readOneRowOfData(null);
+            
+            // Some devices adds an extra \r\n as well
+            serialIs_.mark(2);
+            if ((serialIs_.read() != '\r') || (serialIs_.read() != '\n')) {
+                serialIs_.reset();
+            }
         }
     }
 
