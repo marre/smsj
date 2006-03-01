@@ -286,66 +286,66 @@ public class SerialComm implements GsmComm
         return row;
     }
     
-    public void setBitRate(String theBitRate)
+    public void setBitRate(String bitRate)
     {
-        if      ("110".equals(theBitRate))    bitRate_ = 110;
-        else if ("134".equals(theBitRate))    bitRate_ = 134;
-        else if ("150".equals(theBitRate))    bitRate_ = 150;
-        else if ("300".equals(theBitRate))    bitRate_ = 300;
-        else if ("600".equals(theBitRate))    bitRate_ = 600;
-        else if ("1200".equals(theBitRate))   bitRate_ = 1200;
-        else if ("2400".equals(theBitRate))   bitRate_ = 2400;
-        else if ("4800".equals(theBitRate))   bitRate_ = 4800;
-        else if ("9600".equals(theBitRate))   bitRate_ = 9600;
-        else if ("14400".equals(theBitRate))  bitRate_ = 14400;
-        else if ("19200".equals(theBitRate))  bitRate_ = 19200;
-        else if ("38400".equals(theBitRate))  bitRate_ = 38400;
-        else if ("57600".equals(theBitRate))  bitRate_ = 57600;
-        else if ("115200".equals(theBitRate)) bitRate_ = 115200;
-        else if ("128000".equals(theBitRate)) bitRate_ = 128000;
-        else                                  bitRate_ = DEFAULT_BIT_RATE;        
+        if      ("110".equals(bitRate))    bitRate_ = 110;
+        else if ("134".equals(bitRate))    bitRate_ = 134;
+        else if ("150".equals(bitRate))    bitRate_ = 150;
+        else if ("300".equals(bitRate))    bitRate_ = 300;
+        else if ("600".equals(bitRate))    bitRate_ = 600;
+        else if ("1200".equals(bitRate))   bitRate_ = 1200;
+        else if ("2400".equals(bitRate))   bitRate_ = 2400;
+        else if ("4800".equals(bitRate))   bitRate_ = 4800;
+        else if ("9600".equals(bitRate))   bitRate_ = 9600;
+        else if ("14400".equals(bitRate))  bitRate_ = 14400;
+        else if ("19200".equals(bitRate))  bitRate_ = 19200;
+        else if ("38400".equals(bitRate))  bitRate_ = 38400;
+        else if ("57600".equals(bitRate))  bitRate_ = 57600;
+        else if ("115200".equals(bitRate)) bitRate_ = 115200;
+        else if ("128000".equals(bitRate)) bitRate_ = 128000;
+        else                               bitRate_ = DEFAULT_BIT_RATE;        
     }
     
-    public void setDataBits(String theDataBits)
+    public void setDataBits(String dataBits)
     {
-        if      ("5".equals(theDataBits)) dataBits_ = SerialPort.DATABITS_5;
-        else if ("6".equals(theDataBits)) dataBits_ = SerialPort.DATABITS_6;
-        else if ("7".equals(theDataBits)) dataBits_ = SerialPort.DATABITS_7;
-        else if ("8".equals(theDataBits)) dataBits_ = SerialPort.DATABITS_8;
-        else                              dataBits_ = SerialPort.DATABITS_8;
+        if      ("5".equals(dataBits)) dataBits_ = SerialPort.DATABITS_5;
+        else if ("6".equals(dataBits)) dataBits_ = SerialPort.DATABITS_6;
+        else if ("7".equals(dataBits)) dataBits_ = SerialPort.DATABITS_7;
+        else if ("8".equals(dataBits)) dataBits_ = SerialPort.DATABITS_8;
+        else                           dataBits_ = SerialPort.DATABITS_8;
     }
 
-    public void setFlowControl(String theFlowControl)
+    public void setFlowControl(String flowControl)
     {
-        if      ("RTSCTS".equals(theFlowControl))  flowControl_ = SerialPort.FLOWCONTROL_RTSCTS_IN  | SerialPort.FLOWCONTROL_RTSCTS_OUT;
-        else if ("XONXOFF".equals(theFlowControl)) flowControl_ = SerialPort.FLOWCONTROL_XONXOFF_IN | SerialPort.FLOWCONTROL_XONXOFF_OUT;
-        else if ("NONE".equals(theFlowControl))    flowControl_ = SerialPort.FLOWCONTROL_NONE;
-        else                                       flowControl_ = SerialPort.FLOWCONTROL_NONE;
+        if      ("RTSCTS".equals(flowControl))  flowControl_ = SerialPort.FLOWCONTROL_RTSCTS_IN  | SerialPort.FLOWCONTROL_RTSCTS_OUT;
+        else if ("XONXOFF".equals(flowControl)) flowControl_ = SerialPort.FLOWCONTROL_XONXOFF_IN | SerialPort.FLOWCONTROL_XONXOFF_OUT;
+        else if ("NONE".equals(flowControl))    flowControl_ = SerialPort.FLOWCONTROL_NONE;
+        else                                    flowControl_ = SerialPort.FLOWCONTROL_NONE;
     }
 
-    public void setParity(String theParity)
+    public void setParity(String parity)
     {
-        if      ("NONE".equals(theParity))  parity_ = SerialPort.PARITY_NONE;
-        else if ("EVEN".equals(theParity))  parity_ = SerialPort.PARITY_EVEN;
-        else if ("ODD".equals(theParity))   parity_ = SerialPort.PARITY_ODD;
-        else if ("MARK".equals(theParity))  parity_ = SerialPort.PARITY_MARK;
-        else if ("SPACE".equals(theParity)) parity_ = SerialPort.PARITY_SPACE;
-        else                                parity_ = SerialPort.PARITY_NONE;
+        if      ("NONE".equals(parity))  parity_ = SerialPort.PARITY_NONE;
+        else if ("EVEN".equals(parity))  parity_ = SerialPort.PARITY_EVEN;
+        else if ("ODD".equals(parity))   parity_ = SerialPort.PARITY_ODD;
+        else if ("MARK".equals(parity))  parity_ = SerialPort.PARITY_MARK;
+        else if ("SPACE".equals(parity)) parity_ = SerialPort.PARITY_SPACE;
+        else                             parity_ = SerialPort.PARITY_NONE;
     }
 
-    public void setStopBits(String theStopBits)
+    public void setStopBits(String stopBits)
     {
-        if      ("1".equals(theStopBits))   stopBits_ = SerialPort.STOPBITS_1;
-        else if ("1.5".equals(theStopBits)) stopBits_ = SerialPort.STOPBITS_1_5;
-        else if ("2".equals(theStopBits))   stopBits_ = SerialPort.STOPBITS_2;
-        else                                stopBits_ = SerialPort.STOPBITS_1;
+        if      ("1".equals(stopBits))   stopBits_ = SerialPort.STOPBITS_1;
+        else if ("1.5".equals(stopBits)) stopBits_ = SerialPort.STOPBITS_1_5;
+        else if ("2".equals(stopBits))   stopBits_ = SerialPort.STOPBITS_2;
+        else                             stopBits_ = SerialPort.STOPBITS_1;
     }
     
-    public void setTimeout(String theTimeout)
+    public void setTimeout(String timeout)
     {
         try 
         {
-            timeout_ = Integer.valueOf(theTimeout);
+            timeout_ = Integer.parseInt(timeout);
         } 
         catch (NumberFormatException e)
         {
