@@ -55,21 +55,21 @@ public final class SmsUdhUtil
     /**
      * Calculates the number of bytes needed for the supplied udh elements.
      * 
-     * @param theUdhElements The udh elements
+     * @param udhElements The udh elements
      * @return The size (in bytes)
      */
-    public static int getTotalSize(SmsUdhElement[] theUdhElements)
+    public static int getTotalSize(SmsUdhElement[] udhElements)
     {
         int totLength = 0;
 
-        if (theUdhElements == null)
+        if (udhElements == null)
         {
             return 0;
         }
 
-        for (int i = 0; i < theUdhElements.length; i++)
+        for (int i = 0; i < udhElements.length; i++)
         {
-            totLength += theUdhElements[i].getTotalSize();
+            totLength += udhElements[i].getTotalSize();
         }
 
         return totLength;
@@ -85,22 +85,22 @@ public final class SmsUdhUtil
      * 
      * @return the UDH elements as a byte array.
      */
-    public static byte[] toByteArray(SmsUdhElement[] theUdhElements)
+    public static byte[] toByteArray(SmsUdhElement[] udhElements)
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(100);
         
-        if (theUdhElements == null)
+        if (udhElements == null)
         {
             return new byte[0];
         }
 
-        baos.write((byte) SmsUdhUtil.getTotalSize(theUdhElements));
+        baos.write((byte) SmsUdhUtil.getTotalSize(udhElements));
 
         try
         {
-            for (int i = 0; i < theUdhElements.length; i++)
+            for (int i = 0; i < udhElements.length; i++)
             {
-                theUdhElements[i].writeTo(baos);
+                udhElements[i].writeTo(baos);
             }
         }
         catch (IOException ioe)
@@ -154,19 +154,19 @@ public final class SmsUdhUtil
      * 
      * This can be used to create a concatenated SMS.
      *
-     * @param theRefNr The reference number of this SMS, must be the same in
+     * @param refNr The reference number of this SMS, must be the same in
      * all SMS. Max 255.
-     * @param theTotSms Total number of SMS. Max 255.
-     * @param theSeqNr Sequence number. Max 255.
+     * @param totalNumberOfSms Total number of SMS. Max 255.
+     * @param seqNr Sequence number. Max 255.
      * @return A SmsUdhElement
      */
-    public static SmsUdhElement get8BitConcatUdh(int theRefNr, int theTotSms, int theSeqNr)
+    public static SmsUdhElement get8BitConcatUdh(int refNr, int totalNumberOfSms, int seqNr)
     {
         byte[] udh = new byte[3];
 
-        udh[0] = (byte) (theRefNr  & 0xff);
-        udh[1] = (byte) (theTotSms & 0xff);
-        udh[2] = (byte) (theSeqNr  & 0xff);
+        udh[0] = (byte) (refNr  & 0xff);
+        udh[1] = (byte) (totalNumberOfSms & 0xff);
+        udh[2] = (byte) (seqNr  & 0xff);
 
         return new SmsUdhElement(SmsConstants.UDH_IEI_CONCATENATED_8BIT, udh);
     }
@@ -193,22 +193,22 @@ public final class SmsUdhUtil
      * </i>
      *
      * @param storeMsg Set to true if the message should be stored
-     * @param theMsgType Message type, may be one of MESSAGE_WAITING_VOICE,
+     * @param msgType Message type, may be one of MESSAGE_WAITING_VOICE,
      * MESSAGE_WAITING_FAX, MESSAGE_WAITING_EMAIL or MESSAGE_WAITING_OTHER.
-     * @param theMsgCount Number of messages waiting for retrieval. Max 255
+     * @param msgCount Number of messages waiting for retrieval. Max 255
      * messages. The value 255 shall be taken to mean 255 or greater.
      * @return A SmsUdhElement
      */
-    public static SmsUdhElement getMessageWaitingUdh(boolean storeMsg, int theMsgType, int theMsgCount)
+    public static SmsUdhElement getMessageWaitingUdh(boolean storeMsg, int msgType, int msgCount)
     {
         byte[] udh = new byte[2];
 
-        udh[0] = (byte) (theMsgType  & 0x7f);
+        udh[0] = (byte) (msgType  & 0x7f);
         if ( storeMsg )
         {
             udh[0] |= (byte) (0x80);
         }
-        udh[1] = (byte) (theMsgCount & 0xff);
+        udh[1] = (byte) (msgCount & 0xff);
 
         return new SmsUdhElement(SmsConstants.UDH_IEI_SPECIAL_MESSAGE, udh);
     }
@@ -228,16 +228,16 @@ public final class SmsUdhUtil
      * and IEI data shall also be contained in every subsequent segment of the
      * concatenated SM.
      * </i>
-     * @param theDestPort Destination port
-     * @param theOrigPort Source port
+     * @param destPort Destination port
+     * @param origPort Source port
      * @return A SmsUdhElement
      */
-    public static SmsUdhElement get8BitApplicationPortUdh(int theDestPort, int theOrigPort)
+    public static SmsUdhElement get8BitApplicationPortUdh(int destPort, int origPort)
     {
         byte[] udh = new byte[2];
 
-        udh[0] = (byte) (theDestPort & 0xff);
-        udh[1] = (byte) (theOrigPort & 0xff);
+        udh[0] = (byte) (destPort & 0xff);
+        udh[1] = (byte) (origPort & 0xff);
 
         return new SmsUdhElement(SmsConstants.UDH_IEI_APP_PORT_8BIT, udh);
     }
@@ -257,18 +257,18 @@ public final class SmsUdhUtil
      * and IEI data shall also be contained in every subsequent segment of the
      * concatenated SM.
      * </i>
-     * @param theDestPort Destination port
-     * @param theOrigPort Source port
+     * @param destPort Destination port
+     * @param origPort Source port
      * @return A SmsUdhElement
      */
-    public static SmsUdhElement get16BitApplicationPortUdh(int theDestPort, int theOrigPort)
+    public static SmsUdhElement get16BitApplicationPortUdh(int destPort, int origPort)
     {
         byte[] udh = new byte[4];
 
-        udh[0] = (byte) ((theDestPort >> 8) & 0xff);
-        udh[1] = (byte) (theDestPort & 0xff);
-        udh[2] = (byte) ((theOrigPort >> 8) & 0xff);
-        udh[3] = (byte) (theOrigPort & 0xff);
+        udh[0] = (byte) ((destPort >> 8) & 0xff);
+        udh[1] = (byte) (destPort & 0xff);
+        udh[2] = (byte) ((origPort >> 8) & 0xff);
+        udh[3] = (byte) (origPort & 0xff);
 
         return new SmsUdhElement(SmsConstants.UDH_IEI_APP_PORT_16BIT, udh);
     }
@@ -278,20 +278,20 @@ public final class SmsUdhUtil
      * <p>
      * This can be used to create a concatenated SMS.
      *
-     * @param theRefNr The reference number of this SMS, must be the same in
+     * @param refNr The reference number of this SMS, must be the same in
      * all SMS. Max 65536
-     * @param theTotSms Total number of SMS. Max 255
-     * @param theSeqNr Sequence number. Max 255
+     * @param totalNumberOfSms Total number of SMS. Max 255
+     * @param seqNr Sequence number. Max 255
      * @return A SmsUdhElement
      */
-    public static SmsUdhElement get16BitConcatUdh(int theRefNr, int theTotSms, int theSeqNr)
+    public static SmsUdhElement get16BitConcatUdh(int refNr, int totalNumberOfSms, int seqNr)
     {
         byte[] udh = new byte[4];
 
-        udh[0] = (byte) ((theRefNr >> 8) & 0xff);
-        udh[1] = (byte) (theRefNr & 0xff);
-        udh[2] = (byte) (theTotSms & 0xff);
-        udh[3] = (byte) (theSeqNr  & 0xff);
+        udh[0] = (byte) ((refNr >> 8) & 0xff);
+        udh[1] = (byte) (refNr & 0xff);
+        udh[2] = (byte) (totalNumberOfSms & 0xff);
+        udh[3] = (byte) (seqNr  & 0xff);
 
         return new SmsUdhElement(SmsConstants.UDH_IEI_CONCATENATED_16BIT, udh);
     }
@@ -299,26 +299,26 @@ public final class SmsUdhUtil
     /**
      * Creates a "EMS Text Formatting" UDH element.
      *
-     * @param theStartPos Start position of the text formatting. This position
+     * @param startPos Start position of the text formatting. This position
      * is relative to the start of the UD field of the PDU.
-     * @param theFormatLen The number of character to format. If 0 it sets the
+     * @param formatLen The number of character to format. If 0 it sets the
      * default text formatting.
-     * @param theAlignment Can be any of EMS_TEXT_ALIGN_*
-     * @param theFontSize Can be any of EMS_TEXT_SIZE_*
-     * @param theStyle Can be any of EMS_TEXT_STYLE_*
-     * @param theForegroundColor Can be any of EMS_TEXT_COLOR_*
-     * @param theBackgroundColor Can be any of EMS_TEXT_COLOR_*
+     * @param alignment Can be any of EMS_TEXT_ALIGN_*
+     * @param fontSize Can be any of EMS_TEXT_SIZE_*
+     * @param style Can be any of EMS_TEXT_STYLE_*
+     * @param foregroundColor Can be any of EMS_TEXT_COLOR_*
+     * @param backgroundColor Can be any of EMS_TEXT_COLOR_*
      * @return A SmsUdhElement
      */
-    public static SmsUdhElement getEmsTextFormattingUdh(int theStartPos, int theFormatLen,
-        byte theAlignment, byte theFontSize, byte theStyle, byte theForegroundColor, byte theBackgroundColor)
+    public static SmsUdhElement getEmsTextFormattingUdh(int startPos, int formatLen,
+        byte alignment, byte fontSize, byte style, byte foregroundColor, byte backgroundColor)
     {
         byte[] udh = new byte[4];
 
-        udh[0] = (byte) (theStartPos & 0xff);
-        udh[1] = (byte) (theFormatLen & 0xff);
-        udh[2] = (byte) (( (theAlignment & 0x03) | (theFontSize & 0x0C) | (theStyle & 0xF0) ) & 0xff);
-        udh[3] = (byte) (( (theForegroundColor & 0x0f) | (((theBackgroundColor & 0x0f) << 4) & 0xf0) ) & 0xff);
+        udh[0] = (byte) (startPos & 0xff);
+        udh[1] = (byte) (formatLen & 0xff);
+        udh[2] = (byte) (( (alignment & 0x03) | (fontSize & 0x0C) | (style & 0xF0) ) & 0xff);
+        udh[3] = (byte) (( (foregroundColor & 0x0f) | (((backgroundColor & 0x0f) << 4) & 0xf0) ) & 0xff);
 
         return new SmsUdhElement(SmsConstants.UDH_IEI_EMS_TEXT_FORMATTING, udh);
     }
@@ -326,16 +326,16 @@ public final class SmsUdhUtil
     /**
      * Creates an ems user defined sound udh.
      * 
-     * @param theIMelody The imelody data
+     * @param iMelodyData The imelody data
      * @param position The position
      * @return An SmsUdhElement with a user defined sound
      */
-    public static SmsUdhElement getEmsUserDefinedSoundUdh(byte[] theIMelody, int position) 
+    public static SmsUdhElement getEmsUserDefinedSoundUdh(byte[] iMelodyData, int position) 
     {
-        int iMelodyLength = theIMelody.length;
+        int iMelodyLength = iMelodyData.length;
         byte[] udh = new byte[iMelodyLength + 1];
         udh[0] = (byte) position;
-        System.arraycopy(theIMelody, 0, udh, 1, iMelodyLength);
+        System.arraycopy(iMelodyData, 0, udh, 1, iMelodyLength);
         
         return new SmsUdhElement(SmsConstants.UDH_IEI_EMS_USER_DEFINED_SOUND, udh);
     }

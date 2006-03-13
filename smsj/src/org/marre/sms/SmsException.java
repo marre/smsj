@@ -42,6 +42,8 @@ package org.marre.sms;
  */
 public class SmsException extends Exception
 {
+    private static final long serialVersionUID = -5850718942412939905L;
+
     /**
      * Creates an SmsException.
      *

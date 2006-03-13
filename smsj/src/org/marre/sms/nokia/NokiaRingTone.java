@@ -33,22 +33,22 @@ import org.marre.sms.SmsUserData;
  */
 public class NokiaRingTone extends SmsPortAddressedMessage
 {
-    protected byte[] myRingToneData;
+    protected byte[] ringToneData_;
     
     /**
      * Creates a ring tone
      *
-     * @param theRingTone The ring tone in nokia binary format
+     * @param ringToneData The ring tone in nokia binary format
      */
-    public NokiaRingTone(byte[] theRingTone)
+    public NokiaRingTone(byte[] ringToneData)
     {
         super(SmsConstants.PORT_NOKIA_RING_TONE, 0);
         
-        myRingToneData = theRingTone;
+        ringToneData_ = ringToneData;
     }
 
     public SmsUserData getUserData()
     {
-        return new SmsUserData(myRingToneData);
+        return new SmsUserData(ringToneData_);
     }
 }

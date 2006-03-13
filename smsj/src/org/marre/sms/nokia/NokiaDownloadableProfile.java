@@ -33,40 +33,40 @@ import org.marre.sms.SmsUserData;
  */
 public class NokiaDownloadableProfile extends NokiaMultipartMessage
 {
-    private String myProfileName;
-    private byte[] myScreenSaver;
-    private byte[] myRingingTone;
+    private String profileName_;
+    private byte[] screenSaver_;
+    private byte[] ringingTone_;
 
     public NokiaDownloadableProfile()
     {
     }
 
-    public NokiaDownloadableProfile(String theProfileName)
+    public NokiaDownloadableProfile(String profileName)
     {
-        setProfileName(theProfileName);
+        setProfileName(profileName);
     }
 
-    public void setScreenSaver(byte[] theBitmap)
+    public void setScreenSaver(byte[] bitmapData)
     {
-        myScreenSaver = theBitmap;
+        screenSaver_ = bitmapData;
     }
 
-    public void setScreenSaver(OtaBitmap theBitmap)
+    public void setScreenSaver(OtaBitmap otaBitmap)
     {
-        myScreenSaver = theBitmap.getBytes();
+        screenSaver_ = otaBitmap.getBytes();
     }
 
-    public void setProfileName(String theProfileName)
+    public void setProfileName(String profileName)
     {
-        myProfileName = theProfileName;
+        profileName_ = profileName;
     }
 
-    public void setRingingTone(byte[] theRingingTone)
+    public void setRingingTone(byte[] ringingToneData)
     {
-        myRingingTone = theRingingTone;
+        ringingTone_ = ringingToneData;
     }
 
-    private void addProfileName(String theProfileName)
+    private void addProfileName(String profileName)
     {
     }
 
@@ -76,11 +76,11 @@ public class NokiaDownloadableProfile extends NokiaMultipartMessage
         clear();
 
         // Create message
-        if (myProfileName != null)
+        if (profileName_ != null)
         {
             try
             {
-                addMultipart(NokiaPart.ITEM_PROFILE_NAME, myProfileName.getBytes("UTF-16BE"));
+                addMultipart(NokiaPart.ITEM_PROFILE_NAME, profileName_.getBytes("UTF-16BE"));
             }
             catch (UnsupportedEncodingException ex)
             {
@@ -88,14 +88,14 @@ public class NokiaDownloadableProfile extends NokiaMultipartMessage
             }
         }
 
-        if (myScreenSaver != null)
+        if (screenSaver_ != null)
         {
-            addMultipart(NokiaPart.ITEM_SCREEN_SAVER, myScreenSaver);
+            addMultipart(NokiaPart.ITEM_SCREEN_SAVER, screenSaver_);
         }
 
-        if (myRingingTone != null)
+        if (ringingTone_ != null)
         {
-            addMultipart(NokiaPart.ITEM_RINGTONE, myRingingTone);
+            addMultipart(NokiaPart.ITEM_RINGTONE, ringingTone_);
         }
 
         return super.getUserData();

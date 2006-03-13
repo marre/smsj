@@ -35,7 +35,6 @@
 package org.marre.sms.transport.pswincom;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 
 import junit.framework.TestCase;
 
@@ -57,8 +56,7 @@ public class PsWinXmlResponseParserTest extends TestCase
     public void testParseOk() throws Exception
     {
         PsWinXmlResponseParser parser = new PsWinXmlResponseParser();
-
-        PsWinXmlResponse response = parser.parse(new ByteArrayInputStream(respOk)); 
+        PsWinXmlResponse response = parser.parse(new ByteArrayInputStream(respOk));
         
         assertEquals("OK", response.getLogon());
         assertEquals("", response.getReason());

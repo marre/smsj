@@ -29,7 +29,6 @@ import java.util.Random;
 
 import org.marre.sms.SmsDcs;
 import org.marre.sms.SmsMessage;
-import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsPdu;
 import org.marre.util.StringUtil;
 
@@ -40,25 +39,25 @@ import org.marre.util.StringUtil;
  */
 public class SiemensOtaMessage implements SmsMessage
 {
-    protected int myVersion = 1;
-    protected String myName = "";
-    protected String myType = "";
-    protected long myReferenceId;
-    protected int myDataSize;
-    protected int myNumberOfPackets;
-    protected byte[] myContent;
+    protected int version_ = 1;
+    protected String name_ = "";
+    protected String type_ = "";
+    protected long referenceId_;
+    protected int dataSize_;
+    protected int numberOfPackets_;
+    protected byte[] content_;
 
     /**
      * Creates an SMS containing a Bitmap or a Ringtone
      * 
-     * @param theMessage
+     * @param content
      *            The content in bytes
      */
     public SiemensOtaMessage(String name, String type, byte[] content)
     {
-        myName = name;
-        myType = type;
-        myContent = content;
+        name_ = name;
+        type_ = type;
+        content_ = content;
 
         init();
     }
@@ -66,15 +65,15 @@ public class SiemensOtaMessage implements SmsMessage
     /**
      * Creates an SMS containing a Bitmap or a Ringtone
      * 
-     * @param theMessage
+     * @param content
      *            The content in bytes
      */
     public SiemensOtaMessage(int version, String name, String type, byte[] content)
     {
-        this.myVersion = version;
-        this.myName = name;
-        this.myType = type;
-        this.myContent = content;
+        this.version_ = version;
+        this.name_ = name;
+        this.type_ = type;
+        this.content_ = content;
 
         init();
 
@@ -86,9 +85,9 @@ public class SiemensOtaMessage implements SmsMessage
      */
     private void init()
     {
-        this.myReferenceId = (new Random()).nextLong();
-        this.myDataSize = 140 - 22 - myName.length() - myType.length();
-        this.myNumberOfPackets = (int) Math.ceil((float) myContent.length / (float) myDataSize);
+        this.referenceId_ = (new Random()).nextLong();
+        this.dataSize_ = 140 - 22 - name_.length() - type_.length();
+        this.numberOfPackets_ = (int) Math.ceil((float) content_.length / (float) dataSize_);
     }
 
     /**
@@ -98,7 +97,7 @@ public class SiemensOtaMessage implements SmsMessage
      */
     private byte[] getHeader(int actPacketNumber)
     {
-        byte[] header = new byte[22 + myName.length() + myType.length()];
+        byte[] header = new byte[22 + name_.length() + type_.length()];
 
         // Identifier: "//SEO"
         header[0] = (byte) 0x2f;
@@ -108,43 +107,43 @@ public class SiemensOtaMessage implements SmsMessage
         header[4] = (byte) 0x4f;
 
         // Version
-        header[5] = (byte) (myVersion & 0xff);
+        header[5] = (byte) (version_ & 0xff);
 
         // DataSize
-        header[6] = (byte) (myDataSize & 0xff);
-        header[7] = (byte) ((myDataSize >> 8) & 0xff);
+        header[6] = (byte) (dataSize_ & 0xff);
+        header[7] = (byte) ((dataSize_ >> 8) & 0xff);
 
         // ReferenceId
-        header[8] = (byte) (myReferenceId & 0xff);
-        header[9] = (byte) ((myReferenceId >> 8) & 0xff);
-        header[10] = (byte) ((myReferenceId >> 16) & 0xff);
-        header[11] = (byte) ((myReferenceId >> 24) & 0xff);
+        header[8] = (byte) (referenceId_ & 0xff);
+        header[9] = (byte) ((referenceId_ >> 8) & 0xff);
+        header[10] = (byte) ((referenceId_ >> 16) & 0xff);
+        header[11] = (byte) ((referenceId_ >> 24) & 0xff);
 
         // ActPacketNumber
         header[12] = (byte) (actPacketNumber & 0xff);
         header[13] = (byte) ((actPacketNumber >> 8) & 0xff);
 
         // NumberOfPackets
-        header[14] = (byte) (myNumberOfPackets & 0xff);
-        header[15] = (byte) ((myNumberOfPackets >> 8) & 0xff);
+        header[14] = (byte) (numberOfPackets_ & 0xff);
+        header[15] = (byte) ((numberOfPackets_ >> 8) & 0xff);
 
         // ObjectSize
-        header[16] = (byte) (myContent.length & 0xff);
-        header[17] = (byte) ((myContent.length >> 8) & 0xff);
-        header[18] = (byte) ((myContent.length >> 16) & 0xff);
-        header[19] = (byte) ((myContent.length >> 24) & 0xff);
+        header[16] = (byte) (content_.length & 0xff);
+        header[17] = (byte) ((content_.length >> 8) & 0xff);
+        header[18] = (byte) ((content_.length >> 16) & 0xff);
+        header[19] = (byte) ((content_.length >> 24) & 0xff);
 
         // ObjectType (Pascal String)
-        header[20] = (byte) (myType.length() & 0xff);
-        header[21] = (byte) (myType.charAt(0) & 0xff);
-        header[22] = (byte) (myType.charAt(1) & 0xff);
-        header[23] = (byte) (myType.charAt(2) & 0xff);
+        header[20] = (byte) (type_.length() & 0xff);
+        header[21] = (byte) (type_.charAt(0) & 0xff);
+        header[22] = (byte) (type_.charAt(1) & 0xff);
+        header[23] = (byte) (type_.charAt(2) & 0xff);
 
         // ObjectName (Pascal String)
-        header[24] = (byte) (myName.length() & 0xff);
-        for (int i = 0; i < myName.length(); i++)
+        header[24] = (byte) (name_.length() & 0xff);
+        for (int i = 0; i < name_.length(); i++)
         {
-            header[25 + i] = (byte) ((myName.charAt(i)) & 0xff);
+            header[25 + i] = (byte) ((name_.charAt(i)) & 0xff);
         }
 
         return header;
@@ -160,24 +159,24 @@ public class SiemensOtaMessage implements SmsMessage
      */
     public SmsPdu[] getPdus()
     {
-        SmsPdu[] smsPdus = new SmsPdu[myNumberOfPackets];
+        SmsPdu[] smsPdus = new SmsPdu[numberOfPackets_];
         SmsDcs dcs = SmsDcs.getGeneralDataCodingDcs(SmsDcs.ALPHABET_8BIT, SmsDcs.MSG_CLASS_1);
-        for (int i = 0; i < myNumberOfPackets; i++)
+        for (int i = 0; i < numberOfPackets_; i++)
         {
 
             byte[] pdu = new byte[140];
             byte[] header = getHeader(i + 1);
 
             System.arraycopy(header, 0, pdu, 0, header.length);
-            int offset = myDataSize * i;
+            int offset = dataSize_ * i;
 
             // Handle last SMS
-            if (i == (myNumberOfPackets - 1))
+            if (i == (numberOfPackets_ - 1))
             {
-                myDataSize = myContent.length % myDataSize;
+                dataSize_ = content_.length % dataSize_;
             }
 
-            System.arraycopy(myContent, offset, pdu, header.length, myDataSize);
+            System.arraycopy(content_, offset, pdu, header.length, dataSize_);
 
             SmsPdu smsPdu = new SmsPdu(null, pdu, pdu.length, dcs);
             smsPdus[i] = smsPdu;

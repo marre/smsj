@@ -77,16 +77,33 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
      */
     private class MsgWaiting
     {
-        int type;
-        int count;
-        int options;
+        private int type_;
+        private int count_;
+        private int options_;
         
         private MsgWaiting(int type, int count, int options)
         {
-            this.type = type;
-            this.count = count;
-            this.options = options;
+            this.type_ = type;
+            this.count_ = count;
+            this.options_ = options;
         }
+
+        int getCount()
+        {
+            return count_;
+        }
+
+        int getOptions()
+        {
+            return options_;
+        }
+
+        int getType()
+        {
+            return type_;
+        }
+        
+        
     }
     
     /**
@@ -196,7 +213,7 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
 
         // Bit 0 and 1 indicate the basic indication type.
         // Bit 4, 3 and 2 indicate the extended message indication type.
-        switch (msgWaiting.type)
+        switch (msgWaiting.getType())
         {
         case TYPE_VOICE: udh[0] = 0x00; break;
         case TYPE_FAX:   udh[0] = 0x01; break;
@@ -208,7 +225,7 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
         }
         
         // Bit 6 and 5 indicates the profile ID of the Multiple Subscriber Profile.
-        switch (msgWaiting.options & OPT_PROFILE_MASK)
+        switch (msgWaiting.getOptions() & OPT_PROFILE_MASK)
         {
         case OPT_PROFILE_ID_1: udh[0] |= 0x00; break;
         case OPT_PROFILE_ID_2: udh[0] |= 0x20; break;
@@ -220,13 +237,13 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
         }
         
         // Bit 7 indicates if the message shall be stored.
-        if ((msgWaiting.options & OPT_STORE_MSG) != 0)
+        if ((msgWaiting.getOptions() & OPT_STORE_MSG) != 0)
         {
             udh[0] |= (byte) (0x80);
         }
 
         // Octet 2 contains the number of messages waiting
-        udh[1] = (byte) (msgWaiting.count & 0xff);
+        udh[1] = (byte) (msgWaiting.getCount() & 0xff);
 
         return new SmsUdhElement(SmsConstants.UDH_IEI_SPECIAL_MESSAGE, udh);
     }
@@ -245,7 +262,7 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
         {
             udhElements = new SmsUdhElement[messages_.size()];
             int i = 0;
-         
+            
             for(Iterator j = messages_.iterator(); j.hasNext(); i++)
             {
                 MsgWaiting msgWaiting = (MsgWaiting) j.next();

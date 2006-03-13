@@ -34,7 +34,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
-import org.marre.util.StringUtil;
 import org.marre.sms.SmsDcs;
 
 import junit.framework.TestCase;
@@ -47,7 +46,7 @@ import junit.framework.TestCase;
 
 public class SmsDcsTest extends TestCase
 {
-    public void testGeneralDataCodingGroup() throws SmsException
+    public void testGeneralDataCodingGroup()
     {
         SmsDcs dcs;
         

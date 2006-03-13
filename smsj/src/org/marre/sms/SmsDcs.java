@@ -57,15 +57,15 @@ public class SmsDcs
     public static final int ALPHABET_UNKNOWN = 4;
 
     /** Class 0 SMS. Sometimes called FLASH message. */
-    public static final byte MSG_CLASS_0 = 0;
+    public static final int MSG_CLASS_0 = 0;
     /** Class 1 SMS. Default meaning: ME-specific. */
-    public static final byte MSG_CLASS_1 = 1;
+    public static final int MSG_CLASS_1 = 1;
     /** Class 2 SMS, SIM specific message. */
-    public static final byte MSG_CLASS_2 = 2;
+    public static final int MSG_CLASS_2 = 2;
     /** Class 3 SMS. Default meaning: TE specific (See GSM TS 07.05). */
-    public static final byte MSG_CLASS_3 = 3;
+    public static final int MSG_CLASS_3 = 3;
     /** Message with no specific message class (Often handled as an class 1 SMS). */
-    public static final byte MSG_CLASS_UNKNOWN = 4;
+    public static final int MSG_CLASS_UNKNOWN = 4;
 
     /** DCS general data coding indication group. 00xxxxxx. */
     public static final int GROUP_GENERAL_DATA_CODING = 0;
@@ -81,13 +81,13 @@ public class SmsDcs
     public static final int GROUP_UNKNOWN = 5;
     
     /** Message waiting indication type - voicemail. */
-    public static final byte DCS_MSG_WAITING_VOICEMAIL = 0;
+    public static final int DCS_MSG_WAITING_VOICEMAIL = 0;
     /** Message waiting indication type - fax. */
-    public static final byte DCS_MSG_WAITING_FAX = 1;
+    public static final int DCS_MSG_WAITING_FAX = 1;
     /** Message waiting indication type - email. */
-    public static final byte DCS_MSG_WAITING_EMAIL = 2;
+    public static final int DCS_MSG_WAITING_EMAIL = 2;
     /** Message waiting indication type - other. Should not be used. */
-    public static final byte DCS_MSG_WAITING_OTHER = 3;
+    public static final int DCS_MSG_WAITING_OTHER = 3;
           
     /** The encoded dcs. */
     protected byte dcs_;
@@ -120,7 +120,7 @@ public class SmsDcs
      * 
      * @return A valid general data coding DCS.
      */
-    public static SmsDcs getGeneralDataCodingDcs(int alphabet, byte messageClass)
+    public static SmsDcs getGeneralDataCodingDcs(int alphabet, int messageClass)
     {
         byte dcs = 0x00;
         

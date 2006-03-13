@@ -46,30 +46,30 @@ import java.awt.image.Raster;
  */
 public class OtaBitmap
 {
-    private int myWidth;
-    private int myHeight;
+    private int width_;
+    private int height_;
 
-    private byte[] myOtaImgData;
+    private byte[] otaImgData_;
 
     /**
      * Initialise with a raw Ota Bitmap
      * 
-     * @param otaBitmap
+     * @param otaBitmapData
      */
-    public OtaBitmap(byte[] otaBitmap)
+    public OtaBitmap(byte[] otaBitmapData)
     {
-        if (otaBitmap != null)
+        if (otaBitmapData != null)
         {
             //Read info field read until no more fields left bit 7 is 0
-            int infoField = otaBitmap[0]; //assume just 1 for now
-            myWidth = otaBitmap[1];
-            myHeight = otaBitmap[2];
-            int depth = otaBitmap[3];
+            int infoField = otaBitmapData[0]; //assume just 1 for now
+            width_ = otaBitmapData[1];
+            height_ = otaBitmapData[2];
+            int depth = otaBitmapData[3];
 
-            int length = otaBitmap.length - 4;
-            myOtaImgData = new byte[length];
+            int length = otaBitmapData.length - 4;
+            otaImgData_ = new byte[length];
 
-            System.arraycopy(otaBitmap, 4, myOtaImgData, 0, length);
+            System.arraycopy(otaBitmapData, 4, otaImgData_, 0, length);
         }
     }
 
@@ -78,33 +78,33 @@ public class OtaBitmap
      * <p>
      * Every pixel that is not white will be converted to black.
      * 
-     * @param theImg
+     * @param img
      *            Image to convert.
      */
-    public OtaBitmap(BufferedImage theImg)
+    public OtaBitmap(BufferedImage img)
     {
         int bitOffset = 0;
         int data = 0;
         int nByte = 0;
         int nTotalBytes = 0;
-        Raster raster = theImg.getData();
+        Raster raster = img.getData();
 
-        myWidth = theImg.getWidth();
-        myHeight = theImg.getHeight();
+        width_ = img.getWidth();
+        height_ = img.getHeight();
 
-        nTotalBytes = (myWidth * myHeight) / 8;
-        if (((myWidth * myHeight) % 8) > 0)
+        nTotalBytes = (width_ * height_) / 8;
+        if (((width_ * height_) % 8) > 0)
         {
             nTotalBytes++;
         }
 
-        myOtaImgData = new byte[nTotalBytes];
+        otaImgData_ = new byte[nTotalBytes];
 
-        for (int y = 0; y < myHeight; y++)
+        for (int y = 0; y < height_; y++)
         {
-            for (int x = 0; x < myWidth; x++)
+            for (int x = 0; x < width_; x++)
             {
-                int color = theImg.getRGB(x, y);
+                int color = img.getRGB(x, y);
 
                 if (color != 0)
                 {
@@ -115,7 +115,7 @@ public class OtaBitmap
 
                 if (bitOffset >= 8)
                 {
-                    myOtaImgData[nByte] = (byte) (data & 0xff);
+                    otaImgData_[nByte] = (byte) (data & 0xff);
 
                     bitOffset = 0;
                     data = 0x00;
@@ -126,7 +126,7 @@ public class OtaBitmap
 
         if (bitOffset > 0)
         {
-            myOtaImgData[nByte] = (byte) (data & 0xff);
+            otaImgData_[nByte] = (byte) (data & 0xff);
         }
     }
 
@@ -137,7 +137,7 @@ public class OtaBitmap
      */
     public byte[] getImageData()
     {
-        return myOtaImgData;
+        return otaImgData_;
     }
 
     /**
@@ -147,15 +147,15 @@ public class OtaBitmap
      */
     public byte[] getBytes()
     {
-        byte[] otaBitmap = new byte[myOtaImgData.length + 4];
+        byte[] otaBitmap = new byte[otaImgData_.length + 4];
 
         otaBitmap[0] = 0; // Not sure what this is
-        otaBitmap[1] = (byte) (myWidth & 0xff);
-        otaBitmap[2] = (byte) (myHeight & 0xff);
+        otaBitmap[1] = (byte) (width_ & 0xff);
+        otaBitmap[2] = (byte) (height_ & 0xff);
         otaBitmap[3] = 1; // Number of colors
 
         // Add image data
-        System.arraycopy(myOtaImgData, 0, otaBitmap, 4, myOtaImgData.length);
+        System.arraycopy(otaImgData_, 0, otaBitmap, 4, otaImgData_.length);
 
         return otaBitmap;
     }
@@ -165,7 +165,7 @@ public class OtaBitmap
      */
     public int getHeight()
     {
-        return myHeight;
+        return height_;
     }
 
     /**
@@ -173,7 +173,7 @@ public class OtaBitmap
      */
     public int getWidth()
     {
-        return myWidth;
+        return width_;
     }
 
     /**
@@ -181,7 +181,7 @@ public class OtaBitmap
      */
     public void setHeight(int i)
     {
-        myHeight = i;
+        height_ = i;
     }
 
     /**
@@ -189,7 +189,7 @@ public class OtaBitmap
      */
     public void setWidth(int i)
     {
-        myWidth = i;
+        width_ = i;
     }
 
 }

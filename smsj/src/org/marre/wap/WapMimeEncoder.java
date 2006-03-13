@@ -52,9 +52,9 @@ import org.marre.mime.encoder.TextMimeEncoder;
  */
 public class WapMimeEncoder implements MimeEncoder
 {
-    private TextMimeEncoder myTextMimeEncoder = new TextMimeEncoder();
+    private TextMimeEncoder textMimeEncoder_ = new TextMimeEncoder();
     
-    private byte myWspEncodingVersion;
+    private byte wspEncodingVersion_;
 
     public WapMimeEncoder()
     {
@@ -63,7 +63,7 @@ public class WapMimeEncoder implements MimeEncoder
     
     public WapMimeEncoder(byte wspEncodingVersion)
     {
-        myWspEncodingVersion = wspEncodingVersion;
+        wspEncodingVersion_ = wspEncodingVersion;
     }
 
     /**
@@ -72,72 +72,72 @@ public class WapMimeEncoder implements MimeEncoder
      * NOTE! It only writes an WSP encoded content-type to the stream. It does
      * not add the content type header id.
      * 
-     * @param theOs
+     * @param os
      *            The stream to write to
-     * @param theMsg
+     * @param msg
      *            The message to get the content-type from
      * @throws IOException
      *             Thrown if we fail to write the content-type to the stream
      */
-    public void writeContentType(OutputStream theOs, MimeBodyPart theMsg) throws IOException
+    public void writeContentType(OutputStream os, MimeBodyPart msg) throws IOException
     {
-        if (theMsg instanceof MimeMultipart)
+        if (msg instanceof MimeMultipart)
         {
-            String ct = theMsg.getContentType().getValue();
+            String ct = msg.getContentType().getValue();
 
             // Convert multipart headers...
-            // TODO: Clone content type... We shouldn't change theMsg...
+            // TODO: Clone content type... We shouldn't change the msg...
             String newCt = WspUtil.convertMultipartContentType(ct);
-            theMsg.getContentType().setValue(newCt);
+            msg.getContentType().setValue(newCt);
         }
 
-        WspUtil.writeContentType(myWspEncodingVersion, theOs, theMsg.getContentType());
+        WspUtil.writeContentType(wspEncodingVersion_, os, msg.getContentType());
     }
 
     /**
      * Writes the headers of the message to the given stream.
      * 
-     * @param theOs
+     * @param os
      *            The stream to write to
-     * @param theMsg
+     * @param msg
      *            The message to get the headers from
      * @throws IOException
      *             Thrown if we fail to write the headers to the stream
      */
-    public void writeHeaders(OutputStream theOs, MimeBodyPart theMsg) throws IOException
+    public void writeHeaders(OutputStream os, MimeBodyPart msg) throws IOException
     {
-        for (int i = 0; i < theMsg.getHeaderCount(); i++)
+        for (int i = 0; i < msg.getHeaderCount(); i++)
         {
-            MimeHeader header = theMsg.getHeader(i);
-            WspHeaderEncoder.writeHeader(myWspEncodingVersion, theOs, header);
+            MimeHeader header = msg.getHeader(i);
+            WspHeaderEncoder.writeHeader(wspEncodingVersion_, os, header);
         }
     }
 
     /**
      * Writes the body of the message to the given stream.
      * 
-     * @param theOs
+     * @param os
      *            The stream to write to
-     * @param theMsg
+     * @param msg
      *            The message to get the data from
      * @throws IOException
      *             Thrown if we fail to write the body to the stream
      */
-    public void writeBody(OutputStream theOs, MimeBodyPart theMsg) throws IOException
+    public void writeBody(OutputStream os, MimeBodyPart msg) throws IOException
     {
-        if (theMsg instanceof MimeMultipart)
+        if (msg instanceof MimeMultipart)
         {
-            String ct = theMsg.getContentType().getValue();
+            String ct = msg.getContentType().getValue();
 
             // Convert multipart headers...
-            // TODO: Clone content type... We shouldn't change theMsg...
+            // TODO: Clone content type... We shouldn't change the msg...
             String newCt = WspUtil.convertMultipartContentType(ct);
-            theMsg.getContentType().setValue(newCt);
+            msg.getContentType().setValue(newCt);
 
             if (newCt.startsWith("application/vnd.wap.multipart."))
             {
                 // WSP encoded multipart
-                writeMultipart(theOs, (MimeMultipart) theMsg);
+                writeMultipart(os, (MimeMultipart) msg);
             }
             else
             {
@@ -147,19 +147,19 @@ public class WapMimeEncoder implements MimeEncoder
         }
         else
         {
-            theOs.write(theMsg.getBody());
+            os.write(msg.getBody());
         }
     }
 
     // Section 8.5.2 in WAP-230-WSP-20010705
-    private void writeMultipart(OutputStream theOs, MimeMultipart theMultipart) throws IOException
+    private void writeMultipart(OutputStream os, MimeMultipart multipart) throws IOException
     {
         // nEntries
-        WspUtil.writeUintvar(theOs, theMultipart.getBodyPartCount());
+        WspUtil.writeUintvar(os, multipart.getBodyPartCount());
 
-        for (int i = 0; i < theMultipart.getBodyPartCount(); i++)
+        for (int i = 0; i < multipart.getBodyPartCount(); i++)
         {
-            MimeBodyPart part = (MimeBodyPart) theMultipart.getBodyPart(i);
+            MimeBodyPart part = multipart.getBodyPart(i);
             ByteArrayOutputStream headers = new ByteArrayOutputStream();
             ByteArrayOutputStream content = new ByteArrayOutputStream();
 
@@ -173,16 +173,16 @@ public class WapMimeEncoder implements MimeEncoder
             writeBody(content, part);
             content.close();
 
-            // Write data to theOs
+            // Write data to the os
 
             // Length of the content type and headers combined
-            WspUtil.writeUintvar(theOs, headers.size());
+            WspUtil.writeUintvar(os, headers.size());
             // Length of the data (content)
-            WspUtil.writeUintvar(theOs, content.size());
+            WspUtil.writeUintvar(os, content.size());
             // Content type + headers
-            theOs.write(headers.toByteArray());
+            os.write(headers.toByteArray());
             // Data
-            theOs.write(content.toByteArray());
+            os.write(content.toByteArray());
         }
     }
 }

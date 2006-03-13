@@ -30,19 +30,19 @@ import org.marre.xml.XmlWriter;
 
 public class NokiaOtaBookmark
 {
-    protected String myName;
-    protected String myUrl;
+    protected String name_;
+    protected String url_;
     
     /**
      * Creates a Nokia Ota Browser Settings Bookmark
      * 
      * @param name the name of the bookmark (max 50 chars)
-     * @param theUri the URI of the bookmark (max 255 chars)
+     * @param url the URL of the bookmark (max 255 chars)
      */
     public NokiaOtaBookmark(String name, String url)
     {
-        myName = name;
-        myUrl = url;
+        name_ = name;
+        url_ = url;
     }
     
     public void writeXmlTo(XmlWriter xmlWriter) throws IOException
@@ -50,14 +50,14 @@ public class NokiaOtaBookmark
         // <CHARACTERISTIC TYPE="BOOKMARK">
         xmlWriter.addStartElement("CHARACTERISTIC", new XmlAttribute[]{new XmlAttribute("TYPE", "BOOKMARK")});
         
-        // <PARM NAME="NAME" VALUE="myName"/>
+        // <PARM NAME="NAME" VALUE="name_"/>
         xmlWriter.addEmptyElement("PARM", new XmlAttribute[]{
                 new XmlAttribute("NAME", "NAME"),
-                new XmlAttribute("VALUE", myName)});
-        // <PARM NAME="URL" VALUE="myUrl"/>
+                new XmlAttribute("VALUE", name_)});
+        // <PARM NAME="URL" VALUE="url_"/>
         xmlWriter.addEmptyElement("PARM", new XmlAttribute[]{
                 new XmlAttribute("NAME", "URL"),
-                new XmlAttribute("VALUE", myUrl)});
+                new XmlAttribute("VALUE", url_)});
         
         // </CHARACTERISTIC>
         xmlWriter.addEndElement();

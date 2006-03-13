@@ -46,17 +46,17 @@ import java.util.*;
  */
 public class MimeBodyPart
 {
-    protected byte[] myBody;
-    protected MimeContentType myContentType;
+    protected byte[] body_;
+    protected MimeContentType contentType_;
 
-    protected List myHeaders;
+    protected List headers_;
 
     /**
      * Creates a new empty MimeBodyPart.
      */
     public MimeBodyPart()
     {
-        myHeaders = new LinkedList();
+        headers_ = new LinkedList();
     }
 
     /**
@@ -80,39 +80,39 @@ public class MimeBodyPart
     /**
      * Adds a mime header to this body part.
      * 
-     * @param theHeader The header to add
+     * @param header The header to add
      */
-    public void addHeader(MimeHeader theHeader)
+    public void addHeader(MimeHeader header)
     {
-        myHeaders.add(theHeader);
+        headers_.add(header);
     }
 
     /**
      * Adds a eader to this body part.
      * 
-     * @param theHeaderName The name of the header
-     * @param theHeaderValue The value
+     * @param headerName The name of the header
+     * @param headerValue The value
      */
-    public void addHeader(String theHeaderName, String theHeaderValue)
+    public void addHeader(String headerName, String headerValue)
     {
-        MimeHeader header = getHeader(theHeaderName);
+        MimeHeader header = getHeader(headerName);
         if (header != null)
         {
-            myHeaders.remove(header);
+            headers_.remove(header);
             header = null;
         }
-        addHeader(new MimeHeader(theHeaderName, theHeaderValue));
+        addHeader(new MimeHeader(headerName, headerValue));
     }
 
     /**
      * Retrieves a header with the given index.
      * 
-     * @param theIndex Index of header to retrieve
+     * @param index Index of header to retrieve
      * @return The header, or null if not found
      */
-    public MimeHeader getHeader(int theIndex)
+    public MimeHeader getHeader(int index)
     {
-        return (MimeHeader) myHeaders.get(theIndex);
+        return (MimeHeader)headers_.get(index);
     }
 
     /**
@@ -123,12 +123,8 @@ public class MimeBodyPart
      */
     public MimeHeader getHeader(String headerName)
     {
-        Iterator iter = myHeaders.iterator();
-        
-        while (iter.hasNext())
-        {
-            MimeHeader header = (MimeHeader) iter.next();
-            
+        for (Iterator i=headers_.iterator(); i.hasNext(); ) {
+            MimeHeader header = (MimeHeader) i.next();
             if (header.getName().equalsIgnoreCase(headerName))
             {
                 return header;
@@ -145,53 +141,53 @@ public class MimeBodyPart
      */
     public int getHeaderCount()
     {
-        return myHeaders.size();
+        return headers_.size();
     }
 
     /**
      * Sets the main content of this body part.
      * 
-     * @param theContent The main content
-     * @param theContentType The content-type of the content
+     * @param content The main content
+     * @param contentType The content-type of the content
      */
-    public void setContent(byte[] theContent, String theContentType)
+    public void setContent(byte[] content, String contentType)
     {
-        myBody = new byte[theContent.length];
-        System.arraycopy(theContent, 0, myBody, 0, theContent.length);
-        myContentType = new MimeContentType(theContentType);
+        body_ = new byte[content.length];
+        System.arraycopy(content, 0, body_, 0, content.length);
+        contentType_ = new MimeContentType(contentType);
     }
 
     /**
      * Sets the main content of this body part.
      * 
-     * @param theContent The main content
-     * @param theContentType The content type
+     * @param content The main content
+     * @param contentType The content type
      */
-    public void setContent(byte[] theContent, MimeContentType theContentType)
+    public void setContent(byte[] content, MimeContentType contentType)
     {
-        myBody = new byte[theContent.length];
-        System.arraycopy(theContent, 0, myBody, 0, theContent.length);
-        myContentType = theContentType;
+        body_ = new byte[content.length];
+        System.arraycopy(content, 0, body_, 0, content.length);
+        contentType_ = contentType;
     }
     
     /**
      * Sets the "Content-Id" header.
      * 
-     * @param theContentId The content-id
+     * @param contentId The content-id
      */
-    public void setContentId(String theContentId)
+    public void setContentId(String contentId)
     {
-        addHeader("Content-Id", theContentId);
+        addHeader("Content-Id", contentId);
     }
 
     /**
      * Sets the "Content-Location" header.
      * 
-     * @param theContentLocation The content-location
+     * @param contentLocation The content-location
      */
-    public void setContentLocation(String theContentLocation)
+    public void setContentLocation(String contentLocation)
     {
-        addHeader("Content-Location", theContentLocation);
+        addHeader("Content-Location", contentLocation);
     }
     
     /**
@@ -203,10 +199,10 @@ public class MimeBodyPart
     {
         byte[] bodyCopy = null;
         
-        if (myBody != null)
+        if (body_ != null)
         {
-            bodyCopy = new byte[myBody.length];
-            System.arraycopy(myBody, 0, bodyCopy, 0, myBody.length);
+            bodyCopy = new byte[body_.length];
+            System.arraycopy(body_, 0, bodyCopy, 0, body_.length);
         }
         
         return bodyCopy;
@@ -219,7 +215,7 @@ public class MimeBodyPart
      */
     public int getBodySize()
     {
-        return myBody.length;
+        return body_.length;
     }
 
     /**
@@ -229,6 +225,6 @@ public class MimeBodyPart
      */
     public MimeContentType getContentType()
     {
-        return myContentType;
+        return contentType_;
     }
 }

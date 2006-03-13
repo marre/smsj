@@ -41,75 +41,75 @@ public class MmsHeaders
 {
     private static final int DEFAULT_TRANSACTION_ID_LENGTH = 6;
     
-    protected int    myMessageTypeId = MmsConstants.X_MMS_MESSAGE_TYPE_ID_M_SEND_REQ;
-    protected String myTransactionId;
-    protected int    myVersionId     = MmsConstants.X_MMS_MMS_VERSION_ID_1_0;
-    protected String mySubject;
-    protected String myFrom;
-    protected String myTo;
+    protected int    messageTypeId_ = MmsConstants.X_MMS_MESSAGE_TYPE_ID_M_SEND_REQ;
+    protected String transactionId_;
+    protected int    versionId_     = MmsConstants.X_MMS_MMS_VERSION_ID_1_0;
+    protected String subject_;
+    protected String from_;
+    protected String to_;
     
     public MmsHeaders()
     {
-        myTransactionId = StringUtil.randString(DEFAULT_TRANSACTION_ID_LENGTH);
+        transactionId_ = StringUtil.randString(DEFAULT_TRANSACTION_ID_LENGTH);
     }
     
     public int getMessageType()
     {
-        return myMessageTypeId;
+        return messageTypeId_;
     }
     
     public void setMessageType(int msgTypeId)
     {
-        myMessageTypeId = msgTypeId;
+        messageTypeId_ = msgTypeId;
     }
     
     public String getTransactionId()
     {
-        return myTransactionId;
+        return transactionId_;
     }
     
     public void setTransactionId(String transactionId)
     {
-        myTransactionId = transactionId;
+        transactionId_ = transactionId;
     }
     
     public int getVersion()
     {
-        return myVersionId;
+        return versionId_;
     }
     
     public void setVersion(int versionId)
     {
-        myVersionId = versionId;
+        versionId_ = versionId;
     }
     
     public String getSubject()
     {
-        return mySubject;
+        return subject_;
     }
     
     public void setSubject(String subject)
     {
-        mySubject = subject;
+        subject_ = subject;
     }
     
     public String getFrom()
     {
-        return myFrom;
+        return from_;
     }
     
     public void setFrom(String from)
     {
-        myFrom = from;
+        from_ = from;
     }
     
     public String getTo()
     {
-        return myTo;
+        return to_;
     }
     
     public void setTo(String to)
     {
-        myTo = to;
+        to_ = to;
     }    
 }

@@ -48,8 +48,8 @@ import java.io.*;
 
 public class SmsPdu
 {
-    protected SmsUdhElement[] myUdhElements;
-    protected SmsUserData myUd;
+    protected SmsUdhElement[] udhElements_;
+    protected SmsUserData ud_;
 
     /**
      * Creates an empty SMS pdu object
@@ -62,51 +62,51 @@ public class SmsPdu
     /**
      * Creates an SMS pdu object.
      * 
-     * @param theUdhIeis
+     * @param udhElements
      *            The UDH elements
-     * @param theUd
+     * @param ud
      *            The content
-     * @param theUdLength
+     * @param udLength
      *            The length of the content. Can be in octets or septets
      *            depending on the DCS
      */
-    public SmsPdu(SmsUdhElement[] theUdhIeis, byte[] theUd, int theUdLength, SmsDcs theDataCodingScheme)
+    public SmsPdu(SmsUdhElement[] udhElements, byte[] ud, int udLength, SmsDcs dcs)
     {
-        setUserDataHeaders(theUdhIeis);
-        setUserData(theUd, theUdLength, theDataCodingScheme);
+        setUserDataHeaders(udhElements);
+        setUserData(ud, udLength, dcs);
     }
 
     /**
      * Creates an SMS pdu object.
      * 
-     * @param theUdhIeis
+     * @param udhElements
      *            The UDH elements
-     * @param theUd
+     * @param ud
      *            The content
      */
-    public SmsPdu(SmsUdhElement[] theUdhIeis, SmsUserData theUd)
+    public SmsPdu(SmsUdhElement[] udhElements, SmsUserData ud)
     {
-        setUserDataHeaders(theUdhIeis);
-        setUserData(theUd);
+        setUserDataHeaders(udhElements);
+        setUserData(ud);
     }
     
     /**
      * Sets the UDH field
      * 
-     * @param theUdhElements
+     * @param udhElements
      *            The UDH elements
      */
-    public void setUserDataHeaders(SmsUdhElement[] theUdhElements)
+    public void setUserDataHeaders(SmsUdhElement[] udhElements)
     {
-        if (theUdhElements != null)
+        if (udhElements != null)
         {
-            myUdhElements = new SmsUdhElement[theUdhElements.length];
+            udhElements_ = new SmsUdhElement[udhElements.length];
 
-            System.arraycopy(theUdhElements, 0, myUdhElements, 0, theUdhElements.length);
+            System.arraycopy(udhElements, 0, udhElements_, 0, udhElements.length);
         }
         else
         {
-            myUdhElements = null;
+            udhElements_ = null;
         }
     }
 
@@ -118,20 +118,20 @@ public class SmsPdu
      */
     public byte[] getUserDataHeaders()
     {
-        if (myUdhElements == null)
+        if (udhElements_ == null)
         {
             return null;
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream(100);
 
-        baos.write((byte) SmsUdhUtil.getTotalSize(myUdhElements));
+        baos.write((byte) SmsUdhUtil.getTotalSize(udhElements_));
 
         try
         {
-            for (int i = 0; i < myUdhElements.length; i++)
+            for (int i = 0; i < udhElements_.length; i++)
             {
-                myUdhElements[i].writeTo(baos);
+                udhElements_[i].writeTo(baos);
             }
         }
         catch (IOException ioe)
@@ -146,27 +146,27 @@ public class SmsPdu
     /**
      * Sets the user data field of the message.
      * 
-     * @param theUd
+     * @param ud
      *            The content
-     * @param theUdLength
+     * @param udLength
      *            The length, can be in septets or octets depending on the DCS
-     * @param theDataCodingScheme
+     * @param dcs
      *            The data coding scheme
      */
-    public void setUserData(byte[] theUd, int theUdLength, SmsDcs theDataCodingScheme)
+    public void setUserData(byte[] ud, int udLength, SmsDcs dcs)
     {
-        myUd = new SmsUserData(theUd, theUdLength, theDataCodingScheme);
+        ud_ = new SmsUserData(ud, udLength, dcs);
     }
 
     /**
      * Sets the user data field of the message.
      * 
-     * @param theUd
+     * @param ud
      *            The content
      */
-    public void setUserData(SmsUserData theUd)
+    public void setUserData(SmsUserData ud)
     {
-        myUd = theUd;
+        ud_ = ud;
     }
     
     /**
@@ -176,7 +176,7 @@ public class SmsPdu
      */
     public SmsUserData getUserData()
     {
-        return myUd;
+        return ud_;
     }
     
     /**
@@ -186,6 +186,6 @@ public class SmsPdu
      */
     public SmsDcs getDcs()
     {
-        return myUd.getDcs();
+        return ud_.getDcs();
     }
 }

@@ -39,17 +39,17 @@ import org.marre.sms.SmsUserData;
  */
 public class NokiaGroupGraphic extends SmsPortAddressedMessage
 {
-    protected byte[] myOtaBitmap;
+    protected byte[] bitmapData_;
     
     /**
      * Creates a group graphic SMS message
      *
-     * @param theOtaBitmap An OtaBitmap object representing the
+     * @param otaBitmap An OtaBitmap object representing the
      * image to send
      */
-    public NokiaGroupGraphic(OtaBitmap theOtaBitmap)
+    public NokiaGroupGraphic(OtaBitmap otaBitmap)
     {
-        this(theOtaBitmap.getBytes());
+        this(otaBitmap.getBytes());
     }
 
     /**
@@ -57,13 +57,13 @@ public class NokiaGroupGraphic extends SmsPortAddressedMessage
      * <p>
      * The given byte array must be in the Nokia OTA image format.
      *
-     * @param theOtaImage The ota image as a byte-array
+     * @param bitmapData The ota image as a byte-array
      */
-    public NokiaGroupGraphic(byte[] theOtaImage)
+    public NokiaGroupGraphic(byte[] bitmapData)
     {
         super(SmsConstants.PORT_NOKIA_CLI_LOGO, 0);
         
-        myOtaBitmap = theOtaImage;
+        bitmapData_ = bitmapData;
     }
 
     public SmsUserData getUserData()
@@ -75,7 +75,7 @@ public class NokiaGroupGraphic extends SmsPortAddressedMessage
             // Type?
             baos.write(0x30);
             // bitmap
-            baos.write(myOtaBitmap);
+            baos.write(bitmapData_);
 
             baos.close();
         }

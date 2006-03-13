@@ -128,11 +128,11 @@ public class UcpTransport implements SmsTransport
         }
     }
 
-    public String send(SmsMessage msg, SmsAddress theDest, SmsAddress sender) throws SmsException, IOException
+    public String send(SmsMessage msg, SmsAddress destination, SmsAddress sender) throws SmsException, IOException
     {
         SmsPdu[] msgPdu = null;
 
-        if (theDest.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
+        if (destination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
         {
             throw new SmsException("Cannot sent SMS to ALPHANUMERIC address");
         }
@@ -141,7 +141,7 @@ public class UcpTransport implements SmsTransport
         for (int i = 0; i < msgPdu.length; i++)
         {
             boolean moreToSend = (i < (msgPdu.length - 1));
-            byte[] submitCmd = buildSubmit(msgPdu[i], moreToSend, theDest, sender);
+            byte[] submitCmd = buildSubmit(msgPdu[i], moreToSend, destination, sender);
             String response = sendUcp(submitCmd);
             System.err.println("SMSC response: " + response);
         }
@@ -157,7 +157,7 @@ public class UcpTransport implements SmsTransport
      * @param userid
      * @param pwd
      */
-    public byte[] buildLogin(String userid, String pwd) throws SmsException
+    public byte[] buildLogin(String userid, String pwd)
     {
         UCPSeries60 ucplogin = new UCPSeries60(UCPSeries60.OP_OPEN_SESSION);
 
@@ -172,7 +172,7 @@ public class UcpTransport implements SmsTransport
         return ucplogin.getCommand();
     }
 
-    public byte[] buildSubmit(SmsPdu pdu, boolean moreToSend, SmsAddress dest, SmsAddress sender)
+    public byte[] buildSubmit(SmsPdu pdu, boolean moreToSend, SmsAddress destination, SmsAddress sender)
             throws SmsException
     {
         String ud;
@@ -215,7 +215,7 @@ public class UcpTransport implements SmsTransport
         }
 
         // AdC = Address code recipient for the SM
-        ucpSubmit.setField(UcpSeries50.FIELD_ADC, dest.getAddress());
+        ucpSubmit.setField(UcpSeries50.FIELD_ADC, destination.getAddress());
         if (pdu.getUserDataHeaders() == null) // Handel Messages without UDH
         {
             switch (pdu.getDcs().getAlphabet())
@@ -296,7 +296,7 @@ public class UcpTransport implements SmsTransport
         return ucpSubmit.getCommand();
     }
 
-    public void ping() throws SmsException
+    public void ping()
     {
     }
 
@@ -307,7 +307,7 @@ public class UcpTransport implements SmsTransport
      * @throws SmsException
      *  
      */
-    public void disconnect() throws SmsException, IOException
+    public void disconnect() throws IOException
     {
         ucpOs_.close();
         ucpIs_.close();

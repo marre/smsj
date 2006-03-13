@@ -36,7 +36,4 @@ package org.marre.mms;
 
 public class MmsMessage
 {
-    public MmsMessage()
-    {
-    }
 }

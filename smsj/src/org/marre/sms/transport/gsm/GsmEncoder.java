@@ -63,40 +63,39 @@ public final class GsmEncoder
     /**
      * Encodes the given sms pdu into a gsm sms pdu.
      * 
-     * @param thePdu
-     * @param theDestination
-     * @param theSender
+     * @param pdu
+     * @param destination
+     * @param sender
      * @return
      * @throws SmsException
      */
-    public static byte[] encodePdu(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender)
+    public static byte[] encodePdu(SmsPdu pdu, SmsAddress destination, SmsAddress sender)
         throws SmsException
     {
-        if (thePdu.getDcs().getAlphabet() == SmsDcs.ALPHABET_GSM)
-        {
-            return encodeSeptetPdu(thePdu, theDestination, theSender);
-        }
-        else
-        {
-            return encodeOctetPdu(thePdu, theDestination, theSender);
+        switch (pdu.getDcs().getAlphabet()) {
+        case SmsDcs.ALPHABET_GSM:
+            return encodeSeptetPdu(pdu, destination, sender);
+         
+        default:
+            return encodeOctetPdu(pdu, destination, sender);
         }
     }
     
     /**
      * Encodes an septet encoded pdu.
      * 
-     * @param thePdu
-     * @param theDestination
-     * @param theSender
+     * @param pdu
+     * @param destination
+     * @param sender
      * @return
      * @throws SmsException
      */
-    private static byte[] encodeSeptetPdu(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender)
+    private static byte[] encodeSeptetPdu(SmsPdu pdu, SmsAddress destination, SmsAddress sender)
         throws SmsException
     {
-        SmsUserData userData = thePdu.getUserData();
+        SmsUserData userData = pdu.getUserData();
         byte[] ud = userData.getData();
-        byte[] udh = thePdu.getUserDataHeaders();
+        byte[] udh = pdu.getUserDataHeaders();
 
         int nUdSeptets = userData.getLength();
         int nUdBits = 0;
@@ -170,14 +169,14 @@ public final class GsmEncoder
             //   - myBit 4-6 - TON
             //   - myBit 0-3 - NPI
             // - n octets - BCD
-            writeDestinationAddress(baos, theDestination);
+            writeDestinationAddress(baos, destination);
 
             // TP-PID
             baos.write(0x00);
 
             // TP-DCS
             // UCS, septets, language, SMS class...
-            baos.write(thePdu.getDcs().getValue());
+            baos.write(pdu.getDcs().getValue());
 
             // TP-VP - Optional
             // Probably not needed
@@ -221,18 +220,18 @@ public final class GsmEncoder
     /**
      * Encodes an octet encoded sms pdu.
      * 
-     * @param thePdu
-     * @param theDestination
-     * @param theSender
+     * @param pdu
+     * @param destination
+     * @param sender
      * @return
      * @throws SmsException
      */
-    private static byte[] encodeOctetPdu(SmsPdu thePdu, SmsAddress theDestination, SmsAddress theSender)
+    private static byte[] encodeOctetPdu(SmsPdu pdu, SmsAddress destination, SmsAddress sender)
         throws SmsException
     {
-        SmsUserData userData = thePdu.getUserData();
+        SmsUserData userData = pdu.getUserData();
         byte[] ud = userData.getData();
-        byte[] udh = thePdu.getUserDataHeaders();
+        byte[] udh = pdu.getUserDataHeaders();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream(200);
         
@@ -277,13 +276,13 @@ public final class GsmEncoder
             //   - myBit 4-6 - TON
             //   - myBit 0-3 - NPI
             // - n octets - BCD
-            writeDestinationAddress(baos, theDestination);
+            writeDestinationAddress(baos, destination);
 
             // TP-PID
             baos.write(0x00);
 
             // TP-DCS
-            baos.write(thePdu.getDcs().getValue());
+            baos.write(pdu.getDcs().getValue());
 
             // 1 octet/ 7 octets
             // TP-VP - Optional
@@ -329,16 +328,16 @@ public final class GsmEncoder
     /**
      * Writes a destination address to the given stream in the correct format
      *
-     * @param theOs Stream to write to
-     * @param theDestination Destination address to encode
+     * @param os Stream to write to
+     * @param destination Destination address to encode
      * @throws IOException Thrown if failing to write to the stream
      */
-    private static void writeDestinationAddress(OutputStream theOs, SmsAddress theDestination)
+    private static void writeDestinationAddress(OutputStream os, SmsAddress destination)
         throws IOException
     {
-        String address = theDestination.getAddress();
-        int ton = theDestination.getTypeOfNumber();
-        int npi = theDestination.getNumberingPlanIdentification();
+        String address = destination.getAddress();
+        int ton = destination.getTypeOfNumber();
+        int npi = destination.getNumberingPlanIdentification();
 
         // trim leading + from address
         if (address.charAt(0) == '+')
@@ -347,12 +346,12 @@ public final class GsmEncoder
         }
 
         // Length in semi octets
-        theOs.write(address.length());
+        os.write(address.length());
 
         // Type Of Address
-        theOs.write(0x80 | ton << 4 | npi);
+        os.write(0x80 | ton << 4 | npi);
 
         // BCD encode
-        SmsPduUtil.writeBcdNumber(theOs, address);
+        SmsPduUtil.writeBcdNumber(os, address);
     }    
 }

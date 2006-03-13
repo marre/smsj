@@ -36,6 +36,8 @@ package org.marre.sms.transport.gsm;
 
 public class GsmException extends Exception
 {
+    private static final long serialVersionUID = 7650008473898272619L;
+    
     private String response_;
 
     public GsmException(String msg, Throwable cause)

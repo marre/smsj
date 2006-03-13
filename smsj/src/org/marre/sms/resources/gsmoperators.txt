@@ -1,0 +1,8 @@
+se|Telia Mobitel|240|1
+se|Comviq GSM|240|7
+se|Vodafone|240|8
+de|Vodafone|262|1
+de|D2 Mannesmann Mobilfunk|262|2
+de|E-Plus Mobilfunk|263|3
+it|Telecom Italia Mobile TIM|222|1
+it|Omnitel Pronto|222|10

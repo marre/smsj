@@ -48,28 +48,28 @@ import org.marre.xml.XmlWriter;
 
 public class WbxmlWriter implements XmlWriter
 {
-    private Map myStringTable;
-    private ByteArrayOutputStream myStringTableBuf;
+    private Map stringTable_;
+    private ByteArrayOutputStream stringTableBuf_;
 
-    private OutputStream myOs;
-    private ByteArrayOutputStream myWbxmlBody;
+    private OutputStream os_;
+    private ByteArrayOutputStream wbxmlBody_;
 
-    private String[] myTagTokens;
-    private String[] myAttrStartTokens;
-    private String[] myAttrValueTokens;
+    private String[] tagTokens_;
+    private String[] attrStartTokens_;
+    private String[] attrValueTokens_;
 
-    private String myPublicID;
+    private String publicID_;
     
-    public WbxmlWriter(OutputStream os, String[] theTagTokens, String[] theAttrStrartTokens, String[] theAttrValueTokens)
+    public WbxmlWriter(OutputStream os, String[] tagTokens, String[] attrStrartTokens, String[] attrValueTokens)
     {
-        myWbxmlBody = new ByteArrayOutputStream();
-        myStringTableBuf = new ByteArrayOutputStream();
-        myStringTable = new HashMap();
-        myOs = os;
+        wbxmlBody_ = new ByteArrayOutputStream();
+        stringTableBuf_ = new ByteArrayOutputStream();
+        stringTable_ = new HashMap();
+        os_ = os;
 
-        setTagTokens(theTagTokens);
-        setAttrStartTokens(theAttrStrartTokens);
-        setAttrValueTokens(theAttrValueTokens);
+        setTagTokens(tagTokens);
+        setAttrStartTokens(attrStrartTokens);
+        setAttrValueTokens(attrValueTokens);
     }
 
     public WbxmlWriter(OutputStream os)
@@ -85,116 +85,116 @@ public class WbxmlWriter implements XmlWriter
     public void flush() throws IOException
     {
         // WBXML v 0.1
-        WspUtil.writeUint8(myOs, 0x01);
+        WspUtil.writeUint8(os_, 0x01);
         // Public ID
-        writePublicIdentifier(myOs, myPublicID);
+        writePublicIdentifier(os_, publicID_);
         // Charset - "UTF-8"
-        WspUtil.writeUintvar(myOs, WapConstants.MIB_ENUM_UTF_8);
+        WspUtil.writeUintvar(os_, WapConstants.MIB_ENUM_UTF_8);
         // String table
-        writeStringTable(myOs);
+        writeStringTable(os_);
 
         // Write body
-        myWbxmlBody.close();
-        myWbxmlBody.writeTo(myOs);
+        wbxmlBody_.close();
+        wbxmlBody_.writeTo(os_);
 
-        myOs.flush();
+        os_.flush();
     }
 
     /////// XmlWriter
 
     public void setDoctype(String name, String systemURI)
     {
-        myPublicID = null; //Liquidterm: Defaults to unknown
+        publicID_ = null; //Liquidterm: Defaults to unknown
     }
 
     public void setDoctype(String name, String publicID, String publicURI)
     {
-        myPublicID = publicID;
+        publicID_ = publicID;
     }
 
     public void setDoctype(String publicID)
     {
-        myPublicID = publicID;
+        publicID_ = publicID;
     }
 
     public void addStartElement(String tag) throws IOException
     {
-        int tagIndex = StringUtil.findString(myTagTokens, tag);
+        int tagIndex = StringUtil.findString(tagTokens_, tag);
         if (tagIndex >= 0)
         {
             // Known tag
             tagIndex += 0x05; // Tag token table starts at #5
-            myWbxmlBody.write(WbxmlConstants.TOKEN_KNOWN_C | tagIndex);
+            wbxmlBody_.write(WbxmlConstants.TOKEN_KNOWN_C | tagIndex);
         }
         else
         {
             // Unknown. Add as literal
-            myWbxmlBody.write(WbxmlConstants.TOKEN_LITERAL_C);
-            writeStrT(myWbxmlBody, tag);
+            wbxmlBody_.write(WbxmlConstants.TOKEN_LITERAL_C);
+            writeStrT(wbxmlBody_, tag);
         }
     }
 
     public void addStartElement(String tag, XmlAttribute[] attribs) throws IOException
     {
-        int tagIndex = StringUtil.findString(myTagTokens, tag);
+        int tagIndex = StringUtil.findString(tagTokens_, tag);
         if (tagIndex >= 0)
         {
             // Known tag
             tagIndex += 0x05; // Tag token table starts at #5
-            myWbxmlBody.write(WbxmlConstants.TOKEN_KNOWN_AC | tagIndex);
+            wbxmlBody_.write(WbxmlConstants.TOKEN_KNOWN_AC | tagIndex);
         }
         else if (tag != null)
         {
             // Unknown. Add as literal (Liquidterm: only if not null)
-            myWbxmlBody.write(WbxmlConstants.TOKEN_LITERAL_AC);
-            writeStrT(myWbxmlBody, tag);
+            wbxmlBody_.write(WbxmlConstants.TOKEN_LITERAL_AC);
+            writeStrT(wbxmlBody_, tag);
         }
 
         // Write attributes
-        writeAttributes(myWbxmlBody, attribs);
+        writeAttributes(wbxmlBody_, attribs);
     }
 
     public void addEmptyElement(String tag) throws IOException
     {
-        int tagIndex = StringUtil.findString(myTagTokens, tag);
+        int tagIndex = StringUtil.findString(tagTokens_, tag);
         if (tagIndex >= 0)
         {
             // Known tag
             tagIndex += 0x05; // Tag token table starts at #5
-            myWbxmlBody.write(WbxmlConstants.TOKEN_KNOWN | tagIndex);
+            wbxmlBody_.write(WbxmlConstants.TOKEN_KNOWN | tagIndex);
         }
         else if (tag != null)
         {
             // Unknown. Add as literal (Liquidterm: if not null)
-            myWbxmlBody.write(WbxmlConstants.TOKEN_LITERAL);
-            writeStrT(myWbxmlBody, tag);
+            wbxmlBody_.write(WbxmlConstants.TOKEN_LITERAL);
+            writeStrT(wbxmlBody_, tag);
         }
     }
 
     public void addEmptyElement(String tag, XmlAttribute[] attribs) throws IOException
     {
-        int tagIndex = StringUtil.findString(myTagTokens, tag);
+        int tagIndex = StringUtil.findString(tagTokens_, tag);
 
         if (tagIndex >= 0)
         {
             // Known tag
             tagIndex += 0x05; // Tag token table starts at #5
-            myWbxmlBody.write(WbxmlConstants.TOKEN_KNOWN_A | tagIndex);
+            wbxmlBody_.write(WbxmlConstants.TOKEN_KNOWN_A | tagIndex);
         }
         else
         {
             // Unknown. Add as literal
-            myWbxmlBody.write(WbxmlConstants.TOKEN_LITERAL_A);
-            writeStrT(myWbxmlBody, tag);
+            wbxmlBody_.write(WbxmlConstants.TOKEN_LITERAL_A);
+            writeStrT(wbxmlBody_, tag);
         }
 
         // Add attributes
-        writeAttributes(myWbxmlBody, attribs);
+        writeAttributes(wbxmlBody_, attribs);
     }
 
-    public void addEndElement() throws IOException
+    public void addEndElement()
     {
-        myWbxmlBody.write(WbxmlConstants.TOKEN_END);
+        wbxmlBody_.write(WbxmlConstants.TOKEN_END);
     }
 
     public void addCharacters(char[] ch, int start, int length) throws IOException
@@ -204,8 +204,8 @@ public class WbxmlWriter implements XmlWriter
 
     public void addCharacters(String str) throws IOException
     {
-        myWbxmlBody.write(WbxmlConstants.TOKEN_STR_I);
-        writeStrI(myWbxmlBody, str);
+        wbxmlBody_.write(WbxmlConstants.TOKEN_STR_I);
+        writeStrI(wbxmlBody_, str);
     }
 
     // WBXML specific stuff
@@ -217,9 +217,9 @@ public class WbxmlWriter implements XmlWriter
 
     public void addOpaqueData(byte[] buff, int off, int len) throws IOException
     {
-        myWbxmlBody.write(WbxmlConstants.TOKEN_OPAQ);
-        WspUtil.writeUintvar(myWbxmlBody, buff.length);
-        myWbxmlBody.write(buff, off, len);
+        wbxmlBody_.write(WbxmlConstants.TOKEN_OPAQ);
+        WspUtil.writeUintvar(wbxmlBody_, buff.length);
+        wbxmlBody_.write(buff, off, len);
     }
 
     /**
@@ -228,16 +228,16 @@ public class WbxmlWriter implements XmlWriter
      * @param theTagTokens
      *            first element in this array defines tag #5
      */
-    public void setTagTokens(String[] theTagTokens)
+    public void setTagTokens(String[] tagTokens)
     {
-        if (theTagTokens != null)
+        if (tagTokens != null)
         {
-            myTagTokens = new String[theTagTokens.length];
-            System.arraycopy(theTagTokens, 0, myTagTokens, 0, theTagTokens.length);
+            tagTokens_ = new String[tagTokens.length];
+            System.arraycopy(tagTokens, 0, tagTokens_, 0, tagTokens.length);
         }
         else
         {
-            myTagTokens = null;
+            tagTokens_ = null;
         }
     }
 
@@ -247,16 +247,16 @@ public class WbxmlWriter implements XmlWriter
      * @param theAttrStrartTokens
      *            first element in this array defines attribute #85
      */
-    public void setAttrStartTokens(String[] theAttrStrartTokens)
+    public void setAttrStartTokens(String[] attrStrartTokens)
     {
-        if (theAttrStrartTokens != null)
+        if (attrStrartTokens != null)
         {
-            myAttrStartTokens = new String[theAttrStrartTokens.length];
-            System.arraycopy(theAttrStrartTokens, 0, myAttrStartTokens, 0, theAttrStrartTokens.length);
+            attrStartTokens_ = new String[attrStrartTokens.length];
+            System.arraycopy(attrStrartTokens, 0, attrStartTokens_, 0, attrStrartTokens.length);
         }
         else
         {
-            myAttrStartTokens = null;
+            attrStartTokens_ = null;
         }
     }
 
@@ -266,16 +266,16 @@ public class WbxmlWriter implements XmlWriter
      * @param theAttrValueTokens
      *            first element in this array defines attribute #05
      */
-    public void setAttrValueTokens(String[] theAttrValueTokens)
+    public void setAttrValueTokens(String[] attrValueTokens)
     {
-        if (theAttrValueTokens != null)
+        if (attrValueTokens != null)
         {
-            myAttrValueTokens = new String[theAttrValueTokens.length];
-            System.arraycopy(theAttrValueTokens, 0, myAttrValueTokens, 0, theAttrValueTokens.length);
+            attrValueTokens_ = new String[attrValueTokens.length];
+            System.arraycopy(attrValueTokens, 0, attrValueTokens_, 0, attrValueTokens.length);
         }
         else
         {
-            myAttrValueTokens = null;
+            attrValueTokens_ = null;
         }
     }
 
@@ -306,36 +306,36 @@ public class WbxmlWriter implements XmlWriter
         }
     }
 
-    private void writeStrI(OutputStream theOs, String str) throws IOException
+    private void writeStrI(OutputStream os, String str) throws IOException
     {
         //Liquidterm: protection against null values
         if (str != null)
         {
-            theOs.write(str.getBytes("UTF-8"));
-            theOs.write(0x00);
+            os.write(str.getBytes("UTF-8"));
+            os.write(0x00);
         }
     }
 
-    private void writeStrT(OutputStream theOs, String str) throws IOException
+    private void writeStrT(OutputStream os, String str) throws IOException
     {
-        Integer index = (Integer) myStringTable.get(str);
+        Integer index = (Integer) stringTable_.get(str);
 
         if (index == null)
         {
-            index = new Integer(myStringTableBuf.size());
-            myStringTable.put(str, index);
-            writeStrI(myStringTableBuf, str);
+            index = new Integer(stringTableBuf_.size());
+            stringTable_.put(str, index);
+            writeStrI(stringTableBuf_, str);
         }
 
-        WspUtil.writeUintvar(theOs, index.intValue());
+        WspUtil.writeUintvar(os, index.intValue());
     }
 
-    private void writeStringTable(OutputStream theOs) throws IOException
+    private void writeStringTable(OutputStream os) throws IOException
     {
         // Write length of string table
-        WspUtil.writeUintvar(theOs, myStringTableBuf.size());
+        WspUtil.writeUintvar(os, stringTableBuf_.size());
         // Write string table
-        myStringTableBuf.writeTo(theOs);
+        stringTableBuf_.writeTo(os);
     }
 
     // FIXME: Unsure how to do this stuff with the attributes
@@ -348,68 +348,50 @@ public class WbxmlWriter implements XmlWriter
         {
             // TYPE=VALUE
             String typeValue = attribs[i].getType() + "=" + attribs[i].getValue();
-            idx = StringUtil.findString(myAttrStartTokens, typeValue);
+            idx = StringUtil.findString(attrStartTokens_, typeValue);
             if (idx >= 0)
             {
                 // Found a matching type-value pair
                 idx += 0x05; // Attr start token table starts at #5
-                myWbxmlBody.write(idx);
+                wbxmlBody_.write(idx);
             }
             else
             {
                 // Try with separate type and values
                 
                 // TYPE
-                idx = StringUtil.findString(myAttrStartTokens, attribs[i].getType());
+                idx = StringUtil.findString(attrStartTokens_, attribs[i].getType());
                 if (idx >= 0)
                 {
                     idx += 0x05; // Attr start token table starts at #5
-                    myWbxmlBody.write(idx);
+                    wbxmlBody_.write(idx);
                 }
                 else
                 {
-                    myWbxmlBody.write(WbxmlConstants.TOKEN_LITERAL);
-                    writeStrT(myWbxmlBody, attribs[i].getType());
+                    wbxmlBody_.write(WbxmlConstants.TOKEN_LITERAL);
+                    writeStrT(wbxmlBody_, attribs[i].getType());
                 }
 
                 // VALUE
                 String attrValue = attribs[i].getValue();
                 if (attrValue != null && (!attrValue.equals("")))
                 {
-                    idx = StringUtil.findString(myAttrValueTokens, attrValue);
+                    idx = StringUtil.findString(attrValueTokens_, attrValue);
                     if (idx >= 0)
                     {
                         idx += 0x85; // Attr value token table starts at 85
-                        myWbxmlBody.write(idx);
+                        wbxmlBody_.write(idx);
                     }
                     else
                     {
-                        myWbxmlBody.write(WbxmlConstants.TOKEN_STR_I);
-                        writeStrI(myWbxmlBody, attrValue);
+                        wbxmlBody_.write(WbxmlConstants.TOKEN_STR_I);
+                        writeStrI(wbxmlBody_, attrValue);
                     }
                 }
             }            
         }
 
         // End of attributes
-        myWbxmlBody.write(WbxmlConstants.TOKEN_END);
+        wbxmlBody_.write(WbxmlConstants.TOKEN_END);
     }
-
-    /*
-     * public static void main(String argv[]) throws Exception { XmlWriter
-     * handler = new WbxmlWriter();
-     * 
-     * handler.addStartElement("element", new XmlAttribute[] { new
-     * XmlAttribute("type1", "value1") }); handler.addCharacters("Some text");
-     * handler.addEmptyElement("empty", new XmlAttribute[] { new
-     * XmlAttribute("type2", "value2") }); handler.addStartElement("element",
-     * new XmlAttribute[] { new XmlAttribute("type3", "value3"), new
-     * XmlAttribute("type4", "value4") }); handler.addEmptyElement("empty", new
-     * XmlAttribute[] { new XmlAttribute("type2", "value2") });
-     * handler.addEmptyElement("empty", new XmlAttribute[] { new
-     * XmlAttribute("type2", "value2") }); handler.addEndTag();
-     * handler.addEndTag();
-     * 
-     * handler.writeTo(new FileOutputStream("demo.wbxml")); }
-     */
 }

@@ -45,7 +45,7 @@ public final class StringUtil
 {
     private static final char[] RANDOM_CHARS = "abcdefghijklmnopqrstuvwxyz1234567890".toCharArray();
 
-    private static Random myRandom = new Random();
+    private static Random rnd_ = new Random();
 
     /**
      * This class isn't intended to be instantiated.
@@ -78,17 +78,17 @@ public final class StringUtil
     /**
      * Converts a byte array to a string with hex values.
      * 
-     * @param theData
+     * @param data
      *            Data to convert
      * @return the encoded string
      */
-    public static String bytesToHexString(byte[] theData)
+    public static String bytesToHexString(byte[] data)
     {
-        StringBuffer hexStrBuff = new StringBuffer(theData.length * 2);
+        StringBuffer hexStrBuff = new StringBuffer(data.length * 2);
 
-        for (int i = 0; i < theData.length; i++)
+        for (int i = 0; i < data.length; i++)
         {
-            String hexByteStr = Integer.toHexString(theData[i] & 0xff).toUpperCase();
+            String hexByteStr = Integer.toHexString(data[i] & 0xff).toUpperCase();
             if (hexByteStr.length() == 1)
             {
                 hexStrBuff.append("0");
@@ -102,15 +102,15 @@ public final class StringUtil
     /**
      * Converts a byte to a string with hex values.
      * 
-     * @param theByte
+     * @param data
      *            Byte to convert
      * @return the encoded string
      */
-    public static String byteToHexString(byte theByte)
+    public static String byteToHexString(byte data)
     {
         StringBuffer hexStrBuff = new StringBuffer(2);
 
-        String hexByteStr = Integer.toHexString(theByte & 0xff).toUpperCase();
+        String hexByteStr = Integer.toHexString(data & 0xff).toUpperCase();
         if (hexByteStr.length() == 1)
         {
             hexStrBuff.append("0");
@@ -123,17 +123,17 @@ public final class StringUtil
     /**
      * Converts a string of hex characters to a byte array.
      * 
-     * @param theHexString
+     * @param hexString
      *            The hex string to read
      * @return the resulting byte array
      */
-    public static byte[] hexStringToBytes(String theHexString)
+    public static byte[] hexStringToBytes(String hexString)
     {
-        byte[] data = new byte[theHexString.length() / 2];
+        byte[] data = new byte[hexString.length() / 2];
 
         for (int i = 0; i < data.length; i++)
         {
-            String a = theHexString.substring(i * 2, i * 2 + 2);
+            String a = hexString.substring(i * 2, i * 2 + 2);
             data[i] = (byte) Integer.parseInt(a, 16);
         }
 
@@ -179,7 +179,7 @@ public final class StringUtil
 
         for (int i = 0; i < length; i++)
         {
-            sb.append(RANDOM_CHARS[myRandom.nextInt(RANDOM_CHARS.length)]);
+            sb.append(RANDOM_CHARS[rnd_.nextInt(RANDOM_CHARS.length)]);
         }
 
         return sb.toString();

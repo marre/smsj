@@ -37,18 +37,18 @@ class NokiaPart
     static final byte ITEM_PROFILE_NAME = 0x04;
     static final byte ITEM_SCREEN_SAVER = 0x06;
 
-    private byte myItemType;
-    private byte[] myData;
+    private byte itemType_;
+    private byte[] itemData_;
 
     /**
      *
-     * @param theItemType
-     * @param data
+     * @param itemType
+     * @param itemData
      */
-    NokiaPart(byte theItemType, byte[] data)
+    NokiaPart(byte itemType, byte[] itemData)
     {
-        myItemType = theItemType;
-        myData = data;
+        itemType_ = itemType;
+        itemData_ = itemData;
     }
 
     /**
@@ -57,7 +57,7 @@ class NokiaPart
      */
     byte getItemType()
     {
-        return myItemType;
+        return itemType_;
     }
 
     /**
@@ -66,6 +66,6 @@ class NokiaPart
      */
     byte[] getData()
     {
-        return myData;
+        return itemData_;
     }
 }

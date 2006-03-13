@@ -56,46 +56,46 @@ public final class SmsTransportManager
     /**
      * Dynamically instantiates and initializes an SmsTransport.
      * 
-     * @param theClassname
+     * @param classname
      *            Full classname of the transport. E.g.
      *            "org.marre.sms.transport.gsm.GsmTransport"
-     * @param theProps
+     * @param properties
      *            Properties to initialize the transport with.
      * @return An initialized SmsTransport object
      * @throws SmsException
      *             If we failed to load the requested transport
      */
-    public static SmsTransport getTransport(String theClassname, Properties theProps) throws SmsException
+    public static SmsTransport getTransport(String classname, Properties properties) throws SmsException
     {
         SmsTransport transport = null;
 
         try
         {
             // Try to find and instanciate the transport
-            Class clazz = Class.forName(theClassname);
+            Class clazz = Class.forName(classname);
             Object obj = clazz.newInstance();
 
             // No promblems so far. Initialize the transport
             transport = (SmsTransport) obj;
-            transport.init(theProps);
+            transport.init(properties);
 
             return (SmsTransport) obj;
         }
         catch (ClassCastException ex)
         {
-            throw new SmsException(theClassname + "is not an SmsTransport.", ex);
+            throw new SmsException(classname + "is not an SmsTransport.", ex);
         }
         catch (ClassNotFoundException ex)
         {
-            throw new SmsException("Couldn't find " + theClassname + ". Please check your classpath.", ex);
+            throw new SmsException("Couldn't find " + classname + ". Please check your classpath.", ex);
         }
         catch (InstantiationException ex)
         {
-            throw new SmsException("Couldn't create " + theClassname + ". Please check your classpath.", ex);
+            throw new SmsException("Couldn't create " + classname + ". Please check your classpath.", ex);
         }
         catch (IllegalAccessException ex)
         {
-            throw new SmsException("Couldn't create " + theClassname + ". Please check your classpath.", ex);
+            throw new SmsException("Couldn't create " + classname + ". Please check your classpath.", ex);
         }
     }
 }

@@ -42,31 +42,31 @@ package org.marre.sms;
 public class SmsUserData
 {
     /** The actual user data. */
-    protected byte[] myData;
+    protected byte[] data_;
     
-    /** Length of myData, can be in octets or septets. */
-    protected int myLength;
+    /** Length of data, in octets or septets depending on the dcs. */
+    protected int length_;
     
     /** Data Coding Scheme for this user data. */
-    protected SmsDcs myDcs;
+    protected SmsDcs dcs_;
     
     public SmsUserData(byte[] userData, int userDataLength, SmsDcs dataCodingScheme)
     {
-        myData = userData;
-        myLength = userDataLength;
-        myDcs = dataCodingScheme;
+        data_ = userData;
+        length_ = userDataLength;
+        dcs_ = dataCodingScheme;
     }
     
     public SmsUserData(byte[] userData)
     {
-        myData = userData;
-        myLength = userData.length;
-        myDcs = SmsDcs.getGeneralDataCodingDcs(SmsDcs.ALPHABET_8BIT, SmsDcs.MSG_CLASS_UNKNOWN);
+        data_ = userData;
+        length_ = userData.length;
+        dcs_ = SmsDcs.getGeneralDataCodingDcs(SmsDcs.ALPHABET_8BIT, SmsDcs.MSG_CLASS_UNKNOWN);
     }
     
     public byte[] getData()
     {
-        return myData;
+        return data_;
     }
     
     /**
@@ -80,7 +80,7 @@ public class SmsUserData
      */
     public int getLength()
     {
-        return myLength;
+        return length_;
     }
     
     /**
@@ -90,6 +90,6 @@ public class SmsUserData
      */
     public SmsDcs getDcs()
     {
-        return myDcs;
+        return dcs_;
     }
 }

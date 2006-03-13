@@ -24,6 +24,7 @@ package org.marre.sms.nokia;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,7 +42,7 @@ import org.marre.sms.SmsUserData;
  */
 abstract class NokiaMultipartMessage extends SmsPortAddressedMessage
 {
-    private List myParts = new LinkedList();
+    private List parts_ = new LinkedList();
 
     /**
      * Creates a Nokia Multipart Message
@@ -61,7 +62,7 @@ abstract class NokiaMultipartMessage extends SmsPortAddressedMessage
      */
     protected void addMultipart(byte theItemType, byte[] data)
     {
-        myParts.add(new NokiaPart(theItemType, data));
+        parts_.add(new NokiaPart(theItemType, data));
     }
 
     /**
@@ -69,7 +70,7 @@ abstract class NokiaMultipartMessage extends SmsPortAddressedMessage
      */
     protected void clear()
     {
-        myParts.clear();
+        parts_.clear();
     }
 
     public SmsUserData getUserData()
@@ -84,9 +85,9 @@ abstract class NokiaMultipartMessage extends SmsPortAddressedMessage
             baos.write(0x30);
 
             // Loop through all multiparts and add them
-            for (int i = 0; i < myParts.size(); i++)
+            for (Iterator i = parts_.iterator(); i.hasNext(); )
             {
-                NokiaPart part = (NokiaPart) myParts.get(i);
+                NokiaPart part = (NokiaPart) i.next();
                 byte[] data = part.getData();
 
                 // Type - 1 octet

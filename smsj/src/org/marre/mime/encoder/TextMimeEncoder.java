@@ -69,61 +69,61 @@ public class TextMimeEncoder implements MimeEncoder
     /**
      * Writes the content-type of the message to the given stream.
      * 
-     * @param theOs
+     * @param os
      *            The stream to write to
-     * @param theMsg
+     * @param msg
      *            The message to get the content-type from
      * @throws IOException
      *             Thrown if we fail to write the content-type to the stream
      */
-    public void writeContentType(OutputStream theOs, MimeBodyPart theMsg) throws IOException
+    public void writeContentType(OutputStream os, MimeBodyPart msg) throws IOException
     {
-        MimeContentType ct = theMsg.getContentType();
+        MimeContentType ct = msg.getContentType();
 
-        if (theMsg instanceof MimeMultipart)
+        if (msg instanceof MimeMultipart)
         {
             String boundary = StringUtil.randString(DEFAULT_BOUNDARY_STRING_LENGTH);
             ct.setParam("boundary", boundary);
         }
 
-        writeHeader(theOs, ct);
+        writeHeader(os, ct);
     }
 
     /**
      * Writes the headers of the message to the given stream.
      * 
-     * @param theOs
+     * @param os
      *            The stream to write to
-     * @param theMsg
+     * @param msg
      *            The message to get the headers from
      * @throws IOException
      *             Thrown if we fail to write the headers to the stream
      */
-    public void writeHeaders(OutputStream theOs, MimeBodyPart theMsg) throws IOException
+    public void writeHeaders(OutputStream os, MimeBodyPart msg) throws IOException
     {
-        for (int i = 0; i < theMsg.getHeaderCount(); i++)
+        for (int i = 0; i < msg.getHeaderCount(); i++)
         {
-            MimeHeader header = theMsg.getHeader(i);
-            writeHeader(theOs, header);
+            MimeHeader header = msg.getHeader(i);
+            writeHeader(os, header);
         }
-        theOs.write("\r\n".getBytes());
+        os.write("\r\n".getBytes());
     }
 
     /**
      * Writes the body of the message to the given stream.
      * 
-     * @param theOs
+     * @param os
      *            The stream to write to
-     * @param theMsg
+     * @param msg
      *            The message to get the data from
      * @throws IOException
      *             Thrown if we fail to write the body to the stream
      */
-    public void writeBody(OutputStream theOs, MimeBodyPart theMsg) throws IOException
+    public void writeBody(OutputStream os, MimeBodyPart msg) throws IOException
     {
-        if (theMsg instanceof MimeMultipart)
+        if (msg instanceof MimeMultipart)
         {
-            String ct = theMsg.getContentType().getValue();
+            String ct = msg.getContentType().getValue();
             if (ct.startsWith("application/vnd.wap.multipart."))
             {
                 // WSP encoded multipart
@@ -131,27 +131,27 @@ public class TextMimeEncoder implements MimeEncoder
             }
             else
             {
-                writeMultipart(theOs, (MimeMultipart) theMsg);
+                writeMultipart(os, (MimeMultipart) msg);
             }
         }
         else
         {
-            theOs.write(theMsg.getBody());
-            theOs.write("\r\n".getBytes());
+            os.write(msg.getBody());
+            os.write("\r\n".getBytes());
         }
     }
 
     /**
      * Write one header to the stream.
      * 
-     * @param theOs
+     * @param os
      *            The stream to write to
      * @param header
      *            The header to write.
      * @throws IOException
      *             Thrown if we fail to write the header to the stream
      */
-    protected void writeHeader(OutputStream theOs, MimeHeader header) throws IOException
+    protected void writeHeader(OutputStream os, MimeHeader header) throws IOException
     {
         StringBuffer strBuff = new StringBuffer();
 
@@ -170,42 +170,42 @@ public class TextMimeEncoder implements MimeEncoder
         // <CR><LF>
         strBuff.append("\r\n");
 
-        theOs.write(strBuff.toString().getBytes());
+        os.write(strBuff.toString().getBytes());
     }
 
     /**
      * Writes a multipart entry to the stream.
      * 
-     * @param theOs
+     * @param os
      *            The stream to write to
-     * @param theMultipart
+     * @param multipart
      *            The header to write.
      * @throws IOException
      *             Thrown if we fail to write an entry to the stream
      */
-    private void writeMultipart(OutputStream theOs, MimeMultipart theMultipart) throws IOException
+    private void writeMultipart(OutputStream os, MimeMultipart multipart) throws IOException
     {
-        MimeContentType ct = theMultipart.getContentType();
+        MimeContentType ct = multipart.getContentType();
         MimeHeaderParam boundaryParam = ct.getParam("boundary");
         String boundary = "--" + boundaryParam.getValue();
 
-        for (int i = 0; i < theMultipart.getBodyPartCount(); i++)
+        for (int i = 0; i < multipart.getBodyPartCount(); i++)
         {
-            MimeBodyPart part = (MimeBodyPart) theMultipart.getBodyPart(i);
+            MimeBodyPart part = multipart.getBodyPart(i);
 
             // Write boundary string
-            theOs.write(boundary.getBytes());
-            theOs.write("\r\n".getBytes());
+            os.write(boundary.getBytes());
+            os.write("\r\n".getBytes());
 
             // Generate headers + content-type
-            writeContentType(theOs, part);
-            writeHeaders(theOs, part);
+            writeContentType(os, part);
+            writeHeaders(os, part);
 
             // Write data
-            writeBody(theOs, part);
+            writeBody(os, part);
         }
         // Write end of boundary
-        theOs.write(boundary.getBytes());
-        theOs.write("--\r\n".getBytes());
+        os.write(boundary.getBytes());
+        os.write("--\r\n".getBytes());
     }
 }

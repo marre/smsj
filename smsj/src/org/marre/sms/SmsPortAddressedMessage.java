@@ -44,8 +44,8 @@ package org.marre.sms;
  */
 public abstract class SmsPortAddressedMessage extends SmsConcatMessage
 {
-    protected int myDestPort;
-    protected int myOrigPort;
+    protected int destPort_;
+    protected int origPort_;
     
     /**
      * Creates a new SmsPortAddressedMessage with the given dest and orig port.
@@ -66,12 +66,12 @@ public abstract class SmsPortAddressedMessage extends SmsConcatMessage
      */
     public void setPorts(int destPort, int origPort)
     {
-        myDestPort = destPort;
-        myOrigPort = origPort;
+        destPort_ = destPort;
+        origPort_ = origPort;
     }
     
     public SmsUdhElement[] getUdhElements()
     {
-        return new SmsUdhElement[] { SmsUdhUtil.get16BitApplicationPortUdh(myDestPort, myOrigPort) };
+        return new SmsUdhElement[] { SmsUdhUtil.get16BitApplicationPortUdh(destPort_, origPort_) };
     }
 }

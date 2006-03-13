@@ -70,16 +70,16 @@ public class Mm1Transport implements MmsTransport
     /**
      * URL for the proxy gateway
      */
-    private String myMmsProxyGatewayAddress;
+    private String mmsProxyGatewayAddress_;
 
     /**
      * @see org.marre.mms.transport.MmsTransport#init(java.util.Properties)
      */
-    public void init(Properties theProps) throws MmsException
+    public void init(Properties properties) throws MmsException
     {
-        myMmsProxyGatewayAddress = theProps.getProperty("smsj.mm1.proxygateway");
+        mmsProxyGatewayAddress_ = properties.getProperty("smsj.mm1.proxygateway");
 
-        if (myMmsProxyGatewayAddress == null)
+        if (mmsProxyGatewayAddress_ == null)
         {
             throw new MmsException("smsj.mm1.proxygateway not set");
         }
@@ -99,13 +99,13 @@ public class Mm1Transport implements MmsTransport
      * 
      * @see org.marre.mms.transport.MmsTransport#send(org.marre.mime.MimeBodyPart, org.marre.mms.MmsHeaders)
      */
-    public void send(MimeBodyPart theMessage, MmsHeaders theHeaders) throws MmsException, IOException
+    public void send(MimeBodyPart message, MmsHeaders headers) throws MmsException, IOException
     {
         // POST data to the MMSC
         
         // First create the data so we can find out how large it is
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Mm1Encoder.writeMessageToStream(baos, theMessage, theHeaders);
+        Mm1Encoder.writeMessageToStream(baos, message, headers);
         baos.close();
         
         if (log_.isDebugEnabled())
@@ -114,7 +114,7 @@ public class Mm1Transport implements MmsTransport
             log_.debug("request [" + str + "]");
         }
         
-        URL url = new URL(myMmsProxyGatewayAddress);
+        URL url = new URL(mmsProxyGatewayAddress_);
         HttpURLConnection urlConn = (HttpURLConnection)url.openConnection();
         
         urlConn.addRequestProperty("Content-Length", "" + baos.size());
@@ -154,7 +154,7 @@ public class Mm1Transport implements MmsTransport
      * The mm1 protocol is connection less so this method is not used.
      * @see org.marre.mms.transport.MmsTransport#disconnect()
      */
-    public void disconnect() throws IOException
+    public void disconnect()
     {
         // Empty
     }

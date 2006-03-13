@@ -36,8 +36,8 @@ package org.marre.mime;
 
 public class MimeContentType extends MimeHeader
 {
-    public MimeContentType(String theContentType)
+    public MimeContentType(String contentType)
     {
-        super("Content-type", theContentType);
+        super("Content-type", contentType);
     }
 }

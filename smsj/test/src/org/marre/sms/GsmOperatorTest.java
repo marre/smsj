@@ -32,9 +32,9 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre;
+package org.marre.sms;
 
-import org.marre.sms.GsmOperators;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -43,16 +43,12 @@ import junit.framework.TestCase;
  * @author Markus
  * @version $Id$
  */
-
-public class GsmOperatorsTest extends TestCase
+public class GsmOperatorTest extends TestCase
 {
-    public void testGetMCC_MNC()
+    public void testLoad()
     {
-        int mccMnc[] = GsmOperators.getMCC_MNC("se", "telia");
+        List operators = GsmOperator.getOperators();
         
-        assertNotNull(mccMnc);
-        assertEquals(2, mccMnc.length);
-        assertEquals(240, mccMnc[0]);
-        assertEquals(1, mccMnc[1]);
+        assertTrue(operators.size() > 0);
     }
 }

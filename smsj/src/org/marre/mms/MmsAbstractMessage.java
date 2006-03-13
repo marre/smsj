@@ -45,7 +45,7 @@ import org.marre.mime.MimeContentType;
  */
 public abstract class MmsAbstractMessage extends MmsMessage
 {
-    private MimeContentType myContentType;
+    private MimeContentType contentType_;
 
     /**
      * 
@@ -53,7 +53,7 @@ public abstract class MmsAbstractMessage extends MmsMessage
      */
     public void setContentType(MimeContentType contentType)
     {
-        myContentType = contentType;
+        contentType_ = contentType;
     }
 
     /**
@@ -62,7 +62,7 @@ public abstract class MmsAbstractMessage extends MmsMessage
      */
     public void setContentType(String contentType)
     {
-        myContentType = new MimeContentType(contentType);
+        contentType_ = new MimeContentType(contentType);
     }
 
     /**
@@ -70,6 +70,6 @@ public abstract class MmsAbstractMessage extends MmsMessage
      */
     public MimeContentType getContentType()
     {
-        return myContentType;
+        return contentType_;
     }
 }

@@ -53,45 +53,45 @@ public class SmsTextMessage extends SmsConcatMessage
     /**
      * Creates an SmsTextMessage with the given dcs.
      * 
-     * @param theMsg The message
-     * @param theDcs The data coding scheme
+     * @param msg The message
+     * @param dcs The data coding scheme
      */
-    public SmsTextMessage(String theMsg, SmsDcs theDcs)
+    public SmsTextMessage(String msg, SmsDcs dcs)
     {
-        setText(theMsg, theDcs);
+        setText(msg, dcs);
     }
     
     /**
      * Creates an SmsTextMessage with the given alphabet and message class.
      * <p>
-     * theAlphabet can be any of:<br>
+     * alphabet can be any of:<br>
      * - SmsConstants.ALPHABET_GSM<br>
      * - SmsConstants.ALPHABET_8BIT<br>
      * - SmsConstants.ALPHABET_UCS2<br>
      * <p>
-     * theMessageClass can be any of:<br>
+     * messageClass can be any of:<br>
      * - SmsConstants.MSG_CLASS_0 (Often called a FLASH message)<br>
      * - SmsConstants.MSG_CLASS_1<br>
      * - SmsConstants.MSG_CLASS_2<br>
      * - SmsConstants.MSG_CLASS_3<br>
      *
-     * @param theMsg The message
-     * @param theAlphabet The alphabet
-     * @param theMessageClass The messageclass
+     * @param msg The message
+     * @param alphabet The alphabet
+     * @param messageClass The messageclass
      */
-    public SmsTextMessage(String theMsg, int theAlphabet, byte theMessageClass)
+    public SmsTextMessage(String msg, int alphabet, int messageClass)
     {
-        this(theMsg, SmsDcs.getGeneralDataCodingDcs(theAlphabet, theMessageClass));
+        this(msg, SmsDcs.getGeneralDataCodingDcs(alphabet, messageClass));
     }
 
     /**
      * Creates an SmsTextMessage with default 7Bit GSM Alphabet
      *
-     * @param theMsg The message
+     * @param msg The message
      */
-    public SmsTextMessage(String theMsg)
+    public SmsTextMessage(String msg)
     {
-        this(theMsg, SmsDcs.ALPHABET_GSM, SmsDcs.MSG_CLASS_UNKNOWN);
+        this(msg, SmsDcs.ALPHABET_GSM, SmsDcs.MSG_CLASS_UNKNOWN);
     }
     
     /**

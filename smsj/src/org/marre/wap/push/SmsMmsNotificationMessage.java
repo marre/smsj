@@ -54,70 +54,70 @@ public class SmsMmsNotificationMessage extends SmsWapPushMessage
     private static final int DEFAULT_TRANSACTION_ID_LENGTH = 5;
     private static final long DEFAULT_EXPIRY = 3 * 24 * 60 * 60; // 3 days
 
-    protected String myTransactionId;
-    protected String myFrom;
-    protected String mySubject;
-    protected int myMessageClassId = MmsConstants.X_MMS_MESSAGE_CLASS_ID_PERSONAL;
-    protected long mySize;
-    protected long myExpiry;
-    protected String myContentLocation;
+    protected String transactionId_;
+    protected String from_;
+    protected String subject_;
+    protected int messageClassId_ = MmsConstants.X_MMS_MESSAGE_CLASS_ID_PERSONAL;
+    protected long size_;
+    protected long expiry_;
+    protected String contentLocation_;
 
-    public SmsMmsNotificationMessage(String theContentLocation, long size)
+    public SmsMmsNotificationMessage(String contentLocation, long size)
     {
         super();
 
-        myContentLocation = theContentLocation;
-        myTransactionId = StringUtil.randString(DEFAULT_TRANSACTION_ID_LENGTH);
-        myExpiry = DEFAULT_EXPIRY;
-        mySize = size;
+        contentLocation_ = contentLocation;
+        transactionId_ = StringUtil.randString(DEFAULT_TRANSACTION_ID_LENGTH);
+        expiry_ = DEFAULT_EXPIRY;
+        size_ = size;
     }
     
     protected void writeNotificationTo(OutputStream os) throws IOException
     {
         // X-Mms-Message-Type (m-notification-ind)
         MmsHeaderEncoder.writeHeaderXMmsMessageType(os, MmsConstants.X_MMS_MESSAGE_TYPE_ID_M_NOTIFICATION_IND);
-        MmsHeaderEncoder.writeHeaderXMmsTransactionId(os, myTransactionId);
+        MmsHeaderEncoder.writeHeaderXMmsTransactionId(os, transactionId_);
         MmsHeaderEncoder.writeHeaderXMmsMmsVersion(os, MmsConstants.X_MMS_MMS_VERSION_ID_1_0);
 
-        if ((myFrom != null) && (myFrom.length() > 0))
+        if ((from_ != null) && (from_.length() > 0))
         {
-            MmsHeaderEncoder.writeHeaderFrom(os, myFrom);
+            MmsHeaderEncoder.writeHeaderFrom(os, from_);
         }
 
-        if ((mySubject != null) && (mySubject.length() > 0))
+        if ((subject_ != null) && (subject_.length() > 0))
         {
-            MmsHeaderEncoder.writeHeaderSubject(os, mySubject);
+            MmsHeaderEncoder.writeHeaderSubject(os, subject_);
         }
 
-        MmsHeaderEncoder.writeHeaderXMmsMessageClass(os, myMessageClassId);
-        MmsHeaderEncoder.writeHeaderXMmsMessageSize(os, mySize);
-        MmsHeaderEncoder.writeHeaderXMmsExpiryRelative(os, myExpiry);
-        MmsHeaderEncoder.writeHeaderContentLocation(os, myContentLocation);
+        MmsHeaderEncoder.writeHeaderXMmsMessageClass(os, messageClassId_);
+        MmsHeaderEncoder.writeHeaderXMmsMessageSize(os, size_);
+        MmsHeaderEncoder.writeHeaderXMmsExpiryRelative(os, expiry_);
+        MmsHeaderEncoder.writeHeaderContentLocation(os, contentLocation_);
     }
 
     public void setMessageClass(int messageClassId)
     {
-        myMessageClassId = messageClassId;
+        messageClassId_ = messageClassId;
     }
 
-    public void setSubject(String theSubject)
+    public void setSubject(String subject)
     {
-        mySubject = theSubject;
+        subject_ = subject;
     }
 
     public void setExpiry(int i)
     {
-        myExpiry = i;
+        expiry_ = i;
     }
 
     public void setFrom(String string)
     {
-        myFrom = string;
+        from_ = string;
     }
 
     public void setTransactionId(String transactionId)
     {
-        myTransactionId = transactionId;
+        transactionId_ = transactionId;
     }
     
     public SmsUserData getUserData()
@@ -134,7 +134,7 @@ public class SmsMmsNotificationMessage extends SmsWapPushMessage
             throw new RuntimeException(ex.getMessage());
         }        
         
-        myPushMsg = new MimeBodyPart(baos.toByteArray(), "application/vnd.wap.mms-message");        
+        pushMsg_ = new MimeBodyPart(baos.toByteArray(), "application/vnd.wap.mms-message");        
         setXWapApplicationId("x-wap-application:mms.ua");
 
         return super.getUserData();

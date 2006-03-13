@@ -54,10 +54,10 @@ public interface MmsTransport
      * <p>
      * Initializes the transport with the given properties.
      *
-     * @param theProps Properties
+     * @param properties Properties
      * @throws MmsException
      */
-    void init(Properties theProps) throws MmsException;
+    void init(Properties properties) throws MmsException;
 
     /**
      * Connects to the MMSC (or phone, or service, or...)
@@ -69,12 +69,12 @@ public interface MmsTransport
     /**
      * Sends an MmsMessage to the given destination
      *
-     * @param theMessage The Message to send
-     * @param theHeaders Headers
+     * @param message The Message to send
+     * @param headers Headers
      * @throws MmsException
      * @throws IOException TODO
      */
-    void send(MimeBodyPart theMessage, MmsHeaders theHeaders) throws MmsException, IOException;
+    void send(MimeBodyPart message, MmsHeaders headers) throws MmsException, IOException;
 
     /**
      * Disconnects from the MMSC (or phone, or service, or...)

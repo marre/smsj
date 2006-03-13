@@ -74,14 +74,14 @@ public class SmsPortAddressedTextMessage extends SmsPortAddressedMessage
      * 
      * @param destPort
      * @param origPort
-     * @param theMsg
+     * @param msg
      * @param alphabet
      * @param messageClass
      */
-    public SmsPortAddressedTextMessage(int destPort, int origPort, String theMsg, int alphabet, byte messageClass)
+    public SmsPortAddressedTextMessage(int destPort, int origPort, String msg, int alphabet, int messageClass)
     {
         super(destPort, origPort);
-        smsTextMessage_ = new SmsTextMessage(theMsg, alphabet, messageClass);
+        smsTextMessage_ = new SmsTextMessage(msg, alphabet, messageClass);
     }
     
     /**

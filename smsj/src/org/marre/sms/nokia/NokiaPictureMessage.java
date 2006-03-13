@@ -35,91 +35,91 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
     /**
      * Creates a Nokia Picture Message
      *
-     * @param theBitmap
-     * @param theMsg
+     * @param otaBitmap
+     * @param msg
      */
-    public NokiaPictureMessage(OtaBitmap theBitmap, String theMsg)
+    public NokiaPictureMessage(OtaBitmap otaBitmap, String msg)
     {
-        this(theBitmap, theMsg, false);
+        this(otaBitmap, msg, false);
     }
 
     /**
      * Creates a Nokia Picture Message
      *
-     * @param theBitmap
-     * @param theMsg
+     * @param bitmapData
+     * @param msg
      */
-    public NokiaPictureMessage(byte[] theBitmap, String theMsg)
+    public NokiaPictureMessage(byte[] bitmapData, String msg)
     {
-        this(theBitmap, theMsg, false);
+        this(bitmapData, msg, false);
     }
 
     /**
      * Creates a Nokia Picture Message
      *
-     * @param theBitmap
-     * @param theMsg
+     * @param otaBitmap
+     * @param msg
      * @param asUnicode Set to true if text should be sent as unicode
      */
-    public NokiaPictureMessage(OtaBitmap theBitmap, String theMsg, boolean asUnicode)
+    public NokiaPictureMessage(OtaBitmap otaBitmap, String msg, boolean asUnicode)
     {
-        this(theBitmap.getBytes(), theMsg, asUnicode);
+        this(otaBitmap.getBytes(), msg, asUnicode);
     }
 
     /**
      * Creates a Nokia Picture Message
      *
-     * @param theBitmap
-     * @param theMsg
+     * @param bitmapData
+     * @param msg
      * @param asUnicode Set to true if text should be sent as unicode
      */
-    public NokiaPictureMessage(byte[] theBitmap, String theMsg, boolean asUnicode)
+    public NokiaPictureMessage(byte[] bitmapData, String msg, boolean asUnicode)
     {
-        addBitmap(theBitmap);
-        addText(theMsg, asUnicode);
+        addBitmap(bitmapData);
+        addText(msg, asUnicode);
     }
 
     /**
      * Used internally to add the image
      *
-     * @param theBitmap
+     * @param bitmapData
      */
-    private void addBitmap(byte[] theBitmap)
+    private void addBitmap(byte[] bitmapData)
     {
-        addMultipart(NokiaPart.ITEM_OTA_BITMAP, theBitmap);
+        addMultipart(NokiaPart.ITEM_OTA_BITMAP, bitmapData);
     }
 
     /**
      * Used internally to add the image
-     * @param theBitmap
+     * @param otaBitmap
      */
-    private void addBitmap(OtaBitmap theBitmap)
+    private void addBitmap(OtaBitmap otaBitmap)
     {
-        addMultipart(NokiaPart.ITEM_OTA_BITMAP, theBitmap.getBytes());
+        addMultipart(NokiaPart.ITEM_OTA_BITMAP, otaBitmap.getBytes());
     }
 
     /**
      * Used internally to add text
      *
-     * @param theMsg
+     * @param msg
      * @param asUnicode
      */
-    private void addText(String theMsg, boolean asUnicode)
+    private void addText(String msg, boolean asUnicode)
     {
         try
         {
             if (asUnicode)
             {
-                addMultipart(NokiaPart.ITEM_TEXT_UNICODE, theMsg.getBytes("UTF-16BE"));
+                addMultipart(NokiaPart.ITEM_TEXT_UNICODE, msg.getBytes("UTF-16BE"));
             }
             else
             {
-                addMultipart(NokiaPart.ITEM_TEXT_ISO_8859_1, theMsg.getBytes("ISO-8859-1"));
+                addMultipart(NokiaPart.ITEM_TEXT_ISO_8859_1, msg.getBytes("ISO-8859-1"));
             }
         }
         catch (UnsupportedEncodingException ex)
         {
-            //myLog.fatal("Shouldn't happen, 'UTF-16BE' and 'ISO-8859-1' are in the standard", ex);
+            //log_.fatal("Shouldn't happen, 'UTF-16BE' and 'ISO-8859-1' are in the standard", ex);
         }
     }
 }

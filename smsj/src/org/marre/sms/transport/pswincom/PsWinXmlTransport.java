@@ -34,19 +34,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.transport.pswincom;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.Socket;
 import java.util.Properties;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.marre.sms.SmsAddress;
 import org.marre.sms.SmsConstants;
@@ -58,12 +52,9 @@ import org.marre.sms.SmsPduUtil;
 import org.marre.sms.SmsTextMessage;
 import org.marre.sms.SmsUserData;
 import org.marre.sms.transport.SmsTransport;
-import org.marre.sms.transport.clickatell.ClickatellTransport;
-import org.marre.util.IOUtil;
 import org.marre.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.InputSource;
 
 /**
  * Simple transport for the pswin xml protocol.

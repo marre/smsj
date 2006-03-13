@@ -42,8 +42,8 @@ package org.marre.xml;
  */
 public class XmlAttribute
 {
-    private String myType;
-    private String myValue;
+    private String type_;
+    private String value_;
 
     /**
      * Creates an XmlAttribute.
@@ -53,8 +53,8 @@ public class XmlAttribute
      */
     public XmlAttribute(String type, String value)
     {
-        myType = type;
-        myValue = value;
+        type_ = type;
+        value_ = value;
     }
 
     /**
@@ -64,7 +64,7 @@ public class XmlAttribute
      */
     public String getType()
     {
-        return myType;
+        return type_;
     }
 
     /**
@@ -74,6 +74,6 @@ public class XmlAttribute
      */
     public String getValue()
     {
-        return myValue;
+        return value_;
     }
 }

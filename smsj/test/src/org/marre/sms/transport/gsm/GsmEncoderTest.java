@@ -40,13 +40,11 @@ import org.marre.sms.SmsAddress;
 import org.marre.sms.SmsDcs;
 import org.marre.sms.SmsException;
 import org.marre.sms.SmsMessage;
-import org.marre.sms.SmsMsgWaitingMessage;
 import org.marre.sms.SmsPdu;
 import org.marre.sms.SmsTextMessage;
 import org.marre.sms.SmsUdhElement;
 import org.marre.sms.SmsUdhUtil;
 import org.marre.util.StringUtil;
-import org.marre.wap.push.SmsMmsNotificationMessage;
 
 /**
  * 

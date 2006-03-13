@@ -36,27 +36,29 @@ package org.marre.sms.transport.clickatell;
 
 class ClickatellException extends Exception
 {
+    private static final long serialVersionUID = -4845453569133638027L;
+
     public static final int ERROR_UNKNOWN = -1;
 
     public static final int ERROR_AUTH_FAILED = 1;
     public static final int ERROR_SESSION_ID_EXPIRED = 3;
 
-    private final int myErrId;
+    private final int errId_;
 
-    ClickatellException(String theMsg, int theErrId, Throwable cause)
+    ClickatellException(String msg, int errId, Throwable cause)
     {
-        super(theMsg, cause);
-        myErrId = theErrId;
+        super(msg, cause);
+        errId_ = errId;
     }
 
-    ClickatellException(String theMsg, int theErrId)
+    ClickatellException(String msg, int errId)
     {
-        super(theMsg);
-        myErrId = theErrId;
+        super(msg);
+        errId_ = errId;
     }
     
     int getErrId()
     {
-        return myErrId;
+        return errId_;
     }
 }

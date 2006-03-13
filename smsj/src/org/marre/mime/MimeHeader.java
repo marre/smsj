@@ -34,40 +34,38 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Iterator;
 
 public class MimeHeader
 {
-    protected String myHeaderName;
-    protected String myHeaderValue;
+    protected String headerName_;
+    protected String headerValue_;
 
-    protected List myParams;
+    protected List params_;
 
-    protected MimeHeader()
+    public MimeHeader(String name, String value)
     {
-        // Utility function
-    }
-
-    public MimeHeader(String theName, String theValue)
-    {
-        myHeaderName = theName;
-        myHeaderValue = theValue;
-        myParams = new LinkedList();
+        headerName_ = name;
+        headerValue_ = value;
+        params_ = new LinkedList();
     }
 
     public void setValue(String theValue)
     {
-        myHeaderValue = theValue;
+        headerValue_ = theValue;
     }
 
     public String getName()
     {
-        return myHeaderName;
+        return headerName_;
     }
 
     public String getValue()
     {
-        return myHeaderValue;
+        return headerValue_;
     }
 
     public void setParam(String theName, String theValue)
@@ -76,19 +74,18 @@ public class MimeHeader
         removeParam(theName);
 
         // Add new...
-        myParams.add(new MimeHeaderParam(theName, theValue));
+        params_.add(new MimeHeaderParam(theName, theValue));
     }
 
     public MimeHeaderParam getParam(String theName)
     {
-        Iterator iter = myParams.iterator();
-        while (iter.hasNext())
-        {
-            MimeHeaderParam param = (MimeHeaderParam) iter.next();
+        for (Iterator i=params_.iterator(); i.hasNext(); ) {
+            MimeHeaderParam param = (MimeHeaderParam) i.next();
             if (param.getName().equalsIgnoreCase(theName))
             {
                 return param;
             }
+            
         }
 
         // Not found
@@ -101,36 +98,34 @@ public class MimeHeader
 
         if (param != null)
         {
-            myParams.remove(param);
+            params_.remove(param);
         }
     }
 
     public List getAllParams()
     {
-        return myParams;
+        return Collections.unmodifiableList(params_);
     }
 
     public int getParamCount()
     {
-        return myParams.size();
+        return params_.size();
     }
 
     public MimeHeaderParam getParam(int theIndex)
     {
-        return (MimeHeaderParam) myParams.get(theIndex);
+        return (MimeHeaderParam)params_.get(theIndex);
     }
 
     public String toString()
     {
-        String s = myHeaderName + "=" + myHeaderValue;
+        String s = headerName_ + "=" + headerValue_;
 
-        Iterator i = myParams.iterator();
-
-        while (i.hasNext())
-        {
-            MimeHeaderParam mhp = (MimeHeaderParam) i.next();
-            s = mhp.getName() + "=" + mhp.getValue();
+        for (Iterator i=params_.iterator(); i.hasNext(); ) {
+            MimeHeaderParam param = (MimeHeaderParam) i.next();
+            s = param.getName() + "=" + param.getValue();
         }
+        
         return s;
     }
 }

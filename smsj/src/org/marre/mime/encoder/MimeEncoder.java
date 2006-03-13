@@ -50,36 +50,36 @@ public interface MimeEncoder
     /**
      * Writes the content-type of the message to the given stream.
      * 
-     * @param theOs
+     * @param os
      *            The stream to write to
-     * @param theMsg
+     * @param msg
      *            The message to get the content-type from
      * @throws IOException
      *             Thrown if we fail to write the content-type to the stream
      */
-    void writeContentType(OutputStream theOs, MimeBodyPart theMsg) throws IOException;
+    void writeContentType(OutputStream os, MimeBodyPart msg) throws IOException;
 
     /**
      * Writes the headers of the message to the given stream.
      * 
-     * @param theOs
+     * @param os
      *            The stream to write to
-     * @param theMsg
+     * @param msg
      *            The message to get the headers from
      * @throws IOException
      *             Thrown if we fail to write the headers to the stream
      */
-    void writeHeaders(OutputStream theOs, MimeBodyPart theMsg) throws IOException;
+    void writeHeaders(OutputStream os, MimeBodyPart msg) throws IOException;
 
     /**
      * Writes the body of the message to the given stream.
      * 
-     * @param theOs
+     * @param os
      *            The stream to write to
-     * @param theMsg
+     * @param msg
      *            The message to get the data from
      * @throws IOException
      *             Thrown if we fail to write the body to the stream
      */
-    void writeBody(OutputStream theOs, MimeBodyPart theMsg) throws IOException;
+    void writeBody(OutputStream os, MimeBodyPart msg) throws IOException;
 }

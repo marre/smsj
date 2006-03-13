@@ -54,10 +54,10 @@ public class SmsAddress
 {
     private static final String ALLOWED_DIGITS = "+0123456789*#ab";
 
-    private int myTon = SmsConstants.TON_INTERNATIONAL;
-    private int myNpi = SmsConstants.NPI_ISDN_TELEPHONE;
+    private int ton_ = SmsConstants.TON_INTERNATIONAL;
+    private int npi_ = SmsConstants.NPI_ISDN_TELEPHONE;
 
-    private String myAddress;
+    private String address_;
 
     /**
      * Creates an SmsAddress object.
@@ -65,18 +65,18 @@ public class SmsAddress
      * This constructor tries to be intelligent by choosing the correct
      * NPI and TON from the given address.
      *
-     * @param theAddress The address
+     * @param address The address
      * @throws SmsException Thrown if the address is invalid
      */
-    public SmsAddress(String theAddress)
+    public SmsAddress(String address)
         throws SmsException
     {
         int npi = SmsConstants.NPI_ISDN_TELEPHONE;
         int ton = SmsConstants.TON_INTERNATIONAL;
 
-        for (int i = 0; i < theAddress.length(); i++)
+        for (int i = 0; i < address.length(); i++)
         {
-            char ch = theAddress.charAt(i);
+            char ch = address.charAt(i);
             if (ALLOWED_DIGITS.indexOf(ch) == -1)
             {
                 ton = SmsConstants.TON_ALPHANUMERIC;
@@ -85,7 +85,7 @@ public class SmsAddress
             }
         }
 
-        init(theAddress, ton, npi);
+        init(address, ton, npi);
     }
 
     /**
@@ -93,64 +93,64 @@ public class SmsAddress
      * <p>
      * If you choose TON_ALPHANUMERIC then the NPI will be set to NPI_UNKNOWN.
      *
-     * @param theAddress The address
-     * @param theTon The type of number
-     * @param theNpi The number plan indication
+     * @param address The address
+     * @param ton The type of number
+     * @param npi The number plan indication
      * @throws SmsException Thrown if the address is invalid
      */
-    public SmsAddress(String theAddress, int theTon, int theNpi)
+    public SmsAddress(String address, int ton, int npi)
         throws SmsException
     {
-        init(theAddress, theTon, theNpi);
+        init(address, ton, npi);
     }
 
-    private void init(String theAddress, int theTon, int theNpi)
+    private void init(String address, int ton, int npi)
         throws SmsException
     {
-        int addressLength;
+        int msisdnLength;
 
-        if (theAddress == null)
+        if (address == null)
+        {
+            throw new SmsException("Empty msisdn.");
+        }
+
+        ton_ = ton;
+        address_ = address.trim();
+        msisdnLength = address_.length();
+
+        if (msisdnLength == 0)
         {
             throw new SmsException("Empty address.");
         }
 
-        myTon = theTon;
-        myAddress = theAddress.trim();
-        addressLength = myAddress.length();
-
-        if (addressLength == 0)
+        if (ton == SmsConstants.TON_ALPHANUMERIC)
         {
-            throw new SmsException("Empty address.");
-        }
+            npi_ = SmsConstants.NPI_UNKNOWN;
 
-        if (theTon == SmsConstants.TON_ALPHANUMERIC)
-        {
-            myNpi = SmsConstants.NPI_UNKNOWN;
-
-            if (theAddress.length() > 11)
+            if (address.length() > 11)
             {
                 throw new SmsException("Alphanumeric address can be at most 11 chars.");
             }
         }
         else
         {
-            myNpi = theNpi;
+            npi_ = npi;
 
             // Trim '+' from address
-            if (myAddress.charAt(0) == '+')
+            if (address_.charAt(0) == '+')
             {
-                myAddress = myAddress.substring(1);
-                addressLength -= 1;
+                address_ = address_.substring(1);
+                msisdnLength -= 1;
             }
 
-            if (addressLength > 20)
+            if (msisdnLength > 20)
             {
                 throw new SmsException("Too long address, Max allowed is 20 digits (excluding any inital '+').");
             }
 
-            for (int i = 0; i < theAddress.length(); i++)
+            for (int i = 0; i < address.length(); i++)
             {
-                char ch = theAddress.charAt(i);
+                char ch = address.charAt(i);
                 if (ALLOWED_DIGITS.indexOf(ch) == -1)
                 {
                     throw new SmsException("Invalid digit in address. '" + ch + "'.");
@@ -160,13 +160,13 @@ public class SmsAddress
     }
 
     /**
-     * Returns the address
+     * Returns the msisdn.
      *
      * @return The address
      */
     public String getAddress()
     {
-        return myAddress;
+        return address_;
     }
 
     /**
@@ -178,7 +178,7 @@ public class SmsAddress
      */
     public int getTypeOfNumber()
     {
-        return myTon;
+        return ton_;
     }
 
     /**
@@ -190,7 +190,7 @@ public class SmsAddress
      */
     public int getNumberingPlanIdentification()
     {
-        return myNpi;
+        return npi_;
     }
 }
 

@@ -34,61 +34,55 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 public abstract class MimeMultipart extends MimeBodyPart
 {
-    protected List myParts;
+    protected List bodyParts_;
 
     protected MimeMultipart()
     {
-        myParts = new LinkedList();
+        bodyParts_ = new LinkedList();
     }
 
-    public MimeMultipart(String theContentType)
+    public MimeMultipart(String contentType)
     {
         this();
-        myContentType = new MimeContentType(theContentType);
+        contentType_ = new MimeContentType(contentType);
     }
 
-    public void addBodyPart(MimeBodyPart theBodyPart)
+    public void addBodyPart(MimeBodyPart bodyPart)
     {
-        myParts.add(theBodyPart);
+        bodyParts_.add(bodyPart);
     }
 
-    public void removeBodyPart(MimeBodyPart theBodyPart)
+    public void removeBodyPart(MimeBodyPart bodyPart)
     {
-        myParts.remove(theBodyPart);
+        bodyParts_.remove(bodyPart);
     }
 
-    public MimeBodyPart getBodyPart(int theIndex)
+    public MimeBodyPart getBodyPart(int index)
     {
-        return (MimeBodyPart) myParts.get(theIndex);
+        return (MimeBodyPart) bodyParts_.get(index);
     }
-
-    /*
-     * public List getBodyParts() { return
-     * Collections.unmodifiableList(myParts); }
-     */
 
     public int getBodyPartCount()
     {
-        return myParts.size();
+        return bodyParts_.size();
     }
 
     public String toString()
     {
-        String s = "";
+        StringBuffer strBuff = new StringBuffer();
 
-        Iterator i = myParts.iterator();
-        int c = 0;
-
-        while (i.hasNext())
+        for (Iterator i = bodyParts_.iterator(); i.hasNext(); )
         {
-            MimeBodyPart bodyPart = (MimeBodyPart) i.next();
-            s = s + bodyPart;
+            MimeBodyPart bodyPart = (MimeBodyPart) i.next();            
+            strBuff.append(bodyPart);
         }
 
-        return s;
+        return strBuff.toString();
     }
 }

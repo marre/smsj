@@ -46,7 +46,7 @@ import org.marre.util.StringUtil;
 
 public class SmsPduUtilTest extends TestCase
 {
-    public void testSeptetEncoderBitLength() throws SmsException
+    public void testSeptetEncoderBitLength()
     {
         byte[] srcData = StringUtil.hexStringToBytes("FFFFFFFFFFFFFFFF");
         byte[] dstData;
@@ -88,7 +88,7 @@ public class SmsPduUtilTest extends TestCase
         assertEquals("FFFFFFFFFFFFFF00", StringUtil.bytesToHexString(dstData));
     }
     
-    public void testSeptetEncoderDstStart() throws SmsException
+    public void testSeptetEncoderDstStart()
     {
         byte[] srcData = StringUtil.hexStringToBytes("FFFF");
         byte[] dstData;

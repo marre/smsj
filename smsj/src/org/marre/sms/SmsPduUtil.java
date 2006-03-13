@@ -140,13 +140,13 @@ public final class SmsPduUtil
      * Pack the given string into septets
      *  
      */
-    public static byte[] getSeptets(String theMsg)
+    public static byte[] getSeptets(String msg)
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
 
         try
         {
-            writeSeptets(baos, theMsg);
+            writeSeptets(baos, msg);
             baos.close();
         }
         catch (IOException ex)
@@ -161,28 +161,28 @@ public final class SmsPduUtil
     /**
      * Pack the given string into septets.
      * 
-     * @param theOs
+     * @param os
      *            Write the septets into this stream
-     * @param theMsg
+     * @param msg
      *            The message to encode
      * @throws IOException
-     *             Thrown when failing to write to theOs
+     *             Thrown when failing to write to os
      */
-    public static void writeSeptets(OutputStream theOs, String theMsg) throws IOException
+    public static void writeSeptets(OutputStream os, String msg) throws IOException
     {
         int data = 0;
         int nBits = 0;
 
-        for (int i = 0; i < theMsg.length(); i++)
+        for (int i = 0; i < msg.length(); i++)
         {
-            byte gsmChar = toGsmCharset(theMsg.charAt(i));
+            byte gsmChar = toGsmCharset(msg.charAt(i));
 
             data |= (gsmChar << nBits);
             nBits += 7;
 
             while (nBits >= 8)
             {
-                theOs.write((char) (data & 0xff));
+                os.write((char) (data & 0xff));
 
                 data >>>= 8;
                 nBits -= 8;
@@ -192,29 +192,29 @@ public final class SmsPduUtil
         // Write remaining byte
         if (nBits > 0)
         {
-            theOs.write(data);
+            os.write(data);
         }
     }
 
     /**
      * Decodes a 7-bit encoded string from the given byte array
      * 
-     * @param theArray
+     * @param data
      *            The byte array to read from
-     * @param theLength
+     * @param length
      *            Number of decoded chars to read from the stream
      * @return The decoded string
      */
-    public static String readSeptets(byte[] theArray, int theLength)
+    public static String readSeptets(byte[] data, int length)
     {
-        if (theArray == null)
+        if (data == null)
         {
             return null;
         }
 
         try
         {
-            return readSeptets(new ByteArrayInputStream(theArray), theLength);
+            return readSeptets(new ByteArrayInputStream(data), length);
         }
         catch (IOException ex)
         {
@@ -226,24 +226,24 @@ public final class SmsPduUtil
     /**
      * Decodes a 7-bit encoded string from the stream
      * 
-     * @param theIs
+     * @param is
      *            The stream to read from
-     * @param theLength
+     * @param length
      *            Number of decoded chars to read from the stream
      * @return The decoded string
      * @throws IOException
-     *             when failing to read from theIs
+     *             when failing to read from is
      */
-    public static String readSeptets(InputStream theIs, int theLength) throws IOException
+    public static String readSeptets(InputStream is, int length) throws IOException
     {
         StringBuffer msg = new StringBuffer(160);
 
         int rest = 0;
         int restBits = 0;
 
-        while (msg.length() < theLength)
+        while (msg.length() < length)
         {
-            int data = theIs.read();
+            int data = is.read();
 
             if (data == -1) 
             { 
@@ -253,7 +253,7 @@ public final class SmsPduUtil
             rest |= (data << restBits);
             restBits += 8;
 
-            while ((msg.length() < theLength) && (restBits >= 7))
+            while ((msg.length() < length) && (restBits >= 7))
             {
                 msg.append(fromGsmCharset((byte) (rest & 0x7f)));
 
@@ -268,22 +268,22 @@ public final class SmsPduUtil
     /**
      * Writes the given phonenumber to the stream (BCD coded)
      * 
-     * @param theOs
+     * @param os
      *            Stream to write to
-     * @param theNumber
+     * @param number
      *            Number to convert
      * @throws IOException
-     *             when failing to write to theOs
+     *             when failing to write to os
      */
-    public static void writeBcdNumber(OutputStream theOs, String theNumber) throws IOException
+    public static void writeBcdNumber(OutputStream os, String number) throws IOException
     {
         int bcd = 0x00;
         int n = 0;
 
         // First convert to a "half octet" value
-        for (int i = 0; i < theNumber.length(); i++)
+        for (int i = 0; i < number.length(); i++)
         {
-            switch (theNumber.charAt(i))
+            switch (number.charAt(i))
             {
             case '0':
                 bcd |= 0x00;
@@ -333,7 +333,7 @@ public final class SmsPduUtil
 
             if (n == 2)
             {
-                theOs.write(bcd);
+                os.write(bcd);
                 n = 0;
                 bcd = 0x00;
             }
@@ -346,51 +346,51 @@ public final class SmsPduUtil
         if (n == 1)
         {
             bcd |= 0xF0;
-            theOs.write(bcd);
+            os.write(bcd);
         }
     }
 
     /**
      * Converts bytes to BCD format
      * 
-     * @param theIs
+     * @param is
      *            The byte InputStream
-     * @param theLength
+     * @param length
      *            how many
      * @return Decoded number
      */
-    public static String readBcdNumber(InputStream theIs, int theLength) throws IOException
+    public static String readBcdNumber(InputStream is, int length) throws IOException
     {
-        byte[] arr = new byte[theLength];
-        theIs.read(arr, 0, theLength);
-        return readBcdNumber(arr, 0, theLength);
+        byte[] arr = new byte[length];
+        is.read(arr, 0, length);
+        return readBcdNumber(arr, 0, length);
     }
 
     /**
      * Converts bytes to BCD format
      * 
-     * @param arr
+     * @param data
      *            bytearray
-     * @param theLength
+     * @param length
      *            how many
      * @param offset
      * @return Decoded number
      */
-    public static String readBcdNumber(byte[] arr, int offset, int theLength)
+    public static String readBcdNumber(byte[] data, int offset, int length)
     {
         StringBuffer out = new StringBuffer();
-        for (int i = offset; i < offset + theLength; i++)
+        for (int i = offset; i < offset + length; i++)
         {
-            int arrb = arr[i];
-            if ((arr[i] & 15) <= 9)
+            int arrb = data[i];
+            if ((data[i] & 15) <= 9)
             {
-                out.append("" + (arr[i] & 15));
+                out.append("" + (data[i] & 15));
             }
-            if ((arr[i] & 15) == 0xA)
+            if ((data[i] & 15) == 0xA)
             {
                 out.append("*");
             }
-            if ((arr[i] & 15) == 0xB)
+            if ((data[i] & 15) == 0xB)
             {
                 out.append("#");
             }
@@ -445,16 +445,16 @@ public final class SmsPduUtil
     /**
      * Convert a unicode char to a GSM char
      * 
-     * @param theUnicodeCh
+     * @param ch
      *            The unicode char to convert
      * @return GSM representation of the given unicode char
      */
-    public static byte toGsmCharset(char theUnicodeCh)
+    public static byte toGsmCharset(char ch)
     {
         // First check through the GSM charset table
         for (int i = 0; i < GSM_DEFAULT_ALPHABET_TABLE.length; i++)
         {
-            if (GSM_DEFAULT_ALPHABET_TABLE[i] == theUnicodeCh)
+            if (GSM_DEFAULT_ALPHABET_TABLE[i] == ch)
             {
                 // Found the correct char
                 return (byte) i;
@@ -464,7 +464,7 @@ public final class SmsPduUtil
         // Alternative chars.
         for (int i = 0; i < GSM_DEFAULT_ALPHABET_ALTERNATIVES.length / 2; i += 2)
         {
-            if (GSM_DEFAULT_ALPHABET_ALTERNATIVES[i * 2] == theUnicodeCh) 
+            if (GSM_DEFAULT_ALPHABET_ALTERNATIVES[i * 2] == ch) 
             { 
                 return (byte) (GSM_DEFAULT_ALPHABET_ALTERNATIVES[i * 2 + 1] & 0x7f); 
             }
@@ -474,45 +474,46 @@ public final class SmsPduUtil
         return '?';
     }
 
-    public static void arrayCopy(byte[] theSrc, int theSrcStart, byte[] theDest, int theDestStart, int theLength)
+    public static void arrayCopy(byte[] src, int srcStart, byte[] dest, int destStart, int length)
     {
-        for (int i = 0; i < theLength; i++)
+        for (int i = 0; i < length; i++)
         {
-            theDest[i + theDestStart] = theSrc[i + theSrcStart];
+            dest[i + destStart] = src[i + srcStart];
         }
     }
 
     /**
      * 
-     * @param theSrc
-     * @param theSrcStart
-     * @param theDest
-     * @param theDestStart
-     * @param theDestBitOffset
-     * @param theBitLength
+     * @param src
+     * @param srcStart
+     * @param dest
+     * @param destStart
+     * @param destBitOffset
+     * @param lengthInBits
      *            In bits
      */
-    public static void arrayCopy(byte[] theSrc, int theSrcStart, byte[] theDest, int theDestStart,
-            int theDestBitOffset, int theBitLength)
+    public static void arrayCopy(byte[] src, int srcStart, 
+            byte[] dest, int destStart,int destBitOffset, 
+            int lengthInBits)
     {
         int c = 0;
-        int nBytes = theBitLength / 8;
-        int nRestBits = theBitLength % 8;
+        int nBytes = lengthInBits / 8;
+        int nRestBits = lengthInBits % 8;
 
         for (int i = 0; i < nBytes; i++)
         {
-            c |= ((theSrc[theSrcStart + i] & 0xff) << theDestBitOffset);
-            theDest[theDestStart + i] |= (byte) (c & 0xff);
+            c |= ((src[srcStart + i] & 0xff) << destBitOffset);
+            dest[destStart + i] |= (byte) (c & 0xff);
             c >>>= 8;
         }
 
         if (nRestBits > 0)
         {
-            c |= ((theSrc[theSrcStart + nBytes] & (0xff >> (8-nRestBits))) << theDestBitOffset);
+            c |= ((src[srcStart + nBytes] & (0xff >> (8-nRestBits))) << destBitOffset);
         }
-        if ((nRestBits + theDestBitOffset) > 0)
+        if ((nRestBits + destBitOffset) > 0)
         {
-            theDest[theDestStart + nBytes] |= c & 0xff;
+            dest[destStart + nBytes] |= c & 0xff;
         }
     }
 }

@@ -51,17 +51,17 @@ public class TextXmlWriter implements XmlWriter
     /**
      * The writer that is used internally to store the xml document.
      */
-    protected Writer myWriter;
+    protected Writer writer_;
     
     /**
      * Stack of tags. Used by addEndElement to know what tag to add.
      */
-    protected Stack myTagStack;
+    protected Stack tagStack_;
 
     /**
      * Used by addElement to insert a \r\n.
      */
-    protected boolean myCharsAddedBetweenTags = true;
+    protected boolean charsAddedBetweenTags_ = true;
 
     /**
      * Constructor.
@@ -70,7 +70,7 @@ public class TextXmlWriter implements XmlWriter
      */
     public TextXmlWriter(Writer writer)
     {
-        myWriter = writer;
+        writer_ = writer;
     }
 
     /**
@@ -110,14 +110,14 @@ public class TextXmlWriter implements XmlWriter
      */
     public void addStartElement(String tag) throws IOException
     {
-        if (!myCharsAddedBetweenTags)
+        if (!charsAddedBetweenTags_)
         {
-            myWriter.write("\r\n");
+            writer_.write("\r\n");
         }
-        myCharsAddedBetweenTags = false;
+        charsAddedBetweenTags_ = false;
 
-        myWriter.write("<" + tag + ">");
-        myTagStack.push(tag);
+        writer_.write("<" + tag + ">");
+        tagStack_.push(tag);
     }
 
     /**
@@ -137,13 +137,13 @@ public class TextXmlWriter implements XmlWriter
      */
     public void addEmptyElement(String tag) throws IOException
     {
-        if (!myCharsAddedBetweenTags)
+        if (!charsAddedBetweenTags_)
         {
-            myWriter.write("\r\n");
+            writer_.write("\r\n");
         }
-        myCharsAddedBetweenTags = false;
+        charsAddedBetweenTags_ = false;
 
-        myWriter.write("<" + tag + "/>\r\n");
+        writer_.write("<" + tag + "/>\r\n");
     }
 
     /**
@@ -163,8 +163,8 @@ public class TextXmlWriter implements XmlWriter
      */
     public void addEndElement() throws IOException
     {
-        String tag = (String) myTagStack.pop();
-        myWriter.write("</" + tag + ">\r\n");
+        String tag = (String)tagStack_.pop();
+        writer_.write("</" + tag + ">\r\n");
     }
 
     /**
@@ -174,8 +174,8 @@ public class TextXmlWriter implements XmlWriter
      */
     public void addCharacters(char[] ch, int start, int length) throws IOException
     {
-        myCharsAddedBetweenTags = true;
-        myWriter.write(ch, start, length);
+        charsAddedBetweenTags_ = true;
+        writer_.write(ch, start, length);
     }
 
     /**
@@ -185,8 +185,8 @@ public class TextXmlWriter implements XmlWriter
      */
     public void addCharacters(String str) throws IOException
     {
-        myCharsAddedBetweenTags = true;
-        myWriter.write(str);
+        charsAddedBetweenTags_ = true;
+        writer_.write(str);
     }
 
     /**
@@ -196,6 +196,6 @@ public class TextXmlWriter implements XmlWriter
      */
     public void flush() throws IOException
     {
-        myWriter.flush();
+        writer_.flush();
     }
 }

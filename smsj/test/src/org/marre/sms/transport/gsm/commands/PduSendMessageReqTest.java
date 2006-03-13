@@ -32,51 +32,26 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.mime;
+package org.marre.sms.transport.gsm.commands;
 
-public class MimeMultipartRelated extends MimeMultipart
+import junit.framework.TestCase;
+
+import org.marre.sms.transport.gsm.GsmComm;
+import org.marre.sms.transport.gsm.MockSerialComm;
+import org.marre.util.StringUtil;
+
+public class PduSendMessageReqTest extends TestCase
 {
-    private MimeBodyPart startBodyPart_;
-
-    public MimeMultipartRelated()
+    public void testSuccessfulCMGS() throws Exception
     {
-        super("multipart/related");
-    }
-
-    public void setStartBodyPart(MimeBodyPart bodyPart)
-    {
-        startBodyPart_ = null;
-        if (bodyParts_.contains(bodyPart))
-        {
-            startBodyPart_ = bodyPart;
-        }
-    }
-
-    public MimeContentType getContentType()
-    {
-        MimeContentType ct = super.getContentType();
-        if (startBodyPart_ != null)
-        {
-            MimeContentType startCt = startBodyPart_.getContentType();
-            MimeHeader startCid = startBodyPart_.getHeader("content-id");
-
-            // Add content-type
-            ct.setParam("type", startCt.getValue());
-
-            // Add start parameter
-            if (startCid != null)
-            {
-                ct.setParam("start", startCid.getValue());
-            }
-        }
-        return ct;
-    }
-
-    public String toString()
-    {
-        String s = null;
-        s = getContentType().toString() + "\n";
-        s = s + super.toString();
-        return s;
+        GsmComm comm = new MockSerialComm(new String[]{
+                "> ", 
+                "+CMGS: 97",
+                "",
+                "OK"});
+        
+        PduSendMessageReq req = new PduSendMessageReq(StringUtil.hexStringToBytes("41000C919333289868390000A0050003B5020140201008040281623010080402814020190C040281402010680603814020100804A2C1402010080402816A30100804028140201B0C040281402010E80603814020100804C2C140201008040281723010080402814031180C0402814020502C060381402010081493C1402010080402C56630100804028140311A0C040281402050AC06038140"));
+        
+        req.send(comm);
     }
 }

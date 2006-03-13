@@ -223,7 +223,7 @@ public class NokiaOtaBrowserSettings implements WbxmlDocument
      *  NAME
      *  URL
      */
-    protected List myBookmarks;
+    protected List bookmarks_;
     
     /*
      * ID:
@@ -231,23 +231,21 @@ public class NokiaOtaBrowserSettings implements WbxmlDocument
     
     public NokiaOtaBrowserSettings()
     {
-        myBookmarks = new LinkedList();
+        bookmarks_ = new LinkedList();
     }
     
     protected void writeBookmarksTo(XmlWriter xmlWriter) throws IOException
     {
-        Iterator bookmarkIterator = myBookmarks.iterator();
-        
-        while (bookmarkIterator.hasNext())
+        for (Iterator i = bookmarks_.iterator(); i.hasNext(); ) 
         {
-            NokiaOtaBookmark otaBookmark = (NokiaOtaBookmark)bookmarkIterator.next();
+            NokiaOtaBookmark otaBookmark = (NokiaOtaBookmark) i.next(); 
             otaBookmark.writeXmlTo(xmlWriter);
         }
     }
     
     public void addBookmark(String name, String url)
     {
-        myBookmarks.add(new NokiaOtaBookmark(name, url));
+        bookmarks_.add(new NokiaOtaBookmark(name, url));
     }
 
     public String getContentType()

@@ -36,6 +36,8 @@ package org.marre.mms;
 
 public class MmsException extends Exception
 {
+    private static final long serialVersionUID = 2300330997254942171L;
+
     public MmsException(String reason, Throwable cause)
     {
         super(reason, cause);

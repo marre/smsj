@@ -54,150 +54,97 @@ public final class MmsHeaderEncoder
     {
     }
 
-    /*
-     * This isn't really suitable for MMS public static void
-     * writeHeader(OutputStream theOs, MimeHeader theHeader) throws IOException {
-     * String name = theHeader.getName(); int wellKnownHeaderId =
-     * StringUtil.findString(MmsConstants.HEADER_NAMES, name.toLowerCase());
-     * 
-     * switch (wellKnownHeaderId) { case MmsConstants.HEADER_ID_BCC:
-     * MmsHeaderEncoder.writeHeaderBcc(theOs, theHeader.getValue()); break; case
-     * MmsConstants.HEADER_ID_CC: MmsHeaderEncoder.writeHeaderCc(theOs,
-     * theHeader.getValue()); break; case
-     * MmsConstants.HEADER_ID_X_MMS_CONTENT_LOCATION:
-     * MmsHeaderEncoder.writeHeaderContentLocation(theOs, theHeader.getValue());
-     * break; case MmsConstants.HEADER_ID_CONTENT_TYPE:
-     * MmsHeaderEncoder.writeHeaderContentType(theOs, theHeader); break; case
-     * MmsConstants.HEADER_ID_DATE: break; case
-     * MmsConstants.HEADER_ID_X_MMS_DELIVERY_REPORT: break; case
-     * MmsConstants.HEADER_ID_X_MMS_DELIVERY_TIME: break; case
-     * MmsConstants.HEADER_ID_X_MMS_EXPIRY:
-     * //MmsHeaderEncoder.writeHeaderXMmsExpiry(theOs, theHeader.getValue());
-     * break; case MmsConstants.HEADER_ID_FROM:
-     * MmsHeaderEncoder.writeHeaderFrom(theOs, theHeader.getValue()); break;
-     * case MmsConstants.HEADER_ID_X_MMS_MESSAGE_CLASS:
-     * MmsHeaderEncoder.writeHeaderXMmsMessageClass(theOs,
-     * theHeader.getValue()); break; case MmsConstants.HEADER_ID_MESSAGE_ID:
-     * break; case MmsConstants.HEADER_ID_X_MMS_MESSAGE_TYPE:
-     * MmsHeaderEncoder.writeHeaderXMmsMessageType(theOs, theHeader.getValue());
-     * break; case MmsConstants.HEADER_ID_X_MMS_MMS_VERSION:
-     * MmsHeaderEncoder.writeHeaderXMmsMmsVersion(theOs, theHeader.getValue());
-     * break; case MmsConstants.HEADER_ID_X_MMS_MESSAGE_SIZE: break; case
-     * MmsConstants.HEADER_ID_X_MMS_PRIORITY:
-     * MmsHeaderEncoder.writeHeaderXMmsPriority(theOs, theHeader.getValue());
-     * break; case MmsConstants.HEADER_ID_X_MMS_READ_REPLY:
-     * MmsHeaderEncoder.writeHeaderXMmsReadReply(theOs, theHeader.getValue());
-     * break; case MmsConstants.HEADER_ID_X_MMS_REPORT_ALLOWED: break; case
-     * MmsConstants.HEADER_ID_X_MMS_RESPONSE_STATUS: break; case
-     * MmsConstants.HEADER_ID_X_MMS_RESPONSE_TEXT: break; case
-     * MmsConstants.HEADER_ID_X_MMS_SENDER_VISIBILITY:
-     * MmsHeaderEncoder.writeHeaderXMmsSenderVisibility(theOs,
-     * theHeader.getValue()); break; case MmsConstants.HEADER_ID_X_MMS_STATUS:
-     * MmsHeaderEncoder.writeHeaderXMmsStatus(theOs, theHeader.getValue());
-     * break; case MmsConstants.HEADER_ID_SUBJECT:
-     * MmsHeaderEncoder.writeHeaderSubject(theOs, theHeader.getValue()); break;
-     * case MmsConstants.HEADER_ID_TO: MmsHeaderEncoder.writeHeaderTo(theOs,
-     * theHeader.getValue()); break; case
-     * MmsConstants.HEADER_ID_X_MMS_TRANSACTION_ID:
-     * MmsHeaderEncoder.writeHeaderXMmsTransactionId(theOs,
-     * theHeader.getValue()); break;
-     * 
-     * default: // Application-header WspUtil.writeTokenText(theOs,
-     * theHeader.getName()); WspUtil.writeTextString(theOs,
-     * theHeader.getValue()); break; } }
-     */
-
     /**
      * Writes a wsp encoded content-location header as specified in
      * WAP-230-WSP-20010705-a.pdf.
      * 
-     * @param theOs
-     * @param theContentLocation
+     * @param os
+     * @param contentLocation
      * @throws IOException
      */
-    public static void writeHeaderContentLocation(OutputStream theOs, String theContentLocation) throws IOException
+    public static void writeHeaderContentLocation(OutputStream os, String contentLocation) throws IOException
     {
         // TODO: Verify
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_X_MMS_CONTENT_LOCATION);
-        WspUtil.writeTextString(theOs, theContentLocation);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_CONTENT_LOCATION);
+        WspUtil.writeTextString(os, contentLocation);
     }
 
-    public static void writeHeaderContentType(byte wspEncodingVersion, OutputStream theOs, String theContentType) throws IOException
+    public static void writeHeaderContentType(byte wspEncodingVersion, OutputStream os, String contentLocation) throws IOException
     {
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_CONTENT_TYPE);
-        WspUtil.writeContentType(wspEncodingVersion, theOs, theContentType);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_CONTENT_TYPE);
+        WspUtil.writeContentType(wspEncodingVersion, os, contentLocation);
     }
 
-    public static void writeHeaderContentType(byte wspEncodingVersion, OutputStream theOs, MimeHeader theContentType) throws IOException
+    public static void writeHeaderContentType(byte wspEncodingVersion, OutputStream os, MimeHeader contentType) throws IOException
     {
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_CONTENT_TYPE);
-        WspUtil.writeContentType(wspEncodingVersion, theOs, theContentType);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_CONTENT_TYPE);
+        WspUtil.writeContentType(wspEncodingVersion, os, contentType);
     }
 
-    public static void writeEncodedStringValue(OutputStream baos, String theStringValue) throws IOException
+    public static void writeEncodedStringValue(OutputStream os, String stringValue) throws IOException
     {
         // TODO: Charset...
-        WspUtil.writeTextString(baos, theStringValue);
+        WspUtil.writeTextString(os, stringValue);
     }
 
-    public static void writeHeaderXMmsMessageType(OutputStream theOs, int theMessageTypeId) throws IOException
+    public static void writeHeaderXMmsMessageType(OutputStream os, int messageTypeId) throws IOException
     {
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_X_MMS_MESSAGE_TYPE);
-        WspUtil.writeShortInteger(theOs, theMessageTypeId);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_MESSAGE_TYPE);
+        WspUtil.writeShortInteger(os, messageTypeId);
     }
 
-    public static void writeHeaderXMmsMessageType(OutputStream theOs, String theMessageType) throws IOException
+    public static void writeHeaderXMmsMessageType(OutputStream os, String messageType) throws IOException
     {
-        int messageTypeId = StringUtil.findString(MmsConstants.X_MMS_MESSAGE_TYPE_NAMES, theMessageType.toLowerCase());
+        int messageTypeId = StringUtil.findString(MmsConstants.X_MMS_MESSAGE_TYPE_NAMES, messageType.toLowerCase());
         if (messageTypeId != -1)
         {
-            writeHeaderXMmsMessageType(theOs, messageTypeId);
+            writeHeaderXMmsMessageType(os, messageTypeId);
         }
     }
 
-    public static void writeHeaderXMmsTransactionId(OutputStream theOs, String theTransactionId) throws IOException
+    public static void writeHeaderXMmsTransactionId(OutputStream os, String transactionId) throws IOException
     {
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_X_MMS_TRANSACTION_ID);
-        WspUtil.writeTextString(theOs, theTransactionId);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_TRANSACTION_ID);
+        WspUtil.writeTextString(os, transactionId);
     }
 
-    public static void writeHeaderXMmsMmsVersion(OutputStream theOs, int theVersionId) throws IOException
+    public static void writeHeaderXMmsMmsVersion(OutputStream os, int versionId) throws IOException
     {
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_X_MMS_MMS_VERSION);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_MMS_VERSION);
 
-        switch (theVersionId)
+        switch (versionId)
         {
         case MmsConstants.X_MMS_MMS_VERSION_ID_1_0:
         default:
-            WspUtil.writeShortInteger(theOs, 0x10);
+            WspUtil.writeShortInteger(os, 0x10);
             break;
         }
     }
 
-    public static void writeHeaderXMmsMmsVersion(OutputStream theOs, String theVersion) throws IOException
+    public static void writeHeaderXMmsMmsVersion(OutputStream os, String version) throws IOException
     {
-        int versionId = StringUtil.findString(MmsConstants.X_MMS_MMS_VERSION_NAMES, theVersion.toLowerCase());
+        int versionId = StringUtil.findString(MmsConstants.X_MMS_MMS_VERSION_NAMES, version.toLowerCase());
         if (versionId != -1)
         {
-            writeHeaderXMmsMessageType(theOs, versionId);
+            writeHeaderXMmsMessageType(os, versionId);
         }
     }
 
-    public static void writeHeaderDate(OutputStream theOs, Date date) throws IOException
+    public static void writeHeaderDate(OutputStream os, Date date) throws IOException
     {
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_DATE);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_DATE);
         long time = date.getTime();
-        WspUtil.writeLongInteger(theOs, time);
+        WspUtil.writeLongInteger(os, time);
     }
 
-    public static void writeHeaderFrom(OutputStream theOs, String theFrom) throws IOException
+    public static void writeHeaderFrom(OutputStream os, String from) throws IOException
     {
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_FROM);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_FROM);
 
-        if (theFrom == null)
+        if (from == null)
         {
-            WspUtil.writeValueLength(theOs, 1);
-            WspUtil.writeShortInteger(theOs, MmsConstants.FROM_INSERT_ADDRESS);
+            WspUtil.writeValueLength(os, 1);
+            WspUtil.writeShortInteger(os, MmsConstants.FROM_INSERT_ADDRESS);
         }
         else
         {
@@ -205,106 +152,106 @@ public final class MmsHeaderEncoder
 
             // Write data to baos
             WspUtil.writeShortInteger(baos, MmsConstants.FROM_ADDRESS_PRESENT);
-            MmsHeaderEncoder.writeEncodedStringValue(baos, theFrom);
+            MmsHeaderEncoder.writeEncodedStringValue(baos, from);
             baos.close();
 
-            WspUtil.writeValueLength(theOs, baos.size());
-            theOs.write(baos.toByteArray());
+            WspUtil.writeValueLength(os, baos.size());
+            os.write(baos.toByteArray());
         }
     }
 
-    public static void writeHeaderSubject(OutputStream theOs, String theSubject) throws IOException
+    public static void writeHeaderSubject(OutputStream os, String subject) throws IOException
     {
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_SUBJECT);
-        MmsHeaderEncoder.writeEncodedStringValue(theOs, theSubject);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_SUBJECT);
+        MmsHeaderEncoder.writeEncodedStringValue(os, subject);
     }
 
-    public static void writeHeaderTo(OutputStream theOs, String theRecipient) throws IOException
+    public static void writeHeaderTo(OutputStream os, String receiver) throws IOException
     {
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_TO);
-        MmsHeaderEncoder.writeEncodedStringValue(theOs, theRecipient);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_TO);
+        MmsHeaderEncoder.writeEncodedStringValue(os, receiver);
     }
 
-    public static void writeHeaderCc(OutputStream theOs, String theRecipient) throws IOException
+    public static void writeHeaderCc(OutputStream os, String receiver) throws IOException
     {
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_CC);
-        MmsHeaderEncoder.writeEncodedStringValue(theOs, theRecipient);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_CC);
+        MmsHeaderEncoder.writeEncodedStringValue(os, receiver);
     }
 
-    public static void writeHeaderBcc(OutputStream theOs, String theRecipient) throws IOException
+    public static void writeHeaderBcc(OutputStream os, String receiver) throws IOException
     {
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_BCC);
-        MmsHeaderEncoder.writeEncodedStringValue(theOs, theRecipient);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_BCC);
+        MmsHeaderEncoder.writeEncodedStringValue(os, receiver);
     }
 
-    public static void writeHeaderXMmsReadReply(OutputStream theOs, int theReadReplyId) throws IOException
+    public static void writeHeaderXMmsReadReply(OutputStream os, int readReplyId) throws IOException
     {
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_X_MMS_READ_REPLY);
-        WspUtil.writeShortInteger(theOs, theReadReplyId);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_READ_REPLY);
+        WspUtil.writeShortInteger(os, readReplyId);
     }
 
-    public static void writeHeaderXMmsReadReply(OutputStream theOs, String theReadReply) throws IOException
+    public static void writeHeaderXMmsReadReply(OutputStream os, String readReply) throws IOException
     {
-        int readReplyId = StringUtil.findString(MmsConstants.X_MMS_READ_REPLY_NAMES, theReadReply.toLowerCase());
+        int readReplyId = StringUtil.findString(MmsConstants.X_MMS_READ_REPLY_NAMES, readReply.toLowerCase());
         if (readReplyId != -1)
         {
-            writeHeaderXMmsReadReply(theOs, readReplyId);
+            writeHeaderXMmsReadReply(os, readReplyId);
         }
     }
 
-    public static void writeHeaderXMmsPriority(OutputStream theOs, int thePriorityId) throws IOException
+    public static void writeHeaderXMmsPriority(OutputStream os, int priorityId) throws IOException
     {
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_X_MMS_PRIORITY);
-        WspUtil.writeShortInteger(theOs, thePriorityId);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_PRIORITY);
+        WspUtil.writeShortInteger(os, priorityId);
     }
 
-    public static void writeHeaderXMmsPriority(OutputStream theOs, String thePriority) throws IOException
+    public static void writeHeaderXMmsPriority(OutputStream os, String priority_) throws IOException
     {
-        int priorityId = StringUtil.findString(MmsConstants.X_MMS_PRIORITY_NAMES, thePriority.toLowerCase());
+        int priorityId = StringUtil.findString(MmsConstants.X_MMS_PRIORITY_NAMES, priority_.toLowerCase());
         if (priorityId != -1)
         {
-            writeHeaderXMmsPriority(theOs, priorityId);
+            writeHeaderXMmsPriority(os, priorityId);
         }
     }
 
-    public static void writeHeaderXMmsStatus(OutputStream theOs, int theStatusId) throws IOException
+    public static void writeHeaderXMmsStatus(OutputStream os, int status) throws IOException
     {
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_X_MMS_STATUS);
-        WspUtil.writeShortInteger(theOs, theStatusId);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_STATUS);
+        WspUtil.writeShortInteger(os, status);
     }
 
-    public static void writeHeaderXMmsStatus(OutputStream theOs, String theStatus) throws IOException
+    public static void writeHeaderXMmsStatus(OutputStream os, String status) throws IOException
     {
-        int statusId = StringUtil.findString(MmsConstants.X_MMS_STATUS_NAMES, theStatus.toLowerCase());
+        int statusId = StringUtil.findString(MmsConstants.X_MMS_STATUS_NAMES, status.toLowerCase());
         if (statusId != -1)
         {
-            writeHeaderXMmsStatus(theOs, statusId);
+            writeHeaderXMmsStatus(os, statusId);
         }
     }
 
-    public static void writeHeaderXMmsMessageClass(OutputStream theOs, int theMessageClassId) throws IOException
+    public static void writeHeaderXMmsMessageClass(OutputStream os, int messageClassId) throws IOException
     {
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_X_MMS_MESSAGE_CLASS);
-        WspUtil.writeShortInteger(theOs, theMessageClassId);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_MESSAGE_CLASS);
+        WspUtil.writeShortInteger(os, messageClassId);
     }
 
-    public static void writeHeaderXMmsMessageClass(OutputStream theOs, String theMessageClass) throws IOException
+    public static void writeHeaderXMmsMessageClass(OutputStream os, String messageClass) throws IOException
     {
-        int messageClassId = StringUtil.findString(MmsConstants.X_MMS_MESSAGE_CLASS_NAMES, theMessageClass
+        int messageClassId = StringUtil.findString(MmsConstants.X_MMS_MESSAGE_CLASS_NAMES, messageClass
                 .toLowerCase());
         if (messageClassId != -1)
         {
-            writeHeaderXMmsMessageClass(theOs, messageClassId);
+            writeHeaderXMmsMessageClass(os, messageClassId);
         }
     }
 
-    public static void writeHeaderXMmsMessageSize(OutputStream theOs, long messageSize) throws IOException
+    public static void writeHeaderXMmsMessageSize(OutputStream os, long messageSize) throws IOException
     {
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_X_MMS_MESSAGE_SIZE);
-        WspUtil.writeLongInteger(theOs, messageSize);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_MESSAGE_SIZE);
+        WspUtil.writeLongInteger(os, messageSize);
     }
 
-    public static void writeHeaderXMmsExpiryAbsolute(OutputStream theOs, long theExpiry) throws IOException
+    public static void writeHeaderXMmsExpiryAbsolute(OutputStream os, long expiry) throws IOException
     {
         // Expiry-value = Value-length (Absolute-token Date-value |
         // Relative-token Delta-seconds-value)
@@ -312,56 +259,56 @@ public final class MmsHeaderEncoder
 
         // (Absolute-token Date-value)
         WspUtil.writeShortInteger(baos, MmsConstants.ABSOLUTE_TOKEN);
-        WspUtil.writeLongInteger(baos, theExpiry);
+        WspUtil.writeLongInteger(baos, expiry);
 
         baos.close();
 
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_X_MMS_EXPIRY);
-        WspUtil.writeValueLength(theOs, baos.size());
-        theOs.write(baos.toByteArray());
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_EXPIRY);
+        WspUtil.writeValueLength(os, baos.size());
+        os.write(baos.toByteArray());
     }
 
-    public static void writeHeaderXMmsExpiryAbsolute(OutputStream theOs, Date theExpiry) throws IOException
+    public static void writeHeaderXMmsExpiryAbsolute(OutputStream os, Date expiry) throws IOException
     {
-        writeHeaderXMmsExpiryAbsolute(theOs, theExpiry.getTime());
+        writeHeaderXMmsExpiryAbsolute(os, expiry.getTime());
     }
 
-    public static void writeHeaderXMmsExpiryRelative(OutputStream theOs, long theExpiry) throws IOException
+    public static void writeHeaderXMmsExpiryRelative(OutputStream os, long expiry) throws IOException
     {
         // Expiry-value = Value-length (Absolute-token Date-value |
         // Relative-token Delta-seconds-value)
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         WspUtil.writeShortInteger(baos, MmsConstants.RELATIVE_TOKEN);
-        WspUtil.writeLongInteger(baos, theExpiry);
+        WspUtil.writeLongInteger(baos, expiry);
 
         baos.close();
 
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_X_MMS_EXPIRY);
-        WspUtil.writeValueLength(theOs, baos.size());
-        theOs.write(baos.toByteArray());
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_EXPIRY);
+        WspUtil.writeValueLength(os, baos.size());
+        os.write(baos.toByteArray());
     }
 
-    public static void writeHeaderXMmsSenderVisibility(OutputStream theOs, int theVisibilityId) throws IOException
+    public static void writeHeaderXMmsSenderVisibility(OutputStream os, int visibilityId) throws IOException
     {
-        WspUtil.writeShortInteger(theOs, MmsConstants.HEADER_ID_X_MMS_SENDER_VISIBILITY);
-        WspUtil.writeShortInteger(theOs, theVisibilityId);
+        WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_SENDER_VISIBILITY);
+        WspUtil.writeShortInteger(os, visibilityId);
     }
 
-    public static void writeHeaderXMmsSenderVisibility(OutputStream theOs, String theVisibility) throws IOException
+    public static void writeHeaderXMmsSenderVisibility(OutputStream os, String newVisabilityId) throws IOException
     {
-        int visibilityId = StringUtil.findString(MmsConstants.X_MMS_SENDER_VISIBILITY_NAMES, theVisibility
+        int visibilityId = StringUtil.findString(MmsConstants.X_MMS_SENDER_VISIBILITY_NAMES, newVisabilityId
                 .toLowerCase());
 
         if (visibilityId != -1)
         {
-            writeHeaderXMmsSenderVisibility(theOs, visibilityId);
+            writeHeaderXMmsSenderVisibility(os, visibilityId);
         }
     }
 
-    public static void writeApplicationHeader(OutputStream theOs, String theName, String theValue) throws IOException
+    public static void writeApplicationHeader(OutputStream os, String name, String value) throws IOException
     {
-        WspUtil.writeTokenText(theOs, theName);
-        WspUtil.writeTextString(theOs, theValue);
+        WspUtil.writeTokenText(os, name);
+        WspUtil.writeTextString(os, value);
     }
 }

@@ -44,19 +44,19 @@ import java.io.*;
  */
 public class SmsUdhElement
 {
-    protected int myUdhIei;
-    protected byte[] myUdhIeiData;
+    protected int udhIei_;
+    protected byte[] udhIeiData_;
 
     /**
      * Creates an SmsUdhElement
      *
-     * @param theUdhIei
-     * @param theUdhIeiData
+     * @param udhIei
+     * @param udhIeiData
      */
-    public SmsUdhElement(int theUdhIei, byte[] theUdhIeiData)
+    public SmsUdhElement(int udhIei, byte[] udhIeiData)
     {
-        myUdhIei = theUdhIei;
-        myUdhIeiData = theUdhIeiData;
+        udhIei_ = udhIei;
+        udhIeiData_ = udhIeiData;
     }
 
     /**
@@ -67,7 +67,7 @@ public class SmsUdhElement
      */
     public int getTotalSize()
     {
-        return myUdhIeiData.length + 2;
+        return udhIeiData_.length + 2;
     }
 
     /**
@@ -78,7 +78,7 @@ public class SmsUdhElement
      */
     public int getUdhIeiDataLength()
     {
-        return myUdhIeiData.length;
+        return udhIeiData_.length;
     }
 
     /**
@@ -87,7 +87,7 @@ public class SmsUdhElement
      */
     public byte[] getUdhIeiData()
     {
-        return myUdhIeiData;
+        return udhIeiData_;
     }
 
     /**
@@ -97,11 +97,11 @@ public class SmsUdhElement
      */
     public byte[] getData()
     {
-        byte[] allData = new byte[myUdhIeiData.length + 2];
+        byte[] allData = new byte[udhIeiData_.length + 2];
 
-        allData[0] = (byte) (myUdhIei & 0xff);
-        allData[1] = (byte) (myUdhIeiData.length & 0xff);
-        System.arraycopy(myUdhIeiData, 0, allData, 2, myUdhIeiData.length);
+        allData[0] = (byte) (udhIei_ & 0xff);
+        allData[1] = (byte) (udhIeiData_.length & 0xff);
+        System.arraycopy(udhIeiData_, 0, allData, 2, udhIeiData_.length);
 
         return allData;
     }
@@ -115,8 +115,8 @@ public class SmsUdhElement
     public void writeTo(OutputStream os)
         throws IOException
     {
-        os.write(myUdhIei);
-        os.write(myUdhIeiData.length);
-        os.write(myUdhIeiData);
+        os.write(udhIei_);
+        os.write(udhIeiData_.length);
+        os.write(udhIeiData_);
     }
 }

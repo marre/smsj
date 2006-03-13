@@ -39,24 +39,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.LinkedList;
-import java.util.Stack;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.marre.sms.SmsException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -95,7 +85,7 @@ public class PsWinXmlResponseParser extends DefaultHandler
         try
         {
             SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(false);
+//            factory.setNamespaceAware(false);
 //            factory.setValidating(false);
 //            factory.setXIncludeAware(false);
             return factory.newSAXParser();
@@ -147,7 +137,7 @@ public class PsWinXmlResponseParser extends DefaultHandler
         
     public void characters(char[] ch, int start, int length)
     {
-        String topOfStack = (String) stack_.getLast();
+        String topOfStack = (String)stack_.getLast();
         
         if ("REASON".equals(topOfStack)) {
             reasonBuffer_.append(ch, start, length);

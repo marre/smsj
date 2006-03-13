@@ -36,7 +36,6 @@ package org.marre.sms.transport.gsm.commands;
 
 import java.io.IOException;
 
-import org.marre.sms.SmsException;
 import org.marre.sms.transport.gsm.GsmComm;
 import org.marre.sms.transport.gsm.GsmException;
 import org.marre.util.StringUtil;

@@ -57,67 +57,67 @@ import org.marre.wap.wbxml.WbxmlDocument;
  */
 public class SmsWapPushMessage extends SmsPortAddressedMessage
 {
-    protected byte myWspEncodingVersion = WapConstants.WSP_ENCODING_VERSION_1_2;
-    protected MimeBodyPart myPushMsg;
+    protected byte wspEncodingVersion_ = WapConstants.WSP_ENCODING_VERSION_1_2;
+    protected MimeBodyPart pushMsg_;
         
     protected SmsWapPushMessage()
     {
         super(SmsConstants.PORT_WAP_PUSH, SmsConstants.PORT_WAP_WSP);
     }
     
-    public SmsWapPushMessage(MimeBodyPart thePushMsg)
+    public SmsWapPushMessage(MimeBodyPart pushMsg)
     {
         this();
         
-        myPushMsg = thePushMsg;
+        pushMsg_ = pushMsg;
     }
     
-    public SmsWapPushMessage(WbxmlDocument thePushMsg, MimeContentType theContentType)
+    public SmsWapPushMessage(WbxmlDocument pushMsg, MimeContentType contentType)
     {
         this();
         
         // The current wbxml encoder can only output utf-8
-        theContentType.setParam("charset", "utf-8");
-        myPushMsg = new MimeBodyPart(buildPushMessage(thePushMsg), theContentType);
+        contentType.setParam("charset", "utf-8");
+        pushMsg_ = new MimeBodyPart(buildPushMessage(pushMsg), contentType);
     }
     
-    public SmsWapPushMessage(WbxmlDocument thePushMsg, String theContentType)
+    public SmsWapPushMessage(WbxmlDocument pushMsg, String contentType)
     {
         this();
         
-        MimeContentType ct = new MimeContentType(theContentType);
+        MimeContentType ct = new MimeContentType(contentType);
         // The current wbxml encoder can only output utf-8
         ct.setParam("charset", "utf-8");
-        myPushMsg = new MimeBodyPart(buildPushMessage(thePushMsg), ct);
+        pushMsg_ = new MimeBodyPart(buildPushMessage(pushMsg), ct);
     }
     
-    public SmsWapPushMessage(WbxmlDocument thePushMsg)
+    public SmsWapPushMessage(WbxmlDocument pushMsg)
     {
-        this(thePushMsg, thePushMsg.getWbxmlContentType());
+        this(pushMsg, pushMsg.getWbxmlContentType());
     }
      
-    public SmsWapPushMessage(byte[] thePushMsg, MimeContentType theContentType)
+    public SmsWapPushMessage(byte[] pushMsg, MimeContentType contentType)
     {
         this();
         
-        myPushMsg = new MimeBodyPart(thePushMsg, theContentType);
+        pushMsg_ = new MimeBodyPart(pushMsg, contentType);
     }
         
-    public SmsWapPushMessage(byte[] thePushMsg, String theContentType)
+    public SmsWapPushMessage(byte[] pushMsg, String contentType)
     {
         this();
         
-        myPushMsg = new MimeBodyPart(thePushMsg, theContentType);
+        pushMsg_ = new MimeBodyPart(pushMsg, contentType);
     }
     
-    protected byte[] buildPushMessage(WbxmlDocument thePushMsg)
+    protected byte[] buildPushMessage(WbxmlDocument pushMsg)
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try
         {
             // Data
-            thePushMsg.writeXmlTo(thePushMsg.getWbxmlWriter(baos));
+            pushMsg.writeXmlTo(pushMsg.getWbxmlWriter(baos));
 
             // Done
             baos.close();
@@ -132,7 +132,7 @@ public class SmsWapPushMessage extends SmsPortAddressedMessage
     
     public void setWspEncodingVersion(byte wspEncodingVersion)
     {
-        myWspEncodingVersion = wspEncodingVersion;
+        wspEncodingVersion_ = wspEncodingVersion;
     }
     
     public SmsUserData getUserData()
@@ -161,10 +161,10 @@ public class SmsWapPushMessage extends SmsPortAddressedMessage
             ByteArrayOutputStream headers = new ByteArrayOutputStream();
             
             // Content-type
-            wapMimeEncoder.writeContentType(headers, myPushMsg);
+            wapMimeEncoder.writeContentType(headers, pushMsg_);
 
             // WAP-HEADERS
-            wapMimeEncoder.writeHeaders(headers, myPushMsg);
+            wapMimeEncoder.writeHeaders(headers, pushMsg_);
                         
             // Done with the headers...
             headers.close();
@@ -178,7 +178,7 @@ public class SmsWapPushMessage extends SmsPortAddressedMessage
             baos.write(headers.toByteArray());
 
             // Data
-            wapMimeEncoder.writeBody(baos, myPushMsg);
+            wapMimeEncoder.writeBody(baos, pushMsg_);
 
             // Done
             baos.close();
@@ -193,16 +193,16 @@ public class SmsWapPushMessage extends SmsPortAddressedMessage
 
     public void setXWapApplicationId(String appId)
     {
-        myPushMsg.addHeader("X-Wap-Application-Id", appId);
+        pushMsg_.addHeader("X-Wap-Application-Id", appId);
     }
     
     public void setXWapContentURI(String contentUri)
     {
-        myPushMsg.addHeader("X-Wap-Content-URI", contentUri);
+        pushMsg_.addHeader("X-Wap-Content-URI", contentUri);
     }
 
     public void setXWapInitiatorURI(String initiatorUri)
     {
-        myPushMsg.addHeader("X-Wap-Initiator-URI", initiatorUri);
+        pushMsg_.addHeader("X-Wap-Initiator-URI", initiatorUri);
     }
  }

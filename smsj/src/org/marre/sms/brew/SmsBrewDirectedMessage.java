@@ -92,7 +92,7 @@ public class SmsBrewDirectedMessage implements SmsMessage
         
         SmsUserData userData = 
             new SmsUserData(SmsPduUtil.getSeptets(bdsmsText), bdsmsText.length(),
-                SmsDcs.getGeneralDataCodingDcs(SmsDcs.ALPHABET_GSM, SmsDcs.MSG_CLASS_UNKNOWN));
+                SmsDcs.getGeneralDataCodingDcs(SmsDcs.ALPHABET_8BIT, SmsDcs.MSG_CLASS_UNKNOWN));
         
         return new SmsPdu[] {
                 new SmsPdu(null, userData)

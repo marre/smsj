@@ -32,51 +32,40 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.mime;
+package org.marre.sms.transport.gsm;
 
-public class MimeMultipartRelated extends MimeMultipart
+public class MockSerialComm implements GsmComm
 {
-    private MimeBodyPart startBodyPart_;
-
-    public MimeMultipartRelated()
+    private String[] responses_;
+    private int currentResponse_;
+    
+    public MockSerialComm(String[] responses) {
+        responses_ = responses;
+        currentResponse_ = 0;
+    }
+    
+    public void open()
     {
-        super("multipart/related");
+        // Empty
     }
 
-    public void setStartBodyPart(MimeBodyPart bodyPart)
+    public void close()
     {
-        startBodyPart_ = null;
-        if (bodyParts_.contains(bodyPart))
-        {
-            startBodyPart_ = bodyPart;
-        }
+        // Empty
     }
 
-    public MimeContentType getContentType()
+    public void send(String data)
     {
-        MimeContentType ct = super.getContentType();
-        if (startBodyPart_ != null)
-        {
-            MimeContentType startCt = startBodyPart_.getContentType();
-            MimeHeader startCid = startBodyPart_.getHeader("content-id");
-
-            // Add content-type
-            ct.setParam("type", startCt.getValue());
-
-            // Add start parameter
-            if (startCid != null)
-            {
-                ct.setParam("start", startCid.getValue());
-            }
-        }
-        return ct;
+        // Empty
     }
 
-    public String toString()
+    public String readLine()
     {
-        String s = null;
-        s = getContentType().toString() + "\n";
-        s = s + super.toString();
-        return s;
+        return responses_[currentResponse_++];
+    }
+
+    public String readLine(String find)
+    {
+        return readLine();
     }
 }

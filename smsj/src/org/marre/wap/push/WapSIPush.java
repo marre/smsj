@@ -80,18 +80,18 @@ public class WapSIPush implements WbxmlDocument
             ".org/", // 88
     };
 
-    protected String myUri;
-    protected String myId;
-    protected Date myCreated;
-    protected Date myExpires;
-    protected String myAction;
+    protected String uri_;
+    protected String id_;
+    protected Date createdDate_;
+    protected Date expiresDate_;
+    protected String action_;
 
-    protected String myMessage;
+    protected String message_;
     
     public WapSIPush(String uri, String message)
     {
-        myUri = uri;
-        myMessage = message;
+        uri_ = uri;
+        message_ = message;
     }
 
     /*
@@ -100,7 +100,7 @@ public class WapSIPush implements WbxmlDocument
      * push.writeTo(getWbxmlWriter(), new FileOutputStream("si.wbxml")); }
      */
 
-    private byte[] encodeDateTime(Date theDate)
+    private byte[] encodeDateTime(Date date)
     {
         return null;
         /*
@@ -121,62 +121,62 @@ public class WapSIPush implements WbxmlDocument
 
     public String getUri()
     {
-        return myUri;
+        return uri_;
     }
 
     public void setUri(String uri)
     {
-        myUri = uri;
+        uri_ = uri;
     }
 
     public String getId()
     {
-        return myId;
+        return id_;
     }
 
     public void setId(String id)
     {
-        myId = id;
+        id_ = id;
     }
 
     public Date getCreated()
     {
-        return myCreated;
+        return createdDate_;
     }
 
     public void setCreated(Date created)
     {
-        myCreated = created;
+        createdDate_ = created;
     }
 
     public Date getExpires()
     {
-        return myExpires;
+        return expiresDate_;
     }
 
     public void setExpires(Date expires)
     {
-        myExpires = (Date) expires.clone();
+        expiresDate_ = (Date) expires.clone();
     }
 
     public String getAction()
     {
-        return myAction;
+        return action_;
     }
 
     public void setAction(String action)
     {
-        myAction = action;
+        action_ = action;
     }
 
     public String getMessage()
     {
-        return myMessage;
+        return message_;
     }
 
     public void setMessage(String message)
     {
-        myMessage = message;
+        message_ = message;
     }
 
     public void writeXmlTo(XmlWriter writer) throws IOException
@@ -184,8 +184,8 @@ public class WapSIPush implements WbxmlDocument
         writer.setDoctype("si", "-//WAPFORUM//DTD SI 1.0//EN", "http://www.wapforum.org/DTD/si.dtd");
 
         writer.addStartElement("si");
-        writer.addStartElement("indication", new XmlAttribute[]{new XmlAttribute("href", myUri)});
-        writer.addCharacters(myMessage);
+        writer.addStartElement("indication", new XmlAttribute[]{new XmlAttribute("href", uri_)});
+        writer.addCharacters(message_);
         writer.addEndElement();
         writer.addEndElement();
 

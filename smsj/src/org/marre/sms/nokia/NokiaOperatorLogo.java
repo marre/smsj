@@ -43,92 +43,68 @@ public class NokiaOperatorLogo extends SmsPortAddressedMessage
      * possible to fit a 72x14 pixel image in one SMS instead of two. <br>
      * <b>Note! </b> This will probably only work on Nokia phones...
      */
-    protected boolean myDiscardNokiaHeaders;
+    protected boolean discardNokiaHeaders_;
     
     /** The ota image as a byte array */
-    protected byte[] myBitmap;
+    protected byte[] bitmapData_;
     
     /** GSM Mobile Country Code */
-    protected int myMcc;
+    protected int mcc_;
     
     /** GSM Mobile Network Code */
-    protected int myMnc;
+    protected int mnc_;
 
     /**
      * Creates a Nokia Operator Logo message
      * 
-     * @param theOtaBitmap
-     * @param theMcc
+     * @param otaBitmap
+     * @param mcc
      *            GSM Mobile Country Code
-     * @param theMnc
+     * @param mnc
      *            GSM Mobile Network Code
      */
-    public NokiaOperatorLogo(OtaBitmap theOtaBitmap, int theMcc, int theMnc)
+    public NokiaOperatorLogo(OtaBitmap otaBitmap, int mcc, int mnc)
     {
-        this(theOtaBitmap.getBytes(), theMcc, theMnc);
+        this(otaBitmap.getBytes(), mcc, mnc);
     }
 
     /**
      * Creates a Nokia Operator Logo message
      * 
-     * @param theOtaImage
+     * @param bitmapData
      *            The ota image as a byte array
-     * @param theMcc
+     * @param mcc
      *            GSM Mobile Country Code
-     * @param theMnc
+     * @param mnc
      *            GSM Mobile Network Code
      */
-    public NokiaOperatorLogo(byte[] theOtaImage, int theMcc, int theMnc)
+    public NokiaOperatorLogo(byte[] bitmapData, int mcc, int mnc)
     {
         super(SmsConstants.PORT_NOKIA_OPERATOR_LOGO, 0);
         
-        myBitmap = theOtaImage;
-        myMcc = theMcc;
-        myMnc = theMnc;
+        bitmapData_ = bitmapData;
+        mcc_ = mcc;
+        mnc_ = mnc;
     }
 
     /**
      * Creates a Nokia Operator Logo message
      * 
-     * @param theOtaImage
+     * @param bitmapData
      *            The ota image as a byte array
-     * @param theMcc
+     * @param mcc
      *            GSM Mobile Country Code
-     * @param theMnc
+     * @param mnc
      *            GSM Mobile Network Code
      */
-    public NokiaOperatorLogo(byte[] theOtaImage, int theMcc, int theMnc, boolean discardHeaders)
+    public NokiaOperatorLogo(byte[] bitmapData, int mcc, int mnc, boolean discardHeaders)
     {
         super(SmsConstants.PORT_NOKIA_OPERATOR_LOGO, 0);
         
-        myDiscardNokiaHeaders = discardHeaders;
-        myBitmap = theOtaImage;
-        myMcc = theMcc;
-        myMnc = theMnc;
-    }
-
-    /**
-     * Creates a Nokia Operator Logo message
-     * 
-     * @param theBitmap
-     * @param theOperatorMccMnc
-     *            Operator defined in org.marre.sms.util.GsmOperators
-     */
-    public NokiaOperatorLogo(OtaBitmap theBitmap, int[] theOperatorMccMnc)
-    {
-        this(theBitmap, theOperatorMccMnc[0], theOperatorMccMnc[1]);
-    }
-
-    /**
-     * Creates a Nokia Operator Logo message
-     * 
-     * @param theOtaImage
-     *            The ota image as a byte array
-     * @param theOperatorMccMnc
-     */
-    public NokiaOperatorLogo(byte[] theOtaImage, int[] theOperatorMccMnc)
-    {
-        this(theOtaImage, theOperatorMccMnc[0], theOperatorMccMnc[1]);
+        discardNokiaHeaders_ = discardHeaders;
+        bitmapData_ = bitmapData;
+        mcc_ = mcc;
+        mnc_ = mnc;
     }
 
     public SmsUserData getUserData()
@@ -137,31 +113,31 @@ public class NokiaOperatorLogo extends SmsPortAddressedMessage
 
         try
         {
-            if (!myDiscardNokiaHeaders)
+            if (!discardNokiaHeaders_)
             {
                 // Header??
                 baos.write(0x30);
             }
 
             // mcc
-            SmsPduUtil.writeBcdNumber(baos, "" + myMcc);
+            SmsPduUtil.writeBcdNumber(baos, "" + mcc_);
             // mnc
-            if (myMnc < 10)
+            if (mnc_ < 10)
             {
-                SmsPduUtil.writeBcdNumber(baos, "0" + myMnc);
+                SmsPduUtil.writeBcdNumber(baos, "0" + mnc_);
             }
             else
             {
-                SmsPduUtil.writeBcdNumber(baos, "" + myMnc);
+                SmsPduUtil.writeBcdNumber(baos, "" + mnc_);
             }
 
-            if (!myDiscardNokiaHeaders)
+            if (!discardNokiaHeaders_)
             {
                 // Start of content?
                 baos.write(0x0A);
             }
             // bitmap
-            baos.write(myBitmap);
+            baos.write(bitmapData_);
 
             baos.close();
         }

@@ -36,26 +36,22 @@ package org.marre.mime;
 
 public class MimeHeaderParam
 {
-    protected String myName;
-    protected String myValue;
-
-    protected MimeHeaderParam()
-    {
-    }
+    protected String name_;
+    protected String value_;
 
     public MimeHeaderParam(String name, String value)
     {
-        myName = name;
-        myValue = value;
+        name_ = name;
+        value_ = value;
     }
 
     public String getName()
     {
-        return myName;
+        return name_;
     }
 
     public String getValue()
     {
-        return myValue;
+        return value_;
     }
 }

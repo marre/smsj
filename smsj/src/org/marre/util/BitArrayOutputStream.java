@@ -34,15 +34,16 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.util;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  *
  */
 public class BitArrayOutputStream extends ByteArrayOutputStream
 {
-    private int myBitOffset;
-    private int myBuffer;
+    private int bitOffset_;
+    private int buffer_;
 
     /**
      * Default constructor.
@@ -61,8 +62,8 @@ public class BitArrayOutputStream extends ByteArrayOutputStream
 
     private synchronized void resetBitCounter()
     {
-        myBitOffset = 0;
-        myBuffer = 0x00;
+        bitOffset_ = 0;
+        buffer_ = 0x00;
     }
 
     public synchronized void reset()
@@ -73,9 +74,9 @@ public class BitArrayOutputStream extends ByteArrayOutputStream
 
     public synchronized void flushByte()
     {
-        if (myBitOffset > 0)
+        if (bitOffset_ > 0)
         {
-            super.write(myBuffer);
+            super.write(buffer_);
             resetBitCounter();
         }
     }
@@ -106,10 +107,10 @@ public class BitArrayOutputStream extends ByteArrayOutputStream
 
     public synchronized void writeBit( int bit )
     {
-        myBuffer |= ((bit & 0x01) << myBitOffset);
-        myBitOffset++;
+        buffer_ |= ((bit & 0x01) << bitOffset_);
+        bitOffset_++;
 
-        if (myBitOffset == 8)
+        if (bitOffset_ == 8)
         {
             flushByte();
         }
