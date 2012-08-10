@@ -34,6 +34,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.transport.clickatell;
 
+import org.marre.sms.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,17 +53,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-import org.marre.sms.SmsAddress;
-import org.marre.sms.SmsConcatMessage;
-import org.marre.sms.SmsConstants;
-import org.marre.sms.SmsDcs;
-import org.marre.sms.SmsException;
-import org.marre.sms.SmsMessage;
-import org.marre.sms.SmsPdu;
-import org.marre.sms.SmsPduUtil;
-import org.marre.sms.SmsUdhElement;
-import org.marre.sms.SmsUdhUtil;
-import org.marre.sms.SmsUserData;
 import org.marre.sms.transport.SmsTransport;
 import org.marre.util.StringUtil;
 
@@ -313,7 +303,7 @@ public class ClickatellTransport implements SmsTransport
         if (sender != null)
         {
             requestString += "&from=" + sender.getAddress();
-            reqFeat |= (sender.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC) ? FEAT_ALPHA : FEAT_NUMBER;  
+            reqFeat |= (sender.isAlphanumeric()) ? FEAT_ALPHA : FEAT_NUMBER;
         }
         
         // CLASS_0 message?
@@ -455,7 +445,7 @@ public class ClickatellTransport implements SmsTransport
     {
         String[] msgIds;
         
-        if (receiver.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC) 
+        if (receiver.isAlphanumeric())
         { 
             throw new SmsException("Cannot sent SMS to an ALPHANUMERIC address"); 
         }

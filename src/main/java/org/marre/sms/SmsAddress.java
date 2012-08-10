@@ -54,8 +54,8 @@ public class SmsAddress
 {
     private static final String ALLOWED_DIGITS = "+0123456789*#ab";
 
-    private int ton_ = SmsConstants.TON_INTERNATIONAL;
-    private int npi_ = SmsConstants.NPI_ISDN_TELEPHONE;
+    private SmsTon ton_ = SmsTon.INTERNATIONAL;
+    private SmsNpi npi_ = SmsNpi.ISDN_TELEPHONE;
 
     private String address_;
 
@@ -71,16 +71,16 @@ public class SmsAddress
     public SmsAddress(String address)
         throws SmsException
     {
-        int npi = SmsConstants.NPI_ISDN_TELEPHONE;
-        int ton = SmsConstants.TON_INTERNATIONAL;
+        SmsNpi npi = SmsNpi.ISDN_TELEPHONE;
+        SmsTon ton = SmsTon.INTERNATIONAL;
 
         for (int i = 0; i < address.length(); i++)
         {
             char ch = address.charAt(i);
             if (ALLOWED_DIGITS.indexOf(ch) == -1)
             {
-                ton = SmsConstants.TON_ALPHANUMERIC;
-                npi = SmsConstants.NPI_UNKNOWN;
+                ton = SmsTon.ALPHANUMERIC;
+                npi = SmsNpi.UNKNOWN;
                 break;
             }
         }
@@ -98,13 +98,13 @@ public class SmsAddress
      * @param npi The number plan indication
      * @throws SmsException Thrown if the address is invalid
      */
-    public SmsAddress(String address, int ton, int npi)
+    public SmsAddress(String address, SmsTon ton, SmsNpi npi)
         throws SmsException
     {
         init(address, ton, npi);
     }
 
-    private void init(String address, int ton, int npi)
+    private void init(String address, SmsTon ton, SmsNpi npi)
         throws SmsException
     {
         int msisdnLength;
@@ -123,9 +123,9 @@ public class SmsAddress
             throw new SmsException("Empty address.");
         }
 
-        if (ton == SmsConstants.TON_ALPHANUMERIC)
+        if (ton == SmsTon.ALPHANUMERIC)
         {
-            npi_ = SmsConstants.NPI_UNKNOWN;
+            npi_ = SmsNpi.UNKNOWN;
 
             if (address.length() > 11)
             {
@@ -169,6 +169,10 @@ public class SmsAddress
         return address_;
     }
 
+    public boolean isAlphanumeric() {
+        return ton_ == SmsTon.ALPHANUMERIC;
+    }
+
     /**
      * Returns the TON field
      * <p>
@@ -176,7 +180,7 @@ public class SmsAddress
      *
      * @return The TON
      */
-    public int getTypeOfNumber()
+    public SmsTon getTypeOfNumber()
     {
         return ton_;
     }
@@ -188,7 +192,7 @@ public class SmsAddress
      *
      * @return The NPI
      */
-    public int getNumberingPlanIdentification()
+    public SmsNpi getNumberingPlanIdentification()
     {
         return npi_;
     }

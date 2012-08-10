@@ -40,13 +40,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Properties;
 
-import org.marre.sms.SmsAddress;
-import org.marre.sms.SmsConstants;
-import org.marre.sms.SmsDcs;
-import org.marre.sms.SmsException;
-import org.marre.sms.SmsMessage;
-import org.marre.sms.SmsPdu;
-import org.marre.sms.SmsPduUtil;
+import org.marre.sms.*;
 import org.marre.sms.transport.SmsTransport;
 import org.marre.util.StringUtil;
 
@@ -132,7 +126,7 @@ public class UcpTransport implements SmsTransport
     {
         SmsPdu[] msgPdu = null;
 
-        if (destination.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
+        if (destination.isAlphanumeric())
         {
             throw new SmsException("Cannot sent SMS to ALPHANUMERIC address");
         }
@@ -190,7 +184,7 @@ public class UcpTransport implements SmsTransport
         // telephone and TON international, 5039 The OAdC contains an
         // alphanumeric address)
         // OAdC = Address code originator
-        if (sender.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
+        if (sender.isAlphanumeric())
         {
             String addr = sender.getAddress();
             if (addr.length() > 11)

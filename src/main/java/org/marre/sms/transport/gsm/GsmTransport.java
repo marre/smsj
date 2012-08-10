@@ -38,11 +38,7 @@ package org.marre.sms.transport.gsm;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.marre.sms.SmsAddress;
-import org.marre.sms.SmsConstants;
-import org.marre.sms.SmsException;
-import org.marre.sms.SmsMessage;
-import org.marre.sms.SmsPdu;
+import org.marre.sms.*;
 import org.marre.sms.transport.SmsTransport;
 import org.marre.sms.transport.gsm.commands.MessageFormatSetReq;
 import org.marre.sms.transport.gsm.commands.PduSendMessageReq;
@@ -169,9 +165,9 @@ public class GsmTransport implements SmsTransport
      */
     public String send(SmsMessage msg, SmsAddress dest, SmsAddress sender) throws SmsException, IOException
     {
-        if (dest.getTypeOfNumber() == SmsConstants.TON_ALPHANUMERIC)
+        if (dest.getTypeOfNumber() == SmsTon.ALPHANUMERIC)
         {
-            throw new SmsException("Cannot sent SMS to an ALPHANUMERIC address");
+            throw new SmsException("Cannot send SMS to an ALPHANUMERIC address");
         }
 
         try

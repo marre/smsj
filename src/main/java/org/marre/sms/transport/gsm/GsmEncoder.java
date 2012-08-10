@@ -38,12 +38,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.marre.sms.SmsAddress;
-import org.marre.sms.SmsDcs;
-import org.marre.sms.SmsException;
-import org.marre.sms.SmsPdu;
-import org.marre.sms.SmsPduUtil;
-import org.marre.sms.SmsUserData;
+import org.marre.sms.*;
 
 /**
  * Builds GSM pdu encoded messages.
@@ -336,8 +331,8 @@ public final class GsmEncoder
         throws IOException
     {
         String address = destination.getAddress();
-        int ton = destination.getTypeOfNumber();
-        int npi = destination.getNumberingPlanIdentification();
+        SmsTon ton = destination.getTypeOfNumber();
+        SmsNpi npi = destination.getNumberingPlanIdentification();
 
         // trim leading + from address
         if (address.charAt(0) == '+')
@@ -349,7 +344,7 @@ public final class GsmEncoder
         os.write(address.length());
 
         // Type Of Address
-        os.write(0x80 | ton << 4 | npi);
+        os.write(0x80 | ton.getValue() << 4 | npi.getValue());
 
         // BCD encode
         SmsPduUtil.writeBcdNumber(os, address);
