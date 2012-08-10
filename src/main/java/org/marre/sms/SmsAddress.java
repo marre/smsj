@@ -50,7 +50,7 @@ package org.marre.sms;
  * @author Markus Eriksson
  * @version $Id$
  */
-public class SmsAddress
+public final class SmsAddress
 {
     private static final String ALLOWED_DIGITS = "+0123456789*#ab";
 
