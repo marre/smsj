@@ -113,7 +113,7 @@ public class PsWinXmlTransport implements SmsTransport
 
         switch (smsPdu.getDcs().getAlphabet())
         {
-        case SmsDcs.ALPHABET_UCS2:
+        case UCS2:
             // <OP>9</OP>
             xmlStringWriter.write("<OP>9</OP>\r\n");
             // <TEXT>hex-text</TEXT>
@@ -122,14 +122,14 @@ public class PsWinXmlTransport implements SmsTransport
             xmlStringWriter.write("</TEXT>\r\n");
             break;
 
-        case SmsDcs.ALPHABET_GSM:
+        case GSM:
             // <TEXT>txt</TEXT>
             xmlStringWriter.write("<TEXT>");
             xmlStringWriter.write(SmsPduUtil.readSeptets(userData.getData(), userData.getLength()));
             xmlStringWriter.write("</TEXT>\r\n");
             break;
 
-        case SmsDcs.ALPHABET_8BIT:
+        case LATIN1:
             // <OP>8</OP>
             xmlStringWriter.write("<OP>8</OP>\r\n");
             // <TEXT>udh-and-ud</TEXT>
@@ -156,7 +156,7 @@ public class PsWinXmlTransport implements SmsTransport
             xmlStringWriter.write("</SND>\r\n");
         }
 
-        if (smsPdu.getDcs().getMessageClass() == SmsDcs.MSG_CLASS_0)
+        if (smsPdu.getDcs().getMessageClass() == SmsMsgClass.CLASS_0)
         {
             // <CLASS>0</CLASS>
             xmlStringWriter.write("<CLASS>");
@@ -178,7 +178,7 @@ public class PsWinXmlTransport implements SmsTransport
 
         switch (userData.getDcs().getAlphabet())
         {
-        case SmsDcs.ALPHABET_UCS2:
+        case UCS2:
             // <OP>9</OP>
             xmlStringWriter.write("<OP>9</OP>\r\n");
             // <TEXT>hex-text</TEXT>
@@ -187,7 +187,7 @@ public class PsWinXmlTransport implements SmsTransport
             xmlStringWriter.write("</TEXT>\r\n");
             break;
 
-        case SmsDcs.ALPHABET_GSM:
+        case GSM:
             // <TEXT>txt</TEXT>
             xmlStringWriter.write("<TEXT>");
             xmlStringWriter.write(msg.getText());
@@ -211,7 +211,7 @@ public class PsWinXmlTransport implements SmsTransport
             xmlStringWriter.write("</SND>\r\n");
         }
 
-        if (userData.getDcs().getMessageClass() == SmsDcs.MSG_CLASS_0)
+        if (userData.getDcs().getMessageClass() == SmsMsgClass.CLASS_0)
         {
             // <CLASS>0</CLASS>
             xmlStringWriter.write("<CLASS>");

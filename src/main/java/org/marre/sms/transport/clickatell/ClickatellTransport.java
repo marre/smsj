@@ -307,7 +307,7 @@ public class ClickatellTransport implements SmsTransport
         }
         
         // CLASS_0 message?
-        if (ud.getDcs().getMessageClass() == SmsDcs.MSG_CLASS_0)
+        if (ud.getDcs().getMessageClass() == SmsMsgClass.CLASS_0)
         {
             requestString += "&msg_type=SMS_FLASH";
             reqFeat |= FEAT_FLASH;
@@ -323,17 +323,17 @@ public class ClickatellTransport implements SmsTransport
             //
             switch (ud.getDcs().getAlphabet())
             {
-            case SmsDcs.ALPHABET_8BIT:
+            case LATIN1:
                 throw new SmsException("Clickatell API cannot send 8 bit encoded messages without UDH");
 
-            case SmsDcs.ALPHABET_UCS2:
+            case UCS2:
                 String udStr = StringUtil.bytesToHexString(ud.getData());
                 requestString += "&unicode=1";
                 requestString += "&text=" + udStr;
                 reqFeat |= FEAT_UCS2;
                 break;
 
-            case SmsDcs.ALPHABET_GSM:
+            case GSM:
                 String msg = SmsPduUtil.readSeptets(ud.getData(), ud.getLength());            
                 try
                 {
@@ -360,7 +360,7 @@ public class ClickatellTransport implements SmsTransport
             //
             switch (ud.getDcs().getAlphabet())
             {
-            case SmsDcs.ALPHABET_8BIT:
+            case LATIN1:
                 udStr = StringUtil.bytesToHexString(ud.getData());
                 udhStr = StringUtil.bytesToHexString(udhData);                
                 requestString += "&udh=" + udhStr;
@@ -368,7 +368,7 @@ public class ClickatellTransport implements SmsTransport
                 reqFeat |= FEAT_UDH | FEAT_8BIT;
                 break;
 
-            case SmsDcs.ALPHABET_UCS2:
+            case UCS2:
                 udStr = StringUtil.bytesToHexString(ud.getData());
                 udhStr = StringUtil.bytesToHexString(udhData);
                 requestString += "&unicode=1";
@@ -377,7 +377,7 @@ public class ClickatellTransport implements SmsTransport
                 reqFeat |= FEAT_UDH | FEAT_UCS2;
                 break;
 
-            case SmsDcs.ALPHABET_GSM:
+            case GSM:
                 throw new SmsException("Clickatell API cannot send 7 bit encoded messages with UDH");
 
             default:

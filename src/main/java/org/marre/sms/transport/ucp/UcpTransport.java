@@ -174,7 +174,7 @@ public class UcpTransport implements SmsTransport
         UcpSeries50 ucpSubmit = new UcpSeries50(UcpSeries50.OP_SUBMIT_SHORT_MESSAGE);
 
         byte[] udh = pdu.getUserDataHeaders();
-        boolean isSeptets = (pdu.getDcs().getAlphabet() == SmsDcs.ALPHABET_GSM);
+        boolean isSeptets = (pdu.getDcs().getAlphabet() == SmsAlphabet.GSM);
         int udBits;
 
         // FIXME: TRN
@@ -214,16 +214,16 @@ public class UcpTransport implements SmsTransport
         {
             switch (pdu.getDcs().getAlphabet())
             {
-            case SmsDcs.ALPHABET_GSM:
+            case GSM:
                 System.out.println("GSM Message without UDH");
                 ucpSubmit.setField(UcpSeries50.FIELD_MT, "3");
                 String msg = SmsPduUtil.readSeptets(pdu.getUserData().getData(), pdu.getUserData().getLength());
                 ucpSubmit.setField(UcpSeries50.FIELD_MSG, StringUtil.bytesToHexString(SmsPduUtil.toGsmCharset(msg)));
                 System.out.println(msg.length());
                 break;
-            case SmsDcs.ALPHABET_8BIT:
+            case LATIN1:
                 throw new SmsException(" 8Bit Messages without UDH are not Supported");
-            case SmsDcs.ALPHABET_UCS2:
+            case UCS2:
                 System.out.println("UCS2 Message without UDH");
                 ud = StringUtil.bytesToHexString(pdu.getUserData().getData());
                 ucpSubmit.setField(UcpSeries50.FIELD_MSG, ud);
@@ -243,9 +243,9 @@ public class UcpTransport implements SmsTransport
         {
             switch (pdu.getDcs().getAlphabet())
             {
-            case SmsDcs.ALPHABET_GSM:
+            case GSM:
                 throw new SmsException("Cannot send 7 bit encoded messages with UDH");
-            case SmsDcs.ALPHABET_8BIT:
+            case LATIN1:
                 ud = StringUtil.bytesToHexString(pdu.getUserData().getData());
                 udhData = pdu.getUserDataHeaders();
                 // Add length of udh
@@ -263,7 +263,7 @@ public class UcpTransport implements SmsTransport
                 ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_DCS, pdu.getDcs().getValue());
                 ucpSubmit.addXSer(UcpSeries50.XSER_TYPE_UDH, udhData);
                 break;
-            case SmsDcs.ALPHABET_UCS2:
+            case UCS2:
                 throw new SmsException(" UCS2 Messages are currently not Supportet ");
             default:
                 throw new SmsException("Unsupported data coding scheme");

@@ -116,7 +116,7 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
      */
     public SmsMsgWaitingMessage()
     {
-        this("", SmsDcs.ALPHABET_8BIT);
+        this("", SmsAlphabet.LATIN1);
     }
     
     /**
@@ -126,7 +126,7 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
      */
     public SmsMsgWaitingMessage(String text)
     {
-        this(text, SmsDcs.ALPHABET_GSM);
+        this(text, SmsAlphabet.GSM);
     }
     
     /**
@@ -135,9 +135,9 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
      * @param text Description of this message
      * @param alphabet Alphabet to use. Valid values are SmsDcs.ALPHABET_*.
      */
-    public SmsMsgWaitingMessage(String text, int alphabet)
+    public SmsMsgWaitingMessage(String text, SmsAlphabet alphabet)
     {
-        super(text, SmsDcs.getGeneralDataCodingDcs(alphabet, SmsDcs.MSG_CLASS_UNKNOWN));
+        super(text, SmsDcs.getGeneralDataCodingDcs(alphabet, SmsMsgClass.CLASS_UNKNOWN));
     }
     
     /**

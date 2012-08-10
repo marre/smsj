@@ -79,7 +79,7 @@ public class SmsTextMessage extends SmsConcatMessage
      * @param alphabet The alphabet
      * @param messageClass The messageclass
      */
-    public SmsTextMessage(String msg, int alphabet, int messageClass)
+    public SmsTextMessage(String msg, SmsAlphabet alphabet, SmsMsgClass messageClass)
     {
         this(msg, SmsDcs.getGeneralDataCodingDcs(alphabet, messageClass));
     }
@@ -91,7 +91,7 @@ public class SmsTextMessage extends SmsConcatMessage
      */
     public SmsTextMessage(String msg)
     {
-        this(msg, SmsDcs.ALPHABET_GSM, SmsDcs.MSG_CLASS_UNKNOWN);
+        this(msg, SmsAlphabet.GSM, SmsMsgClass.CLASS_UNKNOWN);
     }
     
     /**
@@ -159,15 +159,15 @@ public class SmsTextMessage extends SmsConcatMessage
         {
             switch (dcs_.getAlphabet())
             {
-            case SmsDcs.ALPHABET_GSM:
+            case GSM:
                 ud = new SmsUserData(SmsPduUtil.getSeptets(text_), text_.length(), dcs_);
                 break;
                 
-            case SmsDcs.ALPHABET_8BIT:
+            case LATIN1:
                 ud = new SmsUserData(text_.getBytes("ISO-8859-1"), text_.length(), dcs_);
                 break;
                 
-            case SmsDcs.ALPHABET_UCS2:
+            case UCS2:
                 ud = new SmsUserData(text_.getBytes("UTF-16BE"), text_.length() * 2, dcs_);
                 break;
                 

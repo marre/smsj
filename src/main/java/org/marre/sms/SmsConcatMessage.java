@@ -313,13 +313,13 @@ public abstract class SmsConcatMessage implements SmsMessage
 
         switch (ud.getDcs().getAlphabet())
         {
-        case SmsDcs.ALPHABET_GSM:
+        case GSM:
             smsPdus = createSeptetPdus(udhElements, ud, nBytesLeft);
             break;
-        case SmsDcs.ALPHABET_UCS2:
+        case UCS2:
             smsPdus = createUnicodePdus(udhElements, ud, nBytesLeft);
             break;
-        case SmsDcs.ALPHABET_8BIT:
+        case LATIN1:
         default:
             smsPdus = createOctalPdus(udhElements, ud, nBytesLeft);
             break;

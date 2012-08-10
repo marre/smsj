@@ -34,11 +34,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.brew;
 
-import org.marre.sms.SmsMessage;
-import org.marre.sms.SmsDcs;
-import org.marre.sms.SmsPdu;
-import org.marre.sms.SmsPduUtil;
-import org.marre.sms.SmsUserData;
+import org.marre.sms.*;
 
 /**
  * Brew directed SMS message (BDSMS).
@@ -92,7 +88,7 @@ public class SmsBrewDirectedMessage implements SmsMessage
         
         SmsUserData userData = 
             new SmsUserData(SmsPduUtil.getSeptets(bdsmsText), bdsmsText.length(),
-                SmsDcs.getGeneralDataCodingDcs(SmsDcs.ALPHABET_8BIT, SmsDcs.MSG_CLASS_UNKNOWN));
+                SmsDcs.getGeneralDataCodingDcs(SmsAlphabet.LATIN1, SmsMsgClass.CLASS_UNKNOWN));
         
         return new SmsPdu[] {
                 new SmsPdu(null, userData)

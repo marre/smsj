@@ -132,15 +132,15 @@ public final class SmsUdhUtil
 
         switch (ud.getDcs().getAlphabet())
         {
-        case SmsDcs.ALPHABET_GSM:
+        case GSM:
             maxChars = (bytesLeft * 8) / 7;
             break;
             
-        case SmsDcs.ALPHABET_UCS2:
+        case UCS2:
             maxChars = bytesLeft / 2;
             break;
             
-        case SmsDcs.ALPHABET_8BIT:
+        case LATIN1:
         default:
             maxChars = bytesLeft;
             break;

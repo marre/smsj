@@ -36,14 +36,7 @@ package org.marre.sms.transport.gsm;
 
 import junit.framework.TestCase;
 
-import org.marre.sms.SmsAddress;
-import org.marre.sms.SmsDcs;
-import org.marre.sms.SmsException;
-import org.marre.sms.SmsMessage;
-import org.marre.sms.SmsPdu;
-import org.marre.sms.SmsTextMessage;
-import org.marre.sms.SmsUdhElement;
-import org.marre.sms.SmsUdhUtil;
+import org.marre.sms.*;
 import org.marre.util.StringUtil;
 
 /**
@@ -298,7 +291,7 @@ public class GsmEncoderTest extends TestCase
         byte[] data;
      
         // 70 chars should fit within one SMS
-        msg = new SmsTextMessage("0123456789012345678901234567890123456789012345678901234567890123456789", SmsDcs.ALPHABET_UCS2, SmsDcs.MSG_CLASS_UNKNOWN);
+        msg = new SmsTextMessage("0123456789012345678901234567890123456789012345678901234567890123456789", SmsAlphabet.UCS2, SmsMsgClass.CLASS_UNKNOWN);
         smsPdus = msg.getPdus();
         assertEquals(1, smsPdus.length);
         data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));
@@ -306,7 +299,7 @@ public class GsmEncoderTest extends TestCase
                      StringUtil.bytesToHexString(data));
                 
         // 0 chars
-        msg = new SmsTextMessage("", SmsDcs.ALPHABET_UCS2, SmsDcs.MSG_CLASS_UNKNOWN);
+        msg = new SmsTextMessage("", SmsAlphabet.UCS2, SmsMsgClass.CLASS_UNKNOWN);
         smsPdus = msg.getPdus();
         assertEquals(1, smsPdus.length);
         data = GsmEncoder.encodePdu(smsPdus[0], new SmsAddress("123"), new SmsAddress("456"));

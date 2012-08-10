@@ -78,7 +78,7 @@ public class SmsPortAddressedTextMessage extends SmsPortAddressedMessage
      * @param alphabet
      * @param messageClass
      */
-    public SmsPortAddressedTextMessage(int destPort, int origPort, String msg, int alphabet, int messageClass)
+    public SmsPortAddressedTextMessage(int destPort, int origPort, String msg, SmsAlphabet alphabet, SmsMsgClass messageClass)
     {
         super(destPort, origPort);
         smsTextMessage_ = new SmsTextMessage(msg, alphabet, messageClass);

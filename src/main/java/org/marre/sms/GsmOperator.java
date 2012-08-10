@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
 public class GsmOperator
 {
     private static final Logger log_ = LoggerFactory.getLogger(GsmOperator.class);
-    private static List operators_;
+    private static List<GsmOperator> operators_;
     
     private String name_;
     private String country_;
@@ -120,7 +120,7 @@ public class GsmOperator
             try
             {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-                List operators = new LinkedList();
+                List<GsmOperator> operators = new LinkedList<GsmOperator>();
                 
                 for (String row=reader.readLine(); row != null; row=reader.readLine()) {
                     StringTokenizer st = new StringTokenizer(row, "|");

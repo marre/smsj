@@ -38,13 +38,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.marre.sms.SmsAddress;
-import org.marre.sms.SmsConstants;
-import org.marre.sms.SmsDcs;
-import org.marre.sms.SmsException;
-import org.marre.sms.SmsMessage;
-import org.marre.sms.SmsMsgWaitingMessage;
-import org.marre.sms.SmsTextMessage;
+import org.marre.sms.*;
 import org.marre.sms.transport.SmsTransport;
 import org.marre.sms.transport.SmsTransportManager;
 import org.marre.wap.nokia.NokiaOtaBrowserSettings;
@@ -310,7 +304,7 @@ public class SmsSender
      */
     public String sendTextSms(String text, String dest, String sender) throws SmsException, IOException
     {
-        SmsTextMessage textMessage = new SmsTextMessage(text, SmsDcs.ALPHABET_GSM, SmsDcs.MSG_CLASS_UNKNOWN);        
+        SmsTextMessage textMessage = new SmsTextMessage(text, SmsAlphabet.GSM, SmsMsgClass.CLASS_UNKNOWN);
         return sendSms(textMessage, dest, sender);
     }
 
@@ -330,7 +324,7 @@ public class SmsSender
      */
     public String sendTextSms(String text, String dest) throws SmsException, IOException
     {
-        SmsTextMessage textMessage = new SmsTextMessage(text, SmsDcs.ALPHABET_GSM, SmsDcs.MSG_CLASS_UNKNOWN);        
+        SmsTextMessage textMessage = new SmsTextMessage(text, SmsAlphabet.GSM, SmsMsgClass.CLASS_UNKNOWN);
         return sendSms(textMessage, dest, null);
     }
     
@@ -352,7 +346,7 @@ public class SmsSender
      */
     public String sendUnicodeTextSms(String text, String dest, String sender) throws SmsException, IOException
     {
-        SmsTextMessage textMessage = new SmsTextMessage(text, SmsDcs.ALPHABET_UCS2, SmsDcs.MSG_CLASS_UNKNOWN);        
+        SmsTextMessage textMessage = new SmsTextMessage(text, SmsAlphabet.UCS2, SmsMsgClass.CLASS_UNKNOWN);
         return sendSms(textMessage, dest, sender);
     }
 
@@ -372,7 +366,7 @@ public class SmsSender
      */
     public String sendUnicodeTextSms(String text, String dest) throws SmsException, IOException
     {
-        SmsTextMessage textMessage = new SmsTextMessage(text, SmsDcs.ALPHABET_UCS2, SmsDcs.MSG_CLASS_UNKNOWN);        
+        SmsTextMessage textMessage = new SmsTextMessage(text, SmsAlphabet.UCS2, SmsMsgClass.CLASS_UNKNOWN);
         return sendSms(textMessage, dest, null);
     }
     

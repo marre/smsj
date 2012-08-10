@@ -68,7 +68,7 @@ public final class GsmEncoder
         throws SmsException
     {
         switch (pdu.getDcs().getAlphabet()) {
-        case SmsDcs.ALPHABET_GSM:
+        case GSM:
             return encodeSeptetPdu(pdu, destination, sender);
          
         default:
