@@ -30,22 +30,15 @@ package org.marre.sms.nokia;
  */
 class NokiaPart
 {
-    static final byte ITEM_TEXT_ISO_8859_1 = 0x00;
-    static final byte ITEM_TEXT_UNICODE = 0x01;
-    static final byte ITEM_OTA_BITMAP = 0x02;
-    static final byte ITEM_RINGTONE = 0x03;
-    static final byte ITEM_PROFILE_NAME = 0x04;
-    static final byte ITEM_SCREEN_SAVER = 0x06;
-
-    private byte itemType_;
-    private byte[] itemData_;
+    private final NokiaItemType itemType_;
+    private final byte[] itemData_;
 
     /**
      *
      * @param itemType
      * @param itemData
      */
-    NokiaPart(byte itemType, byte[] itemData)
+    NokiaPart(NokiaItemType itemType, byte[] itemData)
     {
         itemType_ = itemType;
         itemData_ = itemData;
@@ -55,7 +48,7 @@ class NokiaPart
      *
      * @return
      */
-    byte getItemType()
+    NokiaItemType getItemType()
     {
         return itemType_;
     }

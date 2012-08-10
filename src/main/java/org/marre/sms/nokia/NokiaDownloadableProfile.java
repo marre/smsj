@@ -80,22 +80,22 @@ public class NokiaDownloadableProfile extends NokiaMultipartMessage
         {
             try
             {
-                addMultipart(NokiaPart.ITEM_PROFILE_NAME, profileName_.getBytes("UTF-16BE"));
+                addMultipart(NokiaItemType.PROFILE_NAME, profileName_.getBytes("UTF-16BE"));
             }
             catch (UnsupportedEncodingException ex)
             {
-                throw new RuntimeException(ex.getMessage());
+                throw new RuntimeException(ex);
             }
         }
 
         if (screenSaver_ != null)
         {
-            addMultipart(NokiaPart.ITEM_SCREEN_SAVER, screenSaver_);
+            addMultipart(NokiaItemType.SCREEN_SAVER, screenSaver_);
         }
 
         if (ringingTone_ != null)
         {
-            addMultipart(NokiaPart.ITEM_RINGTONE, ringingTone_);
+            addMultipart(NokiaItemType.RINGTONE, ringingTone_);
         }
 
         return super.getUserData();

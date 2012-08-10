@@ -43,16 +43,16 @@ public class NokiaOperatorLogo extends SmsPortAddressedMessage
      * possible to fit a 72x14 pixel image in one SMS instead of two. <br>
      * <b>Note! </b> This will probably only work on Nokia phones...
      */
-    protected boolean discardNokiaHeaders_;
+    private boolean discardNokiaHeaders_;
     
     /** The ota image as a byte array */
-    protected byte[] bitmapData_;
+    private byte[] bitmapData_;
     
     /** GSM Mobile Country Code */
-    protected int mcc_;
+    private int mcc_;
     
     /** GSM Mobile Network Code */
-    protected int mnc_;
+    private int mnc_;
 
     /**
      * Creates a Nokia Operator Logo message
@@ -143,7 +143,7 @@ public class NokiaOperatorLogo extends SmsPortAddressedMessage
         }
         catch (IOException ex)
         {
-            // Should not happen!
+            throw new RuntimeException(ex);
         }
 
         return new SmsUserData(baos.toByteArray());

@@ -86,7 +86,7 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
      */
     private void addBitmap(byte[] bitmapData)
     {
-        addMultipart(NokiaPart.ITEM_OTA_BITMAP, bitmapData);
+        addMultipart(NokiaItemType.OTA_BITMAP, bitmapData);
     }
 
     /**
@@ -95,7 +95,7 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
      */
     private void addBitmap(OtaBitmap otaBitmap)
     {
-        addMultipart(NokiaPart.ITEM_OTA_BITMAP, otaBitmap.getBytes());
+        addMultipart(NokiaItemType.OTA_BITMAP, otaBitmap.getBytes());
     }
 
     /**
@@ -110,16 +110,16 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
         {
             if (asUnicode)
             {
-                addMultipart(NokiaPart.ITEM_TEXT_UNICODE, msg.getBytes("UTF-16BE"));
+                addMultipart(NokiaItemType.TEXT_UNICODE, msg.getBytes("UTF-16BE"));
             }
             else
             {
-                addMultipart(NokiaPart.ITEM_TEXT_ISO_8859_1, msg.getBytes("ISO-8859-1"));
+                addMultipart(NokiaItemType.TEXT_ISO_8859_1, msg.getBytes("ISO-8859-1"));
             }
         }
         catch (UnsupportedEncodingException ex)
         {
-            //log_.fatal("Shouldn't happen, 'UTF-16BE' and 'ISO-8859-1' are in the standard", ex);
+            throw new RuntimeException(ex);
         }
     }
 }
