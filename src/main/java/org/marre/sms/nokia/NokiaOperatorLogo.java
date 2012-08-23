@@ -25,10 +25,7 @@ package org.marre.sms.nokia;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.marre.sms.SmsConstants;
-import org.marre.sms.SmsPduUtil;
-import org.marre.sms.SmsPortAddressedMessage;
-import org.marre.sms.SmsUserData;
+import org.marre.sms.*;
 
 /**
  * Nokia Operator Logo message
@@ -80,7 +77,7 @@ public class NokiaOperatorLogo extends SmsPortAddressedMessage
      */
     public NokiaOperatorLogo(byte[] bitmapData, int mcc, int mnc)
     {
-        super(SmsConstants.PORT_NOKIA_OPERATOR_LOGO, 0);
+        super(SmsPort.NOKIA_OPERATOR_LOGO, SmsPort.ZERO);
         
         bitmapData_ = bitmapData;
         mcc_ = mcc;
@@ -99,7 +96,7 @@ public class NokiaOperatorLogo extends SmsPortAddressedMessage
      */
     public NokiaOperatorLogo(byte[] bitmapData, int mcc, int mnc, boolean discardHeaders)
     {
-        super(SmsConstants.PORT_NOKIA_OPERATOR_LOGO, 0);
+        super(SmsPort.NOKIA_OPERATOR_LOGO, SmsPort.ZERO);
         
         discardNokiaHeaders_ = discardHeaders;
         bitmapData_ = bitmapData;

@@ -39,7 +39,7 @@ import java.io.IOException;
 
 import org.marre.mime.MimeBodyPart;
 import org.marre.mime.MimeContentType;
-import org.marre.sms.SmsConstants;
+import org.marre.sms.SmsPort;
 import org.marre.sms.SmsPortAddressedMessage;
 import org.marre.sms.SmsUserData;
 import org.marre.wap.WapConstants;
@@ -62,7 +62,7 @@ public class SmsWapPushMessage extends SmsPortAddressedMessage
         
     protected SmsWapPushMessage()
     {
-        super(SmsConstants.PORT_WAP_PUSH, SmsConstants.PORT_WAP_WSP);
+        super(SmsPort.WAP_PUSH, SmsPort.WAP_WSP);
     }
     
     public SmsWapPushMessage(MimeBodyPart pushMsg)

@@ -25,7 +25,7 @@ package org.marre.sms.nokia;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.marre.sms.SmsConstants;
+import org.marre.sms.SmsPort;
 import org.marre.sms.SmsPortAddressedMessage;
 import org.marre.sms.SmsUserData;
 
@@ -61,7 +61,7 @@ public class NokiaGroupGraphic extends SmsPortAddressedMessage
      */
     public NokiaGroupGraphic(byte[] bitmapData)
     {
-        super(SmsConstants.PORT_NOKIA_CLI_LOGO, 0);
+        super(SmsPort.NOKIA_CLI_LOGO, SmsPort.ZERO);
         
         bitmapData_ = bitmapData;
     }

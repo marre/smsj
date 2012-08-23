@@ -39,6 +39,8 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.marre.sms.*;
+import org.marre.sms.mwi.MsgWaitingType;
+import org.marre.sms.mwi.SmsMsgWaitingMessage;
 import org.marre.sms.transport.SmsTransport;
 import org.marre.sms.transport.SmsTransportManager;
 import org.marre.wap.nokia.NokiaOtaBrowserSettings;
@@ -389,7 +391,7 @@ public class SmsSender
         browserSettings.addBookmark(title, url);
            
         SmsWapPushMessage wapPushMessage = new SmsWapPushMessage(browserSettings, "application/x-wap-prov.browser-bookmarks");
-        wapPushMessage.setPorts(49154, SmsConstants.PORT_OTA_SETTINGS_BROWSER);
+        wapPushMessage.setPorts(new SmsPort(49154), SmsPort.OTA_SETTINGS_BROWSER);
  
         return sendSms(wapPushMessage, dest, null);
     }
@@ -472,7 +474,7 @@ public class SmsSender
      */
     public String sendMsgWaitingVoice(int count, String dest) throws SmsException, IOException
     {
-        return sendMsgWaiting(SmsMsgWaitingMessage.TYPE_VOICE, count, dest);
+        return sendMsgWaiting(MsgWaitingType.VOICE, count, dest);
     }
     
     /**
@@ -488,7 +490,7 @@ public class SmsSender
      */
     public String sendMsgWaitingFax(int count, String dest) throws SmsException, IOException
     {
-        return sendMsgWaiting(SmsMsgWaitingMessage.TYPE_FAX, count, dest);
+        return sendMsgWaiting(MsgWaitingType.FAX, count, dest);
     }
     
     /**
@@ -504,10 +506,10 @@ public class SmsSender
      */
     public String sendMsgWaitingEmail(int count, String dest) throws SmsException, IOException
     {
-        return sendMsgWaiting(SmsMsgWaitingMessage.TYPE_EMAIL, count, dest);
+        return sendMsgWaiting(MsgWaitingType.EMAIL, count, dest);
     }
     
-    private String sendMsgWaiting(int type, int count, String dest) throws SmsException, IOException
+    private String sendMsgWaiting(MsgWaitingType type, int count, String dest) throws SmsException, IOException
     {
         SmsMsgWaitingMessage msgWaiting = new SmsMsgWaitingMessage();
         msgWaiting.addMsgWaiting(type, count);

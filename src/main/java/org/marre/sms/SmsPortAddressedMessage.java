@@ -44,8 +44,8 @@ package org.marre.sms;
  */
 public abstract class SmsPortAddressedMessage extends SmsConcatMessage
 {
-    protected int destPort_;
-    protected int origPort_;
+    protected SmsPort destPort_;
+    protected SmsPort origPort_;
     
     /**
      * Creates a new SmsPortAddressedMessage with the given dest and orig port.
@@ -53,7 +53,7 @@ public abstract class SmsPortAddressedMessage extends SmsConcatMessage
      * @param destPort
      * @param origPort
      */
-    protected SmsPortAddressedMessage(int destPort, int origPort)
+    protected SmsPortAddressedMessage(SmsPort destPort, SmsPort origPort)
     {
         setPorts(destPort, origPort);
     }
@@ -64,7 +64,7 @@ public abstract class SmsPortAddressedMessage extends SmsConcatMessage
      * @param destPort
      * @param origPort
      */
-    public void setPorts(int destPort, int origPort)
+    public void setPorts(SmsPort destPort, SmsPort origPort)
     {
         destPort_ = destPort;
         origPort_ = origPort;

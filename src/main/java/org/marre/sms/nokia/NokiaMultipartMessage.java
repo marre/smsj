@@ -24,11 +24,9 @@ package org.marre.sms.nokia;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
-import org.marre.sms.SmsConstants;
+import org.marre.sms.SmsPort;
 import org.marre.sms.SmsPortAddressedMessage;
 import org.marre.sms.SmsUserData;
 
@@ -49,7 +47,7 @@ abstract class NokiaMultipartMessage extends SmsPortAddressedMessage
      */
     protected NokiaMultipartMessage()
     {
-        super(SmsConstants.PORT_NOKIA_MULTIPART_MESSAGE, 0);
+        super(SmsPort.NOKIA_MULTIPART_MESSAGE, SmsPort.ZERO);
     }
 
     /**

@@ -36,8 +36,8 @@ package org.marre.wap.push;
 
 import junit.framework.TestCase;
 
-import org.marre.sms.SmsConstants;
 import org.marre.sms.SmsPdu;
+import org.marre.sms.SmsPort;
 import org.marre.sms.SmsUserData;
 import org.marre.util.StringUtil;
 import org.marre.wap.nokia.NokiaOtaBrowserSettings;
@@ -59,7 +59,7 @@ public class SmsWapPushMessageTest extends TestCase
         // Check contents
         SmsWapPushMessage push = new SmsWapPushMessage(browserSettings);
         // Set ports
-        push.setPorts(SmsConstants.PORT_OTA_SETTINGS_BROWSER, 49154);
+        push.setPorts(SmsPort.OTA_SETTINGS_BROWSER, new SmsPort(49154));
         
         SmsUserData userData = push.getUserData();
         

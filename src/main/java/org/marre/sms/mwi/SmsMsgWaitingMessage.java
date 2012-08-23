@@ -32,7 +32,9 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.sms;
+package org.marre.sms.mwi;
+
+import org.marre.sms.*;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -50,42 +52,22 @@ import java.util.LinkedList;
  */
 public class SmsMsgWaitingMessage extends SmsTextMessage
 {
-    /** Message waiting type : VOICE */
-    public static final int TYPE_VOICE = 0;
-    /** Message waiting type : FAX */
-    public static final int TYPE_FAX = 1;
-    /** Message waiting type : EMAIL */
-    public static final int TYPE_EMAIL = 2;
-    /** Message waiting type : VIDEO */
-    public static final int TYPE_VIDEO = 3;
-    
-    private static final int OPT_PROFILE_MASK = 0x03;
-    /** Profile ID 1. (Default) */
-    public static final int OPT_PROFILE_ID_1 = 0x00;
-    /** Profile ID 2. */
-    public static final int OPT_PROFILE_ID_2 = 0x01;
-    /** Profile ID 3. */
-    public static final int OPT_PROFILE_ID_3 = 0x02;
-    /** Profile ID 4. */
-    public static final int OPT_PROFILE_ID_4 = 0x03;
-    
-    /** Store message in the phone memory. */
-    public static final int OPT_STORE_MSG = 0x04;    
-    
     /**
      * Represents one message waiting udh.
      */
-    private class MsgWaiting
+    private static class MsgWaiting
     {
-        private int type_;
-        private int count_;
-        private int options_;
+        private final MsgWaitingType type_;
+        private final int count_;
+        private final MsgWaitingProfile profile_;
+        private final boolean storeMessage_;
         
-        private MsgWaiting(int type, int count, int options)
+        private MsgWaiting(MsgWaitingType type, int count, MsgWaitingProfile profile, boolean storeMessage)
         {
             this.type_ = type;
             this.count_ = count;
-            this.options_ = options;
+            this.profile_ = profile;
+            this.storeMessage_ = storeMessage;
         }
 
         int getCount()
@@ -93,23 +75,24 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
             return count_;
         }
 
-        int getOptions()
-        {
-            return options_;
-        }
-
-        int getType()
+        MsgWaitingType getType()
         {
             return type_;
         }
-        
-        
+
+        public MsgWaitingProfile getProfile() {
+            return profile_;
+        }
+
+        public boolean storeMessage() {
+            return storeMessage_;
+        }
     }
     
     /**
      * List of MsgWaiting "objects".
      */
-    protected LinkedList messages_ = new LinkedList();
+    protected LinkedList<MsgWaiting> messages_ = new LinkedList<MsgWaiting>();
     
     /**
      * Creates an empty message.
@@ -146,41 +129,28 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
      * @param type Type of message that is waiting. Can be any of TYPE_*.
      * @param count Number of messages waiting for retrieval.
      */
-    public void addMsgWaiting(int type, int count)
+    public void addMsgWaiting(MsgWaitingType type, int count)
     {
-        addMsgWaiting(type, count, 0);
+        addMsgWaiting(type, count, MsgWaitingProfile.ID_1, false);
     }
     
     /**
      * Adds a message waiting.
-     * 
+     *
      * @param type Type of message that is waiting. Can be any of TYPE_*.
      * @param count Number of messages waiting for retrieval.
-     * @param options Bitfield of OPT_ options.
+     * @param profile
+     * @param storeMessage
      */
-    public void addMsgWaiting(int type, int count, int options)
+    public void addMsgWaiting(MsgWaitingType type, int count, MsgWaitingProfile profile, boolean storeMessage)
     {
-        // Check input parameters
-        switch (type)
-        {
-        case TYPE_VOICE:
-        case TYPE_FAX:
-        case TYPE_EMAIL:
-        case TYPE_VIDEO:
-            // Valid values
-            break;
-            
-        default:
-            throw new IllegalArgumentException("Invalid type.");
-        }
-        
         // count can be at most 255.
         if (count > 255)
         {
             count = 255;
         }
         
-        messages_.add(new MsgWaiting(type, count, options));
+        messages_.add(new MsgWaiting(type, count, profile, storeMessage));
     }
 
     /**
@@ -215,29 +185,23 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
         // Bit 4, 3 and 2 indicate the extended message indication type.
         switch (msgWaiting.getType())
         {
-        case TYPE_VOICE: udh[0] = 0x00; break;
-        case TYPE_FAX:   udh[0] = 0x01; break;
-        case TYPE_EMAIL: udh[0] = 0x02; break;
-        case TYPE_VIDEO: udh[0] = 0x07; break;
-
-        default:
-            throw new RuntimeException("Invalid message type.");
+        case VOICE: udh[0] = 0x00; break;
+        case FAX:   udh[0] = 0x01; break;
+        case EMAIL: udh[0] = 0x02; break;
+        case VIDEO: udh[0] = 0x07; break;
         }
         
         // Bit 6 and 5 indicates the profile ID of the Multiple Subscriber Profile.
-        switch (msgWaiting.getOptions() & OPT_PROFILE_MASK)
+        switch (msgWaiting.getProfile())
         {
-        case OPT_PROFILE_ID_1: udh[0] |= 0x00; break;
-        case OPT_PROFILE_ID_2: udh[0] |= 0x20; break;
-        case OPT_PROFILE_ID_3: udh[0] |= 0x40; break;
-        case OPT_PROFILE_ID_4: udh[0] |= 0x60; break;
-            
-        default:
-            throw new RuntimeException("Invalid option.");
+        case ID_1: udh[0] |= 0x00; break;
+        case ID_2: udh[0] |= 0x20; break;
+        case ID_3: udh[0] |= 0x40; break;
+        case ID_4: udh[0] |= 0x60; break;
         }
         
         // Bit 7 indicates if the message shall be stored.
-        if ((msgWaiting.getOptions() & OPT_STORE_MSG) != 0)
+        if (msgWaiting.storeMessage())
         {
             udh[0] |= (byte) (0x80);
         }
@@ -245,7 +209,7 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
         // Octet 2 contains the number of messages waiting
         udh[1] = (byte) (msgWaiting.getCount() & 0xff);
 
-        return new SmsUdhElement(SmsConstants.UDH_IEI_SPECIAL_MESSAGE, udh);
+        return new SmsUdhElement(SmsUdhIei.SPECIAL_MESSAGE, udh);
     }
     
     /**

@@ -56,7 +56,7 @@ public class GsmEncoderTest extends TestCase
         
         public SmsUdhElement[] getUdhElements() 
         {
-            return new SmsUdhElement[]{SmsUdhUtil.get8BitApplicationPortUdh(10,11)};
+            return new SmsUdhElement[]{SmsUdhUtil.get8BitApplicationPortUdh(new SmsPort(10),new SmsPort(11))};
         }
     }
     
@@ -208,7 +208,7 @@ public class GsmEncoderTest extends TestCase
         
         public SmsUdhElement[] getUdhElements() 
         {
-            return new SmsUdhElement[]{SmsUdhUtil.get16BitApplicationPortUdh(10,11)};
+            return new SmsUdhElement[]{SmsUdhUtil.get16BitApplicationPortUdh(new SmsPort(10),new SmsPort(11))};
         }
     }
     

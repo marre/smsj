@@ -42,9 +42,9 @@ import java.io.*;
  * @author Markus Eriksson
  * @version $Id$
  */
-public class SmsUdhElement
+public final class SmsUdhElement
 {
-    protected int udhIei_;
+    protected SmsUdhIei udhIei_;
     protected byte[] udhIeiData_;
 
     /**
@@ -53,7 +53,7 @@ public class SmsUdhElement
      * @param udhIei
      * @param udhIeiData
      */
-    public SmsUdhElement(int udhIei, byte[] udhIeiData)
+    public SmsUdhElement(SmsUdhIei udhIei, byte[] udhIeiData)
     {
         udhIei_ = udhIei;
         udhIeiData_ = udhIeiData;
@@ -99,7 +99,7 @@ public class SmsUdhElement
     {
         byte[] allData = new byte[udhIeiData_.length + 2];
 
-        allData[0] = (byte) (udhIei_ & 0xff);
+        allData[0] = (byte) (udhIei_.getValue() & 0xff);
         allData[1] = (byte) (udhIeiData_.length & 0xff);
         System.arraycopy(udhIeiData_, 0, allData, 2, udhIeiData_.length);
 
@@ -115,7 +115,7 @@ public class SmsUdhElement
     public void writeTo(OutputStream os)
         throws IOException
     {
-        os.write(udhIei_);
+        os.write(udhIei_.getValue());
         os.write(udhIeiData_.length);
         os.write(udhIeiData_);
     }

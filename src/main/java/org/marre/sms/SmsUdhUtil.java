@@ -168,7 +168,7 @@ public final class SmsUdhUtil
         udh[1] = (byte) (totalNumberOfSms & 0xff);
         udh[2] = (byte) (seqNr  & 0xff);
 
-        return new SmsUdhElement(SmsConstants.UDH_IEI_CONCATENATED_8BIT, udh);
+        return new SmsUdhElement(SmsUdhIei.CONCATENATED_8BIT, udh);
     }
 
     /**
@@ -210,7 +210,7 @@ public final class SmsUdhUtil
         }
         udh[1] = (byte) (msgCount & 0xff);
 
-        return new SmsUdhElement(SmsConstants.UDH_IEI_SPECIAL_MESSAGE, udh);
+        return new SmsUdhElement(SmsUdhIei.SPECIAL_MESSAGE, udh);
     }
 
     /**
@@ -232,14 +232,17 @@ public final class SmsUdhUtil
      * @param origPort Source port
      * @return A SmsUdhElement
      */
-    public static SmsUdhElement get8BitApplicationPortUdh(int destPort, int origPort)
+    public static SmsUdhElement get8BitApplicationPortUdh(SmsPort destPort, SmsPort origPort)
     {
         byte[] udh = new byte[2];
 
-        udh[0] = (byte) (destPort & 0xff);
-        udh[1] = (byte) (origPort & 0xff);
+        int destPortNo = destPort.getPort();
+        int origPortNo = origPort.getPort();
 
-        return new SmsUdhElement(SmsConstants.UDH_IEI_APP_PORT_8BIT, udh);
+        udh[0] = (byte) (destPortNo & 0xff);
+        udh[1] = (byte) (origPortNo & 0xff);
+
+        return new SmsUdhElement(SmsUdhIei.APP_PORT_8BIT, udh);
     }
 
     /**
@@ -261,16 +264,19 @@ public final class SmsUdhUtil
      * @param origPort Source port
      * @return A SmsUdhElement
      */
-    public static SmsUdhElement get16BitApplicationPortUdh(int destPort, int origPort)
+    public static SmsUdhElement get16BitApplicationPortUdh(SmsPort destPort, SmsPort origPort)
     {
         byte[] udh = new byte[4];
 
-        udh[0] = (byte) ((destPort >> 8) & 0xff);
-        udh[1] = (byte) (destPort & 0xff);
-        udh[2] = (byte) ((origPort >> 8) & 0xff);
-        udh[3] = (byte) (origPort & 0xff);
+        int destPortNo = destPort.getPort();
+        int origPortNo = origPort.getPort();
 
-        return new SmsUdhElement(SmsConstants.UDH_IEI_APP_PORT_16BIT, udh);
+        udh[0] = (byte) ((destPortNo >> 8) & 0xff);
+        udh[1] = (byte) (destPortNo & 0xff);
+        udh[2] = (byte) ((origPortNo >> 8) & 0xff);
+        udh[3] = (byte) (origPortNo & 0xff);
+
+        return new SmsUdhElement(SmsUdhIei.APP_PORT_16BIT, udh);
     }
 
     /**
@@ -293,87 +299,6 @@ public final class SmsUdhUtil
         udh[2] = (byte) (totalNumberOfSms & 0xff);
         udh[3] = (byte) (seqNr  & 0xff);
 
-        return new SmsUdhElement(SmsConstants.UDH_IEI_CONCATENATED_16BIT, udh);
-    }
-
-    /**
-     * Creates a "EMS Text Formatting" UDH element.
-     *
-     * @param startPos Start position of the text formatting. This position
-     * is relative to the start of the UD field of the PDU.
-     * @param formatLen The number of character to format. If 0 it sets the
-     * default text formatting.
-     * @param alignment Can be any of EMS_TEXT_ALIGN_*
-     * @param fontSize Can be any of EMS_TEXT_SIZE_*
-     * @param style Can be any of EMS_TEXT_STYLE_*
-     * @param foregroundColor Can be any of EMS_TEXT_COLOR_*
-     * @param backgroundColor Can be any of EMS_TEXT_COLOR_*
-     * @return A SmsUdhElement
-     */
-    public static SmsUdhElement getEmsTextFormattingUdh(int startPos, int formatLen,
-        byte alignment, byte fontSize, byte style, byte foregroundColor, byte backgroundColor)
-    {
-        byte[] udh = new byte[4];
-
-        udh[0] = (byte) (startPos & 0xff);
-        udh[1] = (byte) (formatLen & 0xff);
-        udh[2] = (byte) (( (alignment & 0x03) | (fontSize & 0x0C) | (style & 0xF0) ) & 0xff);
-        udh[3] = (byte) (( (foregroundColor & 0x0f) | (((backgroundColor & 0x0f) << 4) & 0xf0) ) & 0xff);
-
-        return new SmsUdhElement(SmsConstants.UDH_IEI_EMS_TEXT_FORMATTING, udh);
-    }
-    
-    /**
-     * Creates an ems user defined sound udh.
-     * 
-     * @param iMelodyData The imelody data
-     * @param position The position
-     * @return An SmsUdhElement with a user defined sound
-     */
-    public static SmsUdhElement getEmsUserDefinedSoundUdh(byte[] iMelodyData, int position) 
-    {
-        int iMelodyLength = iMelodyData.length;
-        byte[] udh = new byte[iMelodyLength + 1];
-        udh[0] = (byte) position;
-        System.arraycopy(iMelodyData, 0, udh, 1, iMelodyLength);
-        
-        return new SmsUdhElement(SmsConstants.UDH_IEI_EMS_USER_DEFINED_SOUND, udh);
-    }
-    
-    /**
-     * Creates an ems user prompt indicator udh.
-     * 
-     * @param numFragments Number of fragments
-     * @return An SmsUdhElement with an user prompt indicator
-     */
-    public static SmsUdhElement getEmsUserPromptIndicatorUdh(int numFragments)
-    {
-        byte[] udh = new byte[1];
-        udh[0] = (byte) numFragments;
-        
-        return new SmsUdhElement(SmsConstants.UDH_IEI_EMS_USER_PROMPT, udh);
-    }
-    
-    /**
-     * Creates an ems variable picture udh.
-     * 
-     * @param bitmap The bitmap data
-     * @param width The width of the bitmap (in pixels)
-     * @param height The height of the bitmap (in pixels)
-     * @param position The position of the bitmap
-     * @return An SmsUdhElement with the bitmap
-     */
-    public static SmsUdhElement getEmsVariablePictureUdh(byte[] bitmap, int width, int height, int position) 
-    {
-        int otaBitmapLength = bitmap.length;
-        byte[] udh = new byte[otaBitmapLength + 3];
-        
-        udh[0] = (byte) position;
-        udh[1] = (byte) (width / 8);
-        udh[2] = (byte) height;
-        
-        System.arraycopy(bitmap, 0, udh, 3, otaBitmapLength);
-        
-        return new SmsUdhElement(SmsConstants.UDH_IEI_EMS_VARIABLE_PICTURE, udh);
+        return new SmsUdhElement(SmsUdhIei.CONCATENATED_16BIT, udh);
     }
 }

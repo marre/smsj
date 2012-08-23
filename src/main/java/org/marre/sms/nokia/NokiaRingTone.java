@@ -22,7 +22,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.nokia;
 
-import org.marre.sms.SmsConstants;
+import org.marre.sms.SmsPort;
 import org.marre.sms.SmsPortAddressedMessage;
 import org.marre.sms.SmsUserData;
 
@@ -42,7 +42,7 @@ public class NokiaRingTone extends SmsPortAddressedMessage
      */
     public NokiaRingTone(byte[] ringToneData)
     {
-        super(SmsConstants.PORT_NOKIA_RING_TONE, 0);
+        super(SmsPort.NOKIA_RING_TONE, SmsPort.ZERO);
         
         ringToneData_ = ringToneData;
     }

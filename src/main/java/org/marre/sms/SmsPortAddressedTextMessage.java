@@ -52,7 +52,7 @@ public class SmsPortAddressedTextMessage extends SmsPortAddressedMessage
      * @param origPort
      * @param msg
      */
-    public SmsPortAddressedTextMessage(int destPort, int origPort, String msg)
+    public SmsPortAddressedTextMessage(SmsPort destPort, SmsPort origPort, String msg)
     {
         super(destPort, origPort);
         smsTextMessage_ = new SmsTextMessage(msg);
@@ -78,7 +78,7 @@ public class SmsPortAddressedTextMessage extends SmsPortAddressedMessage
      * @param alphabet
      * @param messageClass
      */
-    public SmsPortAddressedTextMessage(int destPort, int origPort, String msg, SmsAlphabet alphabet, SmsMsgClass messageClass)
+    public SmsPortAddressedTextMessage(SmsPort destPort, SmsPort origPort, String msg, SmsAlphabet alphabet, SmsMsgClass messageClass)
     {
         super(destPort, origPort);
         smsTextMessage_ = new SmsTextMessage(msg, alphabet, messageClass);
@@ -92,7 +92,7 @@ public class SmsPortAddressedTextMessage extends SmsPortAddressedMessage
      * @param msg
      * @param dcs
      */
-    public SmsPortAddressedTextMessage(int destPort, int origPort, String msg, SmsDcs dcs)
+    public SmsPortAddressedTextMessage(SmsPort destPort, SmsPort origPort, String msg, SmsDcs dcs)
     {
         super(destPort, origPort);
         smsTextMessage_ = new SmsTextMessage(msg, dcs);
