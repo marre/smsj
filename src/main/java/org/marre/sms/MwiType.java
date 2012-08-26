@@ -1,9 +1,9 @@
-package org.marre.sms.mwi;
+package org.marre.sms;
 
 /**
  * Supported MWI types.
  */
-public enum MsgWaitingType {
+public enum MwiType {
     /** Message waiting type : VOICE */
     VOICE,
     /** Message waiting type : FAX */

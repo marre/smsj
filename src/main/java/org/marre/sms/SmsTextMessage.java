@@ -63,17 +63,6 @@ public class SmsTextMessage extends SmsConcatMessage
     
     /**
      * Creates an SmsTextMessage with the given alphabet and message class.
-     * <p>
-     * alphabet can be any of:<br>
-     * - SmsConstants.ALPHABET_GSM<br>
-     * - SmsConstants.ALPHABET_8BIT<br>
-     * - SmsConstants.ALPHABET_UCS2<br>
-     * <p>
-     * messageClass can be any of:<br>
-     * - SmsConstants.MSG_CLASS_0 (Often called a FLASH message)<br>
-     * - SmsConstants.MSG_CLASS_1<br>
-     * - SmsConstants.MSG_CLASS_2<br>
-     * - SmsConstants.MSG_CLASS_3<br>
      *
      * @param msg The message
      * @param alphabet The alphabet

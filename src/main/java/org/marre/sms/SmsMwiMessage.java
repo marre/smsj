@@ -32,9 +32,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.sms.mwi;
-
-import org.marre.sms.*;
+package org.marre.sms;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -50,19 +48,19 @@ import java.util.LinkedList;
  * @author Markus Eriksson
  * @version $Id$
  */
-public class SmsMsgWaitingMessage extends SmsTextMessage
+public class SmsMwiMessage extends SmsTextMessage
 {
     /**
      * Represents one message waiting udh.
      */
     private static class MsgWaiting
     {
-        private final MsgWaitingType type_;
+        private final MwiType type_;
         private final int count_;
-        private final MsgWaitingProfile profile_;
+        private final MwiProfile profile_;
         private final boolean storeMessage_;
         
-        private MsgWaiting(MsgWaitingType type, int count, MsgWaitingProfile profile, boolean storeMessage)
+        private MsgWaiting(MwiType type, int count, MwiProfile profile, boolean storeMessage)
         {
             this.type_ = type;
             this.count_ = count;
@@ -75,12 +73,12 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
             return count_;
         }
 
-        MsgWaitingType getType()
+        MwiType getType()
         {
             return type_;
         }
 
-        public MsgWaitingProfile getProfile() {
+        public MwiProfile getProfile() {
             return profile_;
         }
 
@@ -97,7 +95,7 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
     /**
      * Creates an empty message.
      */
-    public SmsMsgWaitingMessage()
+    public SmsMwiMessage()
     {
         this("", SmsAlphabet.LATIN1);
     }
@@ -107,7 +105,7 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
      * 
      * @param text Description of this message.
      */
-    public SmsMsgWaitingMessage(String text)
+    public SmsMwiMessage(String text)
     {
         this(text, SmsAlphabet.GSM);
     }
@@ -118,7 +116,7 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
      * @param text Description of this message
      * @param alphabet Alphabet to use. Valid values are SmsDcs.ALPHABET_*.
      */
-    public SmsMsgWaitingMessage(String text, SmsAlphabet alphabet)
+    public SmsMwiMessage(String text, SmsAlphabet alphabet)
     {
         super(text, SmsDcs.getGeneralDataCodingDcs(alphabet, SmsMsgClass.CLASS_UNKNOWN));
     }
@@ -129,9 +127,9 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
      * @param type Type of message that is waiting. Can be any of TYPE_*.
      * @param count Number of messages waiting for retrieval.
      */
-    public void addMsgWaiting(MsgWaitingType type, int count)
+    public void addMsgWaiting(MwiType type, int count)
     {
-        addMsgWaiting(type, count, MsgWaitingProfile.ID_1, false);
+        addMsgWaiting(type, count, MwiProfile.ID_1, false);
     }
     
     /**
@@ -142,7 +140,7 @@ public class SmsMsgWaitingMessage extends SmsTextMessage
      * @param profile
      * @param storeMessage
      */
-    public void addMsgWaiting(MsgWaitingType type, int count, MsgWaitingProfile profile, boolean storeMessage)
+    public void addMsgWaiting(MwiType type, int count, MwiProfile profile, boolean storeMessage)
     {
         // count can be at most 255.
         if (count > 255)

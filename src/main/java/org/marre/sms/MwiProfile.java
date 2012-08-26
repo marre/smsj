@@ -1,9 +1,9 @@
-package org.marre.sms.mwi;
+package org.marre.sms;
 
 /**
  * Message Waiting Profiles
  */
-public enum MsgWaitingProfile {
+public enum MwiProfile {
     /** Profile ID 1. (Default) */
     ID_1,
     /** Profile ID 2. */

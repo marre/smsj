@@ -474,14 +474,6 @@ public final class SmsPduUtil
         return '?';
     }
 
-    public static void arrayCopy(byte[] src, int srcStart, byte[] dest, int destStart, int length)
-    {
-        for (int i = 0; i < length; i++)
-        {
-            dest[i + destStart] = src[i + srcStart];
-        }
-    }
-
     /**
      * 
      * @param src

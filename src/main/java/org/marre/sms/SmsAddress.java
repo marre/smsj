@@ -45,7 +45,6 @@ package org.marre.sms;
  * - 20 digits (excluding any initial '+') or<br>
  * - 11 alphanumeric chars (if TON == TON_ALPHANUMERIC).
  * <p>
- * Look in SmsConstants for definitions of TON and NPI.
  *
  * @author Markus Eriksson
  * @version $Id$
@@ -175,8 +174,6 @@ public final class SmsAddress
 
     /**
      * Returns the TON field
-     * <p>
-     * See SmsConstants for definitions of different TON:s
      *
      * @return The TON
      */
@@ -187,8 +184,6 @@ public final class SmsAddress
 
     /**
      * Returns the NPI field
-     * <p>
-     * See SmsConstants for definitions of different TON:s
      *
      * @return The NPI
      */

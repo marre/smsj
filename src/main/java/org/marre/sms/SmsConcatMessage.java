@@ -142,7 +142,7 @@ public abstract class SmsConcatMessage implements SmsMessage
                 udLength = udBytes;
 
                 pduUd = new byte[udBytes];
-                SmsPduUtil.arrayCopy(ud.getData(), udOffset, pduUd, 0, udBytes);
+                System.arraycopy(ud.getData(), udOffset, pduUd, 0, udBytes);
                 smsPdus[i] = new SmsPdu(pduUdhElements, pduUd, udLength, ud.getDcs());
             }
         }
@@ -214,7 +214,7 @@ public abstract class SmsConcatMessage implements SmsMessage
                 udBytes = udLength * 2;
 
                 pduUd = new byte[udBytes];
-                SmsPduUtil.arrayCopy(ud.getData(), udOffset * 2, pduUd, 0, udBytes);
+                System.arraycopy(ud.getData(), udOffset * 2, pduUd, 0, udBytes);
                 smsPdus[i] = new SmsPdu(pduUdhElements, pduUd, udBytes, ud.getDcs());
             }
         }
