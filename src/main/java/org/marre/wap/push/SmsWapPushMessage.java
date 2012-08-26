@@ -83,12 +83,7 @@ public class SmsWapPushMessage extends SmsPortAddressedMessage
     
     public SmsWapPushMessage(WbxmlDocument pushMsg, String contentType)
     {
-        this();
-        
-        MimeContentType ct = new MimeContentType(contentType);
-        // The current wbxml encoder can only output utf-8
-        ct.setParam("charset", "utf-8");
-        pushMsg_ = new MimeBodyPart(buildPushMessage(pushMsg), ct);
+        this(pushMsg, new MimeContentType(contentType));
     }
     
     public SmsWapPushMessage(WbxmlDocument pushMsg)
