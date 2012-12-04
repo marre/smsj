@@ -74,9 +74,7 @@ public class MimeMultipartRelated extends MimeMultipart
 
     public String toString()
     {
-        String s = null;
-        s = getContentType().toString() + "\n";
-        s = s + super.toString();
-        return s;
+        return getContentType().toString() + "\n" +
+               super.toString();
     }
 }

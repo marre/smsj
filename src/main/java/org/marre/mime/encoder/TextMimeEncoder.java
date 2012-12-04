@@ -153,12 +153,12 @@ public class TextMimeEncoder implements MimeEncoder
      */
     protected void writeHeader(OutputStream os, MimeHeader header) throws IOException
     {
-        StringBuffer strBuff = new StringBuffer();
+        StringBuilder strBuff = new StringBuilder();
 
         String name = header.getName();
         String value = header.getValue();
 
-        strBuff.append(name + ": " + value);
+        strBuff.append(name).append(": ").append(value);
 
         for (int i = 0; i < header.getParamCount(); i++)
         {

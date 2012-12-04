@@ -251,7 +251,7 @@ public class SerialComm implements GsmComm
     private String readOneRowOfData(String find)
         throws IOException
     {
-        StringBuffer buffer = new StringBuffer(256);
+        StringBuilder buffer = new StringBuilder(256);
         int ch;
 
         while (true)

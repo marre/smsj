@@ -37,20 +37,19 @@ package org.marre.mime;
 import java.util.Collections;
 import java.util.List;
 import java.util.LinkedList;
-import java.util.Iterator;
 
 public class MimeHeader
 {
     protected String headerName_;
     protected String headerValue_;
 
-    protected List params_;
+    protected List<MimeHeaderParam> params_;
 
     public MimeHeader(String name, String value)
     {
         headerName_ = name;
         headerValue_ = value;
-        params_ = new LinkedList();
+        params_ = new LinkedList<MimeHeaderParam>();
     }
 
     public void setValue(String theValue)
@@ -79,13 +78,10 @@ public class MimeHeader
 
     public MimeHeaderParam getParam(String theName)
     {
-        for (Iterator i=params_.iterator(); i.hasNext(); ) {
-            MimeHeaderParam param = (MimeHeaderParam) i.next();
-            if (param.getName().equalsIgnoreCase(theName))
-            {
+        for (MimeHeaderParam param : params_) {
+            if (param.getName().equalsIgnoreCase(theName)) {
                 return param;
             }
-            
         }
 
         // Not found
@@ -95,7 +91,6 @@ public class MimeHeader
     public void removeParam(String theName)
     {
         MimeHeaderParam param = getParam(theName);
-
         if (param != null)
         {
             params_.remove(param);
@@ -114,18 +109,19 @@ public class MimeHeader
 
     public MimeHeaderParam getParam(int theIndex)
     {
-        return (MimeHeaderParam)params_.get(theIndex);
+        return params_.get(theIndex);
     }
 
     public String toString()
     {
-        String s = headerName_ + "=" + headerValue_;
+        StringBuilder sb = new StringBuilder();
 
-        for (Iterator i=params_.iterator(); i.hasNext(); ) {
-            MimeHeaderParam param = (MimeHeaderParam) i.next();
-            s = param.getName() + "=" + param.getValue();
+        sb.append(headerName_).append("=").append(headerValue_);
+
+        for (MimeHeaderParam param : params_) {
+            sb.append("; ").append(param.getName()).append("=").append(param.getValue());
         }
-        
-        return s;
+
+        return sb.toString();
     }
 }

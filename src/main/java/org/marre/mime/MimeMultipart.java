@@ -34,17 +34,16 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 public abstract class MimeMultipart extends MimeBodyPart
 {
-    protected List bodyParts_;
+    protected List<MimeBodyPart> bodyParts_;
 
     protected MimeMultipart()
     {
-        bodyParts_ = new LinkedList();
+        bodyParts_ = new LinkedList<MimeBodyPart>();
     }
 
     public MimeMultipart(String contentType)
@@ -65,7 +64,7 @@ public abstract class MimeMultipart extends MimeBodyPart
 
     public MimeBodyPart getBodyPart(int index)
     {
-        return (MimeBodyPart) bodyParts_.get(index);
+        return bodyParts_.get(index);
     }
 
     public int getBodyPartCount()
@@ -75,11 +74,9 @@ public abstract class MimeMultipart extends MimeBodyPart
 
     public String toString()
     {
-        StringBuffer strBuff = new StringBuffer();
+        StringBuilder strBuff = new StringBuilder();
 
-        for (Iterator i = bodyParts_.iterator(); i.hasNext(); )
-        {
-            MimeBodyPart bodyPart = (MimeBodyPart) i.next();            
+        for (MimeBodyPart bodyPart : bodyParts_) {
             strBuff.append(bodyPart);
         }
 

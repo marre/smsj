@@ -49,14 +49,14 @@ public class MimeBodyPart
     protected byte[] body_;
     protected MimeContentType contentType_;
 
-    protected List headers_;
+    protected List<MimeHeader> headers_;
 
     /**
      * Creates a new empty MimeBodyPart.
      */
     public MimeBodyPart()
     {
-        headers_ = new LinkedList();
+        headers_ = new LinkedList<MimeHeader>();
     }
 
     /**
@@ -99,7 +99,6 @@ public class MimeBodyPart
         if (header != null)
         {
             headers_.remove(header);
-            header = null;
         }
         addHeader(new MimeHeader(headerName, headerValue));
     }
@@ -112,7 +111,7 @@ public class MimeBodyPart
      */
     public MimeHeader getHeader(int index)
     {
-        return (MimeHeader)headers_.get(index);
+        return headers_.get(index);
     }
 
     /**
@@ -123,10 +122,8 @@ public class MimeBodyPart
      */
     public MimeHeader getHeader(String headerName)
     {
-        for (Iterator i=headers_.iterator(); i.hasNext(); ) {
-            MimeHeader header = (MimeHeader) i.next();
-            if (header.getName().equalsIgnoreCase(headerName))
-            {
+        for (MimeHeader header : headers_) {
+            if (header.getName().equalsIgnoreCase(headerName)) {
                 return header;
             }
         }

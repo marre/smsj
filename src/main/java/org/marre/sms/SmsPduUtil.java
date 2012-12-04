@@ -236,7 +236,7 @@ public final class SmsPduUtil
      */
     public static String readSeptets(InputStream is, int length) throws IOException
     {
-        StringBuffer msg = new StringBuffer(160);
+        StringBuilder msg = new StringBuilder(160);
 
         int rest = 0;
         int restBits = 0;
@@ -378,13 +378,13 @@ public final class SmsPduUtil
      */
     public static String readBcdNumber(byte[] data, int offset, int length)
     {
-        StringBuffer out = new StringBuffer();
+        StringBuilder out = new StringBuilder();
         for (int i = offset; i < offset + length; i++)
         {
             int arrb = data[i];
             if ((data[i] & 15) <= 9)
             {
-                out.append("" + (data[i] & 15));
+                out.append("").append(data[i] & 15);
             }
             if ((data[i] & 15) == 0xA)
             {
@@ -397,7 +397,7 @@ public final class SmsPduUtil
             arrb = (arrb >>> 4);
             if ((arrb & 15) <= 9)
             {
-                out.append("" + (arrb & 15));
+                out.append("").append(arrb & 15);
             }
             if ((arrb & 15) == 0xA)
             {

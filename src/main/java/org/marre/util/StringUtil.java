@@ -84,13 +84,11 @@ public final class StringUtil
      */
     public static String bytesToHexString(byte[] data)
     {
-        StringBuffer hexStrBuff = new StringBuffer(data.length * 2);
+        StringBuilder hexStrBuff = new StringBuilder(data.length * 2);
 
-        for (int i = 0; i < data.length; i++)
-        {
-            String hexByteStr = Integer.toHexString(data[i] & 0xff).toUpperCase();
-            if (hexByteStr.length() == 1)
-            {
+        for (byte aData : data) {
+            String hexByteStr = Integer.toHexString(aData & 0xff).toUpperCase();
+            if (hexByteStr.length() == 1) {
                 hexStrBuff.append("0");
             }
             hexStrBuff.append(hexByteStr);
@@ -108,7 +106,7 @@ public final class StringUtil
      */
     public static String byteToHexString(byte data)
     {
-        StringBuffer hexStrBuff = new StringBuffer(2);
+        StringBuilder hexStrBuff = new StringBuilder(2);
 
         String hexByteStr = Integer.toHexString(data & 0xff).toUpperCase();
         if (hexByteStr.length() == 1)
@@ -154,7 +152,7 @@ public final class StringUtil
     public static String intToString(int value, int nChars)
     {
         String strValue = Integer.toString(value);
-        StringBuffer strBuf = new StringBuffer(nChars);
+        StringBuilder strBuf = new StringBuilder(nChars);
 
         for (int i = strValue.length(); i < nChars; i++)
         {
@@ -175,7 +173,7 @@ public final class StringUtil
      */
     public static String randString(int length)
     {
-        StringBuffer sb = new StringBuffer(length);
+        StringBuilder sb = new StringBuilder(length);
 
         for (int i = 0; i < length; i++)
         {
