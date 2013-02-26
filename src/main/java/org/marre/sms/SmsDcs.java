@@ -44,7 +44,7 @@ public class SmsDcs
 {
 
     /** The encoded dcs. */
-    protected byte dcs_;
+    protected final byte dcs_;
     
     /**
      * Creates a specific DCS.

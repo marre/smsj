@@ -60,7 +60,7 @@ import org.marre.util.StringUtil;
  */
 public class Mm1Transport implements MmsTransport
 {
-    private static Logger log_ = LoggerFactory.getLogger(Mm1Transport.class);
+    private static final Logger log_ = LoggerFactory.getLogger(Mm1Transport.class);
 
     /** 
      * Content type for a mms message. 

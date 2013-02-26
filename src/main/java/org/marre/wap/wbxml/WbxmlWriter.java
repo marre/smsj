@@ -48,11 +48,11 @@ import org.marre.xml.XmlWriter;
 
 public class WbxmlWriter implements XmlWriter
 {
-    private Map<String, Integer> stringTable_;
-    private ByteArrayOutputStream stringTableBuf_;
+    private final Map<String, Integer> stringTable_ = new HashMap<String, Integer>();
+    private final ByteArrayOutputStream stringTableBuf_ = new ByteArrayOutputStream();
 
-    private OutputStream os_;
-    private ByteArrayOutputStream wbxmlBody_;
+    private final OutputStream os_;
+    private final ByteArrayOutputStream wbxmlBody_ = new ByteArrayOutputStream();
 
     private String[] tagTokens_;
     private String[] attrStartTokens_;
@@ -62,9 +62,6 @@ public class WbxmlWriter implements XmlWriter
     
     public WbxmlWriter(OutputStream os, String[] tagTokens, String[] attrStrartTokens, String[] attrValueTokens)
     {
-        wbxmlBody_ = new ByteArrayOutputStream();
-        stringTableBuf_ = new ByteArrayOutputStream();
-        stringTable_ = new HashMap<String, Integer>();
         os_ = os;
 
         setTagTokens(tagTokens);

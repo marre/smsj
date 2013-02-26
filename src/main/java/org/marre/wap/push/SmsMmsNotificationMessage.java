@@ -58,9 +58,9 @@ public class SmsMmsNotificationMessage extends SmsWapPushMessage
     protected String from_;
     protected String subject_;
     protected int messageClassId_ = MmsConstants.X_MMS_MESSAGE_CLASS_ID_PERSONAL;
-    protected long size_;
+    protected final long size_;
     protected long expiry_;
-    protected String contentLocation_;
+    protected final String contentLocation_;
 
     public SmsMmsNotificationMessage(String contentLocation, long size)
     {

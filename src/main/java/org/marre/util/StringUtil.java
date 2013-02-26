@@ -45,7 +45,7 @@ public final class StringUtil
 {
     private static final char[] RANDOM_CHARS = "abcdefghijklmnopqrstuvwxyz1234567890".toCharArray();
 
-    private static Random rnd_ = new Random();
+    private static final Random rnd_ = new Random();
 
     /**
      * This class isn't intended to be instantiated.

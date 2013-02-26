@@ -43,7 +43,7 @@ package org.marre.sms;
 public class SmsPortAddressedTextMessage extends SmsPortAddressedMessage
 {
     /** The text message part. */ 
-    protected SmsTextMessage smsTextMessage_;
+    protected final SmsTextMessage smsTextMessage_;
     
     /**
      * Creates a new SmsPortAddressedTextMessage with default 6Bit GSM Alphabet.

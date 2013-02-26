@@ -44,8 +44,8 @@ import java.io.*;
  */
 public final class SmsUdhElement
 {
-    protected SmsUdhIei udhIei_;
-    protected byte[] udhIeiData_;
+    protected final SmsUdhIei udhIei_;
+    protected final byte[] udhIeiData_;
 
     /**
      * Creates an SmsUdhElement

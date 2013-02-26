@@ -36,7 +36,7 @@ package org.marre.sms.transport.gsm;
 
 public class MockSerialComm implements GsmComm
 {
-    private String[] responses_;
+    private final String[] responses_;
     private int currentResponse_;
     
     public MockSerialComm(String[] responses) {

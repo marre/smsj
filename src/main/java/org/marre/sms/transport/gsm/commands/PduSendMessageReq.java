@@ -50,10 +50,10 @@ import org.slf4j.LoggerFactory;
  */
 public class PduSendMessageReq
 {
-    private static Logger log_ = LoggerFactory.getLogger(PduSendMessageReq.class);
+    private static final Logger log_ = LoggerFactory.getLogger(PduSendMessageReq.class);
     
-    private byte[] smscPdu_;
-    private byte[] smsPdu_;
+    private final byte[] smscPdu_;
+    private final byte[] smsPdu_;
     
     /**
      * Send message in PDU mode using default SMSC.

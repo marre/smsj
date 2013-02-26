@@ -89,9 +89,8 @@ public final class SmsTon {
 
         SmsTon smsTon = (SmsTon) o;
 
-        if (value != smsTon.value) return false;
+        return value == smsTon.value;
 
-        return true;
     }
 
     @Override

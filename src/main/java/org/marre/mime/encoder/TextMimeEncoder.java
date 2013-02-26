@@ -163,7 +163,7 @@ public class TextMimeEncoder implements MimeEncoder
         {
             MimeHeaderParam headerParam = header.getParam(i);
             // + "; charset=adsfasdf; param=value"
-            strBuff.append("; " + headerParam.getName() + "=" + headerParam.getValue());
+            strBuff.append("; ").append(headerParam.getName()).append("=").append(headerParam.getValue());
         }
 
         // <CR><LF>

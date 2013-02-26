@@ -50,9 +50,8 @@ public final class NokiaItemType {
 
         NokiaItemType that = (NokiaItemType) o;
 
-        if (typeId != that.typeId) return false;
+        return typeId == that.typeId;
 
-        return true;
     }
 
     @Override

@@ -30,8 +30,8 @@ import org.marre.xml.XmlWriter;
 
 public class NokiaOtaBookmark
 {
-    protected String name_;
-    protected String url_;
+    protected final String name_;
+    protected final String url_;
     
     /**
      * Creates a Nokia Ota Browser Settings Bookmark

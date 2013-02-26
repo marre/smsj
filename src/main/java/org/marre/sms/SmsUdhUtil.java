@@ -67,9 +67,8 @@ public final class SmsUdhUtil
             return 0;
         }
 
-        for (int i = 0; i < udhElements.length; i++)
-        {
-            totLength += udhElements[i].getTotalSize();
+        for (SmsUdhElement udhElement : udhElements) {
+            totLength += udhElement.getTotalSize();
         }
 
         return totLength;
@@ -98,9 +97,8 @@ public final class SmsUdhUtil
 
         try
         {
-            for (int i = 0; i < udhElements.length; i++)
-            {
-                udhElements[i].writeTo(baos);
+            for (SmsUdhElement udhElement : udhElements) {
+                udhElement.writeTo(baos);
             }
         }
         catch (IOException ioe)

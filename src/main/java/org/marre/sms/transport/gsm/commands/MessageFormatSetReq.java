@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 public class MessageFormatSetReq
 {
-    private static Logger log_ = LoggerFactory.getLogger(MessageFormatSetReq.class);
+    private static final Logger log_ = LoggerFactory.getLogger(MessageFormatSetReq.class);
     
     public static final int MODE_PDU = 0;
     public static final int MODE_TEXT = 1;

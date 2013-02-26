@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 public class PingReq
 {
-    private static Logger log_ = LoggerFactory.getLogger(PingReq.class);
+    private static final Logger log_ = LoggerFactory.getLogger(PingReq.class);
 
     public void send(GsmComm comm) throws GsmException, IOException 
     {

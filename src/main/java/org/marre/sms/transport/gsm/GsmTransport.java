@@ -74,9 +74,9 @@ import org.slf4j.LoggerFactory;
  */
 public class GsmTransport implements SmsTransport
 {
-    private static Logger log_ = LoggerFactory.getLogger(SerialComm.class);
+    private static final Logger log_ = LoggerFactory.getLogger(SerialComm.class);
     
-    private static String DEFAULT_SERIAL_PORT_APP_NAME = "SMSJ";
+    private static final String DEFAULT_SERIAL_PORT_APP_NAME = "SMSJ";
     
     private static final int RESPONSE_OK = 1;
     private static final int RESPONSE_ERROR = 2;
@@ -173,9 +173,8 @@ public class GsmTransport implements SmsTransport
         try
         {
             SmsPdu[] msgPdu = msg.getPdus();
-            for(int i=0; i < msgPdu.length; i++)
-            {
-                byte[] data = GsmEncoder.encodePdu(msgPdu[i], dest, sender);
+            for (SmsPdu aMsgPdu : msgPdu) {
+                byte[] data = GsmEncoder.encodePdu(aMsgPdu, dest, sender);
                 PduSendMessageReq sendMessageReq = new PduSendMessageReq(data);
                 PduSendMessageRsp sendMessageRsp = sendMessageReq.send(serialComm_);
             }

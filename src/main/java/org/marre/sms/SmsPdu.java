@@ -129,9 +129,8 @@ public class SmsPdu
 
         try
         {
-            for (int i = 0; i < udhElements_.length; i++)
-            {
-                udhElements_[i].writeTo(baos);
+            for (SmsUdhElement anUdhElements_ : udhElements_) {
+                anUdhElements_.writeTo(baos);
             }
         }
         catch (IOException ioe)

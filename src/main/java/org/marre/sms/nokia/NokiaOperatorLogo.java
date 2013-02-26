@@ -43,13 +43,13 @@ public class NokiaOperatorLogo extends SmsPortAddressedMessage
     private boolean discardNokiaHeaders_;
     
     /** The ota image as a byte array */
-    private byte[] bitmapData_;
+    private final byte[] bitmapData_;
     
     /** GSM Mobile Country Code */
-    private int mcc_;
+    private final int mcc_;
     
     /** GSM Mobile Network Code */
-    private int mnc_;
+    private final int mnc_;
 
     /**
      * Creates a Nokia Operator Logo message

@@ -56,7 +56,7 @@ import gnu.io.UnsupportedCommOperationException;
  */
 public class SerialComm implements GsmComm
 {
-    private static Logger log_ = LoggerFactory.getLogger(SerialComm.class);
+    private static final Logger log_ = LoggerFactory.getLogger(SerialComm.class);
 
     private static final int DEFAULT_BIT_RATE = 19200;
     private static final int DEFAULT_TIMEOUT = 0;
@@ -65,8 +65,8 @@ public class SerialComm implements GsmComm
     private OutputStream serialOs_;
     private InputStream serialIs_;
 
-    private String appName_;
-    private String portName_;
+    private final String appName_;
+    private final String portName_;
     private int bitRate_;
     private int dataBits_; 
     private int stopBits_;

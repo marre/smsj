@@ -51,8 +51,8 @@ import org.marre.sms.*;
  */
 public class SmsBrewDirectedMessage implements SmsMessage
 {
-    private String text_;
-    private String classId_;
+    private final String text_;
+    private final String classId_;
     
     /**
      * Creates a BREW directed SMS message.

@@ -59,10 +59,10 @@ public class GsmOperator
     private static final Logger log_ = LoggerFactory.getLogger(GsmOperator.class);
     private static List<GsmOperator> operators_;
     
-    private String name_;
-    private String country_;
-    private int mcc_;
-    private int mnc_;
+    private final String name_;
+    private final String country_;
+    private final int mcc_;
+    private final int mnc_;
 
     private GsmOperator(String name, String country, int mcc, int mnc)
     {
@@ -107,11 +107,11 @@ public class GsmOperator
     /**
      * @return a list of all GsmOperator that are known to smsj.
      */
-    public static final List getOperators() {
+    public static List getOperators() {
         return Collections.unmodifiableList(operators_);
     }
     
-    private static final void loadOperatorsFromResource(String resourceName)
+    private static void loadOperatorsFromResource(String resourceName)
     {
         InputStream in = GsmOperator.class.getResourceAsStream(resourceName);
         

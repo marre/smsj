@@ -73,7 +73,7 @@ import org.marre.util.StringUtil;
  */
 public class ClickatellTransport implements SmsTransport
 {
-    private static Logger log_ = LoggerFactory.getLogger(ClickatellTransport.class);
+    private static final Logger log_ = LoggerFactory.getLogger(ClickatellTransport.class);
 
     private String username_;
     private String password_;
@@ -161,7 +161,7 @@ public class ClickatellTransport implements SmsTransport
                                                   Integer.parseInt(errorNo));
                 }
                 
-                log_.debug("sendRequest: Got ID : " + ((String) objs[1]));
+                log_.debug("sendRequest: Got ID : " + (objs[1]));
                 idList.add(objs[1]);
             }
             responseReader.close();

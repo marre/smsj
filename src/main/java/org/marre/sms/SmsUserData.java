@@ -42,13 +42,13 @@ package org.marre.sms;
 public class SmsUserData
 {
     /** The actual user data. */
-    protected byte[] data_;
+    protected final byte[] data_;
     
     /** Length of data, in octets or septets depending on the dcs. */
-    protected int length_;
+    protected final int length_;
     
     /** Data Coding Scheme for this user data. */
-    protected SmsDcs dcs_;
+    protected final SmsDcs dcs_;
     
     public SmsUserData(byte[] userData, int userDataLength, SmsDcs dataCodingScheme)
     {

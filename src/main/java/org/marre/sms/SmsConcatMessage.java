@@ -48,7 +48,7 @@ import java.util.Random;
  */
 public abstract class SmsConcatMessage implements SmsMessage
 {
-    private static Random rnd_ = new Random();
+    private static final Random rnd_ = new Random();
 
     /**
      * Creates an empty SmsConcatMessage.
@@ -112,11 +112,7 @@ public abstract class SmsConcatMessage implements SmsMessage
                 pduUdhElements = new SmsUdhElement[udhElements.length + 1];
 
                 // Copy the UDH headers
-                for (int j = 0; j < udhElements.length; j++)
-                {
-                    // Leave position pduUdhElements[0] for the concat UDHI
-                    pduUdhElements[j + 1] = udhElements[j];
-                }
+                System.arraycopy(udhElements, 0, pduUdhElements, 1, udhElements.length);
             }
 
             // Create pdus
@@ -184,11 +180,7 @@ public abstract class SmsConcatMessage implements SmsMessage
                 pduUdhElements = new SmsUdhElement[udhElements.length + 1];
 
                 // Copy the UDH headers
-                for (int j = 0; j < udhElements.length; j++)
-                {
-                    // Leave position pduUdhElements[0] for the concat UDHI
-                    pduUdhElements[j + 1] = udhElements[j];
-                }
+                System.arraycopy(udhElements, 0, pduUdhElements, 1, udhElements.length);
             }
 
             // Create pdus
@@ -258,11 +250,7 @@ public abstract class SmsConcatMessage implements SmsMessage
                 pduUdhElements = new SmsUdhElement[udhElements.length + 1];
 
                 // Copy the UDH headers
-                for (int j = 0; j < udhElements.length; j++)
-                {
-                    // Leave position pduUdhElements[0] for the concat UDHI
-                    pduUdhElements[j + 1] = udhElements[j];
-                }
+                System.arraycopy(udhElements, 0, pduUdhElements, 1, udhElements.length);
             }
 
             // Convert septets into a string...

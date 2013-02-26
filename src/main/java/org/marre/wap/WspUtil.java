@@ -50,10 +50,10 @@ import org.marre.mime.MimeHeaderParam;
  */
 public final class WspUtil
 {
-    private static Map<String, Integer> wspHeaders_;
-    private static Map<String, Integer> wspContentTypes_;
-    private static Map<String, Integer> wspParameters_;
-    private static Map<String, Integer> wspPushAppTypes_;
+    private static final Map<String, Integer> wspHeaders_;
+    private static final Map<String, Integer> wspContentTypes_;
+    private static final Map<String, Integer> wspParameters_;
+    private static final Map<String, Integer> wspPushAppTypes_;
     
     /* Maps a header id to a well known id */
     private static final int[] WELL_KNOWN_HEADER_ID_WSP_11 = {

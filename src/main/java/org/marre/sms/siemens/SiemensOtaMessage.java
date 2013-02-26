@@ -43,7 +43,7 @@ public class SiemensOtaMessage implements SmsMessage
     protected long referenceId_;
     protected int dataSize_;
     protected int numberOfPackets_;
-    protected byte[] content_;
+    protected final byte[] content_;
 
     /**
      * Creates an SMS containing a Bitmap or a Ringtone
@@ -231,9 +231,8 @@ public class SiemensOtaMessage implements SmsMessage
 
         System.out.println("Data   : " + StringUtil.bytesToHexString(data));
 
-        for (int i = 0; i < pdus.length; i++)
-        {
-            System.out.println("UD     : " + StringUtil.bytesToHexString(pdus[i].getUserData().getData()));
+        for (SmsPdu pdu : pdus) {
+            System.out.println("UD     : " + StringUtil.bytesToHexString(pdu.getUserData().getData()));
         }
     }
 

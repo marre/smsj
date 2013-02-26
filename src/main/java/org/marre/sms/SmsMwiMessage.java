@@ -90,7 +90,7 @@ public class SmsMwiMessage extends SmsTextMessage
     /**
      * List of MsgWaiting "objects".
      */
-    protected LinkedList<MsgWaiting> messages_ = new LinkedList<MsgWaiting>();
+    protected final LinkedList<MsgWaiting> messages_ = new LinkedList<MsgWaiting>();
     
     /**
      * Creates an empty message.

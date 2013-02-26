@@ -81,9 +81,8 @@ public final class SmsNpi {
 
         SmsNpi smsNpi = (SmsNpi) o;
 
-        if (value != smsNpi.value) return false;
+        return value == smsNpi.value;
 
-        return true;
     }
 
     @Override

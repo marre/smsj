@@ -42,7 +42,7 @@ package org.marre.sms.transport.gsm.commands;
  */
 public class PduSendMessageRsp
 {
-    String messageReference_;
+    private final String messageReference_;
     
     public PduSendMessageRsp(String messageReference) {
         messageReference_ = messageReference;

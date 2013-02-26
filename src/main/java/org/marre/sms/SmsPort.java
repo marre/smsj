@@ -72,9 +72,8 @@ public final class SmsPort {
 
         SmsPort smsPort = (SmsPort) o;
 
-        if (port != smsPort.port) return false;
+        return port == smsPort.port;
 
-        return true;
     }
 
     @Override
