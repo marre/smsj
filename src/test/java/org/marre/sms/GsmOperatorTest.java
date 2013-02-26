@@ -47,7 +47,7 @@ public class GsmOperatorTest extends TestCase
 {
     public void testLoad()
     {
-        List operators = GsmOperator.getOperators();
+        List<GsmOperator> operators = GsmOperator.getOperators();
         
         assertTrue(operators.size() > 0);
     }

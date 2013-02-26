@@ -107,7 +107,7 @@ public class GsmOperator
     /**
      * @return a list of all GsmOperator that are known to smsj.
      */
-    public static List getOperators() {
+    public static List<GsmOperator> getOperators() {
         return Collections.unmodifiableList(operators_);
     }
     
