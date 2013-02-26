@@ -36,12 +36,6 @@ package org.marre.wap;
 
 public final class WapConstants
 {    
-    public static final byte WSP_ENCODING_VERSION_1_1 = 0x11;
-    public static final byte WSP_ENCODING_VERSION_1_2 = 0x12;
-    public static final byte WSP_ENCODING_VERSION_1_3 = 0x13;
-    public static final byte WSP_ENCODING_VERSION_1_4 = 0x14;
-    public static final byte WSP_ENCODING_VERSION_1_5 = 0x15;
-        
     public static final int PDU_TYPE_PUSH = 0x06;
 
     /*

@@ -44,6 +44,7 @@ import org.marre.sms.SmsPortAddressedMessage;
 import org.marre.sms.SmsUserData;
 import org.marre.wap.WapConstants;
 import org.marre.wap.WapMimeEncoder;
+import org.marre.wap.WspEncodingVersion;
 import org.marre.wap.WspUtil;
 import org.marre.wap.wbxml.WbxmlDocument;
 
@@ -57,7 +58,7 @@ import org.marre.wap.wbxml.WbxmlDocument;
  */
 public class SmsWapPushMessage extends SmsPortAddressedMessage
 {
-    protected byte wspEncodingVersion_ = WapConstants.WSP_ENCODING_VERSION_1_2;
+    protected WspEncodingVersion wspEncodingVersion_ = WspEncodingVersion.VERSION_1_2;
     protected MimeBodyPart pushMsg_;
         
     protected SmsWapPushMessage()
@@ -125,14 +126,14 @@ public class SmsWapPushMessage extends SmsPortAddressedMessage
         return baos.toByteArray();
     }
     
-    public void setWspEncodingVersion(byte wspEncodingVersion)
+    public void setWspEncodingVersion(WspEncodingVersion wspEncodingVersion)
     {
         wspEncodingVersion_ = wspEncodingVersion;
     }
     
     public SmsUserData getUserData()
     {
-        WapMimeEncoder wapMimeEncoder = new WapMimeEncoder(WapConstants.WSP_ENCODING_VERSION_1_2);
+        WapMimeEncoder wapMimeEncoder = new WapMimeEncoder(WspEncodingVersion.VERSION_1_2);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try

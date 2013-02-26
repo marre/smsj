@@ -34,10 +34,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
-public class MimeHeaderParam
+public final class MimeHeaderParam
 {
-    protected String name_;
-    protected String value_;
+    private final String name_;
+    private final String value_;
 
     public MimeHeaderParam(String name, String value)
     {

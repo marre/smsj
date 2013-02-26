@@ -40,16 +40,15 @@ import java.util.LinkedList;
 
 public class MimeHeader
 {
-    protected String headerName_;
+    protected final String headerName_;
     protected String headerValue_;
 
-    protected List<MimeHeaderParam> params_;
+    protected final List<MimeHeaderParam> params_ = new LinkedList<MimeHeaderParam>();
 
     public MimeHeader(String name, String value)
     {
         headerName_ = name;
         headerValue_ = value;
-        params_ = new LinkedList<MimeHeaderParam>();
     }
 
     public void setValue(String theValue)

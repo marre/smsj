@@ -48,7 +48,7 @@ import org.marre.xml.XmlWriter;
 
 public class WbxmlWriter implements XmlWriter
 {
-    private Map stringTable_;
+    private Map<String, Integer> stringTable_;
     private ByteArrayOutputStream stringTableBuf_;
 
     private OutputStream os_;
@@ -64,7 +64,7 @@ public class WbxmlWriter implements XmlWriter
     {
         wbxmlBody_ = new ByteArrayOutputStream();
         stringTableBuf_ = new ByteArrayOutputStream();
-        stringTable_ = new HashMap();
+        stringTable_ = new HashMap<String, Integer>();
         os_ = os;
 
         setTagTokens(tagTokens);
@@ -225,7 +225,7 @@ public class WbxmlWriter implements XmlWriter
     /**
      * Sets the tag tokens.
      * 
-     * @param theTagTokens
+     * @param tagTokens
      *            first element in this array defines tag #5
      */
     public void setTagTokens(String[] tagTokens)
@@ -244,7 +244,7 @@ public class WbxmlWriter implements XmlWriter
     /**
      * Sets the attribute start tokens.
      * 
-     * @param theAttrStrartTokens
+     * @param attrStrartTokens
      *            first element in this array defines attribute #85
      */
     public void setAttrStartTokens(String[] attrStrartTokens)
@@ -263,7 +263,7 @@ public class WbxmlWriter implements XmlWriter
     /**
      * Sets the attribute value tokens.
      * 
-     * @param theAttrValueTokens
+     * @param attrValueTokens
      *            first element in this array defines attribute #05
      */
     public void setAttrValueTokens(String[] attrValueTokens)
@@ -318,7 +318,7 @@ public class WbxmlWriter implements XmlWriter
 
     private void writeStrT(OutputStream os, String str) throws IOException
     {
-        Integer index = (Integer) stringTable_.get(str);
+        Integer index = stringTable_.get(str);
 
         if (index == null)
         {
@@ -344,51 +344,40 @@ public class WbxmlWriter implements XmlWriter
     {
         int idx;
 
-        for (int i = 0; i < attribs.length; i++)
-        {
+        for (XmlAttribute attrib : attribs) {
             // TYPE=VALUE
-            String typeValue = attribs[i].getType() + "=" + attribs[i].getValue();
+            String typeValue = attrib.getType() + "=" + attrib.getValue();
             idx = StringUtil.findString(attrStartTokens_, typeValue);
-            if (idx >= 0)
-            {
+            if (idx >= 0) {
                 // Found a matching type-value pair
                 idx += 0x05; // Attr start token table starts at #5
                 wbxmlBody_.write(idx);
-            }
-            else
-            {
+            } else {
                 // Try with separate type and values
-                
+
                 // TYPE
-                idx = StringUtil.findString(attrStartTokens_, attribs[i].getType());
-                if (idx >= 0)
-                {
+                idx = StringUtil.findString(attrStartTokens_, attrib.getType());
+                if (idx >= 0) {
                     idx += 0x05; // Attr start token table starts at #5
                     wbxmlBody_.write(idx);
-                }
-                else
-                {
+                } else {
                     wbxmlBody_.write(WbxmlConstants.TOKEN_LITERAL);
-                    writeStrT(wbxmlBody_, attribs[i].getType());
+                    writeStrT(wbxmlBody_, attrib.getType());
                 }
 
                 // VALUE
-                String attrValue = attribs[i].getValue();
-                if (attrValue != null && (!attrValue.equals("")))
-                {
+                String attrValue = attrib.getValue();
+                if (attrValue != null && (!attrValue.equals(""))) {
                     idx = StringUtil.findString(attrValueTokens_, attrValue);
-                    if (idx >= 0)
-                    {
+                    if (idx >= 0) {
                         idx += 0x85; // Attr value token table starts at 85
                         wbxmlBody_.write(idx);
-                    }
-                    else
-                    {
+                    } else {
                         wbxmlBody_.write(WbxmlConstants.TOKEN_STR_I);
                         writeStrI(wbxmlBody_, attrValue);
                     }
                 }
-            }            
+            }
         }
 
         // End of attributes

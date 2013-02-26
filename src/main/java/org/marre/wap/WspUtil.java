@@ -50,10 +50,10 @@ import org.marre.mime.MimeHeaderParam;
  */
 public final class WspUtil
 {
-    private static Map wspHeaders_;
-    private static Map wspContentTypes_;
-    private static Map wspParameters_;
-    private static Map wspPushAppTypes_;
+    private static Map<String, Integer> wspHeaders_;
+    private static Map<String, Integer> wspContentTypes_;
+    private static Map<String, Integer> wspParameters_;
+    private static Map<String, Integer> wspPushAppTypes_;
     
     /* Maps a header id to a well known id */
     private static final int[] WELL_KNOWN_HEADER_ID_WSP_11 = {
@@ -148,239 +148,239 @@ public final class WspUtil
     
     static {
         // WSP 1.1
-        wspHeaders_ = new HashMap();
-        wspHeaders_.put("accept",               new Integer(WapConstants.HEADER_ACCEPT));
-        wspHeaders_.put("accept-charset",       new Integer(WapConstants.HEADER_ACCEPT_CHARSET));
-        wspHeaders_.put("accept-encoding",      new Integer(WapConstants.HEADER_ACCEPT_ENCODING));
-        wspHeaders_.put("accept-language",      new Integer(WapConstants.HEADER_ACCEPT_LANGUAGE));
-        wspHeaders_.put("accept-ranges",        new Integer(WapConstants.HEADER_ACCEPT_RANGES));
-        wspHeaders_.put("age",                  new Integer(WapConstants.HEADER_AGE));
-        wspHeaders_.put("allow",                new Integer(WapConstants.HEADER_ALLOW));
-        wspHeaders_.put("authorization",        new Integer(WapConstants.HEADER_AUTHORIZATION));
-        wspHeaders_.put("cache-control",        new Integer(WapConstants.HEADER_CACHE_CONTROL));
-        wspHeaders_.put("connection",           new Integer(WapConstants.HEADER_CONNECTION));
-        wspHeaders_.put("content-base",         new Integer(WapConstants.HEADER_CONTENT_BASE));
-        wspHeaders_.put("content-encoding",     new Integer(WapConstants.HEADER_CONTENT_ENCODING));
-        wspHeaders_.put("content-language",     new Integer(WapConstants.HEADER_CONTENT_LANGUAGE));
-        wspHeaders_.put("content-length",       new Integer(WapConstants.HEADER_CONTENT_LENGTH));
-        wspHeaders_.put("content-location",     new Integer(WapConstants.HEADER_CONTENT_LOCATION));
-        wspHeaders_.put("content-md5",          new Integer(WapConstants.HEADER_CONTENT_MD5));
-        wspHeaders_.put("content-range",        new Integer(WapConstants.HEADER_CONTENT_RANGE));
-        wspHeaders_.put("content-type",         new Integer(WapConstants.HEADER_CONTENT_TYPE));
-        wspHeaders_.put("date",                 new Integer(WapConstants.HEADER_DATE));
-        wspHeaders_.put("etag",                 new Integer(WapConstants.HEADER_ETAG));
-        wspHeaders_.put("expires",              new Integer(WapConstants.HEADER_EXPIRES));
-        wspHeaders_.put("from",                 new Integer(WapConstants.HEADER_FROM));
-        wspHeaders_.put("host",                 new Integer(WapConstants.HEADER_HOST));
-        wspHeaders_.put("if-modified-since",    new Integer(WapConstants.HEADER_IF_MODIFIED_SINCE));
-        wspHeaders_.put("if-match",             new Integer(WapConstants.HEADER_IF_MATCH));
-        wspHeaders_.put("if-none-match",        new Integer(WapConstants.HEADER_IF_NONE_MATCH));
-        wspHeaders_.put("if-range",             new Integer(WapConstants.HEADER_IF_RANGE));
-        wspHeaders_.put("if-unmodified-since",  new Integer(WapConstants.HEADER_IF_UNMODIFIED_SINCE));
-        wspHeaders_.put("location",             new Integer(WapConstants.HEADER_LOCATION));
-        wspHeaders_.put("last-modified",        new Integer(WapConstants.HEADER_LAST_MODIFIED));
-        wspHeaders_.put("max-forwards",         new Integer(WapConstants.HEADER_MAX_FORWARDS));
-        wspHeaders_.put("pragma",               new Integer(WapConstants.HEADER_PRAGMA));
-        wspHeaders_.put("proxy-authenticate",   new Integer(WapConstants.HEADER_PROXY_AUTHENTICATE));
-        wspHeaders_.put("proxy-authorization",  new Integer(WapConstants.HEADER_PROXY_AUTHORIZATION));
-        wspHeaders_.put("public",               new Integer(WapConstants.HEADER_PUBLIC));
-        wspHeaders_.put("range",                new Integer(WapConstants.HEADER_RANGE));
-        wspHeaders_.put("referer",              new Integer(WapConstants.HEADER_REFERER));
-        wspHeaders_.put("retry-after",          new Integer(WapConstants.HEADER_RETRY_AFTER));
-        wspHeaders_.put("server",               new Integer(WapConstants.HEADER_SERVER));
-        wspHeaders_.put("transfer-encoding",    new Integer(WapConstants.HEADER_TRANSFER_ENCODING));
-        wspHeaders_.put("upgrade",              new Integer(WapConstants.HEADER_UPGRADE));
-        wspHeaders_.put("user-agent",           new Integer(WapConstants.HEADER_USER_AGENT));
-        wspHeaders_.put("vary",                 new Integer(WapConstants.HEADER_VARY));
-        wspHeaders_.put("via",                  new Integer(WapConstants.HEADER_VIA));
-        wspHeaders_.put("warning",              new Integer(WapConstants.HEADER_WARNING));
-        wspHeaders_.put("www-authenticate",     new Integer(WapConstants.HEADER_WWW_AUTHENTICATE));
-        wspHeaders_.put("content-disposition",  new Integer(WapConstants.HEADER_CONTENT_DISPOSITION));
+        wspHeaders_ = new HashMap<String, Integer>();
+        wspHeaders_.put("accept",               Integer.valueOf(WapConstants.HEADER_ACCEPT));
+        wspHeaders_.put("accept-charset",       Integer.valueOf(WapConstants.HEADER_ACCEPT_CHARSET));
+        wspHeaders_.put("accept-encoding",      Integer.valueOf(WapConstants.HEADER_ACCEPT_ENCODING));
+        wspHeaders_.put("accept-language",      Integer.valueOf(WapConstants.HEADER_ACCEPT_LANGUAGE));
+        wspHeaders_.put("accept-ranges",        Integer.valueOf(WapConstants.HEADER_ACCEPT_RANGES));
+        wspHeaders_.put("age",                  Integer.valueOf(WapConstants.HEADER_AGE));
+        wspHeaders_.put("allow",                Integer.valueOf(WapConstants.HEADER_ALLOW));
+        wspHeaders_.put("authorization",        Integer.valueOf(WapConstants.HEADER_AUTHORIZATION));
+        wspHeaders_.put("cache-control",        Integer.valueOf(WapConstants.HEADER_CACHE_CONTROL));
+        wspHeaders_.put("connection",           Integer.valueOf(WapConstants.HEADER_CONNECTION));
+        wspHeaders_.put("content-base",         Integer.valueOf(WapConstants.HEADER_CONTENT_BASE));
+        wspHeaders_.put("content-encoding",     Integer.valueOf(WapConstants.HEADER_CONTENT_ENCODING));
+        wspHeaders_.put("content-language",     Integer.valueOf(WapConstants.HEADER_CONTENT_LANGUAGE));
+        wspHeaders_.put("content-length",       Integer.valueOf(WapConstants.HEADER_CONTENT_LENGTH));
+        wspHeaders_.put("content-location",     Integer.valueOf(WapConstants.HEADER_CONTENT_LOCATION));
+        wspHeaders_.put("content-md5",          Integer.valueOf(WapConstants.HEADER_CONTENT_MD5));
+        wspHeaders_.put("content-range",        Integer.valueOf(WapConstants.HEADER_CONTENT_RANGE));
+        wspHeaders_.put("content-type",         Integer.valueOf(WapConstants.HEADER_CONTENT_TYPE));
+        wspHeaders_.put("date",                 Integer.valueOf(WapConstants.HEADER_DATE));
+        wspHeaders_.put("etag",                 Integer.valueOf(WapConstants.HEADER_ETAG));
+        wspHeaders_.put("expires",              Integer.valueOf(WapConstants.HEADER_EXPIRES));
+        wspHeaders_.put("from",                 Integer.valueOf(WapConstants.HEADER_FROM));
+        wspHeaders_.put("host",                 Integer.valueOf(WapConstants.HEADER_HOST));
+        wspHeaders_.put("if-modified-since",    Integer.valueOf(WapConstants.HEADER_IF_MODIFIED_SINCE));
+        wspHeaders_.put("if-match",             Integer.valueOf(WapConstants.HEADER_IF_MATCH));
+        wspHeaders_.put("if-none-match",        Integer.valueOf(WapConstants.HEADER_IF_NONE_MATCH));
+        wspHeaders_.put("if-range",             Integer.valueOf(WapConstants.HEADER_IF_RANGE));
+        wspHeaders_.put("if-unmodified-since",  Integer.valueOf(WapConstants.HEADER_IF_UNMODIFIED_SINCE));
+        wspHeaders_.put("location",             Integer.valueOf(WapConstants.HEADER_LOCATION));
+        wspHeaders_.put("last-modified",        Integer.valueOf(WapConstants.HEADER_LAST_MODIFIED));
+        wspHeaders_.put("max-forwards",         Integer.valueOf(WapConstants.HEADER_MAX_FORWARDS));
+        wspHeaders_.put("pragma",               Integer.valueOf(WapConstants.HEADER_PRAGMA));
+        wspHeaders_.put("proxy-authenticate",   Integer.valueOf(WapConstants.HEADER_PROXY_AUTHENTICATE));
+        wspHeaders_.put("proxy-authorization",  Integer.valueOf(WapConstants.HEADER_PROXY_AUTHORIZATION));
+        wspHeaders_.put("public",               Integer.valueOf(WapConstants.HEADER_PUBLIC));
+        wspHeaders_.put("range",                Integer.valueOf(WapConstants.HEADER_RANGE));
+        wspHeaders_.put("referer",              Integer.valueOf(WapConstants.HEADER_REFERER));
+        wspHeaders_.put("retry-after",          Integer.valueOf(WapConstants.HEADER_RETRY_AFTER));
+        wspHeaders_.put("server",               Integer.valueOf(WapConstants.HEADER_SERVER));
+        wspHeaders_.put("transfer-encoding",    Integer.valueOf(WapConstants.HEADER_TRANSFER_ENCODING));
+        wspHeaders_.put("upgrade",              Integer.valueOf(WapConstants.HEADER_UPGRADE));
+        wspHeaders_.put("user-agent",           Integer.valueOf(WapConstants.HEADER_USER_AGENT));
+        wspHeaders_.put("vary",                 Integer.valueOf(WapConstants.HEADER_VARY));
+        wspHeaders_.put("via",                  Integer.valueOf(WapConstants.HEADER_VIA));
+        wspHeaders_.put("warning",              Integer.valueOf(WapConstants.HEADER_WARNING));
+        wspHeaders_.put("www-authenticate",     Integer.valueOf(WapConstants.HEADER_WWW_AUTHENTICATE));
+        wspHeaders_.put("content-disposition",  Integer.valueOf(WapConstants.HEADER_CONTENT_DISPOSITION));
         
         // WSP 1.2
-        wspHeaders_.put("accept",               new Integer(WapConstants.HEADER_ACCEPT));
-        wspHeaders_.put("x-wap-application-id", new Integer(WapConstants.HEADER_X_WAP_APPLICATION_ID));
-        wspHeaders_.put("x-wap-content-uri",    new Integer(WapConstants.HEADER_X_WAP_CONTENT_URI));
-        wspHeaders_.put("x-wap-initiator-uri",  new Integer(WapConstants.HEADER_X_WAP_INITIATOR_URI));
-        wspHeaders_.put("bearer-indication",    new Integer(WapConstants.HEADER_BEARER_INDICATION));
-        wspHeaders_.put("accept-application",   new Integer(WapConstants.HEADER_ACCEPT_APPLICATION));
-        wspHeaders_.put("push-flag",            new Integer(WapConstants.HEADER_PUSH_FLAG));
-        wspHeaders_.put("profile",              new Integer(WapConstants.HEADER_PROFILE));
-        wspHeaders_.put("profile-diff",         new Integer(WapConstants.HEADER_PROFILE_DIFF));
-        wspHeaders_.put("profile-warning",      new Integer(WapConstants.HEADER_PROFILE_WARNING));
+        wspHeaders_.put("accept",               Integer.valueOf(WapConstants.HEADER_ACCEPT));
+        wspHeaders_.put("x-wap-application-id", Integer.valueOf(WapConstants.HEADER_X_WAP_APPLICATION_ID));
+        wspHeaders_.put("x-wap-content-uri",    Integer.valueOf(WapConstants.HEADER_X_WAP_CONTENT_URI));
+        wspHeaders_.put("x-wap-initiator-uri",  Integer.valueOf(WapConstants.HEADER_X_WAP_INITIATOR_URI));
+        wspHeaders_.put("bearer-indication",    Integer.valueOf(WapConstants.HEADER_BEARER_INDICATION));
+        wspHeaders_.put("accept-application",   Integer.valueOf(WapConstants.HEADER_ACCEPT_APPLICATION));
+        wspHeaders_.put("push-flag",            Integer.valueOf(WapConstants.HEADER_PUSH_FLAG));
+        wspHeaders_.put("profile",              Integer.valueOf(WapConstants.HEADER_PROFILE));
+        wspHeaders_.put("profile-diff",         Integer.valueOf(WapConstants.HEADER_PROFILE_DIFF));
+        wspHeaders_.put("profile-warning",      Integer.valueOf(WapConstants.HEADER_PROFILE_WARNING));
         
         // WSP 1.3
-        wspHeaders_.put("expect",               new Integer(WapConstants.HEADER_EXPECT));
-        wspHeaders_.put("te",                   new Integer(WapConstants.HEADER_TE));
-        wspHeaders_.put("trailer",              new Integer(WapConstants.HEADER_TRAILER));
-        wspHeaders_.put("accept-charset",       new Integer(WapConstants.HEADER_ACCEPT_CHARSET));
-        wspHeaders_.put("accept-encoding",      new Integer(WapConstants.HEADER_ACCEPT_ENCODING));
-        wspHeaders_.put("cache-control",        new Integer(WapConstants.HEADER_CACHE_CONTROL));
-        wspHeaders_.put("content-range",        new Integer(WapConstants.HEADER_CONTENT_RANGE));
-        wspHeaders_.put("x-wap-tod",            new Integer(WapConstants.HEADER_X_WAP_TOD));
-        wspHeaders_.put("content-id",           new Integer(WapConstants.HEADER_CONTENT_ID));
-        wspHeaders_.put("set-cookie",           new Integer(WapConstants.HEADER_SET_COOKIE));
-        wspHeaders_.put("cookie",               new Integer(WapConstants.HEADER_COOKIE));
-        wspHeaders_.put("encoding-version",     new Integer(WapConstants.HEADER_ENCODING_VERSION));
+        wspHeaders_.put("expect",               Integer.valueOf(WapConstants.HEADER_EXPECT));
+        wspHeaders_.put("te",                   Integer.valueOf(WapConstants.HEADER_TE));
+        wspHeaders_.put("trailer",              Integer.valueOf(WapConstants.HEADER_TRAILER));
+        wspHeaders_.put("accept-charset",       Integer.valueOf(WapConstants.HEADER_ACCEPT_CHARSET));
+        wspHeaders_.put("accept-encoding",      Integer.valueOf(WapConstants.HEADER_ACCEPT_ENCODING));
+        wspHeaders_.put("cache-control",        Integer.valueOf(WapConstants.HEADER_CACHE_CONTROL));
+        wspHeaders_.put("content-range",        Integer.valueOf(WapConstants.HEADER_CONTENT_RANGE));
+        wspHeaders_.put("x-wap-tod",            Integer.valueOf(WapConstants.HEADER_X_WAP_TOD));
+        wspHeaders_.put("content-id",           Integer.valueOf(WapConstants.HEADER_CONTENT_ID));
+        wspHeaders_.put("set-cookie",           Integer.valueOf(WapConstants.HEADER_SET_COOKIE));
+        wspHeaders_.put("cookie",               Integer.valueOf(WapConstants.HEADER_COOKIE));
+        wspHeaders_.put("encoding-version",     Integer.valueOf(WapConstants.HEADER_ENCODING_VERSION));
         
         // WSP 1.4
-        wspHeaders_.put("profile-warning",      new Integer(WapConstants.HEADER_PROFILE_WARNING));
-        wspHeaders_.put("content-disposition",  new Integer(WapConstants.HEADER_CONTENT_DISPOSITION));
-        wspHeaders_.put("x-wap-security",       new Integer(WapConstants.HEADER_X_WAP_SECURITY));
-        wspHeaders_.put("cache-control",        new Integer(WapConstants.HEADER_CACHE_CONTROL));
+        wspHeaders_.put("profile-warning",      Integer.valueOf(WapConstants.HEADER_PROFILE_WARNING));
+        wspHeaders_.put("content-disposition",  Integer.valueOf(WapConstants.HEADER_CONTENT_DISPOSITION));
+        wspHeaders_.put("x-wap-security",       Integer.valueOf(WapConstants.HEADER_X_WAP_SECURITY));
+        wspHeaders_.put("cache-control",        Integer.valueOf(WapConstants.HEADER_CACHE_CONTROL));
         
         // http://www.wapforum.org/wina/wsp-content-type.htm
         // WSP 1.1
-        wspContentTypes_ = new HashMap();        
-        wspContentTypes_.put("*/*",                                            new Integer(0x00));
-        wspContentTypes_.put("text/*",                                         new Integer(0x01));
-        wspContentTypes_.put("text/html",                                      new Integer(0x02));
-        wspContentTypes_.put("text/plain",                                     new Integer(0x03));
-        wspContentTypes_.put("text/x-hdml",                                    new Integer(0x04));
-        wspContentTypes_.put("text/x-ttml",                                    new Integer(0x05));
-        wspContentTypes_.put("text/x-vCalendar",                               new Integer(0x06));
-        wspContentTypes_.put("text/x-vCard",                                   new Integer(0x07));
-        wspContentTypes_.put("text/vnd.wap.wml",                               new Integer(0x08));
-        wspContentTypes_.put("text/vnd.wap.wmlscript",                         new Integer(0x09));
-        wspContentTypes_.put("text/vnd.wap.wta-event",                         new Integer(0x0A));
-        wspContentTypes_.put("multipart/*",                                    new Integer(0x0B));
-        wspContentTypes_.put("multipart/mixed",                                new Integer(0x0C));
-        wspContentTypes_.put("multipart/form-data",                            new Integer(0x0D));
-        wspContentTypes_.put("multipart/byteranges",                           new Integer(0x0E));
-        wspContentTypes_.put("multipart/alternative",                          new Integer(0x0F));
-        wspContentTypes_.put("application/*",                                  new Integer(0x10));
-        wspContentTypes_.put("application/java-vm",                            new Integer(0x11));
-        wspContentTypes_.put("application/x-www-form-urlencoded",              new Integer(0x12));
-        wspContentTypes_.put("application/x-hdmlc",                            new Integer(0x13));
-        wspContentTypes_.put("application/vnd.wap.wmlc",                       new Integer(0x14));
-        wspContentTypes_.put("application/vnd.wap.wmlscriptc",                 new Integer(0x15));
-        wspContentTypes_.put("application/vnd.wap.wta-eventc",                 new Integer(0x16));
-        wspContentTypes_.put("application/vnd.wap.uaprof",                     new Integer(0x17));
-        wspContentTypes_.put("application/vnd.wap.wtls-ca-certificate",        new Integer(0x18));
-        wspContentTypes_.put("application/vnd.wap.wtls-user-certificate",      new Integer(0x19));
-        wspContentTypes_.put("application/x-x509-ca-cert",                     new Integer(0x1A));
-        wspContentTypes_.put("application/x-x509-user-cert",                   new Integer(0x1B));
-        wspContentTypes_.put("image/*",                                        new Integer(0x1C));
-        wspContentTypes_.put("image/gif",                                      new Integer(0x1D));
-        wspContentTypes_.put("image/jpeg",                                     new Integer(0x1E));
-        wspContentTypes_.put("image/tiff",                                     new Integer(0x1F));
-        wspContentTypes_.put("image/png",                                      new Integer(0x20));
-        wspContentTypes_.put("image/vnd.wap.wbmp",                             new Integer(0x21));
-        wspContentTypes_.put("application/vnd.wap.multipart.*",                new Integer(0x22));
-        wspContentTypes_.put("application/vnd.wap.multipart.mixed",            new Integer(0x23));
-        wspContentTypes_.put("application/vnd.wap.multipart.form-data",        new Integer(0x24));
-        wspContentTypes_.put("application/vnd.wap.multipart.byteranges",       new Integer(0x25));
-        wspContentTypes_.put("application/vnd.wap.multipart.alternative",      new Integer(0x26));
-        wspContentTypes_.put("application/xml",                                new Integer(0x27));
-        wspContentTypes_.put("text/xml",                                       new Integer(0x28));
-        wspContentTypes_.put("application/vnd.wap.wbxml",                      new Integer(0x29));
-        wspContentTypes_.put("application/x-x968-cross-cert",                  new Integer(0x2A));
-        wspContentTypes_.put("application/x-x968-ca-cert",                     new Integer(0x2B));
-        wspContentTypes_.put("application/x-x968-user-cert",                   new Integer(0x2C));
-        wspContentTypes_.put("text/vnd.wap.si",                                new Integer(0x2D));
+        wspContentTypes_ = new HashMap<String, Integer>();
+        wspContentTypes_.put("*/*",                                            Integer.valueOf(0x00));
+        wspContentTypes_.put("text/*",                                         Integer.valueOf(0x01));
+        wspContentTypes_.put("text/html",                                      Integer.valueOf(0x02));
+        wspContentTypes_.put("text/plain",                                     Integer.valueOf(0x03));
+        wspContentTypes_.put("text/x-hdml",                                    Integer.valueOf(0x04));
+        wspContentTypes_.put("text/x-ttml",                                    Integer.valueOf(0x05));
+        wspContentTypes_.put("text/x-vCalendar",                               Integer.valueOf(0x06));
+        wspContentTypes_.put("text/x-vCard",                                   Integer.valueOf(0x07));
+        wspContentTypes_.put("text/vnd.wap.wml",                               Integer.valueOf(0x08));
+        wspContentTypes_.put("text/vnd.wap.wmlscript",                         Integer.valueOf(0x09));
+        wspContentTypes_.put("text/vnd.wap.wta-event",                         Integer.valueOf(0x0A));
+        wspContentTypes_.put("multipart/*",                                    Integer.valueOf(0x0B));
+        wspContentTypes_.put("multipart/mixed",                                Integer.valueOf(0x0C));
+        wspContentTypes_.put("multipart/form-data",                            Integer.valueOf(0x0D));
+        wspContentTypes_.put("multipart/byteranges",                           Integer.valueOf(0x0E));
+        wspContentTypes_.put("multipart/alternative",                          Integer.valueOf(0x0F));
+        wspContentTypes_.put("application/*",                                  Integer.valueOf(0x10));
+        wspContentTypes_.put("application/java-vm",                            Integer.valueOf(0x11));
+        wspContentTypes_.put("application/x-www-form-urlencoded",              Integer.valueOf(0x12));
+        wspContentTypes_.put("application/x-hdmlc",                            Integer.valueOf(0x13));
+        wspContentTypes_.put("application/vnd.wap.wmlc",                       Integer.valueOf(0x14));
+        wspContentTypes_.put("application/vnd.wap.wmlscriptc",                 Integer.valueOf(0x15));
+        wspContentTypes_.put("application/vnd.wap.wta-eventc",                 Integer.valueOf(0x16));
+        wspContentTypes_.put("application/vnd.wap.uaprof",                     Integer.valueOf(0x17));
+        wspContentTypes_.put("application/vnd.wap.wtls-ca-certificate",        Integer.valueOf(0x18));
+        wspContentTypes_.put("application/vnd.wap.wtls-user-certificate",      Integer.valueOf(0x19));
+        wspContentTypes_.put("application/x-x509-ca-cert",                     Integer.valueOf(0x1A));
+        wspContentTypes_.put("application/x-x509-user-cert",                   Integer.valueOf(0x1B));
+        wspContentTypes_.put("image/*",                                        Integer.valueOf(0x1C));
+        wspContentTypes_.put("image/gif",                                      Integer.valueOf(0x1D));
+        wspContentTypes_.put("image/jpeg",                                     Integer.valueOf(0x1E));
+        wspContentTypes_.put("image/tiff",                                     Integer.valueOf(0x1F));
+        wspContentTypes_.put("image/png",                                      Integer.valueOf(0x20));
+        wspContentTypes_.put("image/vnd.wap.wbmp",                             Integer.valueOf(0x21));
+        wspContentTypes_.put("application/vnd.wap.multipart.*",                Integer.valueOf(0x22));
+        wspContentTypes_.put("application/vnd.wap.multipart.mixed",            Integer.valueOf(0x23));
+        wspContentTypes_.put("application/vnd.wap.multipart.form-data",        Integer.valueOf(0x24));
+        wspContentTypes_.put("application/vnd.wap.multipart.byteranges",       Integer.valueOf(0x25));
+        wspContentTypes_.put("application/vnd.wap.multipart.alternative",      Integer.valueOf(0x26));
+        wspContentTypes_.put("application/xml",                                Integer.valueOf(0x27));
+        wspContentTypes_.put("text/xml",                                       Integer.valueOf(0x28));
+        wspContentTypes_.put("application/vnd.wap.wbxml",                      Integer.valueOf(0x29));
+        wspContentTypes_.put("application/x-x968-cross-cert",                  Integer.valueOf(0x2A));
+        wspContentTypes_.put("application/x-x968-ca-cert",                     Integer.valueOf(0x2B));
+        wspContentTypes_.put("application/x-x968-user-cert",                   Integer.valueOf(0x2C));
+        wspContentTypes_.put("text/vnd.wap.si",                                Integer.valueOf(0x2D));
 
         // WSP 1.2
-        wspContentTypes_.put("application/vnd.wap.sic",                        new Integer(0x2E));
-        wspContentTypes_.put("text/vnd.wap.sl",                                new Integer(0x2F));
-        wspContentTypes_.put("application/vnd.wap.slc",                        new Integer(0x30));
-        wspContentTypes_.put("text/vnd.wap.co",                                new Integer(0x31));
-        wspContentTypes_.put("application/vnd.wap.coc",                        new Integer(0x32));
-        wspContentTypes_.put("application/vnd.wap.multipart.related",          new Integer(0x33));
-        wspContentTypes_.put("application/vnd.wap.sia",                        new Integer(0x34));
+        wspContentTypes_.put("application/vnd.wap.sic",                        Integer.valueOf(0x2E));
+        wspContentTypes_.put("text/vnd.wap.sl",                                Integer.valueOf(0x2F));
+        wspContentTypes_.put("application/vnd.wap.slc",                        Integer.valueOf(0x30));
+        wspContentTypes_.put("text/vnd.wap.co",                                Integer.valueOf(0x31));
+        wspContentTypes_.put("application/vnd.wap.coc",                        Integer.valueOf(0x32));
+        wspContentTypes_.put("application/vnd.wap.multipart.related",          Integer.valueOf(0x33));
+        wspContentTypes_.put("application/vnd.wap.sia",                        Integer.valueOf(0x34));
                 
         // WSP 1.3
-        wspContentTypes_.put("text/vnd.wap.connectivity-xml",                  new Integer(0x35));
-        wspContentTypes_.put("application/vnd.wap.connectivity-wbxml",         new Integer(0x36));
+        wspContentTypes_.put("text/vnd.wap.connectivity-xml",                  Integer.valueOf(0x35));
+        wspContentTypes_.put("application/vnd.wap.connectivity-wbxml",         Integer.valueOf(0x36));
         
         // WSP 1.4
-        wspContentTypes_.put("application/pkcs7-mime",                         new Integer(0x37));
-        wspContentTypes_.put("application/vnd.wap.hashed-certificate",         new Integer(0x38));
-        wspContentTypes_.put("application/vnd.wap.signed-certificate",         new Integer(0x39));
-        wspContentTypes_.put("application/vnd.wap.cert-response",              new Integer(0x3A));
-        wspContentTypes_.put("application/xhtml+xml",                          new Integer(0x3B));
-        wspContentTypes_.put("application/wml+xml",                            new Integer(0x3C));
-        wspContentTypes_.put("text/css",                                       new Integer(0x3D));
-        wspContentTypes_.put("application/vnd.wap.mms-message",                new Integer(0x3E));
-        wspContentTypes_.put("application/vnd.wap.rollover-certificate",       new Integer(0x3F));
+        wspContentTypes_.put("application/pkcs7-mime",                         Integer.valueOf(0x37));
+        wspContentTypes_.put("application/vnd.wap.hashed-certificate",         Integer.valueOf(0x38));
+        wspContentTypes_.put("application/vnd.wap.signed-certificate",         Integer.valueOf(0x39));
+        wspContentTypes_.put("application/vnd.wap.cert-response",              Integer.valueOf(0x3A));
+        wspContentTypes_.put("application/xhtml+xml",                          Integer.valueOf(0x3B));
+        wspContentTypes_.put("application/wml+xml",                            Integer.valueOf(0x3C));
+        wspContentTypes_.put("text/css",                                       Integer.valueOf(0x3D));
+        wspContentTypes_.put("application/vnd.wap.mms-message",                Integer.valueOf(0x3E));
+        wspContentTypes_.put("application/vnd.wap.rollover-certificate",       Integer.valueOf(0x3F));
         
         // WSP 1.5
-        wspContentTypes_.put("application/vnd.wap.locc+wbxml",                 new Integer(0x40));
-        wspContentTypes_.put("application/vnd.wap.loc+xml",                    new Integer(0x41));
-        wspContentTypes_.put("application/vnd.syncml.dm+wbxml",                new Integer(0x42));
-        wspContentTypes_.put("application/vnd.syncml.dm+xml",                  new Integer(0x43));
-        wspContentTypes_.put("application/vnd.syncml.notification",            new Integer(0x44));
-        wspContentTypes_.put("application/vnd.wap.xhtml+xml",                  new Integer(0x45));
-        wspContentTypes_.put("application/vnd.wv.csp.cir",                     new Integer(0x46));
-        wspContentTypes_.put("application/vnd.oma.dd+xml",                     new Integer(0x47));
-        wspContentTypes_.put("application/vnd.oma.drm.message",                new Integer(0x48));
-        wspContentTypes_.put("application/vnd.oma.drm.content",                new Integer(0x49));
-        wspContentTypes_.put("application/vnd.oma.drm.rights+xml",             new Integer(0x4A));
-        wspContentTypes_.put("application/vnd.oma.drm.rights+wbxml",           new Integer(0x4B));
+        wspContentTypes_.put("application/vnd.wap.locc+wbxml",                 Integer.valueOf(0x40));
+        wspContentTypes_.put("application/vnd.wap.loc+xml",                    Integer.valueOf(0x41));
+        wspContentTypes_.put("application/vnd.syncml.dm+wbxml",                Integer.valueOf(0x42));
+        wspContentTypes_.put("application/vnd.syncml.dm+xml",                  Integer.valueOf(0x43));
+        wspContentTypes_.put("application/vnd.syncml.notification",            Integer.valueOf(0x44));
+        wspContentTypes_.put("application/vnd.wap.xhtml+xml",                  Integer.valueOf(0x45));
+        wspContentTypes_.put("application/vnd.wv.csp.cir",                     Integer.valueOf(0x46));
+        wspContentTypes_.put("application/vnd.oma.dd+xml",                     Integer.valueOf(0x47));
+        wspContentTypes_.put("application/vnd.oma.drm.message",                Integer.valueOf(0x48));
+        wspContentTypes_.put("application/vnd.oma.drm.content",                Integer.valueOf(0x49));
+        wspContentTypes_.put("application/vnd.oma.drm.rights+xml",             Integer.valueOf(0x4A));
+        wspContentTypes_.put("application/vnd.oma.drm.rights+wbxml",           Integer.valueOf(0x4B));
         
         // WSP 1.1
-        wspParameters_ = new HashMap();
-        wspParameters_.put("q",                    new Integer(WapConstants.PARAMETER_Q));
-        wspParameters_.put("charset",              new Integer(WapConstants.PARAMETER_CHARSET));
-        wspParameters_.put("level",                new Integer(WapConstants.PARAMETER_LEVEL));
-        wspParameters_.put("type",                 new Integer(WapConstants.PARAMETER_TYPE));
-        wspParameters_.put("name",                 new Integer(WapConstants.PARAMETER_NAME));
-        wspParameters_.put("filename",             new Integer(WapConstants.PARAMETER_FILENAME));
-        wspParameters_.put("differences",          new Integer(WapConstants.PARAMETER_DIFFERENCES));
-        wspParameters_.put("padding",              new Integer(WapConstants.PARAMETER_PADDING));
+        wspParameters_ = new HashMap<String, Integer>();
+        wspParameters_.put("q",                    Integer.valueOf(WapConstants.PARAMETER_Q));
+        wspParameters_.put("charset",              Integer.valueOf(WapConstants.PARAMETER_CHARSET));
+        wspParameters_.put("level",                Integer.valueOf(WapConstants.PARAMETER_LEVEL));
+        wspParameters_.put("type",                 Integer.valueOf(WapConstants.PARAMETER_TYPE));
+        wspParameters_.put("name",                 Integer.valueOf(WapConstants.PARAMETER_NAME));
+        wspParameters_.put("filename",             Integer.valueOf(WapConstants.PARAMETER_FILENAME));
+        wspParameters_.put("differences",          Integer.valueOf(WapConstants.PARAMETER_DIFFERENCES));
+        wspParameters_.put("padding",              Integer.valueOf(WapConstants.PARAMETER_PADDING));
             
         // WSP 1.2
-        wspParameters_.put("type",                 new Integer(WapConstants.PARAMETER_TYPE_MULTIPART_RELATED));
-        wspParameters_.put("start",                new Integer(WapConstants.PARAMETER_START_MULTIPART_RELATED));
-        wspParameters_.put("start-info",           new Integer(WapConstants.PARAMETER_START_INFO_MULTIPART_RELATED));
+        wspParameters_.put("type",                 Integer.valueOf(WapConstants.PARAMETER_TYPE_MULTIPART_RELATED));
+        wspParameters_.put("start",                Integer.valueOf(WapConstants.PARAMETER_START_MULTIPART_RELATED));
+        wspParameters_.put("start-info",           Integer.valueOf(WapConstants.PARAMETER_START_INFO_MULTIPART_RELATED));
             
         // WSP 1.3
-        wspParameters_.put("comment",              new Integer(WapConstants.PARAMETER_COMMENT));
-        wspParameters_.put("domain",               new Integer(WapConstants.PARAMETER_DOMAIN));
-        wspParameters_.put("max-age",              new Integer(WapConstants.PARAMETER_MAX_AGE));
-        wspParameters_.put("path",                 new Integer(WapConstants.PARAMETER_PATH));
-        wspParameters_.put("secure",               new Integer(WapConstants.PARAMETER_SECURE));
+        wspParameters_.put("comment",              Integer.valueOf(WapConstants.PARAMETER_COMMENT));
+        wspParameters_.put("domain",               Integer.valueOf(WapConstants.PARAMETER_DOMAIN));
+        wspParameters_.put("max-age",              Integer.valueOf(WapConstants.PARAMETER_MAX_AGE));
+        wspParameters_.put("path",                 Integer.valueOf(WapConstants.PARAMETER_PATH));
+        wspParameters_.put("secure",               Integer.valueOf(WapConstants.PARAMETER_SECURE));
             
         // WSP 1.4
-        wspParameters_.put("sec",                  new Integer(WapConstants.PARAMETER_SEC_CONNECTIVITY));
-        wspParameters_.put("mac",                  new Integer(WapConstants.PARAMETER_MAC_CONNECTIVITY));
-        wspParameters_.put("creation-date",        new Integer(WapConstants.PARAMETER_CREATION_DATE));
-        wspParameters_.put("modification-date",    new Integer(WapConstants.PARAMETER_MODIFICATION_DATE));
-        wspParameters_.put("read-date",            new Integer(WapConstants.PARAMETER_READ_DATE));
-        wspParameters_.put("size",                 new Integer(WapConstants.PARAMETER_SIZE));
-        wspParameters_.put("name",                 new Integer(WapConstants.PARAMETER_NAME));
-        wspParameters_.put("filename",             new Integer(WapConstants.PARAMETER_FILENAME));
-        wspParameters_.put("start",                new Integer(WapConstants.PARAMETER_START_MULTIPART_RELATED));
-        wspParameters_.put("start-info",           new Integer(WapConstants.PARAMETER_START_INFO_MULTIPART_RELATED));
-        wspParameters_.put("comment",              new Integer(WapConstants.PARAMETER_COMMENT));
-        wspParameters_.put("domain",               new Integer(WapConstants.PARAMETER_DOMAIN));
-        wspParameters_.put("path",                 new Integer(WapConstants.PARAMETER_PATH));
+        wspParameters_.put("sec",                  Integer.valueOf(WapConstants.PARAMETER_SEC_CONNECTIVITY));
+        wspParameters_.put("mac",                  Integer.valueOf(WapConstants.PARAMETER_MAC_CONNECTIVITY));
+        wspParameters_.put("creation-date",        Integer.valueOf(WapConstants.PARAMETER_CREATION_DATE));
+        wspParameters_.put("modification-date",    Integer.valueOf(WapConstants.PARAMETER_MODIFICATION_DATE));
+        wspParameters_.put("read-date",            Integer.valueOf(WapConstants.PARAMETER_READ_DATE));
+        wspParameters_.put("size",                 Integer.valueOf(WapConstants.PARAMETER_SIZE));
+        wspParameters_.put("name",                 Integer.valueOf(WapConstants.PARAMETER_NAME));
+        wspParameters_.put("filename",             Integer.valueOf(WapConstants.PARAMETER_FILENAME));
+        wspParameters_.put("start",                Integer.valueOf(WapConstants.PARAMETER_START_MULTIPART_RELATED));
+        wspParameters_.put("start-info",           Integer.valueOf(WapConstants.PARAMETER_START_INFO_MULTIPART_RELATED));
+        wspParameters_.put("comment",              Integer.valueOf(WapConstants.PARAMETER_COMMENT));
+        wspParameters_.put("domain",               Integer.valueOf(WapConstants.PARAMETER_DOMAIN));
+        wspParameters_.put("path",                 Integer.valueOf(WapConstants.PARAMETER_PATH));
         
         // http://www.wapforum.org/wina/push-app-id.htm
-        wspPushAppTypes_ = new HashMap();
-        wspPushAppTypes_.put("x-wap-application:*",            new Integer(0x00));
-        wspPushAppTypes_.put("x-wap-application:push.sia",     new Integer(0x01));
-        wspPushAppTypes_.put("x-wap-application:wml.ua",       new Integer(0x02));
-        wspPushAppTypes_.put("x-wap-application:wta.ua",       new Integer(0x03));
-        wspPushAppTypes_.put("x-wap-application:mms.ua",       new Integer(0x04));
-        wspPushAppTypes_.put("x-wap-application:push.syncml",  new Integer(0x05));
-        wspPushAppTypes_.put("x-wap-application:loc.ua",       new Integer(0x06));
-        wspPushAppTypes_.put("x-wap-application:syncml.dm",    new Integer(0x07));
-        wspPushAppTypes_.put("x-wap-application:drm.ua",       new Integer(0x08));
-        wspPushAppTypes_.put("x-wap-application:emn.ua",       new Integer(0x09));
-        wspPushAppTypes_.put("x-wap-application:wv.ua",        new Integer(0x0A));
+        wspPushAppTypes_ = new HashMap<String, Integer>();
+        wspPushAppTypes_.put("x-wap-application:*",            Integer.valueOf(0x00));
+        wspPushAppTypes_.put("x-wap-application:push.sia",     Integer.valueOf(0x01));
+        wspPushAppTypes_.put("x-wap-application:wml.ua",       Integer.valueOf(0x02));
+        wspPushAppTypes_.put("x-wap-application:wta.ua",       Integer.valueOf(0x03));
+        wspPushAppTypes_.put("x-wap-application:mms.ua",       Integer.valueOf(0x04));
+        wspPushAppTypes_.put("x-wap-application:push.syncml",  Integer.valueOf(0x05));
+        wspPushAppTypes_.put("x-wap-application:loc.ua",       Integer.valueOf(0x06));
+        wspPushAppTypes_.put("x-wap-application:syncml.dm",    Integer.valueOf(0x07));
+        wspPushAppTypes_.put("x-wap-application:drm.ua",       Integer.valueOf(0x08));
+        wspPushAppTypes_.put("x-wap-application:emn.ua",       Integer.valueOf(0x09));
+        wspPushAppTypes_.put("x-wap-application:wv.ua",        Integer.valueOf(0x0A));
         
-        wspPushAppTypes_.put("x-wap-microsoft:localcontent.ua",    new Integer(0x8000));
-        wspPushAppTypes_.put("x-wap-microsoft:imclient.ua ",       new Integer(0x8001));
-        wspPushAppTypes_.put("x-wap-docomo:imode.mail.ua ",        new Integer(0x8002));
-        wspPushAppTypes_.put("x-wap-docomo:imode.mr.ua",           new Integer(0x8003));
-        wspPushAppTypes_.put("x-wap-docomo:imode.mf.ua",           new Integer(0x8004));
-        wspPushAppTypes_.put("x-motorola:location.ua ",            new Integer(0x8005));
-        wspPushAppTypes_.put("x-motorola:now.ua",                  new Integer(0x8006));
-        wspPushAppTypes_.put("x-motorola:otaprov.ua",              new Integer(0x8007));
-        wspPushAppTypes_.put("x-motorola:browser.ua",              new Integer(0x8008));
-        wspPushAppTypes_.put("x-motorola:splash.ua",               new Integer(0x8009));
-        wspPushAppTypes_.put("x-wap-nai:mvsw.command ",            new Integer(0x800B));
-        wspPushAppTypes_.put("x-wap-openwave:iota.ua",             new Integer(0x8010));
+        wspPushAppTypes_.put("x-wap-microsoft:localcontent.ua",    Integer.valueOf(0x8000));
+        wspPushAppTypes_.put("x-wap-microsoft:imclient.ua ",       Integer.valueOf(0x8001));
+        wspPushAppTypes_.put("x-wap-docomo:imode.mail.ua ",        Integer.valueOf(0x8002));
+        wspPushAppTypes_.put("x-wap-docomo:imode.mr.ua",           Integer.valueOf(0x8003));
+        wspPushAppTypes_.put("x-wap-docomo:imode.mf.ua",           Integer.valueOf(0x8004));
+        wspPushAppTypes_.put("x-motorola:location.ua ",            Integer.valueOf(0x8005));
+        wspPushAppTypes_.put("x-motorola:now.ua",                  Integer.valueOf(0x8006));
+        wspPushAppTypes_.put("x-motorola:otaprov.ua",              Integer.valueOf(0x8007));
+        wspPushAppTypes_.put("x-motorola:browser.ua",              Integer.valueOf(0x8008));
+        wspPushAppTypes_.put("x-motorola:splash.ua",               Integer.valueOf(0x8009));
+        wspPushAppTypes_.put("x-wap-nai:mvsw.command ",            Integer.valueOf(0x800B));
+        wspPushAppTypes_.put("x-wap-openwave:iota.ua",             Integer.valueOf(0x8010));
     }
     
     private WspUtil()
@@ -397,7 +397,7 @@ public final class WspUtil
      */
     public static int getHeaderType(String headerName)
     {
-        Integer headerType = (Integer) wspHeaders_.get(headerName);
+        Integer headerType = wspHeaders_.get(headerName);
         
         return (headerType != null) ? (headerType.intValue()) : (-1);
     }
@@ -409,25 +409,25 @@ public final class WspUtil
      * @param headerType The header type
      * @return A well known header id or -1 if not found.
      */
-    public static int getWellKnownHeaderId(byte wspEncodingVersion, int headerType)
+    public static int getWellKnownHeaderId(WspEncodingVersion wspEncodingVersion, int headerType)
     {
         int wellKnownHeaderId;
 
         switch (wspEncodingVersion)
         {
-        case WapConstants.WSP_ENCODING_VERSION_1_1:
+        case VERSION_1_1:
             wellKnownHeaderId = WELL_KNOWN_HEADER_ID_WSP_11[headerType];
             break;
-        case WapConstants.WSP_ENCODING_VERSION_1_2:
+        case VERSION_1_2:
             wellKnownHeaderId = WELL_KNOWN_HEADER_ID_WSP_12[headerType];
             break;
             
-        case WapConstants.WSP_ENCODING_VERSION_1_3:
+        case VERSION_1_3:
             wellKnownHeaderId = WELL_KNOWN_HEADER_ID_WSP_13[headerType];
             break;
             
-        case WapConstants.WSP_ENCODING_VERSION_1_4:
-        case WapConstants.WSP_ENCODING_VERSION_1_5:
+        case VERSION_1_4:
+        case VERSION_1_5:
             wellKnownHeaderId = WELL_KNOWN_HEADER_ID_WSP_14[headerType];
             break;
         
@@ -447,39 +447,18 @@ public final class WspUtil
      * @param contentType The content type
      * @return A well known content type id or -1 if not found.
      */
-    public static int getWellKnownContentTypeId(byte wspEncodingVersion, String contentType)
+    public static int getWellKnownContentTypeId(WspEncodingVersion wspEncodingVersion, String contentType)
     {
-        Integer contentTypeIdInt = (Integer) wspContentTypes_.get(contentType);        
-
+        Integer contentTypeIdInt = wspContentTypes_.get(contentType);
         if (contentTypeIdInt == null)
         {
             return -1;
         }
         
         int wellKnownContentTypeId = contentTypeIdInt.intValue();
-        
-        if ( (wspEncodingVersion >= WapConstants.WSP_ENCODING_VERSION_1_1) && (wellKnownContentTypeId <= 0x2D) )
-        {
+        if (wspEncodingVersion.isWellKnownContentTypeId(wellKnownContentTypeId)) {
             return wellKnownContentTypeId;
-        }
-        else if ( (wspEncodingVersion >= WapConstants.WSP_ENCODING_VERSION_1_2) && (wellKnownContentTypeId <= 0x34) )
-        {
-            return wellKnownContentTypeId;
-        }
-        else if ( (wspEncodingVersion >= WapConstants.WSP_ENCODING_VERSION_1_3) && (wellKnownContentTypeId <= 0x36) )
-        {
-            return wellKnownContentTypeId;
-        }
-        else if ( (wspEncodingVersion >= WapConstants.WSP_ENCODING_VERSION_1_4) && (wellKnownContentTypeId <= 0x3F) )
-        {
-            return wellKnownContentTypeId;
-        }
-        else if ( (wspEncodingVersion >= WapConstants.WSP_ENCODING_VERSION_1_5) && (wellKnownContentTypeId <= 0x4B) )
-        {
-            return wellKnownContentTypeId;
-        }
-        else
-        {
+        } else {
             return -1;
         }
     }
@@ -494,7 +473,7 @@ public final class WspUtil
      */
     public static int getParameterType(String parameterName)
     {
-        Integer parameterType = (Integer) wspParameters_.get(parameterName);
+        Integer parameterType = wspParameters_.get(parameterName);
         
         return (parameterType != null) ? (parameterType.intValue()) : (-1);
     }
@@ -517,7 +496,7 @@ public final class WspUtil
      * @param parameterType The header type
      * @return A well known parameter id or -1 if not found.
      */
-    public static int getWellKnownParameterId(byte wspEncodingVersion, int parameterType)
+    public static int getWellKnownParameterId(WspEncodingVersion wspEncodingVersion, int parameterType)
     {
         int wellKnownParameterId = -1;
 
@@ -525,19 +504,19 @@ public final class WspUtil
         {
             switch (wspEncodingVersion)
             {
-            case WapConstants.WSP_ENCODING_VERSION_1_1:
+            case VERSION_1_1:
                 wellKnownParameterId = WELL_KNOWN_PARAMETER_ID_WSP_11[parameterType];
                 break;
-            case WapConstants.WSP_ENCODING_VERSION_1_2:
+            case VERSION_1_2:
                 wellKnownParameterId = WELL_KNOWN_PARAMETER_ID_WSP_12[parameterType];
                 break;
                 
-            case WapConstants.WSP_ENCODING_VERSION_1_3:
+            case VERSION_1_3:
                 wellKnownParameterId = WELL_KNOWN_PARAMETER_ID_WSP_13[parameterType];
                 break;
                 
-            case WapConstants.WSP_ENCODING_VERSION_1_4:
-            case WapConstants.WSP_ENCODING_VERSION_1_5:
+            case VERSION_1_4:
+            case VERSION_1_5:
                 wellKnownParameterId = WELL_KNOWN_PARAMETER_ID_WSP_14[parameterType];
                 break;
             
@@ -558,7 +537,7 @@ public final class WspUtil
      */
     public static int getWellKnownPushAppId(String pushApp)
     {
-        Integer pushAppIdInt = (Integer) wspPushAppTypes_.get(pushApp);        
+        Integer pushAppIdInt = wspPushAppTypes_.get(pushApp);
 
         if (pushAppIdInt == null)
         {
@@ -765,7 +744,7 @@ public final class WspUtil
      * @param theContentType
      * @throws IOException
      */
-    public static void writeContentType(byte wspEncodingVersion, OutputStream theOs, String theContentType) throws IOException
+    public static void writeContentType(WspEncodingVersion wspEncodingVersion, OutputStream theOs, String theContentType) throws IOException
     {
         int wellKnownContentType = WspUtil.getWellKnownContentTypeId(wspEncodingVersion, theContentType.toLowerCase());
 
@@ -791,7 +770,7 @@ public final class WspUtil
      * @param theContentType
      * @throws IOException
      */
-    public static void writeContentType(byte wspEncodingVersion, OutputStream theOs, MimeHeader theContentType) throws IOException
+    public static void writeContentType(WspEncodingVersion wspEncodingVersion, OutputStream theOs, MimeHeader theContentType) throws IOException
     {
         if (theContentType.getParamCount() == 0)
         {
@@ -836,7 +815,7 @@ public final class WspUtil
         }
     }
 
-    public static void writeTypedValue(byte wspEncodingVersion, OutputStream os, int wspParamType, String value) throws IOException
+    public static void writeTypedValue(WspEncodingVersion wspEncodingVersion, OutputStream os, int wspParamType, String value) throws IOException
     {
         switch (wspParamType)
         {
@@ -945,7 +924,7 @@ public final class WspUtil
         }
     }
 
-    public static void writeParameter(byte wspEncodingVersion, OutputStream os, String name, String value) throws IOException
+    public static void writeParameter(WspEncodingVersion wspEncodingVersion, OutputStream os, String name, String value) throws IOException
     {
         int parameterType = WspUtil.getParameterType(name);
         int wellKnownParameter = WspUtil.getWellKnownParameterId(wspEncodingVersion, parameterType);

@@ -36,6 +36,8 @@ package org.marre.xml;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Stack;
 
 /**
@@ -51,12 +53,12 @@ public class TextXmlWriter implements XmlWriter
     /**
      * The writer that is used internally to store the xml document.
      */
-    protected Writer writer_;
+    private final Writer writer_;
     
     /**
      * Stack of tags. Used by addEndElement to know what tag to add.
      */
-    protected Stack tagStack_;
+    private final Deque<String> tagStack_ = new ArrayDeque<String>();
 
     /**
      * Used by addElement to insert a \r\n.
@@ -163,7 +165,7 @@ public class TextXmlWriter implements XmlWriter
      */
     public void addEndElement() throws IOException
     {
-        String tag = (String)tagStack_.pop();
+        String tag = tagStack_.pop();
         writer_.write("</" + tag + ">\r\n");
     }
 

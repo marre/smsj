@@ -41,6 +41,7 @@ import java.util.Date;
 
 import org.marre.mime.MimeHeader;
 import org.marre.util.StringUtil;
+import org.marre.wap.WspEncodingVersion;
 import org.marre.wap.WspUtil;
 
 /**
@@ -69,13 +70,13 @@ public final class MmsHeaderEncoder
         WspUtil.writeTextString(os, contentLocation);
     }
 
-    public static void writeHeaderContentType(byte wspEncodingVersion, OutputStream os, String contentLocation) throws IOException
+    public static void writeHeaderContentType(WspEncodingVersion wspEncodingVersion, OutputStream os, String contentLocation) throws IOException
     {
         WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_CONTENT_TYPE);
         WspUtil.writeContentType(wspEncodingVersion, os, contentLocation);
     }
 
-    public static void writeHeaderContentType(byte wspEncodingVersion, OutputStream os, MimeHeader contentType) throws IOException
+    public static void writeHeaderContentType(WspEncodingVersion wspEncodingVersion, OutputStream os, MimeHeader contentType) throws IOException
     {
         WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_CONTENT_TYPE);
         WspUtil.writeContentType(wspEncodingVersion, os, contentType);

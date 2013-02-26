@@ -44,6 +44,7 @@ import org.marre.mms.MmsException;
 import org.marre.mms.MmsHeaders;
 import org.marre.wap.WapConstants;
 import org.marre.wap.WapMimeEncoder;
+import org.marre.wap.WspEncodingVersion;
 import org.marre.wap.WspUtil;
 import org.marre.wap.mms.MmsHeaderEncoder;
 
@@ -55,8 +56,7 @@ import org.marre.wap.mms.MmsHeaderEncoder;
  */
 public final class Mm1Encoder
 {
-    private static MimeEncoder wapMimeEncoder_ = new WapMimeEncoder();
-    private static byte wspEncodingVersion_ = WapConstants.WSP_ENCODING_VERSION_1_2;
+    private static final WspEncodingVersion wspEncodingVersion_ = WspEncodingVersion.VERSION_1_2;
 
     private Mm1Encoder()
     {
@@ -86,11 +86,12 @@ public final class Mm1Encoder
             MmsHeaderEncoder.writeHeaderContentType(wspEncodingVersion_, out, message.getContentType());
 
             // Add content
-            wapMimeEncoder_.writeBody(out, message);
+            MimeEncoder wapMimeEncoder = new WapMimeEncoder();
+            wapMimeEncoder.writeBody(out, message);
         }
         catch (IOException ex)
         {
-            throw new MmsException(ex.getMessage());
+            throw new MmsException("Failed to write message to stream", ex);
         }
     }
 

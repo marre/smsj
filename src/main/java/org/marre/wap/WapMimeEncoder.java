@@ -42,7 +42,6 @@ import org.marre.mime.MimeBodyPart;
 import org.marre.mime.MimeHeader;
 import org.marre.mime.MimeMultipart;
 import org.marre.mime.encoder.MimeEncoder;
-import org.marre.mime.encoder.TextMimeEncoder;
 
 /**
  * Converts mime documents to a wsp encoded stream.
@@ -52,16 +51,14 @@ import org.marre.mime.encoder.TextMimeEncoder;
  */
 public class WapMimeEncoder implements MimeEncoder
 {
-    private TextMimeEncoder textMimeEncoder_ = new TextMimeEncoder();
-    
-    private byte wspEncodingVersion_;
+    private final WspEncodingVersion wspEncodingVersion_;
 
     public WapMimeEncoder()
     {
-        this(WapConstants.WSP_ENCODING_VERSION_1_2);
+        this(WspEncodingVersion.VERSION_1_2);
     }
     
-    public WapMimeEncoder(byte wspEncodingVersion)
+    public WapMimeEncoder(WspEncodingVersion wspEncodingVersion)
     {
         wspEncodingVersion_ = wspEncodingVersion;
     }

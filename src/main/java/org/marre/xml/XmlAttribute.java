@@ -42,8 +42,8 @@ package org.marre.xml;
  */
 public class XmlAttribute
 {
-    private String type_;
-    private String value_;
+    private final String type_;
+    private final String value_;
 
     /**
      * Creates an XmlAttribute.

@@ -51,7 +51,7 @@ public final class WspHeaderEncoder
         // Static class
     }
     
-    public static void writeHeader(byte wspEncodingVersion, OutputStream os, MimeHeader header) throws IOException
+    public static void writeHeader(WspEncodingVersion wspEncodingVersion, OutputStream os, MimeHeader header) throws IOException
     {
         String headerName = header.getName().toLowerCase();
         int headerType = WspUtil.getHeaderType(headerName);
@@ -210,7 +210,7 @@ public final class WspHeaderEncoder
      * 
      * Content-ID is introduced in encoding version 1.3.
      */
-    public static void writeHeaderContentID(byte wspEncodingVersion, OutputStream os, String contentId) throws IOException
+    public static void writeHeaderContentID(WspEncodingVersion wspEncodingVersion, OutputStream os, String contentId) throws IOException
     {
         int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_CONTENT_ID);
         if (headerId != -1)
@@ -228,21 +228,21 @@ public final class WspHeaderEncoder
      * Writes a wsp encoded content-location header as specified in
      * WAP-230-WSP-20010705-a.pdf.
      */
-    public static void writeHeaderContentLocation(byte wspEncodingVersion, OutputStream os, String contentLocation) throws IOException
+    public static void writeHeaderContentLocation(WspEncodingVersion wspEncodingVersion, OutputStream os, String contentLocation) throws IOException
     {
         int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_CONTENT_LOCATION);        
         WspUtil.writeShortInteger(os, headerId);
         WspUtil.writeTextString(os, contentLocation);
     }
 
-    public static void writeHeaderContentType(byte wspEncodingVersion, OutputStream os, String contentType) throws IOException
+    public static void writeHeaderContentType(WspEncodingVersion wspEncodingVersion, OutputStream os, String contentType) throws IOException
     {
         int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_CONTENT_TYPE);        
         WspUtil.writeShortInteger(os, headerId);
         WspUtil.writeContentType(wspEncodingVersion, os, contentType);
     }
 
-    public static void writeHeaderContentType(byte wspEncodingVersion, OutputStream os, MimeHeader contentType) throws IOException
+    public static void writeHeaderContentType(WspEncodingVersion wspEncodingVersion, OutputStream os, MimeHeader contentType) throws IOException
     {
         int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_CONTENT_TYPE);        
         WspUtil.writeShortInteger(os, headerId);
@@ -255,7 +255,7 @@ public final class WspHeaderEncoder
      * 
      * X-Wap-Application-Id is introduced in encoding version 1.2.
      */
-    public static void writeHeaderXWapApplicationId(byte wspEncodingVersion, OutputStream os, String appId) throws IOException
+    public static void writeHeaderXWapApplicationId(WspEncodingVersion wspEncodingVersion, OutputStream os, String appId) throws IOException
     {
         int wellKnownAppId = WspUtil.getWellKnownPushAppId(appId.toLowerCase());
         

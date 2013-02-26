@@ -49,14 +49,13 @@ public class MimeBodyPart
     protected byte[] body_;
     protected MimeContentType contentType_;
 
-    protected List<MimeHeader> headers_;
+    protected final List<MimeHeader> headers_ = new LinkedList<MimeHeader>();
 
     /**
      * Creates a new empty MimeBodyPart.
      */
     public MimeBodyPart()
     {
-        headers_ = new LinkedList<MimeHeader>();
     }
 
     /**

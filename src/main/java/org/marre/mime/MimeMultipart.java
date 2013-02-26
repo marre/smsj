@@ -39,16 +39,10 @@ import java.util.List;
 
 public abstract class MimeMultipart extends MimeBodyPart
 {
-    protected List<MimeBodyPart> bodyParts_;
-
-    protected MimeMultipart()
-    {
-        bodyParts_ = new LinkedList<MimeBodyPart>();
-    }
+    protected final List<MimeBodyPart> bodyParts_ = new LinkedList<MimeBodyPart>();
 
     public MimeMultipart(String contentType)
     {
-        this();
         contentType_ = new MimeContentType(contentType);
     }
 

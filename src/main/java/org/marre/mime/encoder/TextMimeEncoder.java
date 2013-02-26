@@ -63,7 +63,6 @@ public class TextMimeEncoder implements MimeEncoder
      */
     public TextMimeEncoder()
     {
-        super();
     }
 
     /**

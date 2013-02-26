@@ -67,7 +67,7 @@ public interface MmsTransport
     void connect() throws MmsException, IOException;
 
     /**
-     * Sends an MmsMessage to the given destination
+     * Sends an MMS to the given destination
      *
      * @param message The Message to send
      * @param headers Headers
