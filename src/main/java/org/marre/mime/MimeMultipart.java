@@ -34,6 +34,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -56,14 +58,8 @@ public abstract class MimeMultipart extends MimeBodyPart
         bodyParts_.remove(bodyPart);
     }
 
-    public MimeBodyPart getBodyPart(int index)
-    {
-        return bodyParts_.get(index);
-    }
-
-    public int getBodyPartCount()
-    {
-        return bodyParts_.size();
+    public Collection<MimeBodyPart> getBodyParts() {
+        return Collections.unmodifiableCollection(bodyParts_);
     }
 
     public String toString()

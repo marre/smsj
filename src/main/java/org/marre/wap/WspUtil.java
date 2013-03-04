@@ -41,7 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.marre.mime.MimeHeader;
-import org.marre.mime.MimeHeaderParam;
+import org.marre.mime.MimeHeaderParameter;
 
 /**
  * 
@@ -772,7 +772,7 @@ public final class WspUtil
      */
     public static void writeContentType(WspEncodingVersion wspEncodingVersion, OutputStream theOs, MimeHeader theContentType) throws IOException
     {
-        if (theContentType.getParamCount() == 0)
+        if (theContentType.getParameters().isEmpty())
         {
             // Simple content type, use "constrained-media" format
             writeContentType(wspEncodingVersion, theOs, theContentType.getValue());
@@ -798,9 +798,7 @@ public final class WspUtil
             }
 
             // Add Parameters
-            for (int i = 0; i < theContentType.getParamCount(); i++)
-            {
-                MimeHeaderParam headerParam = theContentType.getParam(i);
+            for (MimeHeaderParameter headerParam : theContentType.getParameters()) {
                 writeParameter(wspEncodingVersion, baos, headerParam.getName(), headerParam.getValue());
             }
             baos.close();

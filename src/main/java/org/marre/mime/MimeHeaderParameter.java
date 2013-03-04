@@ -34,47 +34,44 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
-import java.io.UnsupportedEncodingException;
+public final class MimeHeaderParameter
+{
+    private final String name_;
+    private final String value_;
 
-public final class MimeUtil
-{    
-    private MimeUtil()
+    public MimeHeaderParameter(String name, String value)
     {
-        // Utility function
-    }
-    
-    public static MimeBodyPart createTextBodyPart(String str)
-    {
-        return createTextBodyPart(str, "text/plain");
-    }
-    
-    public static MimeBodyPart createTextBodyPart(String str, String contentType)
-    {
-        MimeBodyPart textBodyPart = new MimeBodyPart();
-        MimeContentType ct = new MimeContentType(contentType);
-        ct.setParam("charset", "utf-8");
-        
-        byte[] data = null;
-        try 
-        {
-            data = str.getBytes("UTF-8");
-        }
-        catch (UnsupportedEncodingException ex)
-        {
-            // Shouldn't happen.... UTF-8 is standard...
-        }
-        
-        textBodyPart.setContent(data, ct);
-        
-        return textBodyPart;
+        name_ = name;
+        value_ = value;
     }
 
-    public static MimeBodyPart createBinaryBodyPart(byte[] content, String contentType)
+    public String getName()
     {
-        MimeBodyPart binBodyPart = new MimeBodyPart();
+        return name_;
+    }
 
-        binBodyPart.setContent(content, contentType);
+    public String getValue()
+    {
+        return value_;
+    }
 
-        return binBodyPart;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MimeHeaderParameter)) return false;
+
+        MimeHeaderParameter that = (MimeHeaderParameter) o;
+
+        if (!name_.equals(that.name_)) return false;
+        if (!value_.equals(that.value_)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name_.hashCode();
+        result = 31 * result + value_.hashCode();
+        return result;
     }
 }

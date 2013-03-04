@@ -34,6 +34,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.LinkedList;
@@ -43,7 +44,7 @@ public class MimeHeader
     protected final String headerName_;
     protected String headerValue_;
 
-    protected final List<MimeHeaderParam> params_ = new LinkedList<MimeHeaderParam>();
+    protected final List<MimeHeaderParameter> params_ = new LinkedList<MimeHeaderParameter>();
 
     public MimeHeader(String name, String value)
     {
@@ -69,15 +70,15 @@ public class MimeHeader
     public void setParam(String theName, String theValue)
     {
         // Remove parameter if it already exists...
-        removeParam(theName);
+        removeParameter(theName);
 
         // Add new...
-        params_.add(new MimeHeaderParam(theName, theValue));
+        params_.add(new MimeHeaderParameter(theName, theValue));
     }
 
-    public MimeHeaderParam getParam(String theName)
+    public MimeHeaderParameter getParameter(String theName)
     {
-        for (MimeHeaderParam param : params_) {
+        for (MimeHeaderParameter param : params_) {
             if (param.getName().equalsIgnoreCase(theName)) {
                 return param;
             }
@@ -87,28 +88,18 @@ public class MimeHeader
         return null;
     }
 
-    public void removeParam(String theName)
+    public void removeParameter(String theName)
     {
-        MimeHeaderParam param = getParam(theName);
+        MimeHeaderParameter param = getParameter(theName);
         if (param != null)
         {
             params_.remove(param);
         }
     }
 
-    public List getAllParams()
+    public Collection<MimeHeaderParameter> getParameters()
     {
-        return Collections.unmodifiableList(params_);
-    }
-
-    public int getParamCount()
-    {
-        return params_.size();
-    }
-
-    public MimeHeaderParam getParam(int theIndex)
-    {
-        return params_.get(theIndex);
+        return Collections.unmodifiableCollection(params_);
     }
 
     public String toString()
@@ -117,10 +108,32 @@ public class MimeHeader
 
         sb.append(headerName_).append("=").append(headerValue_);
 
-        for (MimeHeaderParam param : params_) {
+        for (MimeHeaderParameter param : params_) {
             sb.append("; ").append(param.getName()).append("=").append(param.getValue());
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MimeHeader)) return false;
+
+        MimeHeader that = (MimeHeader) o;
+
+        if (!headerName_.equals(that.headerName_)) return false;
+        if (!headerValue_.equals(that.headerValue_)) return false;
+        if (!params_.equals(that.params_)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = headerName_.hashCode();
+        result = 31 * result + headerValue_.hashCode();
+        result = 31 * result + params_.hashCode();
+        return result;
     }
 }

@@ -37,6 +37,7 @@ package org.marre.wap;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
 
 import org.marre.mime.MimeBodyPart;
 import org.marre.mime.MimeHeader;
@@ -103,9 +104,7 @@ public class WapMimeEncoder implements MimeEncoder
      */
     public void writeHeaders(OutputStream os, MimeBodyPart msg) throws IOException
     {
-        for (int i = 0; i < msg.getHeaderCount(); i++)
-        {
-            MimeHeader header = msg.getHeader(i);
+        for (MimeHeader header : msg.getHeaders()) {
             WspHeaderEncoder.writeHeader(wspEncodingVersion_, os, header);
         }
     }
@@ -151,12 +150,12 @@ public class WapMimeEncoder implements MimeEncoder
     // Section 8.5.2 in WAP-230-WSP-20010705
     private void writeMultipart(OutputStream os, MimeMultipart multipart) throws IOException
     {
-        // nEntries
-        WspUtil.writeUintvar(os, multipart.getBodyPartCount());
+        Collection<MimeBodyPart> bodyParts = multipart.getBodyParts();
 
-        for (int i = 0; i < multipart.getBodyPartCount(); i++)
-        {
-            MimeBodyPart part = multipart.getBodyPart(i);
+        // nEntries
+        WspUtil.writeUintvar(os, bodyParts.size());
+
+        for (MimeBodyPart part : bodyParts) {
             ByteArrayOutputStream headers = new ByteArrayOutputStream();
             ByteArrayOutputStream content = new ByteArrayOutputStream();
 

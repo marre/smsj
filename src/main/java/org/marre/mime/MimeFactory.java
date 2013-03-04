@@ -34,24 +34,47 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
-public final class MimeHeaderParam
-{
-    private final String name_;
-    private final String value_;
+import java.io.UnsupportedEncodingException;
 
-    public MimeHeaderParam(String name, String value)
+public final class MimeFactory
+{    
+    private MimeFactory()
     {
-        name_ = name;
-        value_ = value;
+        // Utility function
+    }
+    
+    public static MimeBodyPart createTextBodyPart(String str)
+    {
+        return createTextBodyPart(str, "text/plain");
+    }
+    
+    public static MimeBodyPart createTextBodyPart(String str, String contentType)
+    {
+        MimeBodyPart textBodyPart = new MimeBodyPart();
+        MimeContentType ct = new MimeContentType(contentType);
+        ct.setParam("charset", "utf-8");
+        
+        byte[] data = null;
+        try 
+        {
+            data = str.getBytes("UTF-8");
+        }
+        catch (UnsupportedEncodingException ex)
+        {
+            // Shouldn't happen.... UTF-8 is standard...
+        }
+        
+        textBodyPart.setContent(data, ct);
+        
+        return textBodyPart;
     }
 
-    public String getName()
+    public static MimeBodyPart createBinaryBodyPart(byte[] content, String contentType)
     {
-        return name_;
-    }
+        MimeBodyPart binBodyPart = new MimeBodyPart();
 
-    public String getValue()
-    {
-        return value_;
+        binBodyPart.setContent(content, contentType);
+
+        return binBodyPart;
     }
 }

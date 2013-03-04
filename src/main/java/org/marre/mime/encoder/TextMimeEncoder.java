@@ -37,11 +37,8 @@ package org.marre.mime.encoder;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.marre.mime.MimeBodyPart;
-import org.marre.mime.MimeContentType;
-import org.marre.mime.MimeHeader;
-import org.marre.mime.MimeHeaderParam;
-import org.marre.mime.MimeMultipart;
+import org.marre.mime.*;
+import org.marre.mime.MimeHeaderParameter;
 import org.marre.util.StringUtil;
 
 /**
@@ -100,9 +97,7 @@ public class TextMimeEncoder implements MimeEncoder
      */
     public void writeHeaders(OutputStream os, MimeBodyPart msg) throws IOException
     {
-        for (int i = 0; i < msg.getHeaderCount(); i++)
-        {
-            MimeHeader header = msg.getHeader(i);
+        for (MimeHeader header : msg.getHeaders()) {
             writeHeader(os, header);
         }
         os.write("\r\n".getBytes());
@@ -159,9 +154,7 @@ public class TextMimeEncoder implements MimeEncoder
 
         strBuff.append(name).append(": ").append(value);
 
-        for (int i = 0; i < header.getParamCount(); i++)
-        {
-            MimeHeaderParam headerParam = header.getParam(i);
+        for (MimeHeaderParameter headerParam : header.getParameters()) {
             // + "; charset=adsfasdf; param=value"
             strBuff.append("; ").append(headerParam.getName()).append("=").append(headerParam.getValue());
         }
@@ -185,13 +178,10 @@ public class TextMimeEncoder implements MimeEncoder
     private void writeMultipart(OutputStream os, MimeMultipart multipart) throws IOException
     {
         MimeContentType ct = multipart.getContentType();
-        MimeHeaderParam boundaryParam = ct.getParam("boundary");
+        MimeHeaderParameter boundaryParam = ct.getParameter("boundary");
         String boundary = "--" + boundaryParam.getValue();
 
-        for (int i = 0; i < multipart.getBodyPartCount(); i++)
-        {
-            MimeBodyPart part = multipart.getBodyPart(i);
-
+        for (MimeBodyPart part : multipart.getBodyParts()) {
             // Write boundary string
             os.write(boundary.getBytes());
             os.write("\r\n".getBytes());

@@ -87,7 +87,7 @@ public class MimeBodyPart
     }
 
     /**
-     * Adds a eader to this body part.
+     * Adds a header to this body part.
      * 
      * @param headerName The name of the header
      * @param headerValue The value
@@ -103,14 +103,10 @@ public class MimeBodyPart
     }
 
     /**
-     * Retrieves a header with the given index.
-     * 
-     * @param index Index of header to retrieve
-     * @return The header, or null if not found
+     * Retrieves all headers.
      */
-    public MimeHeader getHeader(int index)
-    {
-        return headers_.get(index);
+    public Collection<MimeHeader> getHeaders() {
+        return Collections.unmodifiableCollection(headers_);
     }
 
     /**
@@ -130,16 +126,6 @@ public class MimeBodyPart
         return null;
     }
     
-    /**
-     * Returns the number of headers.
-     * 
-     * @return The number of headers
-     */
-    public int getHeaderCount()
-    {
-        return headers_.size();
-    }
-
     /**
      * Sets the main content of this body part.
      * 
