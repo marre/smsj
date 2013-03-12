@@ -246,49 +246,6 @@ public class SmsSender
     }
 
     /**
-     * Convenience method to create a SmsSender object that knows how to send
-     * messages via PSWinComm
-     * 
-     * @param username
-     *            PsWinComm username
-     * @param password
-     *            PsWinComm password
-     * @return A SmsSender object that uses the PsWinXmlTransport to send
-     *         messages
-     * @throws SmsException
-     */
-    public static SmsSender getPsWinCommXmlSender(String username, String password) throws SmsException
-    {
-        Properties props = new Properties();
-
-        props.setProperty("smsj.pswincom.username", username);
-        props.setProperty("smsj.pswincom.password", password);
-
-        return new SmsSender("org.marre.sms.transport.pswincom.PsWinXmlTransport", props);
-    }
-
-    /**
-     * Convenience method to create a SmsSender object that knows how to send
-     * messages via PSWinComm
-     * 
-     * @param propsFilename
-     *            Filename of a properties file containing properties for the
-     *            pswincomm transport.
-     *            
-     * @return A SmsSender object that uses the PsWinXmlTransport to send
-     *         messages
-     *         
-     * @throws SmsException
-     * @throws IOException 
-     */
-    public static SmsSender getPsWinCommXmlSender(String propsFilename) throws SmsException, IOException
-    {
-        Properties props = new Properties();
-        props.load(new FileInputStream(propsFilename));
-        return new SmsSender("org.marre.sms.transport.pswincom.PsWinXmlTransport", props);
-    }
-
-    /**
      * Sends an ordinary SMS to the given recipient.
      * 
      * There is no limit on the number of concatenated SMS that this message will
