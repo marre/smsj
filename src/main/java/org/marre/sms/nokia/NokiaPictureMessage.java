@@ -22,7 +22,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.nokia;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Nokia Picture message
@@ -106,20 +106,13 @@ public class NokiaPictureMessage extends NokiaMultipartMessage
      */
     private void addText(String msg, boolean asUnicode)
     {
-        try
+        if (asUnicode)
         {
-            if (asUnicode)
-            {
-                addMultipart(NokiaItemType.TEXT_UNICODE, msg.getBytes("UTF-16BE"));
-            }
-            else
-            {
-                addMultipart(NokiaItemType.TEXT_ISO_8859_1, msg.getBytes("ISO-8859-1"));
-            }
+            addMultipart(NokiaItemType.TEXT_UNICODE, msg.getBytes(StandardCharsets.UTF_16BE));
         }
-        catch (UnsupportedEncodingException ex)
+        else
         {
-            throw new RuntimeException(ex);
+            addMultipart(NokiaItemType.TEXT_ISO_8859_1, msg.getBytes(StandardCharsets.ISO_8859_1));
         }
     }
 }

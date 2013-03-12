@@ -34,7 +34,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 public final class MimeFactory
 {    
@@ -54,16 +54,8 @@ public final class MimeFactory
         MimeContentType ct = new MimeContentType(contentType);
         ct.setParam("charset", "utf-8");
         
-        byte[] data = null;
-        try 
-        {
-            data = str.getBytes("UTF-8");
-        }
-        catch (UnsupportedEncodingException ex)
-        {
-            // Shouldn't happen.... UTF-8 is standard...
-        }
-        
+        byte[] data = str.getBytes(StandardCharsets.UTF_8);
+
         textBodyPart.setContent(data, ct);
         
         return textBodyPart;

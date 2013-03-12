@@ -22,9 +22,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.nokia;
 
-import java.io.UnsupportedEncodingException;
-
 import org.marre.sms.SmsUserData;
+
+import java.nio.charset.StandardCharsets;
+
 /**
  * Nokia Downloadable Profile
  *
@@ -78,14 +79,7 @@ public class NokiaDownloadableProfile extends NokiaMultipartMessage
         // Create message
         if (profileName_ != null)
         {
-            try
-            {
-                addMultipart(NokiaItemType.PROFILE_NAME, profileName_.getBytes("UTF-16BE"));
-            }
-            catch (UnsupportedEncodingException ex)
-            {
-                throw new RuntimeException(ex);
-            }
+            addMultipart(NokiaItemType.PROFILE_NAME, profileName_.getBytes(StandardCharsets.UTF_16BE));
         }
 
         if (screenSaver_ != null)

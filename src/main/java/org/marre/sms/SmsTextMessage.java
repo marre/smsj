@@ -35,6 +35,7 @@
 package org.marre.sms;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Represents a text message.
@@ -144,35 +145,25 @@ public class SmsTextMessage extends SmsConcatMessage
     {
         SmsUserData ud;
         
-        try
+        switch (dcs_.getAlphabet())
         {
-            switch (dcs_.getAlphabet())
-            {
-            case GSM:
-                ud = new SmsUserData(SmsPduUtil.getSeptets(text_), text_.length(), dcs_);
-                break;
-                
-            case LATIN1:
-                ud = new SmsUserData(text_.getBytes("ISO-8859-1"), text_.length(), dcs_);
-                break;
-                
-            case UCS2:
-                ud = new SmsUserData(text_.getBytes("UTF-16BE"), text_.length() * 2, dcs_);
-                break;
-                
-            default:
-                ud = null;
-                break;
-            }
+        case GSM:
+            ud = new SmsUserData(SmsPduUtil.getSeptets(text_), text_.length(), dcs_);
+            break;
+
+        case LATIN1:
+            ud = new SmsUserData(text_.getBytes(StandardCharsets.ISO_8859_1), text_.length(), dcs_);
+            break;
+
+        case UCS2:
+            ud = new SmsUserData(text_.getBytes(StandardCharsets.UTF_16BE), text_.length() * 2, dcs_);
+            break;
+
+        default:
+            ud = null;
+            break;
         }
-        catch (UnsupportedEncodingException ex)
-        {
-            // Shouldn't happen. According to the javadoc documentation
-            // for JDK 1.3.1 the "UTF-16BE" and "ISO-8859-1" encoding
-            // are standard...
-            throw new RuntimeException(ex);
-        }
-        
+
         return ud;
     }
 
