@@ -177,6 +177,75 @@ public class SmsSender
     }
 
     /**
+     * Convenience method to create a SmsSender object that knows how to send
+     * messages with a UCP SMSC.
+     * 
+     * @param address
+     *            A string with the ip address or host name of the SMSC
+     * @param port
+     *            An integer with the ip port on which the SMSC listens
+     * @return A SmsSender object that uses the UcpTranport to send messages
+     * @throws SmsException
+     */
+    public static SmsSender getUcpSender(String address, int port) throws SmsException
+    {
+        //Liquidterm: strict input checking is done in the UcpTransport class
+        Properties props = new Properties();
+        props.setProperty("smsj.ucp.ip.host", address);
+        props.setProperty("smsj.ucp.ip.port", Integer.toString(port));
+        return new SmsSender("org.marre.sms.transport.ucp.UcpTransport", props);
+    }
+
+    /**
+     * Convenience method to create a SmsSender object that knows how to send
+     * messages with a UCP SMSC.
+     * 
+     * @param address
+     *            A string with the ip address or host name of the SMSC
+     * @param port
+     *            An integer with the ip port on which the SMSC listens
+     * @param ucp60Uid
+     *            A string containing the UCP60 userid
+     * @param ucp60Pwd
+     *            A string containing the UCP60 password
+     *            
+     * @return A SmsSender object that uses the UcpTranport to send messages
+     * 
+     * @throws SmsException
+     */
+    public static SmsSender getUcpSender(String address, int port, String ucp60Uid, String ucp60Pwd)
+            throws SmsException
+    {
+        //Liquidterm: strict input checking is done in the UcpTransport class
+        Properties props = new Properties();
+        props.setProperty("smsj.ucp.ip.host", address);
+        props.setProperty("smsj.ucp.ip.port", Integer.toString(port));
+        props.setProperty("smsj.ucp.ucp60.uid", ucp60Uid);
+        props.setProperty("smsj.ucp.ucp60.password", ucp60Pwd);
+        return new SmsSender("org.marre.sms.transport.ucp.UcpTransport", props);
+    }
+
+    /**
+     * Convenience method to create a SmsSender object that knows how to send
+     * messages with a UCP SMSC.
+     * 
+     * @param propsFilename
+     *            A string containt a filename with the serialized Properties
+     *            object for the transport
+     *            
+     * @return A SmsSender object that uses the UcpTranport to send messages
+     * 
+     * @throws SmsException
+     * @throws IOException 
+     */
+    public static SmsSender getUcpSender(String propsFilename) throws SmsException, IOException
+    {
+        Properties props = new Properties();
+        props.load(new FileInputStream(propsFilename));
+        return new SmsSender("org.marre.sms.transport.ucp.UcpTransport", props);
+    }
+
+    /**
      * Sends an ordinary SMS to the given recipient.
      * 
      * There is no limit on the number of concatenated SMS that this message will
