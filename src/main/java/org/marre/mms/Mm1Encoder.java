@@ -32,7 +32,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.mms.transport.mm1;
+package org.marre.mms;
 
 import java.io.IOException;
 import java.io.OutputStream;
