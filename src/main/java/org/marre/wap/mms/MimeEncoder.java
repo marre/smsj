@@ -32,7 +32,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.mime.encoder;
+package org.marre.wap.mms;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -56,7 +56,7 @@ public class WspHeaderEncoderTest extends TestCase
         try
         {
             baos = new ByteArrayOutputStream();
-            WspHeaderEncoder.writeCustomHeader(baos, "Header-Name", "Header-Value");
+            WspHeaderEncoder.writeApplicationHeader(baos, "Header-Name", "Header-Value");
             baos.close();
             assertEquals("4865616465722D4E616D65004865616465722D56616C756500", StringUtil.bytesToHexString(baos.toByteArray()));
         }

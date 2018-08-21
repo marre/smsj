@@ -39,37 +39,34 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class MimeMultipart extends MimeBodyPart
-{
-    protected final List<MimeBodyPart> bodyParts_ = new LinkedList<MimeBodyPart>();
+public abstract class MimeMultipart extends MimeBodyPart {
 
-    public MimeMultipart(String contentType)
-    {
-        contentType_ = new MimeContentType(contentType);
+  protected final List<MimeBodyPart> bodyParts = new LinkedList<>();
+
+  public MimeMultipart(String contentType) {
+    super(contentType);
+  }
+
+  public void addBodyPart(MimeBodyPart bodyPart) {
+    bodyParts.add(bodyPart);
+  }
+
+  public void removeBodyPart(MimeBodyPart bodyPart) {
+    bodyParts.remove(bodyPart);
+  }
+
+  public Collection<MimeBodyPart> getBodyParts() {
+    return Collections.unmodifiableCollection(bodyParts);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder strBuff = new StringBuilder();
+
+    for (MimeBodyPart bodyPart : bodyParts) {
+      strBuff.append(bodyPart);
     }
 
-    public void addBodyPart(MimeBodyPart bodyPart)
-    {
-        bodyParts_.add(bodyPart);
-    }
-
-    public void removeBodyPart(MimeBodyPart bodyPart)
-    {
-        bodyParts_.remove(bodyPart);
-    }
-
-    public Collection<MimeBodyPart> getBodyParts() {
-        return Collections.unmodifiableCollection(bodyParts_);
-    }
-
-    public String toString()
-    {
-        StringBuilder strBuff = new StringBuilder();
-
-        for (MimeBodyPart bodyPart : bodyParts_) {
-            strBuff.append(bodyPart);
-        }
-
-        return strBuff.toString();
-    }
+    return strBuff.toString();
+  }
 }

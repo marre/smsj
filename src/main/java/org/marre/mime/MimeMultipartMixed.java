@@ -34,10 +34,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
-public class MimeMultipartMixed extends MimeMultipart
-{
-    public MimeMultipartMixed()
-    {
-        super("multipart/mixed");
-    }
+public class MimeMultipartMixed extends MimeMultipart {
+
+  public MimeMultipartMixed() {
+    super("multipart/mixed");
+  }
+
 }

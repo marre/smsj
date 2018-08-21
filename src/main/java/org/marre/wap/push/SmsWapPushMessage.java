@@ -43,7 +43,7 @@ import org.marre.sms.SmsPort;
 import org.marre.sms.SmsPortAddressedMessage;
 import org.marre.sms.SmsUserData;
 import org.marre.wsp.WspConstants;
-import org.marre.wap.WapMimeEncoder;
+import org.marre.wap.mms.WapMimeEncoder;
 import org.marre.wsp.WspEncodingVersion;
 import org.marre.wsp.WspUtil;
 import org.marre.wap.wbxml.WbxmlDocument;

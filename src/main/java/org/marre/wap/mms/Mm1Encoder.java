@@ -32,18 +32,16 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.mms;
+package org.marre.wap.mms;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 import org.marre.mime.MimeBodyPart;
 import org.marre.mime.MimeMultipart;
-import org.marre.mime.encoder.MimeEncoder;
-import org.marre.wap.WapMimeEncoder;
+import org.marre.mms.MmsHeaderEncoder;
 import org.marre.wsp.WspEncodingVersion;
 import org.marre.wsp.WspUtil;
-import org.marre.wap.mms.MmsHeaderEncoder;
 
 /**
  * 

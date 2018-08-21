@@ -51,160 +51,7 @@ public final class WspHeaderEncoder {
     // Static class
   }
 
-  /**
-   * there is only some useful encoder
-   *
-   * @param wspEncodingVersion
-   * @param os
-   * @param header
-   * @throws IOException
-   */
-  public static void writeHeader(WspEncodingVersion wspEncodingVersion, OutputStream os, MimeHeader header) throws IOException {
-    String headerName = header.getName().toLowerCase();
-    int headerType = WspUtil.getHeaderType(headerName);
-
-    switch (headerType) {
-      case WspConstants.HEADER_ACCEPT:
-        break;
-      case WspConstants.HEADER_ACCEPT_APPLICATION:
-        break;
-      case WspConstants.HEADER_ACCEPT_CHARSET:
-        break;
-      case WspConstants.HEADER_ACCEPT_ENCODING:
-        break;
-      case WspConstants.HEADER_ACCEPT_LANGUAGE:
-        break;
-      case WspConstants.HEADER_ACCEPT_RANGES:
-        break;
-      case WspConstants.HEADER_AGE:
-        break;
-      case WspConstants.HEADER_ALLOW:
-        break;
-      case WspConstants.HEADER_AUTHORIZATION:
-        break;
-      case WspConstants.HEADER_BEARER_INDICATION:
-        break;
-      case WspConstants.HEADER_CACHE_CONTROL:
-        break;
-      case WspConstants.HEADER_CONNECTION:
-        break;
-      case WspConstants.HEADER_CONTENT_BASE:
-        break;
-      case WspConstants.HEADER_CONTENT_DISPOSITION:
-        break;
-      case WspConstants.HEADER_CONTENT_ID:
-        writeHeaderContentID(wspEncodingVersion, os, header.getValue());
-        break;
-      case WspConstants.HEADER_CONTENT_LANGUAGE:
-        break;
-      case WspConstants.HEADER_CONTENT_LENGTH:
-        break;
-      case WspConstants.HEADER_CONTENT_LOCATION:
-        writeHeaderContentLocation(wspEncodingVersion, os, header.getValue());
-        break;
-      case WspConstants.HEADER_CONTENT_MD5:
-        break;
-      case WspConstants.HEADER_CONTENT_RANGE:
-        break;
-      case WspConstants.HEADER_CONTENT_TYPE:
-        writeHeaderContentType(wspEncodingVersion, os, header);
-        break;
-      case WspConstants.HEADER_COOKIE:
-        break;
-      case WspConstants.HEADER_DATE:
-        break;
-      case WspConstants.HEADER_ENCODING_VERSION:
-        break;
-      case WspConstants.HEADER_ETAG:
-        break;
-      case WspConstants.HEADER_EXPECT:
-        break;
-      case WspConstants.HEADER_EXPIRES:
-        break;
-      case WspConstants.HEADER_FROM:
-        break;
-      case WspConstants.HEADER_HOST:
-        break;
-      case WspConstants.HEADER_IF_MATCH:
-        break;
-      case WspConstants.HEADER_IF_MODIFIED_SINCE:
-        break;
-      case WspConstants.HEADER_IF_NONE_MATCH:
-        break;
-      case WspConstants.HEADER_IF_RANGE:
-        break;
-      case WspConstants.HEADER_IF_UNMODIFIED_SINCE:
-        break;
-      case WspConstants.HEADER_LAST_MODIFIED:
-        break;
-      case WspConstants.HEADER_LOCATION:
-        break;
-      case WspConstants.HEADER_MAX_FORWARDS:
-        break;
-      case WspConstants.HEADER_PRAGMA:
-        break;
-      case WspConstants.HEADER_PROFILE:
-        break;
-      case WspConstants.HEADER_PROFILE_DIFF:
-        break;
-      case WspConstants.HEADER_PROFILE_WARNING:
-        break;
-      case WspConstants.HEADER_PROXY_AUTHENTICATE:
-        break;
-      case WspConstants.HEADER_PROXY_AUTHORIZATION:
-        break;
-      case WspConstants.HEADER_PUBLIC:
-        break;
-      case WspConstants.HEADER_PUSH_FLAG:
-        break;
-      case WspConstants.HEADER_RANGE:
-        break;
-      case WspConstants.HEADER_REFERER:
-        break;
-      case WspConstants.HEADER_RETRY_AFTER:
-        break;
-      case WspConstants.HEADER_SERVER:
-        break;
-      case WspConstants.HEADER_SET_COOKIE:
-        break;
-      case WspConstants.HEADER_TE:
-        break;
-      case WspConstants.HEADER_TRAILER:
-        break;
-      case WspConstants.HEADER_TRANSFER_ENCODING:
-        break;
-      case WspConstants.HEADER_UPGRADE:
-        break;
-      case WspConstants.HEADER_USER_AGENT:
-        break;
-      case WspConstants.HEADER_VARY:
-        break;
-      case WspConstants.HEADER_VIA:
-        break;
-      case WspConstants.HEADER_WARNING:
-        break;
-      case WspConstants.HEADER_WWW_AUTHENTICATE:
-        break;
-      case WspConstants.HEADER_X_WAP_APPLICATION_ID:
-        writeHeaderXWapApplicationId(wspEncodingVersion, os, header.getValue());
-        break;
-      case WspConstants.HEADER_X_WAP_CONTENT_URI:
-        break;
-      case WspConstants.HEADER_X_WAP_INITIATOR_URI:
-        break;
-      case WspConstants.HEADER_X_WAP_SECURITY:
-        break;
-      case WspConstants.HEADER_X_WAP_TOD:
-        break;
-
-      default:
-        // Custom header
-        writeCustomHeader(os, header.getName(), header.getValue());
-        break;
-    }
-  }
-
-  public static void writeCustomHeader(OutputStream os, String name, String value) throws IOException {
+  public static void writeApplicationHeader(OutputStream os, String name, String value) throws IOException {
     WspUtil.writeTokenText(os, name);
     WspUtil.writeTextString(os, value);
   }
@@ -221,7 +68,7 @@ public final class WspHeaderEncoder {
       WspUtil.writeShortInteger(os, headerId);
       WspUtil.writeQuotedString(os, contentId);
     } else {
-      WspHeaderEncoder.writeCustomHeader(os, "Content-ID", contentId);
+      WspHeaderEncoder.writeApplicationHeader(os, "Content-ID", contentId);
     }
   }
 
@@ -269,7 +116,7 @@ public final class WspHeaderEncoder {
         WspUtil.writeInteger(os, wellKnownAppId);
       }
     } else {
-      writeCustomHeader(os, "X-Wap-Application-Id", appId);
+      writeApplicationHeader(os, "X-Wap-Application-Id", appId);
     }
   }
 }

@@ -34,10 +34,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
-public class MimeContentType extends MimeHeader
-{
-    public MimeContentType(String contentType)
-    {
-        super("Content-type", contentType);
-    }
+public class MimeContentType extends MimeHeader {
+
+  public MimeContentType(String contentType) {
+    super("content-type", contentType);
+  }
 }

@@ -64,16 +64,6 @@ public final class MmsConstants {
   public static final int HEADER_ID_TO = 0x17;
   public static final int HEADER_ID_X_MMS_TRANSACTION_ID = 0x18;
 
-  public static final String[] HEADER_NAMES = {null, "bcc", "cc", "x-mms-content-location", "content-type", "date",
-      "x-mms-delivery-report", "x-mms-delivery-time", "x-mms-expiry", "from", "x-mms-message-class",
-      "message-id", "x-mms-message-type", "x-mms-mms-version", "x-mms-message-size", "x-mms-priority",
-      "x-mms-read-reply", "x-mms-report-allowed", "x-mms-response-status", "x-mms-response-text",
-      "x-mms-sender-visibility", "x-mms-status", "subject", "to", "x-mms-transaction-id"};
-
-  public static final int X_MMS_MMS_VERSION_ID_1_0 = 0x00;
-
-  public static final String[] X_MMS_MMS_VERSION_NAMES = {"1.0"};
-
   public static final int X_MMS_MESSAGE_TYPE_ID_M_SEND_REQ = 0;
   public static final int X_MMS_MESSAGE_TYPE_ID_M_SEND_CONF = 1;
   public static final int X_MMS_MESSAGE_TYPE_ID_M_NOTIFICATION_IND = 2;
@@ -82,28 +72,21 @@ public final class MmsConstants {
   public static final int X_MMS_MESSAGE_TYPE_ID_M_ACKNOWLEDGE_IND = 5;
   public static final int X_MMS_MESSAGE_TYPE_ID_M_DELIVERY_IND = 6;
 
-  public static final String[] X_MMS_MESSAGE_TYPE_NAMES = {"m-send-req", "m-send-conf", "m-notification-ind",
-      "m-notifyresp-ind", "m-retrieve-conf", "m-acknowledge-ind", "m-delivery-ind"};
+  public static final int FROM_ADDRESS_PRESENT = 0;
+  public static final int FROM_INSERT_ADDRESS = 1;
 
-  public static final int FROM_ADDRESS_PRESENT = 0x00;
-  public static final int FROM_INSERT_ADDRESS = 0x01;
+  public static final int EXPIRY_TIME_ABSOLUTE = 0;
+  public static final int EXPIRY_TIME_RELATIVE = 1;
 
-  public static final int EXPIRY_TIME_ABSOLUTE = 0x00;
-  public static final int EXPIRY_TIME_RELATIVE = 0x01;
-
-  public static final short ABSOLUTE_TOKEN = 0x00;
-  public static final short RELATIVE_TOKEN = 0x01;
+  public static final short ABSOLUTE_TOKEN = 0;
+  public static final short RELATIVE_TOKEN = 1;
 
   public static final int X_MMS_READ_REPLY_ID_YES = 0;
   public static final int X_MMS_READ_REPLY_ID_NO = 1;
 
-  public static final String[] X_MMS_READ_REPLY_NAMES = {"yes", "no"};
-
   public static final int X_MMS_PRIORITY_ID_LOW = 0;
   public static final int X_MMS_PRIORITY_ID_NORMAL = 1;
   public static final int X_MMS_PRIORITY_ID_HIGH = 2;
-
-  public static final String[] X_MMS_PRIORITY_NAMES = {"low", "normal", "high"};
 
   public static final int X_MMS_STATUS_ID_EXPIRED = 0;
   public static final int X_MMS_STATUS_ID_RETRIEVED = 1;
@@ -111,19 +94,13 @@ public final class MmsConstants {
   public static final int X_MMS_STATUS_ID_DEFERRED = 3;
   public static final int X_MMS_STATUS_ID_UNRECOGNISED = 4;
 
-  public static final String[] X_MMS_STATUS_NAMES = {"expired", "retrieved", "rejected", "deferred", "unrecognised"};
-
   public static final int X_MMS_MESSAGE_CLASS_ID_PERSONAL = 0;
   public static final int X_MMS_MESSAGE_CLASS_ID_ADVERTISMENT = 1;
   public static final int X_MMS_MESSAGE_CLASS_ID_INFORMATIONAL = 2;
   public static final int X_MMS_MESSAGE_CLASS_ID_AUTO = 3;
 
-  public static final String[] X_MMS_MESSAGE_CLASS_NAMES = {"personal", "advertisment", "informational", "auto"};
-
   public static final int X_MMS_SENDER_VISIBILITY_ID_HIDE = 0;
   public static final int X_MMS_SENDER_VISIBILITY_ID_SHOW = 1;
-
-  public static final String[] X_MMS_SENDER_VISIBILITY_NAMES = {"hide", "show"};
 
   private MmsConstants() {
   }

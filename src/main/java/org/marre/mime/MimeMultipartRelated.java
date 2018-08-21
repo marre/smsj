@@ -34,47 +34,42 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
-public class MimeMultipartRelated extends MimeMultipart
-{
-    private MimeBodyPart startBodyPart_;
+public class MimeMultipartRelated extends MimeMultipart {
 
-    public MimeMultipartRelated()
-    {
-        super("multipart/related");
+  private MimeBodyPart startBodyPart;
+
+  public MimeMultipartRelated() {
+    super("multipart/related");
+  }
+
+  public void setStartBodyPart(MimeBodyPart bodyPart) {
+    startBodyPart = null;
+    if (bodyParts.contains(bodyPart)) {
+      startBodyPart = bodyPart;
     }
+  }
 
-    public void setStartBodyPart(MimeBodyPart bodyPart)
-    {
-        startBodyPart_ = null;
-        if (bodyParts_.contains(bodyPart))
-        {
-            startBodyPart_ = bodyPart;
-        }
+  @Override
+  public MimeContentType getContentType() {
+    MimeContentType ct = super.getContentType();
+    if (startBodyPart != null) {
+      MimeContentType startCt = startBodyPart.getContentType();
+      MimeHeader startCid = startBodyPart.getHeader("content-id");
+
+      // Add content-type
+      ct.setParam("type", startCt.getValue());
+
+      // Add start parameter
+      if (startCid != null) {
+        ct.setParam("start", startCid.getValue());
+      }
     }
+    return ct;
+  }
 
-    public MimeContentType getContentType()
-    {
-        MimeContentType ct = super.getContentType();
-        if (startBodyPart_ != null)
-        {
-            MimeContentType startCt = startBodyPart_.getContentType();
-            MimeHeader startCid = startBodyPart_.getHeader("content-id");
-
-            // Add content-type
-            ct.setParam("type", startCt.getValue());
-
-            // Add start parameter
-            if (startCid != null)
-            {
-                ct.setParam("start", startCid.getValue());
-            }
-        }
-        return ct;
-    }
-
-    public String toString()
-    {
-        return getContentType().toString() + "\n" +
-               super.toString();
-    }
+  @Override
+  public String toString() {
+    return getContentType().toString() + "\n" +
+        super.toString();
+  }
 }

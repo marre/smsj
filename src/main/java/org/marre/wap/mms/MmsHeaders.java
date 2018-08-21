@@ -32,10 +32,13 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.mms;
+package org.marre.wap.mms;
 
+import org.marre.mms.MmsConstants;
 import org.marre.util.StringUtil;
 import org.marre.wsp.WspEncodingVersion;
+
+import java.util.Date;
 
 public class MmsHeaders {
 
@@ -53,8 +56,14 @@ public class MmsHeaders {
 
   private String to;
 
+  private Date date = new Date();
+
   public MmsHeaders() {
     transactionId = StringUtil.randString(DEFAULT_TRANSACTION_ID_LENGTH);
+  }
+
+  public MmsHeaders(String transactionId) {
+    this.transactionId = transactionId;
   }
 
   public int getMessageType() {
@@ -103,5 +112,13 @@ public class MmsHeaders {
 
   public void setTo(String to) {
     this.to = to;
+  }
+
+  public Date getDate() {
+    return date;
+  }
+
+  public void setDate(Date date) {
+    this.date = date;
   }
 }

@@ -38,7 +38,7 @@ import org.marre.mime.MimeBodyPart;
 import org.marre.sms.SmsUserData;
 import org.marre.util.StringUtil;
 import org.marre.mms.MmsConstants;
-import org.marre.wap.mms.MmsHeaderEncoder;
+import org.marre.mms.MmsHeaderEncoder;
 import org.marre.wsp.WspEncodingVersion;
 
 import java.io.ByteArrayOutputStream;
