@@ -38,6 +38,8 @@ package org.marre.mms;
  * @author Markus Eriksson
  */
 public final class MmsConstants {
+  public static final int DEFAULT_TRANSACTION_ID_LENGTH = 6;
+
   public static final int HEADER_ID_BCC = 0x01;
   public static final int HEADER_ID_CC = 0x02;
   public static final int HEADER_ID_X_MMS_CONTENT_LOCATION = 0x03;

@@ -32,54 +32,24 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.wap.mms;
+package org.marre.mms;
+
+import org.marre.mime.MimeMultipartRelated;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.marre.mime.MimeBodyPart;
-
 /**
- * Interface for all mime encoders.
- * 
- * @author Markus Eriksson
- * @version $Id$
+ * Created by hanwen on 2018/8/20.
  */
-public interface MimeEncoder
-{
-    /**
-     * Writes the content-type of the message to the given stream.
-     * 
-     * @param os
-     *            The stream to write to
-     * @param msg
-     *            The message to get the content-type from
-     * @throws IOException
-     *             Thrown if we fail to write the content-type to the stream
-     */
-    void writeContentType(OutputStream os, MimeBodyPart msg) throws IOException;
+public class RelatedMms extends MimeMultipartRelated {
 
-    /**
-     * Writes the headers of the message to the given stream.
-     * 
-     * @param os
-     *            The stream to write to
-     * @param msg
-     *            The message to get the headers from
-     * @throws IOException
-     *             Thrown if we fail to write the headers to the stream
-     */
-    void writeHeaders(OutputStream os, MimeBodyPart msg) throws IOException;
 
-    /**
-     * Writes the body of the message to the given stream.
-     * 
-     * @param os
-     *            The stream to write to
-     * @param msg
-     *            The message to get the data from
-     * @throws IOException
-     *             Thrown if we fail to write the body to the stream
-     */
-    void writeBody(OutputStream os, MimeBodyPart msg) throws IOException;
+  public void writeMessage(OutputStream out) throws IOException {
+
+    // todo create smil
+
+    // setStartBodyPart();
+
+  }
 }

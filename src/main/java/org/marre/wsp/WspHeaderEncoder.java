@@ -51,18 +51,13 @@ public final class WspHeaderEncoder {
     // Static class
   }
 
-  public static void writeApplicationHeader(OutputStream os, String name, String value) throws IOException {
-    WspUtil.writeTokenText(os, name);
-    WspUtil.writeTextString(os, value);
-  }
-
   /**
    * Writes a wsp encoded content-id header as specified in
    * WAP-230-WSP-20010705-a.pdf.
    * <p>
    * Content-ID is introduced in encoding version 1.3.
    */
-  public static void writeHeaderContentID(WspEncodingVersion wspEncodingVersion, OutputStream os, String contentId) throws IOException {
+  public static void writeHeaderContentId(WspEncodingVersion wspEncodingVersion, OutputStream os, String contentId) throws IOException {
     int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WspConstants.HEADER_CONTENT_ID);
     if (headerId != -1) {
       WspUtil.writeShortInteger(os, headerId);
@@ -118,5 +113,10 @@ public final class WspHeaderEncoder {
     } else {
       writeApplicationHeader(os, "X-Wap-Application-Id", appId);
     }
+  }
+
+  public static void writeApplicationHeader(OutputStream os, String name, String value) throws IOException {
+    WspUtil.writeTokenText(os, name);
+    WspUtil.writeTextString(os, value);
   }
 }

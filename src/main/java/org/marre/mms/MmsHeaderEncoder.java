@@ -48,7 +48,7 @@ import java.util.Date;
 
 /**
  * wap-209-mmsencapsulation-20020105-a
- * 
+ *
  * @author Markus Eriksson
  * @version $Id$
  */
@@ -82,16 +82,6 @@ public final class MmsHeaderEncoder {
   public static void writeHeaderContentType(WspEncodingVersion wspEncodingVersion, OutputStream os, MimeHeader contentType) throws IOException {
     WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_CONTENT_TYPE);
     WspUtil.writeContentType(wspEncodingVersion, os, contentType);
-  }
-
-  public static void writeEncodedStringValue(OutputStream os, String stringValue) throws IOException {
-    try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-      WspUtil.writeShortInteger(bos, WspConstants.MIB_ENUM_UTF_8);
-      WspUtil.writeTextString(bos, stringValue);
-
-      WspUtil.writeValueLength(os, bos.size());
-      os.write(bos.toByteArray());
-    }
   }
 
   public static void writeHeaderXMmsMessageType(OutputStream os, int messageTypeId) throws IOException {
@@ -217,4 +207,14 @@ public final class MmsHeaderEncoder {
     WspUtil.writeShortInteger(os, visibilityId);
   }
 
+
+  public static void writeEncodedStringValue(OutputStream os, String stringValue) throws IOException {
+    try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+      WspUtil.writeShortInteger(bos, WspConstants.MIB_ENUM_UTF_8);
+      WspUtil.writeTextString(bos, stringValue);
+
+      WspUtil.writeValueLength(os, bos.size());
+      os.write(bos.toByteArray());
+    }
+  }
 }

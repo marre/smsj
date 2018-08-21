@@ -155,7 +155,7 @@ public class MimeBodyPart {
    * @param contentId The content-id
    */
   public void setContentId(String contentId) {
-    addHeader("content-id", contentId);
+    addHeader("Content-ID", contentId);
   }
 
   /**
@@ -164,7 +164,7 @@ public class MimeBodyPart {
    * @param contentLocation The content-location
    */
   public void setContentLocation(String contentLocation) {
-    addHeader("content-location", contentLocation);
+    addHeader("Content-Location", contentLocation);
   }
 
   /**

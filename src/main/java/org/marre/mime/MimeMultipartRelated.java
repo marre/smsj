@@ -43,10 +43,7 @@ public class MimeMultipartRelated extends MimeMultipart {
   }
 
   public void setStartBodyPart(MimeBodyPart bodyPart) {
-    startBodyPart = null;
-    if (bodyParts.contains(bodyPart)) {
-      startBodyPart = bodyPart;
-    }
+    startBodyPart = bodyPart;
   }
 
   @Override

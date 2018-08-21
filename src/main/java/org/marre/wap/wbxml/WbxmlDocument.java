@@ -34,18 +34,18 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.wap.wbxml;
 
-import java.io.OutputStream;
-
 import org.marre.xml.XmlDocument;
 import org.marre.xml.XmlWriter;
 
+import java.io.OutputStream;
+
 /**
- * 
  * @author Markus
  * @version $Id$
  */
-public interface WbxmlDocument extends XmlDocument
-{
-    String getWbxmlContentType();
-    XmlWriter getWbxmlWriter(OutputStream os);
+public interface WbxmlDocument extends XmlDocument {
+
+  String getWbxmlContentType();
+
+  XmlWriter getWbxmlWriter(OutputStream os);
 }

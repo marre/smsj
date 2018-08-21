@@ -32,93 +32,85 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.wap.mms;
+package org.marre.mms;
 
-import org.marre.mms.MmsConstants;
+import org.marre.mime.MimeMultipartMixed;
+import org.marre.mime.WapMimeEncoder;
 import org.marre.util.StringUtil;
 import org.marre.wsp.WspEncodingVersion;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Date;
 
-public class MmsHeaders {
+/**
+ * Created by hanwen on 2018/8/20.
+ */
+public class MixedMms extends MimeMultipartMixed {
 
-  private static final int DEFAULT_TRANSACTION_ID_LENGTH = 6;
-
-  private int messageTypeId = MmsConstants.X_MMS_MESSAGE_TYPE_ID_M_SEND_REQ;
+  private final WspEncodingVersion wspEncodingVersion;
 
   private String transactionId;
 
-  private WspEncodingVersion version = WspEncodingVersion.VERSION_1_0;
+  private String from;
 
   private String subject;
 
-  private String from;
-
-  private String to;
-
   private Date date = new Date();
 
-  public MmsHeaders() {
-    transactionId = StringUtil.randString(DEFAULT_TRANSACTION_ID_LENGTH);
+  public MixedMms() {
+    wspEncodingVersion = WspEncodingVersion.VERSION_1_2;
   }
 
-  public MmsHeaders(String transactionId) {
-    this.transactionId = transactionId;
-  }
-
-  public int getMessageType() {
-    return messageTypeId;
-  }
-
-  public void setMessageType(int msgTypeId) {
-    messageTypeId = msgTypeId;
-  }
-
-  public String getTransactionId() {
-    return transactionId;
+  public MixedMms(WspEncodingVersion wspEncodingVersion) {
+    this.wspEncodingVersion = wspEncodingVersion;
   }
 
   public void setTransactionId(String transactionId) {
     this.transactionId = transactionId;
   }
 
-  public WspEncodingVersion getVersion() {
-    return version;
-  }
-
-  public void setVersion(WspEncodingVersion version) {
-    this.version = version;
-  }
-
-  public String getSubject() {
-    return subject;
+  public void setFrom(String from) {
+    this.from = from;
   }
 
   public void setSubject(String subject) {
     this.subject = subject;
   }
 
-  public String getFrom() {
-    return from;
-  }
-
-  public void setFrom(String from) {
-    this.from = from;
-  }
-
-  public String getTo() {
-    return to;
-  }
-
-  public void setTo(String to) {
-    this.to = to;
-  }
-
-  public Date getDate() {
-    return date;
-  }
-
   public void setDate(Date date) {
     this.date = date;
+  }
+
+  public void writeMessage(OutputStream out) throws IOException {
+    // Add headers
+    writeHeaders(out);
+
+    // Add content-type
+    MmsHeaderEncoder.writeHeaderContentType(wspEncodingVersion, out, getContentType());
+
+    // Add content
+    WapMimeEncoder.writeBody(wspEncodingVersion, out, this);
+  }
+
+  private void writeHeaders(OutputStream out) throws IOException {
+    if (transactionId == null || transactionId.length() == 0) {
+      transactionId = StringUtil.randString(MmsConstants.DEFAULT_TRANSACTION_ID_LENGTH);
+    }
+    MmsHeaderEncoder.writeHeaderXMmsMessageType(out, MmsConstants.X_MMS_MESSAGE_TYPE_ID_M_RETRIEVE_CONF);
+    MmsHeaderEncoder.writeHeaderXMmsTransactionId(out, transactionId);
+    MmsHeaderEncoder.writeHeaderXMmsMmsVersion(out, WspEncodingVersion.VERSION_1_0);
+
+    if (subject != null && subject.length() > 0) {
+      MmsHeaderEncoder.writeHeaderSubject(out, subject);
+    }
+
+    if (from != null && from.length() > 0) {
+      MmsHeaderEncoder.writeHeaderFrom(out, from);
+    }
+
+    if (date != null) {
+      MmsHeaderEncoder.writeHeaderDate(out, date);
+    }
   }
 }

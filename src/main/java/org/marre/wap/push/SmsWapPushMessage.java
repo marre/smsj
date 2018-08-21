@@ -34,19 +34,19 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.wap.push;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import org.marre.mime.MimeBodyPart;
 import org.marre.mime.MimeContentType;
 import org.marre.sms.SmsPort;
 import org.marre.sms.SmsPortAddressedMessage;
 import org.marre.sms.SmsUserData;
+import org.marre.mime.WapMimeEncoder;
+import org.marre.wap.wbxml.WbxmlDocument;
 import org.marre.wsp.WspConstants;
-import org.marre.wap.mms.WapMimeEncoder;
 import org.marre.wsp.WspEncodingVersion;
 import org.marre.wsp.WspUtil;
-import org.marre.wap.wbxml.WbxmlDocument;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * Connectionless WAP push message with SMS as bearer.
@@ -130,10 +130,10 @@ public class SmsWapPushMessage extends SmsPortAddressedMessage
     {
         wspEncodingVersion_ = wspEncodingVersion;
     }
-    
+
+    @Override
     public SmsUserData getUserData()
     {
-        WapMimeEncoder wapMimeEncoder = new WapMimeEncoder(WspEncodingVersion.VERSION_1_2);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try
@@ -157,10 +157,10 @@ public class SmsWapPushMessage extends SmsPortAddressedMessage
             ByteArrayOutputStream headers = new ByteArrayOutputStream();
             
             // Content-type
-            wapMimeEncoder.writeContentType(headers, pushMsg_);
+            WapMimeEncoder.writeContentType(wspEncodingVersion_, headers, pushMsg_);
 
             // WAP-HEADERS
-            wapMimeEncoder.writeHeaders(headers, pushMsg_);
+            WapMimeEncoder.writeHeaders(wspEncodingVersion_, headers, pushMsg_);
                         
             // Done with the headers...
             headers.close();
@@ -174,7 +174,7 @@ public class SmsWapPushMessage extends SmsPortAddressedMessage
             baos.write(headers.toByteArray());
 
             // Data
-            wapMimeEncoder.writeBody(baos, pushMsg_);
+            WapMimeEncoder.writeBody(wspEncodingVersion_, baos, pushMsg_);
 
             // Done
             baos.close();
