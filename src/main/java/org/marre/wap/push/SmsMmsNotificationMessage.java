@@ -35,11 +35,11 @@
 package org.marre.wap.push;
 
 import org.marre.mime.MimeBodyPart;
-import org.marre.mms.MmsVersion;
 import org.marre.sms.SmsUserData;
 import org.marre.util.StringUtil;
 import org.marre.mms.MmsConstants;
 import org.marre.wap.mms.MmsHeaderEncoder;
+import org.marre.wsp.WspEncodingVersion;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -77,7 +77,7 @@ public class SmsMmsNotificationMessage extends SmsWapPushMessage {
     MmsHeaderEncoder.writeHeaderXMmsMessageType(os, MmsConstants.X_MMS_MESSAGE_TYPE_ID_M_NOTIFICATION_IND);
     MmsHeaderEncoder.writeHeaderXMmsTransactionId(os, transactionId_);
     // TODO
-    MmsHeaderEncoder.writeHeaderXMmsMmsVersion(os, MmsVersion.VERSION_1_0);
+    MmsHeaderEncoder.writeHeaderXMmsMmsVersion(os, WspEncodingVersion.VERSION_1_0);
 
     if ((from_ != null) && (from_.length() > 0)) {
       MmsHeaderEncoder.writeHeaderFrom(os, from_);

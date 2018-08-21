@@ -36,7 +36,6 @@ package org.marre.wap.mms;
 
 import org.marre.mime.MimeHeader;
 import org.marre.mms.MmsConstants;
-import org.marre.mms.MmsVersion;
 import org.marre.util.StringUtil;
 import org.marre.wsp.WspEncodingVersion;
 import org.marre.wsp.WspUtil;
@@ -100,14 +99,14 @@ public final class MmsHeaderEncoder {
     WspUtil.writeTextString(os, transactionId);
   }
 
-  public static void writeHeaderXMmsMmsVersion(OutputStream os, MmsVersion versionId) throws IOException {
+  public static void writeHeaderXMmsMmsVersion(OutputStream os, WspEncodingVersion versionId) throws IOException {
     WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_MMS_VERSION);
 
     // TODO
 //    switch (versionId) {
 //      case MmsConstants.X_MMS_MMS_VERSION_ID_1_0:
 //      default:
-    WspUtil.writeShortInteger(os, versionId.getValue());
+    WspUtil.writeShortInteger(os, versionId.byteValue());
 //        break;
 //    }
   }

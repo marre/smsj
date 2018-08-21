@@ -35,6 +35,7 @@
 package org.marre.mms;
 
 import org.marre.util.StringUtil;
+import org.marre.wsp.WspEncodingVersion;
 
 public class MmsHeaders {
 
@@ -44,7 +45,7 @@ public class MmsHeaders {
 
   private String transactionId;
 
-  private MmsVersion version = MmsVersion.VERSION_1_0;
+  private WspEncodingVersion version = WspEncodingVersion.VERSION_1_0;
 
   private String subject;
 
@@ -72,11 +73,11 @@ public class MmsHeaders {
     this.transactionId = transactionId;
   }
 
-  public MmsVersion getVersion() {
+  public WspEncodingVersion getVersion() {
     return version;
   }
 
-  public void setVersion(MmsVersion version) {
+  public void setVersion(WspEncodingVersion version) {
     this.version = version;
   }
 
