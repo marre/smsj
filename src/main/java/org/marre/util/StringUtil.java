@@ -38,148 +38,128 @@ import java.util.Random;
 
 /**
  * Various functions to encode and decode strings.
- * 
+ *
  * @author Markus Eriksson
  */
-public final class StringUtil
-{
-    private static final char[] RANDOM_CHARS = "abcdefghijklmnopqrstuvwxyz1234567890".toCharArray();
+public final class StringUtil {
 
-    private static final Random rnd_ = new Random();
+  private static final char[] RANDOM_CHARS = "abcdefghijklmnopqrstuvwxyz1234567890".toCharArray();
 
-    /**
-     * This class isn't intended to be instantiated.
-     */
-    private StringUtil()
-    {
-    }
+  private static final Random RND = new Random();
 
-    /**
-     * 
-     * @param stringTable
-     * @param text
-     * @return
-     */
-    public static int findString(String[] stringTable, String text)
-    {
-        if (stringTable != null)
-        {
-            for (int i = 0; i < stringTable.length; i++)
-            {
-                if ((stringTable[i] != null) && (stringTable[i].equals(text)))
-                {
-                    return i;
-                }
-            }
+  /**
+   * This class isn't intended to be instantiated.
+   */
+  private StringUtil() {
+  }
+
+  /**
+   * @param stringTable
+   * @param text
+   * @return
+   */
+  public static int findString(String[] stringTable, String text) {
+    if (stringTable != null) {
+      for (int i = 0; i < stringTable.length; i++) {
+        if ((stringTable[i] != null) && (stringTable[i].equals(text))) {
+          return i;
         }
-        return -1;
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Converts a byte array to a string with hex values.
+   *
+   * @param data Data to convert
+   * @return the encoded string
+   */
+  public static String bytesToHexString(byte[] data) {
+    StringBuilder hexStrBuff = new StringBuilder(data.length * 2);
+
+    for (byte aData : data) {
+      String hexByteStr = Integer.toHexString(aData & 0xff).toUpperCase();
+      if (hexByteStr.length() == 1) {
+        hexStrBuff.append("0");
+      }
+      hexStrBuff.append(hexByteStr);
     }
 
-    /**
-     * Converts a byte array to a string with hex values.
-     * 
-     * @param data
-     *            Data to convert
-     * @return the encoded string
-     */
-    public static String bytesToHexString(byte[] data)
-    {
-        StringBuilder hexStrBuff = new StringBuilder(data.length * 2);
+    return hexStrBuff.toString();
+  }
 
-        for (byte aData : data) {
-            String hexByteStr = Integer.toHexString(aData & 0xff).toUpperCase();
-            if (hexByteStr.length() == 1) {
-                hexStrBuff.append("0");
-            }
-            hexStrBuff.append(hexByteStr);
-        }
+  /**
+   * Converts a byte to a string with hex values.
+   *
+   * @param data Byte to convert
+   * @return the encoded string
+   */
+  public static String byteToHexString(byte data) {
+    StringBuilder hexStrBuff = new StringBuilder(2);
 
-        return hexStrBuff.toString();
+    String hexByteStr = Integer.toHexString(data & 0xff).toUpperCase();
+    if (hexByteStr.length() == 1) {
+      hexStrBuff.append("0");
+    }
+    hexStrBuff.append(hexByteStr);
+
+    return hexStrBuff.toString();
+  }
+
+  /**
+   * Converts a string of hex characters to a byte array.
+   *
+   * @param hexString The hex string to read
+   * @return the resulting byte array
+   */
+  public static byte[] hexStringToBytes(String hexString) {
+    byte[] data = new byte[hexString.length() / 2];
+
+    for (int i = 0; i < data.length; i++) {
+      String a = hexString.substring(i * 2, i * 2 + 2);
+      data[i] = (byte) Integer.parseInt(a, 16);
     }
 
-    /**
-     * Converts a byte to a string with hex values.
-     * 
-     * @param data
-     *            Byte to convert
-     * @return the encoded string
-     */
-    public static String byteToHexString(byte data)
-    {
-        StringBuilder hexStrBuff = new StringBuilder(2);
+    return data;
+  }
 
-        String hexByteStr = Integer.toHexString(data & 0xff).toUpperCase();
-        if (hexByteStr.length() == 1)
-        {
-            hexStrBuff.append("0");
-        }
-        hexStrBuff.append(hexByteStr);
+  /**
+   * Method intToString.
+   * <p>
+   * Converst an integer to nChars characters
+   *
+   * @param value  Integer value
+   * @param nChars Number of chars to represent the "value"
+   * @return String The string representing "value"
+   */
+  public static String intToString(int value, int nChars) {
+    String strValue = Integer.toString(value);
+    StringBuilder strBuf = new StringBuilder(nChars);
 
-        return hexStrBuff.toString();
+    for (int i = strValue.length(); i < nChars; i++) {
+      strBuf.append('0');
+    }
+    strBuf.append(strValue);
+
+    return strBuf.toString();
+  }
+
+  /**
+   * Generates a random string of the given length.
+   * <p>
+   * "abcdefghijklmnopqrstuvwxyz1234567890"
+   *
+   * @param length
+   * @return A random string
+   */
+  public static String randString(int length) {
+    StringBuilder sb = new StringBuilder(length);
+
+    for (int i = 0; i < length; i++) {
+      sb.append(RANDOM_CHARS[RND.nextInt(RANDOM_CHARS.length)]);
     }
 
-    /**
-     * Converts a string of hex characters to a byte array.
-     * 
-     * @param hexString
-     *            The hex string to read
-     * @return the resulting byte array
-     */
-    public static byte[] hexStringToBytes(String hexString)
-    {
-        byte[] data = new byte[hexString.length() / 2];
-
-        for (int i = 0; i < data.length; i++)
-        {
-            String a = hexString.substring(i * 2, i * 2 + 2);
-            data[i] = (byte) Integer.parseInt(a, 16);
-        }
-
-        return data;
-    }
-
-    /**
-     * Method intToString.
-     * 
-     * Converst an integer to nChars characters
-     * 
-     * @param value
-     *            Integer value
-     * @param nChars
-     *            Number of chars to represent the "value"
-     * @return String The string representing "value"
-     */
-    public static String intToString(int value, int nChars)
-    {
-        String strValue = Integer.toString(value);
-        StringBuilder strBuf = new StringBuilder(nChars);
-
-        for (int i = strValue.length(); i < nChars; i++)
-        {
-            strBuf.append('0');
-        }
-        strBuf.append(strValue);
-
-        return strBuf.toString();
-    }
-
-    /**
-     * Generates a random string of the given length.
-     * 
-     * "abcdefghijklmnopqrstuvwxyz1234567890"
-     * 
-     * @param length
-     * @return A random string
-     */
-    public static String randString(int length)
-    {
-        StringBuilder sb = new StringBuilder(length);
-
-        for (int i = 0; i < length; i++)
-        {
-            sb.append(RANDOM_CHARS[rnd_.nextInt(RANDOM_CHARS.length)]);
-        }
-
-        return sb.toString();
-    }
+    return sb.toString();
+  }
 }

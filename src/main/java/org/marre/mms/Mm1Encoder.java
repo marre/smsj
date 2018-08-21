@@ -40,12 +40,9 @@ import java.io.OutputStream;
 import org.marre.mime.MimeBodyPart;
 import org.marre.mime.MimeMultipart;
 import org.marre.mime.encoder.MimeEncoder;
-import org.marre.mms.MmsException;
-import org.marre.mms.MmsHeaders;
-import org.marre.wap.WapConstants;
 import org.marre.wap.WapMimeEncoder;
-import org.marre.wap.WspEncodingVersion;
-import org.marre.wap.WspUtil;
+import org.marre.wsp.WspEncodingVersion;
+import org.marre.wsp.WspUtil;
 import org.marre.wap.mms.MmsHeaderEncoder;
 
 /**

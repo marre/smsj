@@ -32,7 +32,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.wap;
+package org.marre.wsp;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -58,137 +58,137 @@ public final class WspHeaderEncoder
 
         switch (headerType)
         {
-        case WapConstants.HEADER_ACCEPT:
+        case WspConstants.HEADER_ACCEPT:
             break;
-        case WapConstants.HEADER_ACCEPT_APPLICATION:
+        case WspConstants.HEADER_ACCEPT_APPLICATION:
             break;
-        case WapConstants.HEADER_ACCEPT_CHARSET:
+        case WspConstants.HEADER_ACCEPT_CHARSET:
             break;
-        case WapConstants.HEADER_ACCEPT_ENCODING:
+        case WspConstants.HEADER_ACCEPT_ENCODING:
             break;
-        case WapConstants.HEADER_ACCEPT_LANGUAGE:
+        case WspConstants.HEADER_ACCEPT_LANGUAGE:
             break;
-        case WapConstants.HEADER_ACCEPT_RANGES:
+        case WspConstants.HEADER_ACCEPT_RANGES:
             break;
-        case WapConstants.HEADER_AGE:
+        case WspConstants.HEADER_AGE:
             break;
-        case WapConstants.HEADER_ALLOW:
+        case WspConstants.HEADER_ALLOW:
             break;
-        case WapConstants.HEADER_AUTHORIZATION:
+        case WspConstants.HEADER_AUTHORIZATION:
             break;
-        case WapConstants.HEADER_BEARER_INDICATION:
+        case WspConstants.HEADER_BEARER_INDICATION:
             break;
-        case WapConstants.HEADER_CACHE_CONTROL:
+        case WspConstants.HEADER_CACHE_CONTROL:
             break;
-        case WapConstants.HEADER_CONNECTION:
+        case WspConstants.HEADER_CONNECTION:
             break;
-        case WapConstants.HEADER_CONTENT_BASE:
+        case WspConstants.HEADER_CONTENT_BASE:
             break;
-        case WapConstants.HEADER_CONTENT_DISPOSITION:
+        case WspConstants.HEADER_CONTENT_DISPOSITION:
             break;
-        case WapConstants.HEADER_CONTENT_ID:
+        case WspConstants.HEADER_CONTENT_ID:
             writeHeaderContentID(wspEncodingVersion, os, header.getValue());
             break;
-        case WapConstants.HEADER_CONTENT_LANGUAGE:
+        case WspConstants.HEADER_CONTENT_LANGUAGE:
             break;
-        case WapConstants.HEADER_CONTENT_LENGTH:
+        case WspConstants.HEADER_CONTENT_LENGTH:
             break;
-        case WapConstants.HEADER_CONTENT_LOCATION:
+        case WspConstants.HEADER_CONTENT_LOCATION:
             writeHeaderContentLocation(wspEncodingVersion, os, header.getValue());
             break;
-        case WapConstants.HEADER_CONTENT_MD5:
+        case WspConstants.HEADER_CONTENT_MD5:
             break;
-        case WapConstants.HEADER_CONTENT_RANGE:
+        case WspConstants.HEADER_CONTENT_RANGE:
             break;
-        case WapConstants.HEADER_CONTENT_TYPE:
+        case WspConstants.HEADER_CONTENT_TYPE:
             writeHeaderContentType(wspEncodingVersion, os, header);
             break;
-        case WapConstants.HEADER_COOKIE:
+        case WspConstants.HEADER_COOKIE:
             break;
-        case WapConstants.HEADER_DATE:
+        case WspConstants.HEADER_DATE:
             break;
-        case WapConstants.HEADER_ENCODING_VERSION:
+        case WspConstants.HEADER_ENCODING_VERSION:
             break;
-        case WapConstants.HEADER_ETAG:
+        case WspConstants.HEADER_ETAG:
             break;
-        case WapConstants.HEADER_EXPECT:
+        case WspConstants.HEADER_EXPECT:
             break;
-        case WapConstants.HEADER_EXPIRES:
+        case WspConstants.HEADER_EXPIRES:
             break;
-        case WapConstants.HEADER_FROM:
+        case WspConstants.HEADER_FROM:
             break;
-        case WapConstants.HEADER_HOST:
+        case WspConstants.HEADER_HOST:
             break;
-        case WapConstants.HEADER_IF_MATCH:
+        case WspConstants.HEADER_IF_MATCH:
             break;
-        case WapConstants.HEADER_IF_MODIFIED_SINCE:
+        case WspConstants.HEADER_IF_MODIFIED_SINCE:
             break;
-        case WapConstants.HEADER_IF_NONE_MATCH:
+        case WspConstants.HEADER_IF_NONE_MATCH:
             break;
-        case WapConstants.HEADER_IF_RANGE:
+        case WspConstants.HEADER_IF_RANGE:
             break;
-        case WapConstants.HEADER_IF_UNMODIFIED_SINCE:
+        case WspConstants.HEADER_IF_UNMODIFIED_SINCE:
             break;
-        case WapConstants.HEADER_LAST_MODIFIED:
+        case WspConstants.HEADER_LAST_MODIFIED:
             break;
-        case WapConstants.HEADER_LOCATION:
+        case WspConstants.HEADER_LOCATION:
             break;
-        case WapConstants.HEADER_MAX_FORWARDS:
+        case WspConstants.HEADER_MAX_FORWARDS:
             break;
-        case WapConstants.HEADER_PRAGMA:
+        case WspConstants.HEADER_PRAGMA:
             break;
-        case WapConstants.HEADER_PROFILE:
+        case WspConstants.HEADER_PROFILE:
             break;
-        case WapConstants.HEADER_PROFILE_DIFF:
+        case WspConstants.HEADER_PROFILE_DIFF:
             break;
-        case WapConstants.HEADER_PROFILE_WARNING:
+        case WspConstants.HEADER_PROFILE_WARNING:
             break;
-        case WapConstants.HEADER_PROXY_AUTHENTICATE:
+        case WspConstants.HEADER_PROXY_AUTHENTICATE:
             break;
-        case WapConstants.HEADER_PROXY_AUTHORIZATION:
+        case WspConstants.HEADER_PROXY_AUTHORIZATION:
             break;
-        case WapConstants.HEADER_PUBLIC:
+        case WspConstants.HEADER_PUBLIC:
             break;
-        case WapConstants.HEADER_PUSH_FLAG:
+        case WspConstants.HEADER_PUSH_FLAG:
             break;
-        case WapConstants.HEADER_RANGE:
+        case WspConstants.HEADER_RANGE:
             break;
-        case WapConstants.HEADER_REFERER:
+        case WspConstants.HEADER_REFERER:
             break;
-        case WapConstants.HEADER_RETRY_AFTER:
+        case WspConstants.HEADER_RETRY_AFTER:
             break;
-        case WapConstants.HEADER_SERVER:
+        case WspConstants.HEADER_SERVER:
             break;
-        case WapConstants.HEADER_SET_COOKIE:
+        case WspConstants.HEADER_SET_COOKIE:
             break;
-        case WapConstants.HEADER_TE:
+        case WspConstants.HEADER_TE:
             break;
-        case WapConstants.HEADER_TRAILER:
+        case WspConstants.HEADER_TRAILER:
             break;
-        case WapConstants.HEADER_TRANSFER_ENCODING:
+        case WspConstants.HEADER_TRANSFER_ENCODING:
             break;
-        case WapConstants.HEADER_UPGRADE:
+        case WspConstants.HEADER_UPGRADE:
             break;
-        case WapConstants.HEADER_USER_AGENT:
+        case WspConstants.HEADER_USER_AGENT:
             break;
-        case WapConstants.HEADER_VARY:
+        case WspConstants.HEADER_VARY:
             break;
-        case WapConstants.HEADER_VIA:
+        case WspConstants.HEADER_VIA:
             break;
-        case WapConstants.HEADER_WARNING:
+        case WspConstants.HEADER_WARNING:
             break;
-        case WapConstants.HEADER_WWW_AUTHENTICATE:
+        case WspConstants.HEADER_WWW_AUTHENTICATE:
             break;
-        case WapConstants.HEADER_X_WAP_APPLICATION_ID:
+        case WspConstants.HEADER_X_WAP_APPLICATION_ID:
             writeHeaderXWapApplicationId(wspEncodingVersion, os, header.getValue());
             break;
-        case WapConstants.HEADER_X_WAP_CONTENT_URI:
+        case WspConstants.HEADER_X_WAP_CONTENT_URI:
             break;
-        case WapConstants.HEADER_X_WAP_INITIATOR_URI:
+        case WspConstants.HEADER_X_WAP_INITIATOR_URI:
             break;
-        case WapConstants.HEADER_X_WAP_SECURITY:
+        case WspConstants.HEADER_X_WAP_SECURITY:
             break;
-        case WapConstants.HEADER_X_WAP_TOD:
+        case WspConstants.HEADER_X_WAP_TOD:
             break;
 
         default:
@@ -212,7 +212,7 @@ public final class WspHeaderEncoder
      */
     public static void writeHeaderContentID(WspEncodingVersion wspEncodingVersion, OutputStream os, String contentId) throws IOException
     {
-        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_CONTENT_ID);
+        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WspConstants.HEADER_CONTENT_ID);
         if (headerId != -1)
         {
             WspUtil.writeShortInteger(os, headerId);
@@ -230,21 +230,21 @@ public final class WspHeaderEncoder
      */
     public static void writeHeaderContentLocation(WspEncodingVersion wspEncodingVersion, OutputStream os, String contentLocation) throws IOException
     {
-        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_CONTENT_LOCATION);        
+        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WspConstants.HEADER_CONTENT_LOCATION);
         WspUtil.writeShortInteger(os, headerId);
         WspUtil.writeTextString(os, contentLocation);
     }
 
     public static void writeHeaderContentType(WspEncodingVersion wspEncodingVersion, OutputStream os, String contentType) throws IOException
     {
-        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_CONTENT_TYPE);        
+        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WspConstants.HEADER_CONTENT_TYPE);
         WspUtil.writeShortInteger(os, headerId);
         WspUtil.writeContentType(wspEncodingVersion, os, contentType);
     }
 
     public static void writeHeaderContentType(WspEncodingVersion wspEncodingVersion, OutputStream os, MimeHeader contentType) throws IOException
     {
-        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_CONTENT_TYPE);        
+        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WspConstants.HEADER_CONTENT_TYPE);
         WspUtil.writeShortInteger(os, headerId);
         WspUtil.writeContentType(wspEncodingVersion, os, contentType);
     }
@@ -259,7 +259,7 @@ public final class WspHeaderEncoder
     {
         int wellKnownAppId = WspUtil.getWellKnownPushAppId(appId.toLowerCase());
         
-        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WapConstants.HEADER_X_WAP_APPLICATION_ID);        
+        int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WspConstants.HEADER_X_WAP_APPLICATION_ID);
         if (headerId != -1)
         {
             WspUtil.writeShortInteger(os, headerId);

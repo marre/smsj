@@ -35,6 +35,9 @@
 package org.marre.wap;
 
 import junit.framework.TestCase;
+import org.marre.wsp.WspConstants;
+import org.marre.wsp.WspEncodingVersion;
+import org.marre.wsp.WspUtil;
 
 /**
  * 
@@ -47,11 +50,11 @@ public class WspUtilTest extends TestCase
     public void testGetHeaderType() 
     {
         // Just test some of the headers
-        assertEquals(WapConstants.HEADER_ACCEPT,                WspUtil.getHeaderType("accept"));
-        assertEquals(WapConstants.HEADER_CONTENT_LENGTH,        WspUtil.getHeaderType("content-length"));
-        assertEquals(WapConstants.HEADER_IF_UNMODIFIED_SINCE,   WspUtil.getHeaderType("if-unmodified-since"));
-        assertEquals(WapConstants.HEADER_PROFILE_DIFF,          WspUtil.getHeaderType("profile-diff"));
-        assertEquals(WapConstants.HEADER_CONTENT_DISPOSITION,   WspUtil.getHeaderType("content-disposition"));
+        assertEquals(WspConstants.HEADER_ACCEPT,                WspUtil.getHeaderType("accept"));
+        assertEquals(WspConstants.HEADER_CONTENT_LENGTH,        WspUtil.getHeaderType("content-length"));
+        assertEquals(WspConstants.HEADER_IF_UNMODIFIED_SINCE,   WspUtil.getHeaderType("if-unmodified-since"));
+        assertEquals(WspConstants.HEADER_PROFILE_DIFF,          WspUtil.getHeaderType("profile-diff"));
+        assertEquals(WspConstants.HEADER_CONTENT_DISPOSITION,   WspUtil.getHeaderType("content-disposition"));
 
         // Some bogus headers
         assertEquals(-1, WspUtil.getHeaderType("x-d-h-h-totally-unknown-header"));
@@ -64,49 +67,49 @@ public class WspUtilTest extends TestCase
     public void testGetWellKnownHeaderId() 
     {
         // Just test some of the headers
-        assertEquals(0x00, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_1, WapConstants.HEADER_ACCEPT));
-        assertEquals(0x0D, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_1, WapConstants.HEADER_CONTENT_LENGTH));
-        assertEquals(0x1B, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_1, WapConstants.HEADER_IF_UNMODIFIED_SINCE));
-        assertEquals(0x2E, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_1, WapConstants.HEADER_CONTENT_DISPOSITION));
-        assertEquals(0x36, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_2, WapConstants.HEADER_PROFILE_DIFF));
+        assertEquals(0x00, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_1, WspConstants.HEADER_ACCEPT));
+        assertEquals(0x0D, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_1, WspConstants.HEADER_CONTENT_LENGTH));
+        assertEquals(0x1B, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_1, WspConstants.HEADER_IF_UNMODIFIED_SINCE));
+        assertEquals(0x2E, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_1, WspConstants.HEADER_CONTENT_DISPOSITION));
+        assertEquals(0x36, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_2, WspConstants.HEADER_PROFILE_DIFF));
 
         // Unknown 1.1 headers
-        assertEquals(-1, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_1, WapConstants.HEADER_PROFILE_DIFF));
+        assertEquals(-1, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_1, WspConstants.HEADER_PROFILE_DIFF));
         
         // Test cache-control
-        assertEquals(0x08, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_1, WapConstants.HEADER_CACHE_CONTROL));
-        assertEquals(0x08, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_2, WapConstants.HEADER_CACHE_CONTROL));
-        assertEquals(0x3D, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_3, WapConstants.HEADER_CACHE_CONTROL));
-        assertEquals(0x47, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_4, WapConstants.HEADER_CACHE_CONTROL));
+        assertEquals(0x08, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_1, WspConstants.HEADER_CACHE_CONTROL));
+        assertEquals(0x08, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_2, WspConstants.HEADER_CACHE_CONTROL));
+        assertEquals(0x3D, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_3, WspConstants.HEADER_CACHE_CONTROL));
+        assertEquals(0x47, WspUtil.getWellKnownHeaderId(WspEncodingVersion.VERSION_1_4, WspConstants.HEADER_CACHE_CONTROL));
     }
     
     public void testGetWellKnownContentType() 
     {
         // Just test some of the headers
-        assertEquals(0x00, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_1, "*/*"));
-        assertEquals(0x2D, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_1, "text/vnd.wap.si"));
-        assertEquals(0x40, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_5, "application/vnd.wap.locc+wbxml"));
+        assertEquals(0x00, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_1, WspUtil.getContentType("*/*")));
+        assertEquals(0x2D, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_1, WspUtil.getContentType("text/vnd.wap.si")));
+        assertEquals(0x40, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_5, WspUtil.getContentType("application/vnd.wap.locc+wbxml")));
 
         // Unknown 1.1 headers
-        assertEquals(-1, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_1, "some/strange-content-type"));
+        assertEquals(-1, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_1, WspUtil.getContentType("some/strange-content-type")));
         
         // Test differen encoding versions
-        assertEquals(-1, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_1, "application/vnd.wap.locc+wbxml"));
-        assertEquals(-1, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_2, "application/vnd.wap.locc+wbxml"));
-        assertEquals(-1, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_3, "application/vnd.wap.locc+wbxml"));
-        assertEquals(-1, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_4, "application/vnd.wap.locc+wbxml"));
-        assertEquals(0x40, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_5, "application/vnd.wap.locc+wbxml"));
+        assertEquals(-1, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_1, WspUtil.getContentType("application/vnd.wap.locc+wbxml")));
+        assertEquals(-1, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_2, WspUtil.getContentType("application/vnd.wap.locc+wbxml")));
+        assertEquals(-1, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_3, WspUtil.getContentType("application/vnd.wap.locc+wbxml")));
+        assertEquals(-1, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_4, WspUtil.getContentType("application/vnd.wap.locc+wbxml")));
+        assertEquals(0x40, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_5, WspUtil.getContentType("application/vnd.wap.locc+wbxml")));
         
-        assertEquals(-1, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_1, "application/vnd.wap.sic"));
-        assertEquals(0x2E, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_2, "application/vnd.wap.sic"));
-        assertEquals(0x2E, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_3, "application/vnd.wap.sic"));
-        assertEquals(0x2E, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_4, "application/vnd.wap.sic"));
-        assertEquals(0x2E, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_5, "application/vnd.wap.sic"));
+        assertEquals(-1, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_1, WspUtil.getContentType("application/vnd.wap.sic")));
+        assertEquals(0x2E, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_2, WspUtil.getContentType("application/vnd.wap.sic")));
+        assertEquals(0x2E, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_3, WspUtil.getContentType("application/vnd.wap.sic")));
+        assertEquals(0x2E, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_4, WspUtil.getContentType("application/vnd.wap.sic")));
+        assertEquals(0x2E, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_5, WspUtil.getContentType("application/vnd.wap.sic")));
         
-        assertEquals(-1, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_1, "application/vnd.wap.sia"));
-        assertEquals(0x34, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_2, "application/vnd.wap.sia"));
-        assertEquals(0x34, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_3, "application/vnd.wap.sia"));
-        assertEquals(0x34, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_4, "application/vnd.wap.sia"));
-        assertEquals(0x34, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_5, "application/vnd.wap.sia"));
+        assertEquals(-1, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_1, WspUtil.getContentType("application/vnd.wap.sia")));
+        assertEquals(0x34, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_2, WspUtil.getContentType("application/vnd.wap.sia")));
+        assertEquals(0x34, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_3, WspUtil.getContentType("application/vnd.wap.sia")));
+        assertEquals(0x34, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_4, WspUtil.getContentType("application/vnd.wap.sia")));
+        assertEquals(0x34, WspUtil.getWellKnownContentTypeId(WspEncodingVersion.VERSION_1_5, WspUtil.getContentType("application/vnd.wap.sia")));
     }        
 }

@@ -35,81 +35,72 @@
 package org.marre.mms;
 
 import org.marre.util.StringUtil;
-import org.marre.wap.mms.MmsConstants;
 
-public class MmsHeaders
-{
-    private static final int DEFAULT_TRANSACTION_ID_LENGTH = 6;
-    
-    protected int    messageTypeId_ = MmsConstants.X_MMS_MESSAGE_TYPE_ID_M_SEND_REQ;
-    protected String transactionId_;
-    protected int    versionId_     = MmsConstants.X_MMS_MMS_VERSION_ID_1_0;
-    protected String subject_;
-    protected String from_;
-    protected String to_;
-    
-    public MmsHeaders()
-    {
-        transactionId_ = StringUtil.randString(DEFAULT_TRANSACTION_ID_LENGTH);
-    }
-    
-    public int getMessageType()
-    {
-        return messageTypeId_;
-    }
-    
-    public void setMessageType(int msgTypeId)
-    {
-        messageTypeId_ = msgTypeId;
-    }
-    
-    public String getTransactionId()
-    {
-        return transactionId_;
-    }
-    
-    public void setTransactionId(String transactionId)
-    {
-        transactionId_ = transactionId;
-    }
-    
-    public int getVersion()
-    {
-        return versionId_;
-    }
-    
-    public void setVersion(int versionId)
-    {
-        versionId_ = versionId;
-    }
-    
-    public String getSubject()
-    {
-        return subject_;
-    }
-    
-    public void setSubject(String subject)
-    {
-        subject_ = subject;
-    }
-    
-    public String getFrom()
-    {
-        return from_;
-    }
-    
-    public void setFrom(String from)
-    {
-        from_ = from;
-    }
-    
-    public String getTo()
-    {
-        return to_;
-    }
-    
-    public void setTo(String to)
-    {
-        to_ = to;
-    }    
+public class MmsHeaders {
+
+  private static final int DEFAULT_TRANSACTION_ID_LENGTH = 6;
+
+  private int messageTypeId = MmsConstants.X_MMS_MESSAGE_TYPE_ID_M_SEND_REQ;
+
+  private String transactionId;
+
+  private MmsVersion version = MmsVersion.VERSION_1_0;
+
+  private String subject;
+
+  private String from;
+
+  private String to;
+
+  public MmsHeaders() {
+    transactionId = StringUtil.randString(DEFAULT_TRANSACTION_ID_LENGTH);
+  }
+
+  public int getMessageType() {
+    return messageTypeId;
+  }
+
+  public void setMessageType(int msgTypeId) {
+    messageTypeId = msgTypeId;
+  }
+
+  public String getTransactionId() {
+    return transactionId;
+  }
+
+  public void setTransactionId(String transactionId) {
+    this.transactionId = transactionId;
+  }
+
+  public MmsVersion getVersion() {
+    return version;
+  }
+
+  public void setVersion(MmsVersion version) {
+    this.version = version;
+  }
+
+  public String getSubject() {
+    return subject;
+  }
+
+  public void setSubject(String subject) {
+    this.subject = subject;
+  }
+
+  public String getFrom() {
+    return from;
+  }
+
+  public void setFrom(String from) {
+    this.from = from;
+  }
+
+  public String getTo() {
+    return to;
+  }
+
+  public void setTo(String to) {
+    this.to = to;
+  }
 }

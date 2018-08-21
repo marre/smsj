@@ -34,7 +34,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Represents an User Data Header Element
@@ -42,81 +43,79 @@ import java.io.*;
  * @author Markus Eriksson
  * @version $Id$
  */
-public final class SmsUdhElement
-{
-    protected final SmsUdhIei udhIei_;
-    protected final byte[] udhIeiData_;
+public final class SmsUdhElement {
 
-    /**
-     * Creates an SmsUdhElement
-     *
-     * @param udhIei
-     * @param udhIeiData
-     */
-    public SmsUdhElement(SmsUdhIei udhIei, byte[] udhIeiData)
-    {
-        udhIei_ = udhIei;
-        udhIeiData_ = udhIeiData;
-    }
+  protected final SmsUdhIei udhIei;
 
-    /**
-     * Returns the total length of this UDH element.
-     * <p>
-     * The length is including the UDH data length and the UDH "header" (2 bytes)
-     * @return the length
-     */
-    public int getTotalSize()
-    {
-        return udhIeiData_.length + 2;
-    }
+  protected final byte[] udhIeiData;
 
-    /**
-     * Returns the length of the UDH iei data
-     * <p>
-     * The length returned is only the length of the data
-     * @return Length of data
-     */
-    public int getUdhIeiDataLength()
-    {
-        return udhIeiData_.length;
-    }
+  /**
+   * Creates an SmsUdhElement
+   *
+   * @param udhIei
+   * @param udhIeiData
+   */
+  public SmsUdhElement(SmsUdhIei udhIei, byte[] udhIeiData) {
+    this.udhIei = udhIei;
+    this.udhIeiData = udhIeiData;
+  }
 
-    /**
-     * Returns the Udh Iei Data excluding the UDH "header"
-     * @return Data
-     */
-    public byte[] getUdhIeiData()
-    {
-        return udhIeiData_;
-    }
+  /**
+   * Returns the total length of this UDH element.
+   * <p>
+   * The length is including the UDH data length and the UDH "header" (2 bytes)
+   *
+   * @return the length
+   */
+  public int getTotalSize() {
+    return udhIeiData.length + 2;
+  }
 
-    /**
-     * Return the UDH element including the UDH "header" (two bytes)
-     *
-     * @return Data
-     */
-    public byte[] getData()
-    {
-        byte[] allData = new byte[udhIeiData_.length + 2];
+  /**
+   * Returns the length of the UDH iei data
+   * <p>
+   * The length returned is only the length of the data
+   *
+   * @return Length of data
+   */
+  public int getUdhIeiDataLength() {
+    return udhIeiData.length;
+  }
 
-        allData[0] = (byte) (udhIei_.getValue() & 0xff);
-        allData[1] = (byte) (udhIeiData_.length & 0xff);
-        System.arraycopy(udhIeiData_, 0, allData, 2, udhIeiData_.length);
+  /**
+   * Returns the Udh Iei Data excluding the UDH "header"
+   *
+   * @return Data
+   */
+  public byte[] getUdhIeiData() {
+    return udhIeiData;
+  }
 
-        return allData;
-    }
+  /**
+   * Return the UDH element including the UDH "header" (two bytes)
+   *
+   * @return Data
+   */
+  public byte[] getData() {
+    byte[] allData = new byte[udhIeiData.length + 2];
 
-    /**
-     * Writes the UDH element including UDH "header" to the given stream
-     *
-     * @param os Stream to write to
-     * @throws IOException
-     */
-    public void writeTo(OutputStream os)
-        throws IOException
-    {
-        os.write(udhIei_.getValue());
-        os.write(udhIeiData_.length);
-        os.write(udhIeiData_);
-    }
+    allData[0] = (byte) (udhIei.getValue() & 0xff);
+    allData[1] = (byte) (udhIeiData.length & 0xff);
+    System.arraycopy(udhIeiData, 0, allData, 2, udhIeiData.length);
+
+    return allData;
+  }
+
+  /**
+   * Writes the UDH element including UDH "header" to the given stream
+   *
+   * @param os Stream to write to
+   * @throws IOException
+   */
+  public void writeTo(OutputStream os)
+      throws IOException {
+    os.write(udhIei.getValue());
+    os.write(udhIeiData.length);
+    os.write(udhIeiData);
+  }
 }

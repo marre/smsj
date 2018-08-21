@@ -36,42 +36,41 @@ package org.marre.sms;
 
 /**
  * Base class for all port adressed messages.
- * 
+ * <p>
  * It is using a 16 bit port address.
- * 
+ *
  * @author Markus
  * @version $Id$
  */
-public abstract class SmsPortAddressedMessage extends SmsConcatMessage
-{
-    protected SmsPort destPort_;
-    protected SmsPort origPort_;
-    
-    /**
-     * Creates a new SmsPortAddressedMessage with the given dest and orig port.
-     * 
-     * @param destPort
-     * @param origPort
-     */
-    protected SmsPortAddressedMessage(SmsPort destPort, SmsPort origPort)
-    {
-        setPorts(destPort, origPort);
-    }
-    
-    /**
-     * Sets the dest and orig ports.
-     * 
-     * @param destPort
-     * @param origPort
-     */
-    public void setPorts(SmsPort destPort, SmsPort origPort)
-    {
-        destPort_ = destPort;
-        origPort_ = origPort;
-    }
-    
-    public SmsUdhElement[] getUdhElements()
-    {
-        return new SmsUdhElement[] { SmsUdhUtil.get16BitApplicationPortUdh(destPort_, origPort_) };
-    }
+public abstract class SmsPortAddressedMessage extends SmsConcatMessage {
+
+  private SmsPort destPort;
+
+  private SmsPort origPort;
+
+  /**
+   * Creates a new SmsPortAddressedMessage with the given dest and orig port.
+   *
+   * @param destPort
+   * @param origPort
+   */
+  protected SmsPortAddressedMessage(SmsPort destPort, SmsPort origPort) {
+    setPorts(destPort, origPort);
+  }
+
+  /**
+   * Sets the dest and orig ports.
+   *
+   * @param destPort
+   * @param origPort
+   */
+  public void setPorts(SmsPort destPort, SmsPort origPort) {
+    this.destPort = destPort;
+    this.origPort = origPort;
+  }
+
+  @Override
+  public SmsUdhElement[] getUdhElements() {
+    return new SmsUdhElement[]{SmsUdhUtil.get16BitApplicationPortUdh(destPort, origPort)};
+  }
 }

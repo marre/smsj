@@ -34,20 +34,20 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.wap.push;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Date;
-
 import org.marre.wap.wbxml.WbxmlDocument;
 import org.marre.wap.wbxml.WbxmlWriter;
 import org.marre.xml.XmlAttribute;
 import org.marre.xml.XmlWriter;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Date;
+
 public class WapSIPush implements WbxmlDocument
 {
     public static final String WBXML_CONTENT_TYPE = "application/vnd.wap.sic";
     public static final String XML_CONTENT_TYPE = "text/vnd.wap.si";
-        
+
     public static final String[] SI_TAG_TOKENS = {
             "si", // 05
             "indication", // 06
@@ -87,7 +87,7 @@ public class WapSIPush implements WbxmlDocument
     protected String action_;
 
     protected String message_;
-    
+
     public WapSIPush(String uri, String message)
     {
         uri_ = uri;

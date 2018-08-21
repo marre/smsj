@@ -40,6 +40,7 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.marre.util.StringUtil;
+import org.marre.wsp.WspHeaderEncoder;
 
 /**
  * 

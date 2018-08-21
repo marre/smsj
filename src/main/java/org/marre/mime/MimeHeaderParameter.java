@@ -34,44 +34,42 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
-public final class MimeHeaderParameter
-{
-    private final String name_;
-    private final String value_;
+public final class MimeHeaderParameter {
 
-    public MimeHeaderParameter(String name, String value)
-    {
-        name_ = name;
-        value_ = value;
-    }
+  private final String name;
 
-    public String getName()
-    {
-        return name_;
-    }
+  private final String value;
 
-    public String getValue()
-    {
-        return value_;
-    }
+  public MimeHeaderParameter(String name, String value) {
+    this.name = name;
+    this.value = value;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MimeHeaderParameter)) return false;
+  public String getName() {
+    return name;
+  }
 
-        MimeHeaderParameter that = (MimeHeaderParameter) o;
+  public String getValue() {
+    return value;
+  }
 
-        if (!name_.equals(that.name_)) return false;
-        if (!value_.equals(that.value_)) return false;
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof MimeHeaderParameter)) return false;
 
-        return true;
-    }
+    MimeHeaderParameter that = (MimeHeaderParameter) o;
 
-    @Override
-    public int hashCode() {
-        int result = name_.hashCode();
-        result = 31 * result + value_.hashCode();
-        return result;
-    }
+    if (!name.equals(that.name)) return false;
+    if (!value.equals(that.value)) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = name.hashCode();
+    result = 31 * result + value.hashCode();
+    return result;
+  }
 }

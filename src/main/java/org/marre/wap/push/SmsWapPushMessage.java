@@ -42,10 +42,10 @@ import org.marre.mime.MimeContentType;
 import org.marre.sms.SmsPort;
 import org.marre.sms.SmsPortAddressedMessage;
 import org.marre.sms.SmsUserData;
-import org.marre.wap.WapConstants;
+import org.marre.wsp.WspConstants;
 import org.marre.wap.WapMimeEncoder;
-import org.marre.wap.WspEncodingVersion;
-import org.marre.wap.WspUtil;
+import org.marre.wsp.WspEncodingVersion;
+import org.marre.wsp.WspUtil;
 import org.marre.wap.wbxml.WbxmlDocument;
 
 /**
@@ -147,7 +147,7 @@ public class SmsWapPushMessage extends SmsPortAddressedMessage
             WspUtil.writeUint8(baos, 0x00);
 
             // Type
-            WspUtil.writeUint8(baos, WapConstants.PDU_TYPE_PUSH);
+            WspUtil.writeUint8(baos, WspConstants.PDU_TYPE_PUSH);
 
             //
             // WAP PUSH FIELDS

@@ -7,15 +7,40 @@
   
   <packaging>jar</packaging>
   
-  <version>0.1.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <name>smsj</name>
   <url>http://maven.apache.org</url>
+  <description>SMS &amp; MMS library for the Java platform</description>
+
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
 
   <scm>
-    <connection>scm:git:git@github.com:marre/smsj.git</connection>
-    <url>scm:git:git@github.com:marre/smsj.git</url>
-    <developerConnection>scm:git:git@github.com:marre/smsj.git</developerConnection>
+    <connection>scm:git:https://github.com/xfslove/smsj.git</connection>
+    <developerConnection>scm:git:git@github.com:xfslove/smsj.git</developerConnection>
+    <url>https://github.com/xfslove/smsj</url>
+    <tag>HEAD</tag>
   </scm>
+
+  <developers>
+    <developer>
+      <name>marre</name>
+    </developer>
+    <developer>
+      <name>hanwen.huang</name>
+      <email>xfslove@gmail.com</email>
+    </developer>
+  </developers>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -46,12 +71,5 @@
 
 
   </dependencies>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
-    </properties>
-
 
 </project>

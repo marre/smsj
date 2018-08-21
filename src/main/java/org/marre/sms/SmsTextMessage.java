@@ -34,7 +34,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
-import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -46,132 +45,123 @@ import java.nio.charset.StandardCharsets;
  * @author Markus Eriksson
  * @version $Id$
  */
-public class SmsTextMessage extends SmsConcatMessage
-{
-    private String text_;
-    private SmsDcs dcs_;
-    
-    /**
-     * Creates an SmsTextMessage with the given dcs.
-     * 
-     * @param msg The message
-     * @param dcs The data coding scheme
-     */
-    public SmsTextMessage(String msg, SmsDcs dcs)
-    {
-        setText(msg, dcs);
-    }
-    
-    /**
-     * Creates an SmsTextMessage with the given alphabet and message class.
-     *
-     * @param msg The message
-     * @param alphabet The alphabet
-     * @param messageClass The messageclass
-     */
-    public SmsTextMessage(String msg, SmsAlphabet alphabet, SmsMsgClass messageClass)
-    {
-        this(msg, SmsDcs.getGeneralDataCodingDcs(alphabet, messageClass));
+public class SmsTextMessage extends SmsConcatMessage {
+
+  private String text;
+
+  private SmsDcs dcs;
+
+  /**
+   * Creates an SmsTextMessage with the given dcs.
+   *
+   * @param msg The message
+   * @param dcs The data coding scheme
+   */
+  public SmsTextMessage(String msg, SmsDcs dcs) {
+    setText(msg, dcs);
+  }
+
+  /**
+   * Creates an SmsTextMessage with the given alphabet and message class.
+   *
+   * @param msg          The message
+   * @param alphabet     The alphabet
+   * @param messageClass The messageclass
+   */
+  public SmsTextMessage(String msg, SmsAlphabet alphabet, SmsMsgClass messageClass) {
+    this(msg, SmsDcs.getGeneralDataCodingDcs(alphabet, messageClass));
+  }
+
+  /**
+   * Creates an SmsTextMessage with default 7Bit GSM Alphabet
+   *
+   * @param msg The message
+   */
+  public SmsTextMessage(String msg) {
+    this(msg, SmsAlphabet.GSM, SmsMsgClass.CLASS_UNKNOWN);
+  }
+
+  /**
+   * Returns the text message.
+   */
+  public String getText() {
+    return text;
+  }
+
+  /**
+   * Sets the text.
+   *
+   * @param text
+   */
+  public void setText(String text) {
+    if (text == null) {
+      throw new IllegalArgumentException("Text cannot be null, use an empty string instead.");
     }
 
-    /**
-     * Creates an SmsTextMessage with default 7Bit GSM Alphabet
-     *
-     * @param msg The message
-     */
-    public SmsTextMessage(String msg)
-    {
-        this(msg, SmsAlphabet.GSM, SmsMsgClass.CLASS_UNKNOWN);
-    }
-    
-    /**
-     * Returns the text message. 
-     */
-    public String getText()
-    {
-        return text_;
-    }
-    
-    /**
-     * Sets the text.
-     * 
-     * @param text
-     */
-    public void setText(String text)
-    {
-        if (text == null)
-        {
-            throw new IllegalArgumentException("Text cannot be null, use an empty string instead.");
-        }
-        
-        text_ = text;
+    this.text = text;
+  }
+
+  /**
+   * Sets the text.
+   *
+   * @param text
+   */
+  public void setText(String text, SmsDcs dcs) {
+    // Check input for null
+    if (text == null) {
+      throw new IllegalArgumentException("text cannot be null, use an empty string instead.");
     }
 
-    /**
-     * Sets the text.
-     * 
-     * @param text
-     */
-    public void setText(String text, SmsDcs dcs)
-    {
-        // Check input for null
-        if (text == null)
-        {
-            throw new IllegalArgumentException("text cannot be null, use an empty string instead.");
-        }
-        
-        if (dcs == null)
-        {
-            throw new IllegalArgumentException("dcs cannot be null.");
-        }
-        
-        text_ = text;
-        dcs_ = dcs;
-    }
-    
-    /**
-     * Returns the dcs.
-     */
-    public SmsDcs getDcs()
-    {
-        return dcs_;
+    if (dcs == null) {
+      throw new IllegalArgumentException("dcs cannot be null.");
     }
 
-    /**
-     * Returns the user data.
-     * @return user data
-     */
-    public SmsUserData getUserData()
-    {
-        SmsUserData ud;
-        
-        switch (dcs_.getAlphabet())
-        {
-        case GSM:
-            ud = new SmsUserData(SmsPduUtil.getSeptets(text_), text_.length(), dcs_);
-            break;
+    this.text = text;
+    this.dcs = dcs;
+  }
 
-        case LATIN1:
-            ud = new SmsUserData(text_.getBytes(StandardCharsets.ISO_8859_1), text_.length(), dcs_);
-            break;
+  /**
+   * Returns the dcs.
+   */
+  public SmsDcs getDcs() {
+    return dcs;
+  }
 
-        case UCS2:
-            ud = new SmsUserData(text_.getBytes(StandardCharsets.UTF_16BE), text_.length() * 2, dcs_);
-            break;
+  /**
+   * Returns the user data.
+   *
+   * @return user data
+   */
+  @Override
+  public SmsUserData getUserData() {
+    SmsUserData ud;
 
-        default:
-            ud = null;
-            break;
-        }
+    switch (dcs.getAlphabet()) {
+      case GSM:
+        ud = new SmsUserData(SmsPduUtil.getSeptets(text), text.length(), dcs);
+        break;
 
-        return ud;
+      case LATIN1:
+        ud = new SmsUserData(text.getBytes(StandardCharsets.ISO_8859_1), text.length(), dcs);
+        break;
+
+      case UCS2:
+        ud = new SmsUserData(text.getBytes(StandardCharsets.UTF_16BE), text.length() * 2, dcs);
+        break;
+
+      default:
+        ud = null;
+        break;
     }
 
-    /**
-     * Returns null.
-     */
-    public SmsUdhElement[] getUdhElements()
-    {
-        return null;
-    }
+    return ud;
+  }
+
+  /**
+   * Returns null.
+   */
+  @Override
+  public SmsUdhElement[] getUdhElements() {
+    return null;
+  }
 }

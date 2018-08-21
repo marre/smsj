@@ -43,6 +43,9 @@ import org.marre.mime.MimeBodyPart;
 import org.marre.mime.MimeHeader;
 import org.marre.mime.MimeMultipart;
 import org.marre.mime.encoder.MimeEncoder;
+import org.marre.wsp.WspEncodingVersion;
+import org.marre.wsp.WspHeaderEncoder;
+import org.marre.wsp.WspUtil;
 
 /**
  * Converts mime documents to a wsp encoded stream.

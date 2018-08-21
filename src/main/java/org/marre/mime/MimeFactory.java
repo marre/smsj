@@ -36,37 +36,33 @@ package org.marre.mime;
 
 import java.nio.charset.StandardCharsets;
 
-public final class MimeFactory
-{    
-    private MimeFactory()
-    {
-        // Utility function
-    }
-    
-    public static MimeBodyPart createTextBodyPart(String str)
-    {
-        return createTextBodyPart(str, "text/plain");
-    }
-    
-    public static MimeBodyPart createTextBodyPart(String str, String contentType)
-    {
-        MimeBodyPart textBodyPart = new MimeBodyPart();
-        MimeContentType ct = new MimeContentType(contentType);
-        ct.setParam("charset", "utf-8");
-        
-        byte[] data = str.getBytes(StandardCharsets.UTF_8);
+public final class MimeFactory {
 
-        textBodyPart.setContent(data, ct);
-        
-        return textBodyPart;
-    }
+  private MimeFactory() {
+    // Utility function
+  }
 
-    public static MimeBodyPart createBinaryBodyPart(byte[] content, String contentType)
-    {
-        MimeBodyPart binBodyPart = new MimeBodyPart();
+  public static MimeBodyPart createTextBodyPart(String str) {
+    return createTextBodyPart(str, "text/plain");
+  }
 
-        binBodyPart.setContent(content, contentType);
+  public static MimeBodyPart createTextBodyPart(String str, String contentType) {
+    MimeBodyPart textBodyPart = new MimeBodyPart();
+    MimeContentType ct = new MimeContentType(contentType);
+    ct.setParam("charset", "utf-8");
 
-        return binBodyPart;
-    }
+    byte[] data = str.getBytes(StandardCharsets.UTF_8);
+
+    textBodyPart.setContent(data, ct);
+
+    return textBodyPart;
+  }
+
+  public static MimeBodyPart createBinaryBodyPart(byte[] content, String contentType) {
+    MimeBodyPart binBodyPart = new MimeBodyPart();
+
+    binBodyPart.setContent(content, contentType);
+
+    return binBodyPart;
+  }
 }
