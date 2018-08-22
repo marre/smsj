@@ -172,11 +172,6 @@ public class WbxmlWriter implements XmlWriter, AutoCloseable {
   }
 
   @Override
-  public void addCharacters(char[] ch, int start, int length) throws IOException {
-    addCharacters(new String(ch, start, length));
-  }
-
-  @Override
   public void addCharacters(String str) throws IOException {
     wbxmlBody.write(WbxmlConstants.TOKEN_STR_I);
     writeStrI(wbxmlBody, str);

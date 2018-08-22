@@ -110,16 +110,6 @@ public interface XmlWriter
     /**
      * Adds a segment of text.
      * 
-     * @param ch The chars to add
-     * @param start Start offset of the ch array.
-     * @param length Number of chars to add
-     * @throws IOException io error
-     */
-    void addCharacters(char[] ch, int start, int length) throws IOException;
-
-    /**
-     * Adds a segment of text.
-     * 
      * @param str Text to add
      * @throws IOException io error
      */
