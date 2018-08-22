@@ -34,243 +34,232 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.wap.nokia;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.marre.wap.wbxml.WbxmlDocument;
 import org.marre.wap.wbxml.WbxmlWriter;
 import org.marre.xml.XmlWriter;
 
-public class NokiaOtaBrowserSettings implements WbxmlDocument
-{    
-    public static final String WBXML_SETTINGS_CONTENT_TYPE = "application/x-wap-prov.browser-settings";
-    public static final String XML_SETTINGS_CONTENT_TYPE = "application/x-wap-prov.browser-settings";
-    public static final String XML_BOOKMARKS_CONTENT_TYPE = "application/x-wap-prov.browser-bookmarks";
-        
-    public static final String[] OTA_TAG_TOKENS = {
-        "CHARACTERISTIC-LIST", // 05
-        "CHARACTERISTIC", // 06
-        "PARM", // 07
-    };
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.LinkedList;
+import java.util.List;
 
-    public static final String[] OTA_ATTR_START_TOKENS = {
-        "", // 05
-        "TYPE=ADDRESS", // 06
-        "TYPE=URL", // 07
-        "TYPE=NAME", // 08
-        "", // 09
-        "", // 0A
-        "", // 0B
-        "", // 0C
-        "", // 0D
-        "", // 0E
-        "", // 0F
-        "NAME", // 10
-        "VALUE", // 11
-        "NAME=BEARER", // 12
-        "NAME=PROXY", //13
-        "NAME=PORT", //14
-        "NAME=NAME", //15
-        "NAME=PROXY_TYPE", //16
-        "NAME=URL", //17
-        "NAME=PROXY_AUTHNAME", //18
-        "NAME=PROXY_AUTHSECRET", //19
-        "NAME=SMS_SMSC_ADDRESS", //1A
-        "NAME=USSD_SERVICE_CODE", //1B
-        "NAME=GPRS_ACCESSPOINTNAME", //1C
-        "NAME=PPP_LOGINTYPE", //1D
-        "NAME=PROXY_LOGINTYPE", //1E
-        "", //1F
-        "", //20
-        "NAME=CSD_DIALSTRING", //21
-        "NAME=PPP_AUTHTYPE", //22
-        "NAME=PPP_AUTHNAME", //23
-        "NAME=PPP_AUTHSECRET", //24
-        "", //25
-        "", //26
-        "", //27
-        "NAME=CSD_CALLTYPE", //28
-        "NAME=CSD_CALLSPEED", //29
-        "", //2A
-        "", //2B
-        "", //2C
-        "", //2D
-        "", //2E
-        "", //2F
-        "", //30
-        "", //31
-        "", //32
-        "", //33
-        "", //34
-        "", //35
-        "", //36
-        "", //37
-        "", //38
-        "", //39
-        "", //3A
-        "", //3B
-        "", //3C
-        "", //3D
-        "", //3E
-        "", //3F
-        "", //40
-        "", //41
-        "", //42
-        "", //43
-        "", //44
-        "VALUE=GSM/CSD", //45
-        "VALUE=GSM/SMS", //46
-        "VALUE=GSM/USSD", //47
-        "VALUE=IS-136/CSD", //48
-        "VALUE=GPRS", //49
-        "", //4A
-        "", //4B
-        "", //4C
-        "", //4D
-        "", //4E
-        "", //4F
-        "", //50
-        "", //51
-        "", //52
-        "", //53
-        "", //54
-        "", //55
-        "", //56
-        "", //57
-        "", //58
-        "", //59
-        "", //5A
-        "", //5B
-        "", //5C
-        "", //5D
-        "", //5E
-        "", //5F
-        "VALUE=9200", //60
-        "VALUE=9201", //61
-        "VALUE=9202", //62
-        "VALUE=9203", //63
-        "VALUE=AUTOMATIC", //64
-        "VALUE=MANUAL", //65
-        "", //66
-        "", //67
-        "", //68
-        "", //69
-        "VALUE=AUTO", //6A
-        "VALUE=9600", //6B
-        "VALUE=14400", //6C
-        "VALUE=19200", //6D
-        "VALUE=28800", //6E
-        "VALUE=38400", //6F
-        "VALUE=PAP", //70
-        "VALUE=CHAP", //71
-        "VALUE=ANALOGUE", //72
-        "VALUE=ISDN", //73
-        "VALUE=43200", //74
-        "VALUE=57600", //75
-        "VALUE=MSISDN_NO", //76
-        "VALUE=IPV4", //77
-        "VALUE=MSCHAP", //78
-        "", //79
-        "", //7A
-        "", //7B
-        "TYPE=MMSURL", //7C
-        "TYPE=ID", //7D
-        "NAME=ISPNAME", //7E
-        "TYPE=BOOKMARK", //7F
-    };
+public class NokiaOtaBrowserSettings implements WbxmlDocument {
 
-    public static final String[] OTA_ATTR_VALUE_TOKENS = {
-        "", // 85
-        "", // 86
-        "", // 87
-    };
+  public static final String WBXML_SETTINGS_CONTENT_TYPE = "application/x-wap-prov.browser-settings";
+  public static final String XML_BOOKMARKS_CONTENT_TYPE = "application/x-wap-prov.browser-bookmarks";
 
-    /* ADDRESS, URL, NAME, ID, MMSURL, BOOKMARK */
-    
-    /* ADDRESS: 
-     *  BEARER
-     *  PPP_AUTHTYPE    
-     *  PPP_AUTHSECRET
-     *  PPP_LOGINTYPE
-     *  PROXY
-     *  PROXY_TYPE
-     *  PROXY_AUTHNAME
-     *  PROXY_AUTHSECRET
-     *  PROXY_LOGINTYPE
-     *  PORT
-     *  CSD_DIALSTRING
-     *  CSD_CALLTYPE
-     *  CSD_CALLSPEED
-     *  ISP_NAME
-     *  SMS_SMSC_ADDRESS
-     *  USSD_SERVICE_CODE
-     *  GPRS_ACCESSPOINTNAME
-     */
-    
-    /*
-     * URL or MMSURL:
-     */
-    
-    /*
-     * NAME:
-     */
-    
-    /*
-     * BOOKMARK:
-     *  NAME
-     *  URL
-     */
-    protected final List<NokiaOtaBookmark> bookmarks_ = new LinkedList<NokiaOtaBookmark>();
-    
-    /*
-     * ID:
-     */
-    
-    public NokiaOtaBrowserSettings()
-    {
-    }
-    
-    protected void writeBookmarksTo(XmlWriter xmlWriter) throws IOException
-    {
-        for (NokiaOtaBookmark otaBookmark : bookmarks_) {
-            otaBookmark.writeXmlTo(xmlWriter);
-        }
-    }
-    
-    public void addBookmark(String name, String url)
-    {
-        bookmarks_.add(new NokiaOtaBookmark(name, url));
-    }
+  public static final String[] OTA_TAG_TOKENS = {
+      // 05
+      "CHARACTERISTIC-LIST",
+      // 06
+      "CHARACTERISTIC",
+      // 07
+      "PARM"
+  };
 
-    public String getContentType()
-    {
-        return XML_SETTINGS_CONTENT_TYPE;
-    }
-    
-    public String getWbxmlContentType()
-    {
-        return WBXML_SETTINGS_CONTENT_TYPE;
-    }
+  public static final String[] OTA_ATTR_START_TOKENS = {
+      "", // 05
+      "TYPE=ADDRESS", // 06
+      "TYPE=URL", // 07
+      "TYPE=NAME", // 08
+      "", // 09
+      "", // 0A
+      "", // 0B
+      "", // 0C
+      "", // 0D
+      "", // 0E
+      "", // 0F
+      "NAME", // 10
+      "VALUE", // 11
+      "NAME=BEARER", // 12
+      "NAME=PROXY", //13
+      "NAME=PORT", //14
+      "NAME=NAME", //15
+      "NAME=PROXY_TYPE", //16
+      "NAME=URL", //17
+      "NAME=PROXY_AUTHNAME", //18
+      "NAME=PROXY_AUTHSECRET", //19
+      "NAME=SMS_SMSC_ADDRESS", //1A
+      "NAME=USSD_SERVICE_CODE", //1B
+      "NAME=GPRS_ACCESSPOINTNAME", //1C
+      "NAME=PPP_LOGINTYPE", //1D
+      "NAME=PROXY_LOGINTYPE", //1E
+      "", //1F
+      "", //20
+      "NAME=CSD_DIALSTRING", //21
+      "NAME=PPP_AUTHTYPE", //22
+      "NAME=PPP_AUTHNAME", //23
+      "NAME=PPP_AUTHSECRET", //24
+      "", //25
+      "", //26
+      "", //27
+      "NAME=CSD_CALLTYPE", //28
+      "NAME=CSD_CALLSPEED", //29
+      "", //2A
+      "", //2B
+      "", //2C
+      "", //2D
+      "", //2E
+      "", //2F
+      "", //30
+      "", //31
+      "", //32
+      "", //33
+      "", //34
+      "", //35
+      "", //36
+      "", //37
+      "", //38
+      "", //39
+      "", //3A
+      "", //3B
+      "", //3C
+      "", //3D
+      "", //3E
+      "", //3F
+      "", //40
+      "", //41
+      "", //42
+      "", //43
+      "", //44
+      "VALUE=GSM/CSD", //45
+      "VALUE=GSM/SMS", //46
+      "VALUE=GSM/USSD", //47
+      "VALUE=IS-136/CSD", //48
+      "VALUE=GPRS", //49
+      "", //4A
+      "", //4B
+      "", //4C
+      "", //4D
+      "", //4E
+      "", //4F
+      "", //50
+      "", //51
+      "", //52
+      "", //53
+      "", //54
+      "", //55
+      "", //56
+      "", //57
+      "", //58
+      "", //59
+      "", //5A
+      "", //5B
+      "", //5C
+      "", //5D
+      "", //5E
+      "", //5F
+      "VALUE=9200", //60
+      "VALUE=9201", //61
+      "VALUE=9202", //62
+      "VALUE=9203", //63
+      "VALUE=AUTOMATIC", //64
+      "VALUE=MANUAL", //65
+      "", //66
+      "", //67
+      "", //68
+      "", //69
+      "VALUE=AUTO", //6A
+      "VALUE=9600", //6B
+      "VALUE=14400", //6C
+      "VALUE=19200", //6D
+      "VALUE=28800", //6E
+      "VALUE=38400", //6F
+      "VALUE=PAP", //70
+      "VALUE=CHAP", //71
+      "VALUE=ANALOGUE", //72
+      "VALUE=ISDN", //73
+      "VALUE=43200", //74
+      "VALUE=57600", //75
+      "VALUE=MSISDN_NO", //76
+      "VALUE=IPV4", //77
+      "VALUE=MSCHAP", //78
+      "", //79
+      "", //7A
+      "", //7B
+      "TYPE=MMSURL", //7C
+      "TYPE=ID", //7D
+      "NAME=ISPNAME", //7E
+      "TYPE=BOOKMARK", //7F
+  };
 
-    public XmlWriter getWbxmlWriter(OutputStream os)
-    {
-        return new WbxmlWriter(os, OTA_TAG_TOKENS, OTA_ATTR_START_TOKENS, OTA_ATTR_VALUE_TOKENS);
+  public static final String[] OTA_ATTR_VALUE_TOKENS = {
+      "", // 85
+      "", // 86
+      "", // 87
+  };
+
+  /* ADDRESS, URL, NAME, ID, MMSURL, BOOKMARK */
+
+  /* ADDRESS:
+   *  BEARER
+   *  PPP_AUTHTYPE
+   *  PPP_AUTHSECRET
+   *  PPP_LOGINTYPE
+   *  PROXY
+   *  PROXY_TYPE
+   *  PROXY_AUTHNAME
+   *  PROXY_AUTHSECRET
+   *  PROXY_LOGINTYPE
+   *  PORT
+   *  CSD_DIALSTRING
+   *  CSD_CALLTYPE
+   *  CSD_CALLSPEED
+   *  ISP_NAME
+   *  SMS_SMSC_ADDRESS
+   *  USSD_SERVICE_CODE
+   *  GPRS_ACCESSPOINTNAME
+   */
+
+  /*
+   * URL or MMSURL:
+   */
+
+  /*
+   * NAME:
+   */
+
+  /**
+   * BOOKMARK:
+   * NAME
+   * URL
+   */
+  private final List<NokiaOtaBookmark> bookmarks = new LinkedList<>();
+
+  /*
+   * ID:
+   */
+
+  public NokiaOtaBrowserSettings() {
+  }
+
+  public void addBookmark(String name, String url) {
+    bookmarks.add(new NokiaOtaBookmark(name, url));
+  }
+
+  @Override
+  public String getContentType() {
+    return WBXML_SETTINGS_CONTENT_TYPE;
+  }
+
+
+  @Override
+  public void writeXmlTo(OutputStream os) throws Exception {
+    try (WbxmlWriter writer = new WbxmlWriter(OTA_TAG_TOKENS, OTA_ATTR_START_TOKENS, OTA_ATTR_VALUE_TOKENS)) {
+      // <CHARACTERISTIC-LIST>
+      writer.addStartElement("CHARACTERISTIC-LIST");
+
+      // <CHARACTERISTIC TYPE="BOOKMARK"> ...
+      writeBookmarksTo(writer);
+
+      // </CHARACTERISTIC-LIST>
+      writer.writeTo(os);
     }
-    
-    public void writeXmlTo(XmlWriter xmlWriter) throws IOException
-    {
-        xmlWriter.setDoctype("CHARACTERISTIC-LIST", "/DTD/characteristic_list.xml");
-        
-        // <CHARACTERISTIC-LIST>
-        xmlWriter.addStartElement("CHARACTERISTIC-LIST");
-        
-        // <CHARACTERISTIC TYPE="BOOKMARK"> ...
-        writeBookmarksTo(xmlWriter);
-        
-        // </CHARACTERISTIC-LIST>
-        xmlWriter.flush();
+  }
+
+  private void writeBookmarksTo(XmlWriter xmlWriter) throws IOException {
+    for (NokiaOtaBookmark otaBookmark : bookmarks) {
+      otaBookmark.writeXmlTo(xmlWriter);
     }
+  }
 }

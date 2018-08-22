@@ -61,17 +61,14 @@ public class NokiaOtaBrowserSettingsTest extends TestCase
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         
         NokiaOtaBrowserSettings browserSettings = new NokiaOtaBrowserSettings();
-        XmlWriter wbxmlWriter = browserSettings.getWbxmlWriter(baos);
-        
-        assertNotNull(wbxmlWriter);
-        
+
         try
         {                        
             // Add a bookmark
             browserSettings.addBookmark("Wap", "http://wap.dk");
             
             // Write
-            browserSettings.writeXmlTo(wbxmlWriter);
+            browserSettings.writeXmlTo(baos);
             baos.close();
             byte[] singeBookmarkBrowserSettings = baos.toByteArray();
             baos.reset();
@@ -79,7 +76,7 @@ public class NokiaOtaBrowserSettingsTest extends TestCase
             assertEquals("01016A0045C67F0187151103576170000187171103687474703A2F2F7761702E646B000101", 
                          StringUtil.bytesToHexString(singeBookmarkBrowserSettings));
         }
-        catch (IOException ex)
+        catch (Exception ex)
         {
             fail(ex.getMessage());
         }

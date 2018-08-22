@@ -36,10 +36,10 @@ package org.marre.wap.push;
 
 import org.marre.mime.MimeBodyPart;
 import org.marre.mime.MimeContentType;
+import org.marre.mime.WapMimeEncoder;
 import org.marre.sms.SmsPort;
 import org.marre.sms.SmsPortAddressedMessage;
 import org.marre.sms.SmsUserData;
-import org.marre.mime.WapMimeEncoder;
 import org.marre.wap.wbxml.WbxmlDocument;
 import org.marre.wsp.WspConstants;
 import org.marre.wsp.WspEncodingVersion;
@@ -50,155 +50,133 @@ import java.io.IOException;
 
 /**
  * Connectionless WAP push message with SMS as bearer.
- *
+ * <p>
  * It supports the "content-type" and "X-Wap-Application-Id" headers.
  *
  * @author Markus Eriksson
  * @version 1.0
  */
-public class SmsWapPushMessage extends SmsPortAddressedMessage
-{
-    protected WspEncodingVersion wspEncodingVersion_ = WspEncodingVersion.VERSION_1_2;
-    protected MimeBodyPart pushMsg_;
-        
-    protected SmsWapPushMessage()
-    {
-        super(SmsPort.WAP_PUSH, SmsPort.WAP_WSP);
-    }
-    
-    public SmsWapPushMessage(MimeBodyPart pushMsg)
-    {
-        this();
-        
-        pushMsg_ = pushMsg;
-    }
-    
-    public SmsWapPushMessage(WbxmlDocument pushMsg, MimeContentType contentType)
-    {
-        this();
-        
-        // The current wbxml encoder can only output utf-8
-        contentType.setParam("charset", "utf-8");
-        pushMsg_ = new MimeBodyPart(buildPushMessage(pushMsg), contentType);
-    }
-    
-    public SmsWapPushMessage(WbxmlDocument pushMsg, String contentType)
-    {
-        this(pushMsg, new MimeContentType(contentType));
-    }
-    
-    public SmsWapPushMessage(WbxmlDocument pushMsg)
-    {
-        this(pushMsg, pushMsg.getWbxmlContentType());
-    }
-     
-    public SmsWapPushMessage(byte[] pushMsg, MimeContentType contentType)
-    {
-        this();
-        
-        pushMsg_ = new MimeBodyPart(pushMsg, contentType);
-    }
-        
-    public SmsWapPushMessage(byte[] pushMsg, String contentType)
-    {
-        this();
-        
-        pushMsg_ = new MimeBodyPart(pushMsg, contentType);
-    }
-    
-    protected byte[] buildPushMessage(WbxmlDocument pushMsg)
-    {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+public class SmsWapPushMessage extends SmsPortAddressedMessage {
 
-        try
-        {
-            // Data
-            pushMsg.writeXmlTo(pushMsg.getWbxmlWriter(baos));
+  protected WspEncodingVersion wspEncodingVersion = WspEncodingVersion.VERSION_1_2;
 
-            // Done
-            baos.close();
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException(ex.getMessage());
-        }
+  protected MimeBodyPart pushMsg;
 
-        return baos.toByteArray();
-    }
-    
-    public void setWspEncodingVersion(WspEncodingVersion wspEncodingVersion)
-    {
-        wspEncodingVersion_ = wspEncodingVersion;
+  protected SmsWapPushMessage() {
+    super(SmsPort.WAP_PUSH, SmsPort.WAP_WSP);
+  }
+
+  public SmsWapPushMessage(MimeBodyPart pushMsg) {
+    this();
+
+    this.pushMsg = pushMsg;
+  }
+
+  public SmsWapPushMessage(WbxmlDocument pushMsg, MimeContentType contentType) {
+    this();
+
+    // The current wbxml encoder can only output utf-8
+    contentType.setParam("charset", "utf-8");
+    this.pushMsg = new MimeBodyPart(buildPushMessage(pushMsg), contentType);
+  }
+
+  public SmsWapPushMessage(WbxmlDocument pushMsg, String contentType) {
+    this(pushMsg, new MimeContentType(contentType));
+  }
+
+  public SmsWapPushMessage(WbxmlDocument pushMsg) {
+    this(pushMsg, pushMsg.getContentType());
+  }
+
+  public SmsWapPushMessage(byte[] pushMsg, MimeContentType contentType) {
+    this();
+
+    this.pushMsg = new MimeBodyPart(pushMsg, contentType);
+  }
+
+  public SmsWapPushMessage(byte[] pushMsg, String contentType) {
+    this();
+
+    this.pushMsg = new MimeBodyPart(pushMsg, contentType);
+  }
+
+  protected byte[] buildPushMessage(WbxmlDocument pushMsg) {
+
+    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+      // Data
+      pushMsg.writeXmlTo(baos);
+      return baos.toByteArray();
+    } catch (Exception ex) {
+      throw new RuntimeException(ex.getMessage());
     }
 
-    @Override
-    public SmsUserData getUserData()
-    {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+  }
 
-        try
-        {
-            //
-            // WSP HEADER
-            //
+  public void setWspEncodingVersion(WspEncodingVersion wspEncodingVersion) {
+    this.wspEncodingVersion = wspEncodingVersion;
+  }
 
-            // TID - Transaction ID
-            // FIXME: Should perhaps set TID to something useful?
-            WspUtil.writeUint8(baos, 0x00);
+  @Override
+  public SmsUserData getUserData() {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-            // Type
-            WspUtil.writeUint8(baos, WspConstants.PDU_TYPE_PUSH);
+    try {
+      //
+      // WSP HEADER
+      //
 
-            //
-            // WAP PUSH FIELDS
-            //
+      // TID - Transaction ID
+      // FIXME: Should perhaps set TID to something useful?
+      WspUtil.writeUint8(baos, 0x00);
 
-            // Create headers first
-            ByteArrayOutputStream headers = new ByteArrayOutputStream();
-            
-            // Content-type
-            WapMimeEncoder.writeContentType(wspEncodingVersion_, headers, pushMsg_);
+      // Type
+      WspUtil.writeUint8(baos, WspConstants.PDU_TYPE_PUSH);
 
-            // WAP-HEADERS
-            WapMimeEncoder.writeHeaders(wspEncodingVersion_, headers, pushMsg_);
-                        
-            // Done with the headers...
-            headers.close();
+      //
+      // WAP PUSH FIELDS
+      //
 
-            // Headers created, write headers lenght and headers to baos
+      // Create headers first
+      ByteArrayOutputStream headers = new ByteArrayOutputStream();
 
-            // HeadersLen - Length of Content-type and Headers
-            WspUtil.writeUintvar(baos, headers.size());
+      // Content-type
+      WapMimeEncoder.writeContentType(wspEncodingVersion, headers, pushMsg);
 
-            // Headers
-            baos.write(headers.toByteArray());
+      // WAP-HEADERS
+      WapMimeEncoder.writeHeaders(wspEncodingVersion, headers, pushMsg);
 
-            // Data
-            WapMimeEncoder.writeBody(wspEncodingVersion_, baos, pushMsg_);
+      // Done with the headers...
+      headers.close();
 
-            // Done
-            baos.close();
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException(ex.getMessage());
-        }
+      // Headers created, write headers lenght and headers to baos
 
-        return new SmsUserData(baos.toByteArray());
+      // HeadersLen - Length of Content-type and Headers
+      WspUtil.writeUintvar(baos, headers.size());
+
+      // Headers
+      baos.write(headers.toByteArray());
+
+      // Data
+      WapMimeEncoder.writeBody(wspEncodingVersion, baos, pushMsg);
+
+      // Done
+      baos.close();
+    } catch (IOException ex) {
+      throw new RuntimeException(ex.getMessage());
     }
 
-    public void setXWapApplicationId(String appId)
-    {
-        pushMsg_.addHeader("X-Wap-Application-Id", appId);
-    }
-    
-    public void setXWapContentURI(String contentUri)
-    {
-        pushMsg_.addHeader("X-Wap-Content-URI", contentUri);
-    }
+    return new SmsUserData(baos.toByteArray());
+  }
 
-    public void setXWapInitiatorURI(String initiatorUri)
-    {
-        pushMsg_.addHeader("X-Wap-Initiator-URI", initiatorUri);
-    }
- }
+  public void setXWapApplicationId(String appId) {
+    pushMsg.addHeader("X-Wap-Application-Id", appId);
+  }
+
+  public void setXWapContentURI(String contentUri) {
+    pushMsg.addHeader("X-Wap-Content-URI", contentUri);
+  }
+
+  public void setXWapInitiatorURI(String initiatorUri) {
+    pushMsg.addHeader("X-Wap-Initiator-URI", initiatorUri);
+  }
+}

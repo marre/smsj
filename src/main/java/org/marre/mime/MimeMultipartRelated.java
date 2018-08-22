@@ -34,6 +34,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
+import java.util.Collection;
+
 public class MimeMultipartRelated extends MimeMultipart {
 
   private MimeBodyPart startBodyPart;
@@ -62,6 +64,12 @@ public class MimeMultipartRelated extends MimeMultipart {
       }
     }
     return ct;
+  }
+
+  @Override
+  public Collection<MimeBodyPart> getBodyParts() {
+    bodyParts.add(startBodyPart);
+    return super.getBodyParts();
   }
 
   @Override

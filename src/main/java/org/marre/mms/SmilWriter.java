@@ -4,24 +4,15 @@ import org.marre.xml.XmlAttribute;
 import org.marre.xml.XmlWriter;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
- * Created by hanwen on 2018/8/21.
+ * Created by hanwen on 2018/8/22.
  */
 public class SmilWriter implements XmlWriter {
 
   @Override
   public void setDoctype(String publicID) {
-
-  }
-
-  @Override
-  public void setDoctype(String name, String systemURI) {
-
-  }
-
-  @Override
-  public void setDoctype(String name, String publicID, String publicURI) {
 
   }
 
@@ -61,7 +52,7 @@ public class SmilWriter implements XmlWriter {
   }
 
   @Override
-  public void flush() throws IOException {
+  public void writeTo(OutputStream os) throws IOException {
 
   }
 }

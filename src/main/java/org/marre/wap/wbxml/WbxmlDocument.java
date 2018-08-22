@@ -35,9 +35,6 @@
 package org.marre.wap.wbxml;
 
 import org.marre.xml.XmlDocument;
-import org.marre.xml.XmlWriter;
-
-import java.io.OutputStream;
 
 /**
  * @author Markus
@@ -45,7 +42,4 @@ import java.io.OutputStream;
  */
 public interface WbxmlDocument extends XmlDocument {
 
-  String getWbxmlContentType();
-
-  XmlWriter getWbxmlWriter(OutputStream os);
 }

@@ -34,166 +34,171 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.wap.push;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.marre.wap.wbxml.WbxmlDocument;
 import org.marre.wap.wbxml.WbxmlWriter;
 import org.marre.xml.XmlAttribute;
-import org.marre.xml.XmlWriter;
+
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a WAP Service Loading Push message.
- * 
+ *
  * @author Markus
  * @version $Id$
  */
-public class WapSLPush implements WbxmlDocument
-{
-    /** WBXML content type */
-    public static final String WBXML_CONTENT_TYPE = "application/vnd.wap.slc";
-    /** XML content type */
-    public static final String XML_CONTENT_TYPE = "text/vnd.wap.sl";
+public class WapSLPush implements WbxmlDocument {
+  /**
+   * WBXML content type
+   */
+  public static final String WBXML_CONTENT_TYPE = "application/vnd.wap.slc";
 
-    /** Action, execute-low */
-    public static final String ACTION_EXECUTE_LOW = "execute-low";
-    /** Action, execute-high */
-    public static final String ACTION_EXECUTE_HIGH = "execute-high";
-    /** Action, execute-cache */
-    public static final String ACTION_EXECUTE_CACHE = "execute-cache";
-    
-    /** WBXML tag tokens for wap sl push. */
-    public static final String[] SL_TAG_TOKENS = {
-            "sl", // 05
-    };
+  /**
+   * Action, execute-low
+   */
+  public static final String ACTION_EXECUTE_LOW = "execute-low";
+  /**
+   * Action, execute-high
+   */
+  public static final String ACTION_EXECUTE_HIGH = "execute-high";
+  /**
+   * Action, execute-cache
+   */
+  public static final String ACTION_EXECUTE_CACHE = "execute-cache";
 
-    /** WBXML attr start tokens for wap sl push. */
-    public static final String[] SL_ATTR_START_TOKENS = {
-            "action=execute-low", // 05
-            "action=execute-high", // 06
-            "action=cache", // 07
-            "href", // 08
-            "href=http://", // 09
-            "href=http://www.", // 0A
-            "href=https://", // 0B
-            "href=https://www.", // 0C
-    };
+  /**
+   * WBXML tag tokens for wap sl push.
+   */
+  public static final String[] SL_TAG_TOKENS = {
+      // 05
+      "sl"
+  };
 
-    /** WBXML attr value tokens for wap sl push. */
-    public static final String[] SL_ATTR_VALUE_TOKENS = {
-            ".com/", // 85
-            ".edu/", // 86
-            ".net/", // 87
-            ".org/", // 88
-    };
+  /**
+   * WBXML attr start tokens for wap sl push.
+   */
+  public static final String[] SL_ATTR_START_TOKENS = {
+      // 05
+      "action=execute-low",
+      // 06
+      "action=execute-high",
+      // 07
+      "action=cache",
+      // 08
+      "href",
+      // 09
+      "href=http://",
+      // 0A
+      "href=http://www.",
+      // 0B
+      "href=https://",
+      // 0C
+      "href=https://www."
+  };
+
+  /**
+   * WBXML attr value tokens for wap sl push.
+   */
+  public static final String[] SL_ATTR_VALUE_TOKENS = {
+      // 85
+      ".com/",
+      // 86
+      ".edu/",
+      // 87
+      ".net/",
+      // 88
+      ".org/"
+  };
 
 
-    /** The uri. */
-    protected String uri_;
-    /** The action. */
-    protected String action_;
-    
-    /**
-     * Constructor.
-     * 
-     * @param uri
-     */
-    public WapSLPush(String uri)
-    {
-        uri_ = uri;
+  /**
+   * The uri.
+   */
+  private String uri;
+  /**
+   * The action.
+   */
+  private String action;
+
+  /**
+   * Constructor.
+   *
+   * @param uri
+   */
+  public WapSLPush(String uri) {
+    this.uri = uri;
+  }
+
+  /**
+   * Returns the URI.
+   *
+   * @return
+   */
+  public String getUri() {
+    return uri;
+  }
+
+  /**
+   * Sets the URI.
+   *
+   * @param uri
+   */
+  public void setUri(String uri) {
+    this.uri = uri;
+  }
+
+  /**
+   * Retrieves the current set action.
+   *
+   * @return Action or null if not set.
+   */
+  public String getAction() {
+    return action;
+  }
+
+  /**
+   * Set the action.
+   *
+   * @param action Can be ACTION_EXECUTE_LOW, ACTION_EXECUTE_HIGH or ACTION_EXECUTE_CACHE.
+   */
+  public void setAction(String action) {
+    if (!(ACTION_EXECUTE_CACHE.equals(action) ||
+        ACTION_EXECUTE_HIGH.equals(action) ||
+        ACTION_EXECUTE_LOW.equals(action))) {
+      throw new IllegalArgumentException("Action can only be execute-high, execute-low or cache.");
     }
+    this.action = action;
+  }
 
-    /**
-     * Returns the URI.
-     * 
-     * @return
-     */
-    public String getUri()
-    {
-        return uri_;
+  /**
+   * Writes the xml document to the given writer.
+   *
+   * @param os
+   */
+  @Override
+  public void writeXmlTo(OutputStream os) throws Exception {
+    try (WbxmlWriter writer = new WbxmlWriter(SL_TAG_TOKENS, SL_ATTR_START_TOKENS, SL_ATTR_VALUE_TOKENS)) {
+      writer.setDoctype("-//WAPFORUM//DTD SL 1.0//EN");
+
+      List<XmlAttribute> attrs = new ArrayList<>();
+      attrs.add(new XmlAttribute("href", uri));
+      if (action != null && action.length() > 0) {
+        attrs.add(new XmlAttribute("action", action));
+      }
+
+      writer.addEmptyElement("sl", attrs.toArray(new XmlAttribute[0]));
+      writer.writeTo(os);
     }
+  }
 
-    /**
-     * Sets the URI.
-     * @param uri
-     */
-    public void setUri(String uri)
-    {
-        uri_ = uri;
-    }
-
-    /**
-     * Retrieves the current set action.
-     * 
-     * @return Action or null if not set.
-     */
-    public String getAction()
-    {
-        return action_;
-    }
-
-    /**
-     * Set the action. 
-     * 
-     * @param action Can be ACTION_EXECUTE_LOW, ACTION_EXECUTE_HIGH or ACTION_EXECUTE_CACHE.
-     */
-    public void setAction(String action)
-    {
-        if (! (ACTION_EXECUTE_CACHE.equals(action) || 
-               ACTION_EXECUTE_HIGH.equals(action) ||
-               ACTION_EXECUTE_LOW.equals(action)) ) {
-            throw new IllegalArgumentException("Action can only be execute-high, execute-low or cache.");
-        }
-        action_ = action;
-    }
-
-    /**
-     * Writes the xml document to the given writer.
-     * 
-     * @param writer
-     */
-    public void writeXmlTo(XmlWriter writer) throws IOException
-    {
-        writer.setDoctype("sl", "-//WAPFORUM//DTD SL 1.0//EN", "http://www.wapforum.org/DTD/sl.dtd");
-
-        if (action_ == null) {
-            writer.addEmptyElement("sl", new XmlAttribute[]{new XmlAttribute("href", uri_)});
-        } else {
-            writer.addEmptyElement("sl", new XmlAttribute[]{new XmlAttribute("href", uri_),
-                                                            new XmlAttribute("action", action_)});
-        }
-
-        writer.flush();
-    }
-
-    /**
-     * Returns a wbxml writer.
-     * 
-     * @param os The os to write to.
-     * @return Wbxml writer.
-     */
-    public XmlWriter getWbxmlWriter(OutputStream os)
-    {
-        return new WbxmlWriter(os, WapSLPush.SL_TAG_TOKENS, WapSLPush.SL_ATTR_START_TOKENS, WapSLPush.SL_ATTR_VALUE_TOKENS);
-    }
-
-    /**
-     * Returns the wbxml content type.
-     * 
-     * @return wbxml content type.
-     */
-    public String getWbxmlContentType()
-    {
-        return WBXML_CONTENT_TYPE;
-    }
-
-    /**
-     * Returns the text content type.
-     * 
-     * @return Content type
-     */
-    public String getContentType()
-    {
-        return XML_CONTENT_TYPE;
-    }
+  /**
+   * Returns the text content type.
+   *
+   * @return Content type
+   */
+  @Override
+  public String getContentType() {
+    return WBXML_CONTENT_TYPE;
+  }
 }

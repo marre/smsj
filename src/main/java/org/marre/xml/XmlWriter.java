@@ -35,6 +35,7 @@
 package org.marre.xml;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Simple interface to write XML documents.
@@ -49,32 +50,11 @@ public interface XmlWriter
     /**
      * Sets a public ID doctype.
      * 
-     * Must be set before any of the add or flush methods.
+     * Must be set before any of the add or writeTo methods.
      * 
      * @param publicID XML public ID
      */
     void setDoctype(String publicID);
-
-    /**
-     * Sets a system URI doctype.
-     * 
-     * Must be set before any of the add or flush methods.
-     * 
-     * @param name Name
-     * @param systemURI System URI
-     */
-    void setDoctype(String name, String systemURI);
-
-    /**
-     * Sets a public ID doctype.
-     * 
-     * Must be set before any of the add or flush methods.
-     * 
-     * @param name Name
-     * @param publicID PublicID
-     * @param publicURI PublicURI
-     */
-    void setDoctype(String name, String publicID, String publicURI);
 
     /**
      * Adds a start element tag.
@@ -151,6 +131,7 @@ public interface XmlWriter
      * Must be called to be sure that the document is correctly created.
      * 
      * @throws IOException io error
+     * @param os
      */
-    void flush() throws IOException;
+    void writeTo(OutputStream os) throws IOException;
 }

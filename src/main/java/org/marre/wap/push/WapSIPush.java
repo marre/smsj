@@ -37,173 +37,171 @@ package org.marre.wap.push;
 import org.marre.wap.wbxml.WbxmlDocument;
 import org.marre.wap.wbxml.WbxmlWriter;
 import org.marre.xml.XmlAttribute;
-import org.marre.xml.XmlWriter;
 
-import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public class WapSIPush implements WbxmlDocument
-{
-    public static final String WBXML_CONTENT_TYPE = "application/vnd.wap.sic";
-    public static final String XML_CONTENT_TYPE = "text/vnd.wap.si";
+public class WapSIPush implements WbxmlDocument {
 
-    public static final String[] SI_TAG_TOKENS = {
-            "si", // 05
-            "indication", // 06
-            "info", // 07
-            "item", // 08
-    };
+  public static final String WBXML_CONTENT_TYPE = "application/vnd.wap.sic";
 
-    public static final String[] SI_ATTR_START_TOKENS = {
-            "action=signal-none", // 05
-            "action=signal-low", // 06
-            "action=signal-medium", // 07
-            "action=signal-high", // 08
-            "action=delete", // 09
-            "created", // 0A
-            "href", // 0B
-            "href=http://", // 0C
-            "href=http://www.", // 0D
-            "href=https://", // 0E
-            "href=https://www.", // 0F
+  public static final String[] SI_TAG_TOKENS = {
+      // 05
+      "si",
+      // 06
+      "indication",
+      // 07
+      "info",
+      // 08
+      "item"
+  };
 
-            "si-expires", // 10
-            "si-id", // 11
-            "class", // 12
-    };
+  public static final String[] SI_ATTR_START_TOKENS = {
+      // 05
+      "action=signal-none",
+      // 06
+      "action=signal-low",
+      // 07
+      "action=signal-medium",
+      // 08
+      "action=signal-high",
+      // 09
+      "action=delete",
+      // 0A
+      "created",
+      // 0B
+      "href",
+      // 0C
+      "href=http://",
+      // 0D
+      "href=http://www.",
+      // 0E
+      "href=https://",
+      // 0F
+      "href=https://www.",
+      // 10
+      "si-expires",
+      // 11
+      "si-id",
+      // 12
+      "class"
+  };
 
-    public static final String[] SI_ATTR_VALUE_TOKENS = {
-            ".com/", // 85
-            ".edu/", // 86
-            ".net/", // 87
-            ".org/", // 88
-    };
+  public static final String[] SI_ATTR_VALUE_TOKENS = {
+      // 85
+      ".com/",
+      // 86
+      ".edu/",
+      // 87
+      ".net/",
+      // 88
+      ".org/"
+  };
 
-    protected String uri_;
-    protected String id_;
-    protected Date createdDate_;
-    protected Date expiresDate_;
-    protected String action_;
+  private String uri;
 
-    protected String message_;
+  private String id;
 
-    public WapSIPush(String uri, String message)
-    {
-        uri_ = uri;
-        message_ = message;
+  /**
+   * Example: 1999-04-30T06:40:00Z means 6.40 in the morning UTC on the
+   * 30th of April 1999.
+   */
+  private Date createdDate;
+  private Date expiresDate;
+
+  private String action;
+
+  private String message;
+
+  public WapSIPush(String uri, String message) {
+    this.uri = uri;
+    this.message = message;
+  }
+
+  public String getUri() {
+    return uri;
+  }
+
+  public void setUri(String uri) {
+    this.uri = uri;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public Date getCreated() {
+    return createdDate;
+  }
+
+  public void setCreated(Date created) {
+    createdDate = created;
+  }
+
+  public Date getExpires() {
+    return expiresDate;
+  }
+
+  public void setExpires(Date expires) {
+    expiresDate = (Date) expires.clone();
+  }
+
+  public String getAction() {
+    return action;
+  }
+
+  public void setAction(String action) {
+    this.action = action;
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
+  }
+
+  @Override
+  public void writeXmlTo(OutputStream os) throws Exception {
+    try (WbxmlWriter writer = new WbxmlWriter(SI_TAG_TOKENS, SI_ATTR_START_TOKENS, SI_ATTR_VALUE_TOKENS)) {
+      writer.setDoctype("-//WAPFORUM//DTD SI 1.0//EN");
+
+      writer.addStartElement("si");
+      List<XmlAttribute> attrs = new ArrayList<>();
+      attrs.add(new XmlAttribute("href", uri));
+      if (id != null && id.length() > 0) {
+        attrs.add(new XmlAttribute("si-id", id));
+      }
+      if (createdDate != null) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        attrs.add(new XmlAttribute("si-expires", sdf.format(createdDate)));
+      }
+      if (expiresDate != null) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        attrs.add(new XmlAttribute("created", sdf.format(expiresDate)));
+      }
+      if (action != null && action.length() > 0) {
+        attrs.add(new XmlAttribute("action", action));
+      }
+      writer.addStartElement("indication", attrs.toArray(new XmlAttribute[0]));
+      writer.addCharacters(message);
+      writer.addEndElement();
+      writer.addEndElement();
+
+      writer.writeTo(os);
     }
+  }
 
-    /*
-     * public static void main(String argv[]) throws Exception { SIPush push =
-     * new SIPush("http://wap.tv4.se/", "TV4 Nyheter");
-     * push.writeTo(getWbxmlWriter(), new FileOutputStream("si.wbxml")); }
-     */
-
-    private byte[] encodeDateTime(Date date)
-    {
-        return null;
-        /*
-         * If used, the attribute value MUST be expressed in a date/time
-         * representation based on [ISO8601] as specified in [HTML4]. However,
-         * SI does not allow use of time zones; the time MUST always be
-         * expressed in Co-ordinated Universal Time (UTC), a 24-hour timekeeping
-         * system (indicated by the ?Z?). The format is: YYYY-MM-DDThh:mm:ssZ
-         * Where: YYYY = 4 digit year (?0000? ... ?9999?) MM = 2 digit month
-         * (?01?=January, ?02?=February ... ?12?=December) DD = 2 digit day
-         * (?01?, ?02? ... ?31?) hh = 2 digit hour, 24-hour timekeeping system
-         * (00 ... 23) mm = 2 digit minute (?00? ... ?59?) ss = 2 digit second
-         * (?00? ... ?59?) Note: T and Z appear literally in the string.
-         * Example: 1999-04-30T06:40:00Z means 6.40 in the morning UTC on the
-         * 30th of April 1999.
-         */
-    }
-
-    public String getUri()
-    {
-        return uri_;
-    }
-
-    public void setUri(String uri)
-    {
-        uri_ = uri;
-    }
-
-    public String getId()
-    {
-        return id_;
-    }
-
-    public void setId(String id)
-    {
-        id_ = id;
-    }
-
-    public Date getCreated()
-    {
-        return createdDate_;
-    }
-
-    public void setCreated(Date created)
-    {
-        createdDate_ = created;
-    }
-
-    public Date getExpires()
-    {
-        return expiresDate_;
-    }
-
-    public void setExpires(Date expires)
-    {
-        expiresDate_ = (Date) expires.clone();
-    }
-
-    public String getAction()
-    {
-        return action_;
-    }
-
-    public void setAction(String action)
-    {
-        action_ = action;
-    }
-
-    public String getMessage()
-    {
-        return message_;
-    }
-
-    public void setMessage(String message)
-    {
-        message_ = message;
-    }
-
-    public void writeXmlTo(XmlWriter writer) throws IOException
-    {
-        writer.setDoctype("si", "-//WAPFORUM//DTD SI 1.0//EN", "http://www.wapforum.org/DTD/si.dtd");
-
-        writer.addStartElement("si");
-        writer.addStartElement("indication", new XmlAttribute[]{new XmlAttribute("href", uri_)});
-        writer.addCharacters(message_);
-        writer.addEndElement();
-        writer.addEndElement();
-
-        writer.flush();
-    }
-
-    public XmlWriter getWbxmlWriter(OutputStream os)
-    {
-        return new WbxmlWriter(os, WapSIPush.SI_TAG_TOKENS, WapSIPush.SI_ATTR_START_TOKENS, WapSIPush.SI_ATTR_VALUE_TOKENS);
-    }
-
-    public String getWbxmlContentType()
-    {
-        return WBXML_CONTENT_TYPE;
-    }
-
-    public String getContentType()
-    {
-        return XML_CONTENT_TYPE;
-    }
+  @Override
+  public String getContentType() {
+    return WBXML_CONTENT_TYPE;
+  }
 }

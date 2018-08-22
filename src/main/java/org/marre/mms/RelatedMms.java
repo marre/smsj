@@ -52,4 +52,10 @@ public class RelatedMms extends MimeMultipartRelated {
     // setStartBodyPart();
 
   }
+
+  public void createSmilPart() {
+
+
+
+  }
 }

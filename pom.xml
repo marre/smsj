@@ -50,12 +50,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.rxtx</groupId>
-      <artifactId>rxtx</artifactId>
-      <version>2.1.7</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
       <version>1.7.2</version>
@@ -69,6 +63,11 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.axsl.org.w3c.dom.smil</groupId>
+      <artifactId>smil-boston-dom-java</artifactId>
+      <version>2000-02-25</version>
+    </dependency>
 
   </dependencies>
 

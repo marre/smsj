@@ -50,6 +50,8 @@ public class MixedMms extends MimeMultipartMixed {
 
   private final WspEncodingVersion wspEncodingVersion;
 
+  private WspEncodingVersion version = WspEncodingVersion.VERSION_1_0;
+
   private String transactionId;
 
   private String from;
@@ -82,24 +84,18 @@ public class MixedMms extends MimeMultipartMixed {
     this.date = date;
   }
 
-  public void writeMessage(OutputStream out) throws IOException {
-    // Add headers
-    writeHeaders(out);
-
-    // Add content-type
-    MmsHeaderEncoder.writeHeaderContentType(wspEncodingVersion, out, getContentType());
-
-    // Add content
-    WapMimeEncoder.writeBody(wspEncodingVersion, out, this);
+  public void setVersion(WspEncodingVersion version) {
+    this.version = version;
   }
 
-  private void writeHeaders(OutputStream out) throws IOException {
+  public void writeMessage(OutputStream out) throws IOException {
+    // Add headers
     if (transactionId == null || transactionId.length() == 0) {
       transactionId = StringUtil.randString(MmsConstants.DEFAULT_TRANSACTION_ID_LENGTH);
     }
     MmsHeaderEncoder.writeHeaderXMmsMessageType(out, MmsConstants.X_MMS_MESSAGE_TYPE_ID_M_RETRIEVE_CONF);
     MmsHeaderEncoder.writeHeaderXMmsTransactionId(out, transactionId);
-    MmsHeaderEncoder.writeHeaderXMmsMmsVersion(out, WspEncodingVersion.VERSION_1_0);
+    MmsHeaderEncoder.writeHeaderXMmsMmsVersion(out, version);
 
     if (subject != null && subject.length() > 0) {
       MmsHeaderEncoder.writeHeaderSubject(out, subject);
@@ -112,5 +108,12 @@ public class MixedMms extends MimeMultipartMixed {
     if (date != null) {
       MmsHeaderEncoder.writeHeaderDate(out, date);
     }
+
+    // Add content-type
+    MmsHeaderEncoder.writeHeaderContentType(wspEncodingVersion, out, getContentType());
+
+    // Add content
+    WapMimeEncoder.writeBody(wspEncodingVersion, out, this);
   }
+
 }

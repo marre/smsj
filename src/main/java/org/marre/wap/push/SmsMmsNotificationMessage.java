@@ -118,7 +118,7 @@ public class SmsMmsNotificationMessage extends SmsWapPushMessage {
 
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream(256)) {
       writeNotificationTo(baos);
-      pushMsg_ = new MimeBodyPart(baos.toByteArray(), "application/vnd.wap.mms-message");
+      pushMsg = new MimeBodyPart(baos.toByteArray(), "application/vnd.wap.mms-message");
       setXWapApplicationId("x-wap-application:mms.ua");
 
       return super.getUserData();

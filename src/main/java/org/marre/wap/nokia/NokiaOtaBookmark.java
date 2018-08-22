@@ -22,44 +22,43 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.wap.nokia;
 
-import java.io.IOException;
-
 import org.marre.xml.XmlAttribute;
 import org.marre.xml.XmlWriter;
 
+import java.io.IOException;
 
-public class NokiaOtaBookmark
-{
-    protected final String name_;
-    protected final String url_;
-    
-    /**
-     * Creates a Nokia Ota Browser Settings Bookmark
-     * 
-     * @param name the name of the bookmark (max 50 chars)
-     * @param url the URL of the bookmark (max 255 chars)
-     */
-    public NokiaOtaBookmark(String name, String url)
-    {
-        name_ = name;
-        url_ = url;
-    }
-    
-    public void writeXmlTo(XmlWriter xmlWriter) throws IOException
-    {
-        // <CHARACTERISTIC TYPE="BOOKMARK">
-        xmlWriter.addStartElement("CHARACTERISTIC", new XmlAttribute[]{new XmlAttribute("TYPE", "BOOKMARK")});
-        
-        // <PARM NAME="NAME" VALUE="name_"/>
-        xmlWriter.addEmptyElement("PARM", new XmlAttribute[]{
-                new XmlAttribute("NAME", "NAME"),
-                new XmlAttribute("VALUE", name_)});
-        // <PARM NAME="URL" VALUE="url_"/>
-        xmlWriter.addEmptyElement("PARM", new XmlAttribute[]{
-                new XmlAttribute("NAME", "URL"),
-                new XmlAttribute("VALUE", url_)});
-        
-        // </CHARACTERISTIC>
-        xmlWriter.addEndElement();
-    }
+
+public class NokiaOtaBookmark {
+
+  private final String name;
+
+  private final String url;
+
+  /**
+   * Creates a Nokia Ota Browser Settings Bookmark
+   *
+   * @param name the name of the bookmark (max 50 chars)
+   * @param url  the URL of the bookmark (max 255 chars)
+   */
+  public NokiaOtaBookmark(String name, String url) {
+    this.name = name;
+    this.url = url;
+  }
+
+  public void writeXmlTo(XmlWriter xmlWriter) throws IOException {
+    // <CHARACTERISTIC TYPE="BOOKMARK">
+    xmlWriter.addStartElement("CHARACTERISTIC", new XmlAttribute[]{new XmlAttribute("TYPE", "BOOKMARK")});
+
+    // <PARM NAME="NAME" VALUE="name"/>
+    xmlWriter.addEmptyElement("PARM", new XmlAttribute[]{
+        new XmlAttribute("NAME", "NAME"),
+        new XmlAttribute("VALUE", name)});
+    // <PARM NAME="URL" VALUE="url"/>
+    xmlWriter.addEmptyElement("PARM", new XmlAttribute[]{
+        new XmlAttribute("NAME", "URL"),
+        new XmlAttribute("VALUE", url)});
+
+    // </CHARACTERISTIC>
+    xmlWriter.addEndElement();
+  }
 }
