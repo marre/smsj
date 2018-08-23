@@ -1,4 +1,4 @@
-package org.marre.mms;
+package org.marre.mms.smil;
 
 import org.marre.xml.XmlAttribute;
 import org.marre.xml.XmlDocument;

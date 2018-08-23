@@ -37,6 +37,7 @@ package org.marre.mms;
 import org.marre.mime.MimeBodyPart;
 import org.marre.mime.MimeMultipartRelated;
 import org.marre.mime.WapMimeEncoder;
+import org.marre.mms.smil.*;
 import org.marre.util.StringUtil;
 import org.marre.wsp.WspEncodingVersion;
 

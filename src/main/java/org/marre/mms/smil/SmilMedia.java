@@ -1,4 +1,4 @@
-package org.marre.mms;
+package org.marre.mms.smil;
 
 /**
  * Created by hanwen on 2018/8/23.

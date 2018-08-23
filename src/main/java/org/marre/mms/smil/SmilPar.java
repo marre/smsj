@@ -1,4 +1,4 @@
-package org.marre.mms;
+package org.marre.mms.smil;
 
 import java.util.ArrayList;
 import java.util.Collections;
