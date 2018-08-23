@@ -11,16 +11,31 @@ public class SmilRegion {
 
   private final String id;
 
+  /**
+   * percentage
+   */
   private int weight = 100;
 
+  /**
+   * percentage
+   */
   private int height = 100;
 
+  /**
+   * percentage
+   */
   private int left;
 
+  /**
+   * percentage
+   */
   private int right;
 
   private Fit fit = Fit.MEET;
 
+  /**
+   * @param id is {@link SmilRegion#TEXT} or {@link SmilRegion#IMAGE}
+   */
   public SmilRegion(String id) {
     this.id = id;
   }
