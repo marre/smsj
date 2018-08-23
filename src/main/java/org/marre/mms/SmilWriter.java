@@ -50,15 +50,20 @@ public class SmilWriter implements XmlWriter, AutoCloseable {
   @Override
   public void addEmptyElement(String tag) throws IOException {
 
-    addStartElement(tag);
-    addEndElement();
+    smilBody.write('<');
+    smilBody.write(tag.getBytes());
+    smilBody.write('/');
+    smilBody.write('>');
   }
 
   @Override
   public void addEmptyElement(String tag, XmlAttribute[] attribs) throws IOException {
 
-    addStartElement(tag, attribs);
-    addEndElement();
+    smilBody.write('<');
+    smilBody.write(tag.getBytes());
+    writeAttributes(smilBody, attribs);
+    smilBody.write('/');
+    smilBody.write('>');
   }
 
   @Override
