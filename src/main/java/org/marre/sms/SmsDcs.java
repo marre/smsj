@@ -37,6 +37,7 @@ package org.marre.sms;
 import java.io.Serializable;
 
 /**
+ * todo
  * Represents a SMS DCS (Data Coding Scheme).
  *
  * @author Markus Eriksson

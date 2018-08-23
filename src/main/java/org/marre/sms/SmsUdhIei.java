@@ -1,59 +1,72 @@
 package org.marre.sms;
 
-import java.io.Serializable;
-
 /**
+ * https://en.wikipedia.org/wiki/User_Data_Header
+ * <p>
  * Collection of known SMS UDH Identity Element Identifier.
  */
-public final class SmsUdhIei implements Serializable {
+public enum SmsUdhIei {
   /**
    * Concatenated short messages, 8-bit reference number.
    */
-  public static final SmsUdhIei CONCATENATED_8BIT = new SmsUdhIei((byte) 0x00, "CONCATENATED_8BIT");
+  CONCATENATED_8BIT((byte) 0x00),
   /**
    * Special SMS Message Indication.
    */
-  public static final SmsUdhIei SPECIAL_MESSAGE = new SmsUdhIei((byte) 0x01, "SPECIAL_MESSAGE");
+  SPECIAL_MESSAGE((byte) 0x01),
   /**
    * Application port addressing scheme, 8 bit address.
    */
-  public static final SmsUdhIei APP_PORT_8BIT = new SmsUdhIei((byte) 0x04, "APP_PORT_8BIT");
+  APP_PORT_8BIT((byte) 0x04),
   /**
    * Application port addressing scheme, 16 bit address.
    */
-  public static final SmsUdhIei APP_PORT_16BIT = new SmsUdhIei((byte) 0x05, "APP_PORT_16BIT");
+  APP_PORT_16BIT((byte) 0x05),
   /**
    * SMSC Control Parameters.
    */
-  public static final SmsUdhIei SMSC_CONTROL_PARAMS = new SmsUdhIei((byte) 0x06, "SMSC_CONTROL_PARAMS");
+  SMSC_CONTROL_PARAMS((byte) 0x06),
   /**
    * UDH Source Indicator.
    */
-  public static final SmsUdhIei UDH_SOURCE_INDICATOR = new SmsUdhIei((byte) 0x07, "UDH_SOURCE_INDICATOR");
+  UDH_SOURCE_INDICATOR((byte) 0x07),
   /**
    * Concatenated short message, 16-bit reference number.
    */
-  public static final SmsUdhIei CONCATENATED_16BIT = new SmsUdhIei((byte) 0x08, "CONCATENATED_16BIT");
+  CONCATENATED_16BIT((byte) 0x08),
   /**
    * Wireless Control Message Protocol.
    */
-  public static final SmsUdhIei WCMP = new SmsUdhIei((byte) 0x09, "WCMP");
-
+  WCMP((byte) 0x09),
   /**
    * RFC 822 E-Mail Header.
    */
-  public static final SmsUdhIei RFC822_EMAIL_HEADER = new SmsUdhIei((byte) 0x20, "RFC822_EMAIL_HEADER");
+  RFC822_EMAIL_HEADER((byte) 0x20),
   /**
    * Hyperlink format element.
    */
-  public static final SmsUdhIei HYPERLINK_FORMAT = new SmsUdhIei((byte) 0x21, "HYPERLINK_FORMAT");
+  HYPERLINK_FORMAT((byte) 0x21),
+  /**
+   * Reply Address Element
+   */
+  REPLY_ADDRESS((byte) 0x22),
+  /**
+   * Enhanced Voice Mail Information
+   */
+  ENHANCED_VOICE_MAIL((byte) 0x23),
+  /**
+   * National Language Single Shift
+   */
+  NATIONAL_LANGUAGE_SINGLE_SHIFT((byte) 0x24),
+  /**
+   * National Language Locking Shift
+   */
+  NATIONAL_LANGUAGE_LOCKING_SHIFT((byte) 0x25);
 
   private final byte value;
-  private final String name;
 
-  private SmsUdhIei(byte value, String name) {
+  SmsUdhIei(byte value) {
     this.value = value;
-    this.name = name;
   }
 
   /**
@@ -62,7 +75,7 @@ public final class SmsUdhIei implements Serializable {
    * @param value The UDH IEI value as specified in the GSM spec.
    * @return one of the statically defined SmsNpi or a new SmsNpi if unknown.
    */
-  public static SmsUdhIei valueOf(byte value) {
+  public static SmsUdhIei parse(byte value) {
     switch (value) {
       case 0x00:
         return CONCATENATED_8BIT;
@@ -84,22 +97,23 @@ public final class SmsUdhIei implements Serializable {
         return RFC822_EMAIL_HEADER;
       case 0x21:
         return HYPERLINK_FORMAT;
+      case 0x22:
+        return REPLY_ADDRESS;
+      case 0x23:
+        return ENHANCED_VOICE_MAIL;
+      case 0x24:
+        return NATIONAL_LANGUAGE_SINGLE_SHIFT;
+      case 0x25:
+        return NATIONAL_LANGUAGE_LOCKING_SHIFT;
       default:
-        return new SmsUdhIei(value, String.valueOf(value));
+        throw new IllegalArgumentException("unsupported user data header");
     }
   }
 
   /**
    * Returns the UDH IEI value as specified in the GSM spec.
-   *
-   * @return
    */
   public byte getValue() {
     return value;
-  }
-
-  @Override
-  public String toString() {
-    return name;
   }
 }
