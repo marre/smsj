@@ -39,7 +39,6 @@ import org.marre.mime.WapMimeEncoder;
 import org.marre.util.StringUtil;
 import org.marre.wsp.WspEncodingVersion;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 
@@ -61,7 +60,7 @@ public class MixedMms extends MimeMultipartMixed {
   private Date date = new Date();
 
   public MixedMms() {
-    wspEncodingVersion = WspEncodingVersion.VERSION_1_2;
+    wspEncodingVersion = WspEncodingVersion.VERSION_1_3;
   }
 
   public MixedMms(WspEncodingVersion wspEncodingVersion) {
@@ -88,7 +87,7 @@ public class MixedMms extends MimeMultipartMixed {
     this.version = version;
   }
 
-  public void writeMessage(OutputStream out) throws IOException {
+  public void writeMessage(OutputStream out) throws Exception {
     // Add headers
     if (transactionId == null || transactionId.length() == 0) {
       transactionId = StringUtil.randString(MmsConstants.DEFAULT_TRANSACTION_ID_LENGTH);

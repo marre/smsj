@@ -76,7 +76,7 @@ public class SmsWapPushMessage extends SmsPortAddressedMessage {
     this();
 
     // The current wbxml encoder can only output utf-8
-    contentType.setParam("charset", "utf-8");
+    contentType.setParam("Charset", "utf-8");
     this.pushMsg = new MimeBodyPart(buildPushMessage(pushMsg), contentType);
   }
 

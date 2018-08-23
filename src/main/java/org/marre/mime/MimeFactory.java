@@ -49,7 +49,7 @@ public final class MimeFactory {
   public static MimeBodyPart createTextBodyPart(String str, String contentType) {
     MimeBodyPart textBodyPart = new MimeBodyPart();
     MimeContentType ct = new MimeContentType(contentType);
-    ct.setParam("charset", "utf-8");
+    ct.setParam("Charset", "utf-8");
 
     byte[] data = str.getBytes(StandardCharsets.UTF_8);
 

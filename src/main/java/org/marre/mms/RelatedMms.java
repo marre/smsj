@@ -34,28 +34,196 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mms;
 
-import org.marre.mime.MimeMultipartRelated;
+import org.marre.mime.*;
+import org.marre.util.StringUtil;
+import org.marre.wsp.WspEncodingVersion;
 
-import java.io.IOException;
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.UUID;
 
 /**
  * Created by hanwen on 2018/8/20.
  */
 public class RelatedMms extends MimeMultipartRelated {
 
+  private final WspEncodingVersion wspEncodingVersion;
 
-  public void writeMessage(OutputStream out) throws IOException {
+  private WspEncodingVersion version = WspEncodingVersion.VERSION_1_0;
 
-    // todo create smil
+  private String transactionId;
 
-    // setStartBodyPart();
+  private String from;
+
+  private String subject;
+
+  private Date date = new Date();
+
+  private Smil smil = new Smil();
+
+  public RelatedMms() {
+    wspEncodingVersion = WspEncodingVersion.VERSION_1_3;
+  }
+
+  public RelatedMms(WspEncodingVersion wspEncodingVersion) {
+    this.wspEncodingVersion = wspEncodingVersion;
+  }
+
+  public void setTransactionId(String transactionId) {
+    this.transactionId = transactionId;
+  }
+
+  public void setFrom(String from) {
+    this.from = from;
+  }
+
+  public void setSubject(String subject) {
+    this.subject = subject;
+  }
+
+  public void setDate(Date date) {
+    this.date = date;
+  }
+
+  public void setVersion(WspEncodingVersion version) {
+    this.version = version;
+  }
+
+  public void setHeight(int height) {
+    this.smil.setHeight(height);
+  }
+
+  public void setWidth(int width) {
+    this.smil.setWidth(width);
+  }
+
+  public void addRegion(SmilRegion region) {
+    this.smil.addRegion(region);
+  }
+
+  public void addPar(SmilPar par) {
+    this.smil.addPar(par);
+  }
+
+  public void writeMessage(OutputStream out) throws Exception {
+
+    // Add headers
+    if (transactionId == null || transactionId.length() == 0) {
+      transactionId = StringUtil.randString(MmsConstants.DEFAULT_TRANSACTION_ID_LENGTH);
+    }
+    MmsHeaderEncoder.writeHeaderXMmsMessageType(out, MmsConstants.X_MMS_MESSAGE_TYPE_ID_M_RETRIEVE_CONF);
+    MmsHeaderEncoder.writeHeaderXMmsTransactionId(out, transactionId);
+    MmsHeaderEncoder.writeHeaderXMmsMmsVersion(out, version);
+
+    if (subject != null && subject.length() > 0) {
+      MmsHeaderEncoder.writeHeaderSubject(out, subject);
+    }
+
+    if (from != null && from.length() > 0) {
+      MmsHeaderEncoder.writeHeaderFrom(out, from);
+    }
+
+    if (date != null) {
+      MmsHeaderEncoder.writeHeaderDate(out, date);
+    }
+
+    // Add content-type
+    MmsHeaderEncoder.writeHeaderContentType(wspEncodingVersion, out, getContentType());
+
+    // Add content
+
+    setStartBodyPart(createSmilPart());
+
+    WapMimeEncoder.writeBody(wspEncodingVersion, out, this);
 
   }
 
-  public void createSmilPart() {
+  @Override
+  public void addBodyPart(MimeBodyPart bodyPart) {
+    SmilPar par = ((LinkedList<SmilPar>) smil.getParList()).getLast();
 
+    String contentType = bodyPart.getContentType().getName();
+    if (isTextType(contentType)) {
+      SmilMedia media = new SmilMedia.Text(cid());
+      par.addMedia(media);
+    } else if (isImageType(contentType)) {
+      SmilMedia media = new SmilMedia.Image(cid());
+      par.addMedia(media);
+    } else if (isAudioType(contentType)) {
+      SmilMedia media = new SmilMedia.Audio(cid());
+      par.addMedia(media);
+    } else if (isVideoType(contentType)) {
+      SmilMedia media = new SmilMedia.Video(cid());
+      par.addMedia(media);
+    }
 
+    super.addBodyPart(bodyPart);
+  }
 
+  /**
+   * add with smil region
+   *
+   * @param bodyPart  bodyPart
+   * @param refRegion SmilRegion#id
+   */
+  public void addBodyPart(MimeBodyPart bodyPart, String refRegion) {
+    SmilPar par = ((LinkedList<SmilPar>) smil.getParList()).getLast();
+
+    String contentType = bodyPart.getContentType().getName();
+    SmilMedia media;
+    if (isTextType(contentType)) {
+      media = new SmilMedia.Text(cid());
+      ((SmilMedia.Text) media).setRef(refRegion);
+      par.addMedia(media);
+    } else if (isImageType(contentType)) {
+      media = new SmilMedia.Image(cid());
+      ((SmilMedia.Image) media).setRef(refRegion);
+      par.addMedia(media);
+    } else if (isAudioType(contentType)) {
+      media = new SmilMedia.Audio(cid());
+      ((SmilMedia.Audio) media).setRef(refRegion);
+      par.addMedia(media);
+    } else if (isVideoType(contentType)) {
+      media = new SmilMedia.Video(cid());
+      ((SmilMedia.Video) media).setRef(refRegion);
+      par.addMedia(media);
+    }
+
+    super.addBodyPart(bodyPart);
+
+  }
+
+  public MimeBodyPart createSmilPart() throws Exception {
+    try (ByteArrayOutputStream os = new ByteArrayOutputStream();
+         SmilWriter writer = new SmilWriter()) {
+      writer.writeTo(os);
+
+      MimeBodyPart smilPart = new MimeBodyPart(os.toByteArray(), smil.getContentType());
+      // FIXME: Should perhaps set CID to something useful?
+      smilPart.setContentId("0000");
+      return smilPart;
+    }
+  }
+
+  public boolean isTextType(String contentType) {
+    return null != contentType && contentType.startsWith("text/");
+  }
+
+  public boolean isImageType(String contentType) {
+    return null != contentType && contentType.startsWith("image/");
+  }
+
+  public boolean isAudioType(String contentType) {
+    return null != contentType && contentType.startsWith("audio/");
+  }
+
+  public boolean isVideoType(String contentType) {
+    return null != contentType && contentType.startsWith("video/");
+  }
+
+  public String cid() {
+    return "cid:" + UUID.randomUUID().toString().replaceAll("-", "");
   }
 }

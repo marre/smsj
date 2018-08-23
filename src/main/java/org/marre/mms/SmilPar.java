@@ -17,7 +17,7 @@ public class SmilPar {
     return Collections.unmodifiableList(mediaList);
   }
 
-  public void setMedia(SmilMedia media) {
+  public void addMedia(SmilMedia media) {
     this.mediaList.add(media);
   }
 

@@ -6,9 +6,27 @@ import org.marre.xml.XmlDocument;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * one smil looks like
+ * <pre>
+ *
+ *   &lt;smil&gt;
+ *     &lt;head&gt;
+ *       &lt;root-layout/&gt;
+ *       &lt;region id="Text"/&gt;
+ *       &lt;region id="Image"/&gt;
+ *     &lt;/head&gt;
+ *     &lt;body&gt;
+ *       &lt;text src="cid:1" region="Text"/&gt;
+ *       &lt;img src="cid:2" region="Image"/&gt;
+ *     &lt;/body&gt;
+ *   &lt;/smil&gt;
+ *
+ * </pre>
+ *
  * Created by hanwen on 2018/8/22.
  */
 public class Smil implements XmlDocument {
@@ -19,9 +37,9 @@ public class Smil implements XmlDocument {
 
   private int width;
 
-  private List<SmilRegion> regionList = new ArrayList<>();
+  private List<SmilRegion> regionList = new LinkedList<>();
 
-  private List<SmilPar> parList = new ArrayList<>();
+  private List<SmilPar> parList = new LinkedList<>();
 
   public int getHeight() {
     return height;
@@ -43,7 +61,7 @@ public class Smil implements XmlDocument {
     return Collections.unmodifiableList(regionList);
   }
 
-  public void setRegion(SmilRegion region) {
+  public void addRegion(SmilRegion region) {
     this.regionList.add(region);
   }
 
@@ -51,7 +69,7 @@ public class Smil implements XmlDocument {
     return Collections.unmodifiableList(parList);
   }
 
-  public void setPar(SmilPar par) {
+  public void addPar(SmilPar par) {
     this.parList.add(par);
   }
 

@@ -5,6 +5,10 @@ package org.marre.mms;
  */
 public class SmilRegion {
 
+  public static final String TEXT = "Text";
+
+  public static final String IMAGE = "Image";
+
   private final String id;
 
   private int weight = 100;

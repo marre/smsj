@@ -57,7 +57,8 @@ public final class WspHeaderEncoder {
    * <p>
    * Content-ID is introduced in encoding version 1.3.
    */
-  public static void writeHeaderContentId(WspEncodingVersion wspEncodingVersion, OutputStream os, String contentId) throws IOException {
+  public static void
+  writeHeaderContentId(WspEncodingVersion wspEncodingVersion, OutputStream os, String contentId) throws IOException {
     int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WspConstants.HEADER_CONTENT_ID);
     if (headerId != -1) {
       WspUtil.writeShortInteger(os, headerId);
