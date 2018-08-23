@@ -35,10 +35,10 @@
 package org.marre.wap.mms;
 
 import org.marre.mime.MimeBodyPart;
-import org.marre.sms.SmsUserData;
-import org.marre.util.StringUtil;
 import org.marre.mms.MmsConstants;
 import org.marre.mms.MmsHeaderEncoder;
+import org.marre.sms.SmsUserData;
+import org.marre.util.StringUtil;
 import org.marre.wap.push.SmsWapPushMessage;
 import org.marre.wsp.WspEncodingVersion;
 
@@ -53,71 +53,76 @@ import java.io.OutputStream;
  */
 public class SmsMmsNotificationMessage extends SmsWapPushMessage {
 
-  private static final int DEFAULT_TRANSACTION_ID_LENGTH = 5;
   private static final long DEFAULT_EXPIRY = 3 * 24 * 60 * 60;
 
-  protected String transactionId_;
-  protected String from_;
-  protected String subject_;
-  protected int messageClassId_ = MmsConstants.X_MMS_MESSAGE_CLASS_ID_PERSONAL;
-  protected final long size_;
-  protected long expiry_;
-  protected final String contentLocation_;
+  private WspEncodingVersion version = WspEncodingVersion.VERSION_1_0;
+
+  private String transactionId;
+
+  private String from;
+
+  private String subject;
+
+  private int messageClassId = MmsConstants.X_MMS_MESSAGE_CLASS_ID_PERSONAL;
+
+  private final long size;
+
+  private long expiry = DEFAULT_EXPIRY;
+
+  private final String contentLocation;
 
   public SmsMmsNotificationMessage(String contentLocation, long size) {
-    super();
-
-    contentLocation_ = contentLocation;
-    transactionId_ = StringUtil.randString(DEFAULT_TRANSACTION_ID_LENGTH);
-    expiry_ = DEFAULT_EXPIRY;
-    size_ = size;
+    this.contentLocation = contentLocation;
+    this.size = size;
   }
 
   protected void writeNotificationTo(OutputStream os) throws IOException {
     // X-Mms-Message-Type (m-notification-ind)
+    if (transactionId == null || transactionId.length() == 0) {
+      transactionId = StringUtil.randString(MmsConstants.DEFAULT_TRANSACTION_ID_LENGTH);
+    }
     MmsHeaderEncoder.writeHeaderXMmsMessageType(os, MmsConstants.X_MMS_MESSAGE_TYPE_ID_M_NOTIFICATION_IND);
-    MmsHeaderEncoder.writeHeaderXMmsTransactionId(os, transactionId_);
-    // TODO
-    MmsHeaderEncoder.writeHeaderXMmsMmsVersion(os, WspEncodingVersion.VERSION_1_0);
+    MmsHeaderEncoder.writeHeaderXMmsTransactionId(os, transactionId);
+    MmsHeaderEncoder.writeHeaderXMmsMmsVersion(os, version);
 
-    if ((from_ != null) && (from_.length() > 0)) {
-      MmsHeaderEncoder.writeHeaderFrom(os, from_);
+    if (from != null && from.length() > 0) {
+      MmsHeaderEncoder.writeHeaderFrom(os, from);
     }
 
-    if ((subject_ != null) && (subject_.length() > 0)) {
-      MmsHeaderEncoder.writeHeaderSubject(os, subject_);
+    if (subject != null && subject.length() > 0) {
+      MmsHeaderEncoder.writeHeaderSubject(os, subject);
     }
 
-    MmsHeaderEncoder.writeHeaderXMmsMessageClass(os, messageClassId_);
-    MmsHeaderEncoder.writeHeaderXMmsMessageSize(os, size_);
-    MmsHeaderEncoder.writeHeaderXMmsExpiryRelative(os, expiry_);
-    MmsHeaderEncoder.writeHeaderContentLocation(os, contentLocation_);
+    MmsHeaderEncoder.writeHeaderXMmsMessageClass(os, messageClassId);
+    MmsHeaderEncoder.writeHeaderXMmsMessageSize(os, size);
+    MmsHeaderEncoder.writeHeaderXMmsExpiryRelative(os, expiry);
+    MmsHeaderEncoder.writeHeaderContentLocation(os, contentLocation);
   }
 
   public void setMessageClass(int messageClassId) {
-    messageClassId_ = messageClassId;
+    this.messageClassId = messageClassId;
   }
 
   public void setSubject(String subject) {
-    subject_ = subject;
+    this.subject = subject;
   }
 
-  public void setExpiry(int i) {
-    expiry_ = i;
+  public void setExpiry(int expiry) {
+    this.expiry = expiry;
   }
 
-  public void setFrom(String string) {
-    from_ = string;
+  public void setFrom(String from) {
+    this.from = from;
   }
 
   public void setTransactionId(String transactionId) {
-    transactionId_ = transactionId;
+    this.transactionId = transactionId;
   }
 
   @Override
   public SmsUserData getUserData() {
 
-    try (ByteArrayOutputStream baos = new ByteArrayOutputStream(256)) {
+    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
       writeNotificationTo(baos);
       pushMsg = new MimeBodyPart(baos.toByteArray(), "application/vnd.wap.mms-message");
       setXWapApplicationId("x-wap-application:mms.ua");

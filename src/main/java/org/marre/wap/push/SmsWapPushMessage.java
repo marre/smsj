@@ -118,9 +118,8 @@ public class SmsWapPushMessage extends SmsPortAddressedMessage {
 
   @Override
   public SmsUserData getUserData() {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-    try {
+    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
       //
       // WSP HEADER
       //
@@ -137,35 +136,30 @@ public class SmsWapPushMessage extends SmsPortAddressedMessage {
       //
 
       // Create headers first
-      ByteArrayOutputStream headers = new ByteArrayOutputStream();
+      try (ByteArrayOutputStream headers = new ByteArrayOutputStream()) {
 
-      // Content-type
-      WapMimeEncoder.writeContentType(wspEncodingVersion, headers, pushMsg);
+        // Content-type
+        WapMimeEncoder.writeContentType(wspEncodingVersion, headers, pushMsg);
 
-      // WAP-HEADERS
-      WapMimeEncoder.writeHeaders(wspEncodingVersion, headers, pushMsg);
+        // WAP-HEADERS
+        WapMimeEncoder.writeHeaders(wspEncodingVersion, headers, pushMsg);
 
-      // Done with the headers...
-      headers.close();
+        // Headers created, write headers lenght and headers to baos
 
-      // Headers created, write headers lenght and headers to baos
+        // HeadersLen - Length of Content-type and Headers
+        WspUtil.writeUintvar(baos, headers.size());
 
-      // HeadersLen - Length of Content-type and Headers
-      WspUtil.writeUintvar(baos, headers.size());
-
-      // Headers
-      baos.write(headers.toByteArray());
+        // Headers
+        baos.write(headers.toByteArray());
+      }
 
       // Data
       WapMimeEncoder.writeBody(wspEncodingVersion, baos, pushMsg);
 
-      // Done
-      baos.close();
+      return new SmsUserData(baos.toByteArray());
     } catch (IOException ex) {
       throw new RuntimeException(ex.getMessage());
     }
-
-    return new SmsUserData(baos.toByteArray());
   }
 
   public void setXWapApplicationId(String appId) {

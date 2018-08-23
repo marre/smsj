@@ -34,7 +34,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mms;
 
-import org.marre.mime.*;
+import org.marre.mime.MimeBodyPart;
+import org.marre.mime.MimeMultipartRelated;
+import org.marre.mime.WapMimeEncoder;
 import org.marre.util.StringUtil;
 import org.marre.wsp.WspEncodingVersion;
 
@@ -143,21 +145,21 @@ public class RelatedMms extends MimeMultipartRelated {
   @Override
   public void addBodyPart(MimeBodyPart bodyPart) {
     SmilPar par = ((LinkedList<SmilPar>) smil.getParList()).getLast();
+    SmilMedia media;
 
     String contentType = bodyPart.getContentType().getName();
     if (isTextType(contentType)) {
-      SmilMedia media = new SmilMedia.Text(cid());
-      par.addMedia(media);
+      media = new SmilMedia.Text(cid());
     } else if (isImageType(contentType)) {
-      SmilMedia media = new SmilMedia.Image(cid());
-      par.addMedia(media);
+      media = new SmilMedia.Image(cid());
     } else if (isAudioType(contentType)) {
-      SmilMedia media = new SmilMedia.Audio(cid());
-      par.addMedia(media);
+      media = new SmilMedia.Audio(cid());
     } else if (isVideoType(contentType)) {
-      SmilMedia media = new SmilMedia.Video(cid());
-      par.addMedia(media);
+      media = new SmilMedia.Video(cid());
+    } else {
+      throw new RuntimeException("unsupported content-type");
     }
+    par.addMedia(media);
 
     super.addBodyPart(bodyPart);
   }
@@ -170,26 +172,25 @@ public class RelatedMms extends MimeMultipartRelated {
    */
   public void addBodyPart(MimeBodyPart bodyPart, String refRegion) {
     SmilPar par = ((LinkedList<SmilPar>) smil.getParList()).getLast();
+    SmilMedia media;
 
     String contentType = bodyPart.getContentType().getName();
-    SmilMedia media;
     if (isTextType(contentType)) {
       media = new SmilMedia.Text(cid());
       ((SmilMedia.Text) media).setRef(refRegion);
-      par.addMedia(media);
     } else if (isImageType(contentType)) {
       media = new SmilMedia.Image(cid());
       ((SmilMedia.Image) media).setRef(refRegion);
-      par.addMedia(media);
     } else if (isAudioType(contentType)) {
       media = new SmilMedia.Audio(cid());
       ((SmilMedia.Audio) media).setRef(refRegion);
-      par.addMedia(media);
     } else if (isVideoType(contentType)) {
       media = new SmilMedia.Video(cid());
       ((SmilMedia.Video) media).setRef(refRegion);
-      par.addMedia(media);
+    } else {
+      throw new RuntimeException("unsupported content-type");
     }
+    par.addMedia(media);
 
     super.addBodyPart(bodyPart);
 
