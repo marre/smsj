@@ -34,19 +34,20 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
+import java.io.Serializable;
+
 /**
  * Baseclass for the SMS messages
  *
  * @author Markus Eriksson
  * @version $Id$
  */
-public interface SmsMessage
-{
-    /**
-     * Returns the content of this SmsMessage in form of pdus.
-     *
-     * @return Pdus
-     */
-    SmsPdu[] getPdus();
+public interface SmsMessage extends Serializable {
+  /**
+   * Returns the content of this SmsMessage in form of pdus.
+   *
+   * @return Pdus
+   */
+  SmsPdu[] getPdus();
 }
 

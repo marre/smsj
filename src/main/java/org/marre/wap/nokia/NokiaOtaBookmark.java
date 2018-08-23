@@ -26,9 +26,10 @@ import org.marre.xml.XmlAttribute;
 import org.marre.xml.XmlWriter;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 
-public class NokiaOtaBookmark {
+public class NokiaOtaBookmark implements Serializable {
 
   private final String name;
 

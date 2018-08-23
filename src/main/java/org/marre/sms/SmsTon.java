@@ -1,9 +1,11 @@
 package org.marre.sms;
 
+import java.io.Serializable;
+
 /**
  * SMS Type-Of-Number.
  */
-public final class SmsTon {
+public final class SmsTon implements Serializable {
   /**
    * "Unknown" is used when the user or network has
    * no priori information about the numbering plan. In this case, the

@@ -1,9 +1,11 @@
 package org.marre.sms;
 
+import java.io.Serializable;
+
 /**
  * SMS Numbering Plan Identification.
  */
-public final class SmsNpi {
+public final class SmsNpi implements Serializable {
   /**
    * Numbering-Plan-Identification - Unknown.
    */

@@ -36,27 +36,27 @@ package org.marre.xml;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 
 /**
  * Interface for objects that can be represented in xml form.
- * 
+ *
  * @author Markus
  * @version $Id$
  */
-public interface XmlDocument
-{
-    /**
-     * Returns the content-type of this xml document.
-     * 
-     * @return Content-type. Ex: "text/xml".
-     */
-    String getContentType();
+public interface XmlDocument extends Serializable {
+  /**
+   * Returns the content-type of this xml document.
+   *
+   * @return Content-type. Ex: "text/xml".
+   */
+  String getContentType();
 
-    /**
-     * Writes this object to the given XmlWriter.
-     *
-     * @param os
-     * @throws IOException Thrown if failed to write to xmlwriter.
-     */
-    void writeXmlTo(OutputStream os) throws Exception;
+  /**
+   * Writes this object to the given XmlWriter.
+   *
+   * @param os
+   * @throws IOException Thrown if failed to write to xmlwriter.
+   */
+  void writeXmlTo(OutputStream os) throws Exception;
 }

@@ -34,12 +34,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MimeHeader {
+public class MimeHeader implements Serializable {
 
   private final String name;
 

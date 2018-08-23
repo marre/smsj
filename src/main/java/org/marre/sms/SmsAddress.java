@@ -34,6 +34,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
+import java.io.Serializable;
+
 /**
  * Represents an phonenumber in SMSj.
  * <p>
@@ -49,7 +51,7 @@ package org.marre.sms;
  * @author Markus Eriksson
  * @version $Id$
  */
-public final class SmsAddress {
+public final class SmsAddress implements Serializable {
   private static final String ALLOWED_DIGITS = "+0123456789*#ab";
 
   private SmsTon ton = SmsTon.INTERNATIONAL;

@@ -1,9 +1,11 @@
 package org.marre.sms;
 
+import java.io.Serializable;
+
 /**
  * Collection of some known Sms port numbers.
  */
-public final class SmsPort {
+public final class SmsPort implements Serializable {
   /**
    * Port 0, often used as originator port.
    */

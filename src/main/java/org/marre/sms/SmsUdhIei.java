@@ -1,9 +1,11 @@
 package org.marre.sms;
 
+import java.io.Serializable;
+
 /**
  * Collection of known SMS UDH Identity Element Identifier.
  */
-public final class SmsUdhIei {
+public final class SmsUdhIei implements Serializable {
   /**
    * Concatenated short messages, 8-bit reference number.
    */

@@ -34,13 +34,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
+import java.io.Serializable;
+
 /**
  * Represents a SMS DCS (Data Coding Scheme).
  *
  * @author Markus Eriksson
  * @version $Id$
  */
-public class SmsDcs {
+public class SmsDcs implements Serializable {
 
   /**
    * The encoded dcs.

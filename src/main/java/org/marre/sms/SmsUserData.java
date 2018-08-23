@@ -34,11 +34,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
+import java.io.Serializable;
+
 /**
  * @author Markus Eriksson
  * @version $Id$
  */
-public class SmsUserData {
+public class SmsUserData implements Serializable {
   /**
    * The actual user data.
    */

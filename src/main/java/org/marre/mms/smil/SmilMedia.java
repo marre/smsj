@@ -1,9 +1,11 @@
 package org.marre.mms.smil;
 
+import java.io.Serializable;
+
 /**
  * Created by hanwen on 2018/8/23.
  */
-public interface SmilMedia {
+public interface SmilMedia extends Serializable {
 
   String getSrc();
 

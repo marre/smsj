@@ -1,9 +1,11 @@
 package org.marre.sms.nokia;
 
+import java.io.Serializable;
+
 /**
  * Represents the know nokia item types used in a NokiaMultipartMessage.
  */
-public final class NokiaItemType {
+public final class NokiaItemType implements Serializable {
 
   public static final NokiaItemType TEXT_ISO_8859_1 = new NokiaItemType((byte) 0x00, "TEXT_ISO_8859_1");
   public static final NokiaItemType TEXT_UNICODE = new NokiaItemType((byte) 0x01, "TEXT_UNICODE");

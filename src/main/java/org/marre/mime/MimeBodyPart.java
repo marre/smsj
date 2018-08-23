@@ -34,6 +34,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -47,7 +48,7 @@ import java.util.List;
  * @author Markus Eriksson
  * @version $Id$
  */
-public class MimeBodyPart {
+public class MimeBodyPart implements Serializable {
 
   private byte[] body;
 

@@ -34,6 +34,8 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
+import java.io.Serializable;
+
 /**
  * Represents an SMS pdu
  * <p>
@@ -44,10 +46,10 @@ package org.marre.sms;
  * @version $Id$
  */
 
-public class SmsPdu {
-  protected SmsUdhElement[] udhElements;
+public class SmsPdu implements Serializable {
+  private SmsUdhElement[] udhElements;
 
-  protected SmsUserData ud;
+  private SmsUserData ud;
 
   /**
    * Creates an empty SMS pdu object

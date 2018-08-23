@@ -34,7 +34,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.mime;
 
-public final class MimeHeaderParameter {
+import java.io.Serializable;
+
+public final class MimeHeaderParameter implements Serializable {
 
   private final String name;
 

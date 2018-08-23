@@ -36,6 +36,7 @@ package org.marre.sms;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 
 /**
  * Represents an User Data Header Element
@@ -43,7 +44,7 @@ import java.io.OutputStream;
  * @author Markus Eriksson
  * @version $Id$
  */
-public final class SmsUdhElement {
+public final class SmsUdhElement implements Serializable {
 
   protected final SmsUdhIei udhIei;
 

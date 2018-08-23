@@ -22,13 +22,15 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.nokia;
 
+import java.io.Serializable;
+
 /**
  * Used in NokiaMultipartMessages
  *
  * @author Markus Eriksson
  * @version $Id$
  */
-class NokiaPart {
+class NokiaPart implements Serializable {
 
   private final NokiaItemType itemType;
   private final byte[] itemData;

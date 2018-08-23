@@ -1,5 +1,6 @@
 package org.marre.mms.smil;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 /**
  * Created by hanwen on 2018/8/23.
  */
-public class SmilPar {
+public class SmilPar implements Serializable {
 
   private Integer dur;
 
