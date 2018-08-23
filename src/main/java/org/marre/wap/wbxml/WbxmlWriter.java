@@ -43,6 +43,7 @@ import org.marre.xml.XmlWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -256,7 +257,7 @@ public class WbxmlWriter implements XmlWriter, AutoCloseable {
   private void writeStrI(OutputStream os, String str) throws IOException {
     //Liquidterm: protection against null values
     if (str != null && str.length() > 0) {
-      os.write(str.getBytes());
+      os.write(str.getBytes(StandardCharsets.UTF_8));
       os.write(0x00);
     }
   }

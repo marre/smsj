@@ -6,6 +6,7 @@ import org.marre.xml.XmlWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Stack;
 
 /**
@@ -32,7 +33,7 @@ public class SmilWriter implements XmlWriter, AutoCloseable {
   public void addStartElement(String tag) throws IOException {
 
     smilBody.write('<');
-    smilBody.write(tag.getBytes());
+    smilBody.write(tag.getBytes(StandardCharsets.UTF_8));
     smilBody.write('>');
     stringBuf.push(tag);
   }
@@ -41,7 +42,7 @@ public class SmilWriter implements XmlWriter, AutoCloseable {
   public void addStartElement(String tag, XmlAttribute[] attribs) throws IOException {
 
     smilBody.write('<');
-    smilBody.write(tag.getBytes());
+    smilBody.write(tag.getBytes(StandardCharsets.UTF_8));
     writeAttributes(smilBody, attribs);
     smilBody.write('>');
     stringBuf.push(tag);
@@ -51,7 +52,7 @@ public class SmilWriter implements XmlWriter, AutoCloseable {
   public void addEmptyElement(String tag) throws IOException {
 
     smilBody.write('<');
-    smilBody.write(tag.getBytes());
+    smilBody.write(tag.getBytes(StandardCharsets.UTF_8));
     smilBody.write('/');
     smilBody.write('>');
   }
@@ -60,7 +61,7 @@ public class SmilWriter implements XmlWriter, AutoCloseable {
   public void addEmptyElement(String tag, XmlAttribute[] attribs) throws IOException {
 
     smilBody.write('<');
-    smilBody.write(tag.getBytes());
+    smilBody.write(tag.getBytes(StandardCharsets.UTF_8));
     writeAttributes(smilBody, attribs);
     smilBody.write('/');
     smilBody.write('>');
@@ -70,7 +71,7 @@ public class SmilWriter implements XmlWriter, AutoCloseable {
   public void addEndElement() throws IOException {
     smilBody.write('<');
     smilBody.write('/');
-    smilBody.write(stringBuf.pop().getBytes());
+    smilBody.write(stringBuf.pop().getBytes(StandardCharsets.UTF_8));
     smilBody.write('>');
   }
 
@@ -83,10 +84,10 @@ public class SmilWriter implements XmlWriter, AutoCloseable {
     os.write(' ');
     for (int i = 0; i < attribs.length; i++) {
       XmlAttribute attr = attribs[i];
-      os.write(attr.getType().getBytes());
+      os.write(attr.getType().getBytes(StandardCharsets.UTF_8));
       os.write('=');
       os.write('\"');
-      os.write(attr.getValue().getBytes());
+      os.write(attr.getValue().getBytes(StandardCharsets.UTF_8));
       os.write('\"');
       if (i != attribs.length - 1) {
         os.write(' ');

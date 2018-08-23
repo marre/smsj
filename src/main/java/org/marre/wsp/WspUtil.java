@@ -43,6 +43,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -703,15 +704,13 @@ public final class WspUtil {
   }
 
   /**
-   * Writes an "extension media" in pdu format to the given output stream. It
-   * currently only handles ASCII chars, but should be extended to work with
-   * other charsets.
+   * Writes an "extension media" in pdu format to the given output stream.
    *
    * @param theOs  Stream to write to
    * @param theStr Text to write
    */
   public static void writeExtensionMedia(OutputStream theOs, String theStr) throws IOException {
-    theOs.write(theStr.getBytes());
+    theOs.write(theStr.getBytes(StandardCharsets.ISO_8859_1));
     theOs.write((byte) 0x00);
   }
 
@@ -723,7 +722,7 @@ public final class WspUtil {
      * part of the contents. Quote = <Octet 127> End-of-string = <Octet 0>
      */
 
-    byte[] strBytes = theStr.getBytes();
+    byte[] strBytes = theStr.getBytes(StandardCharsets.ISO_8859_1);
 
     if ((strBytes[0] & 0x80) > 0x00) {
       theOs.write(127);
@@ -742,7 +741,7 @@ public final class WspUtil {
     // <Octet 34>
     theOs.write(34);
 
-    theOs.write(theStr.getBytes());
+    theOs.write(theStr.getBytes(StandardCharsets.ISO_8859_1));
     theOs.write(0x00);
   }
 
@@ -752,7 +751,7 @@ public final class WspUtil {
      *
      */
 
-    byte[] strBytes = theStr.getBytes();
+    byte[] strBytes = theStr.getBytes(StandardCharsets.ISO_8859_1);
 
     byte[] sorted = Arrays.copyOf(strBytes, strBytes.length);
     Arrays.sort(sorted);
