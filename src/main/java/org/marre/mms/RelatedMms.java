@@ -148,15 +148,17 @@ public class RelatedMms extends MimeMultipartRelated {
     SmilPar par = ((LinkedList<SmilPar>) smil.getParList()).getLast();
     SmilMedia media;
 
+    String cid = cid();
+    bodyPart.setContentId(cid);
     String contentType = bodyPart.getContentType().getName();
     if (isTextType(contentType)) {
-      media = new SmilMedia.Text(cid());
+      media = new SmilMedia.Text(cid);
     } else if (isImageType(contentType)) {
-      media = new SmilMedia.Image(cid());
+      media = new SmilMedia.Image(cid);
     } else if (isAudioType(contentType)) {
-      media = new SmilMedia.Audio(cid());
+      media = new SmilMedia.Audio(cid);
     } else if (isVideoType(contentType)) {
-      media = new SmilMedia.Video(cid());
+      media = new SmilMedia.Video(cid);
     } else {
       throw new RuntimeException("unsupported content-type");
     }
@@ -175,18 +177,20 @@ public class RelatedMms extends MimeMultipartRelated {
     SmilPar par = ((LinkedList<SmilPar>) smil.getParList()).getLast();
     SmilMedia media;
 
+    String cid = cid();
+    bodyPart.setContentId(cid);
     String contentType = bodyPart.getContentType().getName();
     if (isTextType(contentType)) {
-      media = new SmilMedia.Text(cid());
+      media = new SmilMedia.Text(cid);
       ((SmilMedia.Text) media).setRef(refRegion);
     } else if (isImageType(contentType)) {
-      media = new SmilMedia.Image(cid());
+      media = new SmilMedia.Image(cid);
       ((SmilMedia.Image) media).setRef(refRegion);
     } else if (isAudioType(contentType)) {
-      media = new SmilMedia.Audio(cid());
+      media = new SmilMedia.Audio(cid);
       ((SmilMedia.Audio) media).setRef(refRegion);
     } else if (isVideoType(contentType)) {
-      media = new SmilMedia.Video(cid());
+      media = new SmilMedia.Video(cid);
       ((SmilMedia.Video) media).setRef(refRegion);
     } else {
       throw new RuntimeException("unsupported content-type");

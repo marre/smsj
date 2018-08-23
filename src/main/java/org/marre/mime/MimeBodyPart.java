@@ -155,7 +155,11 @@ public class MimeBodyPart {
    * @param contentId The content-id
    */
   public void setContentId(String contentId) {
-    addHeader("Content-ID", contentId);
+    String escapedContentId = contentId
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+
+    addHeader("Content-ID", "<" + escapedContentId + ">");
   }
 
   /**
