@@ -32,7 +32,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.sms;
+package org.marre.sms.address;
 
 import java.io.Serializable;
 
@@ -67,10 +67,8 @@ public final class SmsAddress implements Serializable {
    * NPI and TON from the given address.
    *
    * @param address The address
-   * @throws SmsException Thrown if the address is invalid
    */
-  public SmsAddress(String address)
-      throws SmsException {
+  public SmsAddress(String address) {
     SmsNpi npi = SmsNpi.ISDN_TELEPHONE;
     SmsTon ton = SmsTon.INTERNATIONAL;
 
@@ -94,19 +92,16 @@ public final class SmsAddress implements Serializable {
    * @param address The address
    * @param ton     The type of number
    * @param npi     The number plan indication
-   * @throws SmsException Thrown if the address is invalid
    */
-  public SmsAddress(String address, SmsTon ton, SmsNpi npi)
-      throws SmsException {
+  public SmsAddress(String address, SmsTon ton, SmsNpi npi) {
     init(address, ton, npi);
   }
 
-  private void init(String address, SmsTon ton, SmsNpi npi)
-      throws SmsException {
+  private void init(String address, SmsTon ton, SmsNpi npi) {
     int msisdnLength;
 
     if (address == null) {
-      throw new SmsException("Empty msisdn.");
+      throw new IllegalArgumentException("Empty msisdn.");
     }
 
     this.ton = ton;
@@ -114,14 +109,14 @@ public final class SmsAddress implements Serializable {
     msisdnLength = this.address.length();
 
     if (msisdnLength == 0) {
-      throw new SmsException("Empty address.");
+      throw new IllegalArgumentException("Empty address.");
     }
 
     if (ton == SmsTon.ALPHANUMERIC) {
       this.npi = SmsNpi.UNKNOWN;
 
       if (address.length() > 11) {
-        throw new SmsException("Alphanumeric address can be at most 11 chars.");
+        throw new IllegalArgumentException("Alphanumeric address can be at most 11 chars.");
       }
     } else {
       this.npi = npi;
@@ -133,13 +128,13 @@ public final class SmsAddress implements Serializable {
       }
 
       if (msisdnLength > 20) {
-        throw new SmsException("Too long address, Max allowed is 20 digits (excluding any inital '+').");
+        throw new IllegalArgumentException("Too long address, Max allowed is 20 digits (excluding any inital '+').");
       }
 
       for (int i = 0; i < address.length(); i++) {
         char ch = address.charAt(i);
         if (ALLOWED_DIGITS.indexOf(ch) == -1) {
-          throw new SmsException("Invalid digit in address. '" + ch + "'.");
+          throw new IllegalArgumentException("Invalid digit in address. '" + ch + "'.");
         }
       }
     }
