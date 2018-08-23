@@ -32,66 +32,56 @@ import java.nio.charset.StandardCharsets;
  * @author Markus Eriksson
  * @version $Id$
  */
-public class NokiaDownloadableProfile extends NokiaMultipartMessage
-{
-    private String profileName_;
-    private byte[] screenSaver_;
-    private byte[] ringingTone_;
+public class NokiaDownloadableProfile extends NokiaMultipartMessage {
 
-    public NokiaDownloadableProfile()
-    {
+  private String profileName;
+  private byte[] screenSaver;
+  private byte[] ringingTone;
+
+  public NokiaDownloadableProfile() {
+  }
+
+  public NokiaDownloadableProfile(String profileName) {
+    setProfileName(profileName);
+  }
+
+  public void setScreenSaver(byte[] bitmapData) {
+    screenSaver = bitmapData;
+  }
+
+  public void setScreenSaver(OtaBitmap otaBitmap) {
+    screenSaver = otaBitmap.getBytes();
+  }
+
+  public void setProfileName(String profileName) {
+    this.profileName = profileName;
+  }
+
+  public void setRingingTone(byte[] ringingToneData) {
+    ringingTone = ringingToneData;
+  }
+
+  private void addProfileName(String profileName) {
+  }
+
+  @Override
+  public SmsUserData getUserData() {
+    // Reset message
+    clear();
+
+    // Create message
+    if (profileName != null) {
+      addMultipart(NokiaItemType.PROFILE_NAME, profileName.getBytes(StandardCharsets.UTF_16BE));
     }
 
-    public NokiaDownloadableProfile(String profileName)
-    {
-        setProfileName(profileName);
+    if (screenSaver != null) {
+      addMultipart(NokiaItemType.SCREEN_SAVER, screenSaver);
     }
 
-    public void setScreenSaver(byte[] bitmapData)
-    {
-        screenSaver_ = bitmapData;
+    if (ringingTone != null) {
+      addMultipart(NokiaItemType.RINGTONE, ringingTone);
     }
 
-    public void setScreenSaver(OtaBitmap otaBitmap)
-    {
-        screenSaver_ = otaBitmap.getBytes();
-    }
-
-    public void setProfileName(String profileName)
-    {
-        profileName_ = profileName;
-    }
-
-    public void setRingingTone(byte[] ringingToneData)
-    {
-        ringingTone_ = ringingToneData;
-    }
-
-    private void addProfileName(String profileName)
-    {
-    }
-
-    public SmsUserData getUserData()
-    {
-        // Reset message
-        clear();
-
-        // Create message
-        if (profileName_ != null)
-        {
-            addMultipart(NokiaItemType.PROFILE_NAME, profileName_.getBytes(StandardCharsets.UTF_16BE));
-        }
-
-        if (screenSaver_ != null)
-        {
-            addMultipart(NokiaItemType.SCREEN_SAVER, screenSaver_);
-        }
-
-        if (ringingTone_ != null)
-        {
-            addMultipart(NokiaItemType.RINGTONE, ringingTone_);
-        }
-
-        return super.getUserData();
-    }
+    return super.getUserData();
+  }
 }

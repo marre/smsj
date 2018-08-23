@@ -22,127 +22,117 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.nokia;
 
+import org.marre.sms.SmsPduUtil;
+import org.marre.sms.SmsPort;
+import org.marre.sms.SmsPortAddressedMessage;
+import org.marre.sms.SmsUserData;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.marre.sms.*;
-
 /**
  * Nokia Operator Logo message
- * 
+ *
  * @author Markus Eriksson
  * @version $Id$
  */
-public class NokiaOperatorLogo extends SmsPortAddressedMessage
-{
-    /**
-     * If set to true it will make the message two bytes shorter to make it
-     * possible to fit a 72x14 pixel image in one SMS instead of two. <br>
-     * <b>Note! </b> This will probably only work on Nokia phones...
-     */
-    private boolean discardNokiaHeaders_;
-    
-    /** The ota image as a byte array */
-    private final byte[] bitmapData_;
-    
-    /** GSM Mobile Country Code */
-    private final int mcc_;
-    
-    /** GSM Mobile Network Code */
-    private final int mnc_;
+public class NokiaOperatorLogo extends SmsPortAddressedMessage {
 
-    /**
-     * Creates a Nokia Operator Logo message
-     * 
-     * @param otaBitmap
-     * @param mcc
-     *            GSM Mobile Country Code
-     * @param mnc
-     *            GSM Mobile Network Code
-     */
-    public NokiaOperatorLogo(OtaBitmap otaBitmap, int mcc, int mnc)
-    {
-        this(otaBitmap.getBytes(), mcc, mnc);
+  /**
+   * If set to true it will make the message two bytes shorter to make it
+   * possible to fit a 72x14 pixel image in one SMS instead of two. <br>
+   * <b>Note! </b> This will probably only work on Nokia phones...
+   */
+  private boolean discardNokiaHeaders;
+
+  /**
+   * The ota image as a byte array
+   */
+  private final byte[] bitmapData;
+
+  /**
+   * GSM Mobile Country Code
+   */
+  private final int mcc;
+
+  /**
+   * GSM Mobile Network Code
+   */
+  private final int mnc;
+
+  /**
+   * Creates a Nokia Operator Logo message
+   *
+   * @param otaBitmap
+   * @param mcc       GSM Mobile Country Code
+   * @param mnc       GSM Mobile Network Code
+   */
+  public NokiaOperatorLogo(OtaBitmap otaBitmap, int mcc, int mnc) {
+    this(otaBitmap.getBytes(), mcc, mnc);
+  }
+
+  /**
+   * Creates a Nokia Operator Logo message
+   *
+   * @param bitmapData The ota image as a byte array
+   * @param mcc        GSM Mobile Country Code
+   * @param mnc        GSM Mobile Network Code
+   */
+  public NokiaOperatorLogo(byte[] bitmapData, int mcc, int mnc) {
+    super(SmsPort.NOKIA_OPERATOR_LOGO, SmsPort.ZERO);
+
+    this.bitmapData = bitmapData;
+    this.mcc = mcc;
+    this.mnc = mnc;
+  }
+
+  /**
+   * Creates a Nokia Operator Logo message
+   *
+   * @param bitmapData The ota image as a byte array
+   * @param mcc        GSM Mobile Country Code
+   * @param mnc        GSM Mobile Network Code
+   */
+  public NokiaOperatorLogo(byte[] bitmapData, int mcc, int mnc, boolean discardHeaders) {
+    super(SmsPort.NOKIA_OPERATOR_LOGO, SmsPort.ZERO);
+
+    discardNokiaHeaders = discardHeaders;
+    this.bitmapData = bitmapData;
+    this.mcc = mcc;
+    this.mnc = mnc;
+  }
+
+  @Override
+  public SmsUserData getUserData() {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
+
+    try {
+      if (!discardNokiaHeaders) {
+        // Header??
+        baos.write(0x30);
+      }
+
+      // mcc
+      SmsPduUtil.writeBcdNumber(baos, "" + mcc);
+      // mnc
+      if (mnc < 10) {
+        SmsPduUtil.writeBcdNumber(baos, "0" + mnc);
+      } else {
+        SmsPduUtil.writeBcdNumber(baos, "" + mnc);
+      }
+
+      if (!discardNokiaHeaders) {
+        // Start of content?
+        baos.write(0x0A);
+      }
+      // bitmap
+      baos.write(bitmapData);
+
+      baos.close();
+    } catch (IOException ex) {
+      throw new RuntimeException(ex);
     }
 
-    /**
-     * Creates a Nokia Operator Logo message
-     * 
-     * @param bitmapData
-     *            The ota image as a byte array
-     * @param mcc
-     *            GSM Mobile Country Code
-     * @param mnc
-     *            GSM Mobile Network Code
-     */
-    public NokiaOperatorLogo(byte[] bitmapData, int mcc, int mnc)
-    {
-        super(SmsPort.NOKIA_OPERATOR_LOGO, SmsPort.ZERO);
-        
-        bitmapData_ = bitmapData;
-        mcc_ = mcc;
-        mnc_ = mnc;
-    }
-
-    /**
-     * Creates a Nokia Operator Logo message
-     * 
-     * @param bitmapData
-     *            The ota image as a byte array
-     * @param mcc
-     *            GSM Mobile Country Code
-     * @param mnc
-     *            GSM Mobile Network Code
-     */
-    public NokiaOperatorLogo(byte[] bitmapData, int mcc, int mnc, boolean discardHeaders)
-    {
-        super(SmsPort.NOKIA_OPERATOR_LOGO, SmsPort.ZERO);
-        
-        discardNokiaHeaders_ = discardHeaders;
-        bitmapData_ = bitmapData;
-        mcc_ = mcc;
-        mnc_ = mnc;
-    }
-
-    public SmsUserData getUserData()
-    {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
-
-        try
-        {
-            if (!discardNokiaHeaders_)
-            {
-                // Header??
-                baos.write(0x30);
-            }
-
-            // mcc
-            SmsPduUtil.writeBcdNumber(baos, "" + mcc_);
-            // mnc
-            if (mnc_ < 10)
-            {
-                SmsPduUtil.writeBcdNumber(baos, "0" + mnc_);
-            }
-            else
-            {
-                SmsPduUtil.writeBcdNumber(baos, "" + mnc_);
-            }
-
-            if (!discardNokiaHeaders_)
-            {
-                // Start of content?
-                baos.write(0x0A);
-            }
-            // bitmap
-            baos.write(bitmapData_);
-
-            baos.close();
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException(ex);
-        }
-
-        return new SmsUserData(baos.toByteArray());
-    }
+    return new SmsUserData(baos.toByteArray());
+  }
 }

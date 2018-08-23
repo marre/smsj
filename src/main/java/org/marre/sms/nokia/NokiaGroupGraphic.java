@@ -22,68 +22,64 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.nokia;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import org.marre.sms.SmsPort;
 import org.marre.sms.SmsPortAddressedMessage;
 import org.marre.sms.SmsUserData;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * Nokia Group Graphic (CLI) message
  * <p>
  * <b>Note!</b> I haven't been able to verify that this class works since
  * I don't have access to a phone that can handle Group Graphic.
+ *
  * @author Markus Eriksson
  * @version $Id$
  */
-public class NokiaGroupGraphic extends SmsPortAddressedMessage
-{
-    protected final byte[] bitmapData_;
-    
-    /**
-     * Creates a group graphic SMS message
-     *
-     * @param otaBitmap An OtaBitmap object representing the
-     * image to send
-     */
-    public NokiaGroupGraphic(OtaBitmap otaBitmap)
-    {
-        this(otaBitmap.getBytes());
+public class NokiaGroupGraphic extends SmsPortAddressedMessage {
+
+  protected final byte[] bitmapData;
+
+  /**
+   * Creates a group graphic SMS message
+   *
+   * @param otaBitmap An OtaBitmap object representing the
+   *                  image to send
+   */
+  public NokiaGroupGraphic(OtaBitmap otaBitmap) {
+    this(otaBitmap.getBytes());
+  }
+
+  /**
+   * Creates a group graphic SMS message
+   * <p>
+   * The given byte array must be in the Nokia OTA image format.
+   *
+   * @param bitmapData The ota image as a byte-array
+   */
+  public NokiaGroupGraphic(byte[] bitmapData) {
+    super(SmsPort.NOKIA_CLI_LOGO, SmsPort.ZERO);
+
+    this.bitmapData = bitmapData;
+  }
+
+  @Override
+  public SmsUserData getUserData() {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
+
+    try {
+      // Type?
+      baos.write(0x30);
+      // bitmap
+      baos.write(bitmapData);
+
+      baos.close();
+    } catch (IOException ex) {
+      // Should not happen!
     }
 
-    /**
-     * Creates a group graphic SMS message
-     * <p>
-     * The given byte array must be in the Nokia OTA image format.
-     *
-     * @param bitmapData The ota image as a byte-array
-     */
-    public NokiaGroupGraphic(byte[] bitmapData)
-    {
-        super(SmsPort.NOKIA_CLI_LOGO, SmsPort.ZERO);
-        
-        bitmapData_ = bitmapData;
-    }
-
-    public SmsUserData getUserData()
-    {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
-
-        try
-        {
-            // Type?
-            baos.write(0x30);
-            // bitmap
-            baos.write(bitmapData_);
-
-            baos.close();
-        }
-        catch (IOException ex)
-        {
-            // Should not happen!
-        }
-        
-        return new SmsUserData(baos.toByteArray());
-    }
+    return new SmsUserData(baos.toByteArray());
+  }
 }

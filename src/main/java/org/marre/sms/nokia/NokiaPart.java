@@ -28,37 +28,31 @@ package org.marre.sms.nokia;
  * @author Markus Eriksson
  * @version $Id$
  */
-class NokiaPart
-{
-    private final NokiaItemType itemType_;
-    private final byte[] itemData_;
+class NokiaPart {
 
-    /**
-     *
-     * @param itemType
-     * @param itemData
-     */
-    NokiaPart(NokiaItemType itemType, byte[] itemData)
-    {
-        itemType_ = itemType;
-        itemData_ = itemData;
-    }
+  private final NokiaItemType itemType;
+  private final byte[] itemData;
 
-    /**
-     *
-     * @return
-     */
-    NokiaItemType getItemType()
-    {
-        return itemType_;
-    }
+  /**
+   * @param itemType
+   * @param itemData
+   */
+  NokiaPart(NokiaItemType itemType, byte[] itemData) {
+    this.itemType = itemType;
+    this.itemData = itemData;
+  }
 
-    /**
-     *
-     * @return
-     */
-    byte[] getData()
-    {
-        return itemData_;
-    }
+  /**
+   * @return
+   */
+  NokiaItemType getItemType() {
+    return itemType;
+  }
+
+  /**
+   * @return
+   */
+  byte[] getData() {
+    return itemData;
+  }
 }

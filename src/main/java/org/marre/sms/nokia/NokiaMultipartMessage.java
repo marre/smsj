@@ -22,87 +22,78 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.nokia;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.LinkedList;
-
 import org.marre.sms.SmsPort;
 import org.marre.sms.SmsPortAddressedMessage;
 import org.marre.sms.SmsUserData;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.LinkedList;
 
 /**
  * Baseclass for Nokia Multipart Messages
  * <p>
  * Baseclass for messages that rely on the Nokia Multipart Messages
- * 
+ *
  * @author Markus Eriksson
  * @version $Id$
  */
-abstract class NokiaMultipartMessage extends SmsPortAddressedMessage
-{
-    private final LinkedList<NokiaPart> parts_ = new LinkedList<NokiaPart>();
+abstract class NokiaMultipartMessage extends SmsPortAddressedMessage {
 
-    /**
-     * Creates a Nokia Multipart Message
-     */
-    protected NokiaMultipartMessage()
-    {
-        super(SmsPort.NOKIA_MULTIPART_MESSAGE, SmsPort.ZERO);
+  private final LinkedList<NokiaPart> parts_ = new LinkedList<>();
+
+  /**
+   * Creates a Nokia Multipart Message
+   */
+  protected NokiaMultipartMessage() {
+    super(SmsPort.NOKIA_MULTIPART_MESSAGE, SmsPort.ZERO);
+  }
+
+  /**
+   * Adds a part to this multipart message
+   *
+   * @param theItemType Type
+   * @param data        Content
+   */
+  protected void addMultipart(NokiaItemType theItemType, byte[] data) {
+    parts_.add(new NokiaPart(theItemType, data));
+  }
+
+  /**
+   * Removes all parts from the message
+   */
+  protected void clear() {
+    parts_.clear();
+  }
+
+  @Override
+  public SmsUserData getUserData() {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
+
+    // Payload
+
+    try {
+      // Header or something...
+      baos.write(0x30);
+
+      // Loop through all multiparts and add them
+      for (NokiaPart part : parts_) {
+        byte[] data = part.getData();
+
+        // Type - 1 octet
+        baos.write(part.getItemType().getTypeId());
+        // Length - 2 octets
+        baos.write((byte) ((data.length >> 8) & 0xff));
+        baos.write((byte) (data.length & 0xff));
+        // Data - n octets
+        baos.write(data);
+      }
+
+      baos.close();
+    } catch (IOException ex) {
+      throw new RuntimeException(ex);
     }
 
-    /**
-     * Adds a part to this multipart message
-     * 
-     * @param theItemType
-     *            Type
-     * @param data
-     *            Content
-     */
-    protected void addMultipart(NokiaItemType theItemType, byte[] data)
-    {
-        parts_.add(new NokiaPart(theItemType, data));
-    }
-
-    /**
-     * Removes all parts from the message
-     */
-    protected void clear()
-    {
-        parts_.clear();
-    }
-
-    public SmsUserData getUserData()
-    {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
-
-        // Payload
-
-        try
-        {
-            // Header or something...
-            baos.write(0x30);
-
-            // Loop through all multiparts and add them
-            for (NokiaPart part : parts_)
-            {
-                byte[] data = part.getData();
-
-                // Type - 1 octet
-                baos.write(part.getItemType().getTypeId());
-                // Length - 2 octets
-                baos.write((byte) ((data.length >> 8) & 0xff));
-                baos.write((byte) (data.length & 0xff));
-                // Data - n octets
-                baos.write(data);
-            }
-
-            baos.close();
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException(ex);
-        }
-
-        return new SmsUserData(baos.toByteArray());
-    }
+    return new SmsUserData(baos.toByteArray());
+  }
 }
