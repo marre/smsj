@@ -185,16 +185,16 @@ public class SmsDcs implements Serializable {
     // 1 Set Indication Active
     switch (smsWaitingInfo) {
       case VOICE:
-        dcs |= 0x04;
+        dcs |= 0x08;
         break;
       case FAX:
-        dcs |= 0x05;
+        dcs |= 0x09;
         break;
       case EMAIL:
-        dcs |= 0x06;
+        dcs |= 0x0A;
         break;
       case OTHER:
-        dcs |= 0x07;
+        dcs |= 0x0B;
         break;
       default:
     }
