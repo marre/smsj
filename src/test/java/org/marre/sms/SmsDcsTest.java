@@ -35,6 +35,10 @@
 package org.marre.sms;
 
 import junit.framework.TestCase;
+import org.marre.sms.dcs.DcsGroup;
+import org.marre.sms.dcs.SmsAlphabet;
+import org.marre.sms.dcs.SmsDcs;
+import org.marre.sms.dcs.SmsMsgClass;
 
 /**
  * @author Markus

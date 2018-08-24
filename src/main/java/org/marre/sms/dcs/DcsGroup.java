@@ -1,4 +1,4 @@
-package org.marre.sms;
+package org.marre.sms.dcs;
 
 /**
  * https://en.wikipedia.org/wiki/Data_Coding_Scheme#SMS_Data_Coding_Scheme

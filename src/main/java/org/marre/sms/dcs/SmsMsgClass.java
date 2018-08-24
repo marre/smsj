@@ -1,4 +1,4 @@
-package org.marre.sms;
+package org.marre.sms.dcs;
 
 /**
  * SMS message classes.

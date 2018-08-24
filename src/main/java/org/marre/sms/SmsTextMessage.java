@@ -34,6 +34,11 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
+import org.marre.sms.dcs.DcsGroup;
+import org.marre.sms.dcs.SmsAlphabet;
+import org.marre.sms.dcs.SmsDcs;
+import org.marre.sms.dcs.SmsMsgClass;
+
 import java.nio.charset.StandardCharsets;
 
 /**

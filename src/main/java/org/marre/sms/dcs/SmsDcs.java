@@ -32,7 +32,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.sms;
+package org.marre.sms.dcs;
 
 import java.io.Serializable;
 

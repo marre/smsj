@@ -34,6 +34,10 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
+import org.marre.sms.dcs.SmsAlphabet;
+import org.marre.sms.dcs.SmsDcs;
+import org.marre.sms.dcs.SmsMsgClass;
+
 /**
  * A port addressed message that delegates the text part to SmsTextMessage.
  *

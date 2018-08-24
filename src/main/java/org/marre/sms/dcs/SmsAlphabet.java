@@ -1,4 +1,4 @@
-package org.marre.sms;
+package org.marre.sms.dcs;
 
 /**
  * The different alphabet types.
