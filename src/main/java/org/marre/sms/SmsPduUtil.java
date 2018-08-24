@@ -35,7 +35,12 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
-import java.io.*;
+import org.marre.sms.charset.Gsm7BitCharsetProvider;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Various functions to encode and decode strings
@@ -43,90 +48,18 @@ import java.io.*;
  * @author Markus Eriksson
  */
 public final class SmsPduUtil {
-  public static final char EXT_TABLE_PREFIX = 0x1B;
+
+  public static final int SMS_OCTET_MAX_LENGTH = 140;
 
   /**
-   * Default alphabet table according to GSM 03.38.
-   * <p>
-   * See http://www.unicode.org/Public/MAPPINGS/ETSI/GSM0338.TXT
+   * Field 1 (1 octet): Length of User Data Header
+   * Field 2 (1 octet): Information Element Identifier, {@link SmsUdhIei#CONCATENATED_8BIT}
+   * Field 3 (1 octet): Length of the header, excluding the first two fields; equal to 03
+   * Field 4 (1 octet): 00-FF, CSMS reference number, must be same for all the SMS parts in the CSMS
+   * Field 5 (1 octet): 00-FF, total number of parts. The value shall remain constant for every short message which makes up the concatenated short message. If the value is zero then the receiving entity shall ignore the whole information element
+   * Field 6 (1 octet): 00-FF, this part's number in the sequence. The value shall start at 1 and increment for every short message which makes up the concatenated short message. If the value is zero or greater than the value in Field 5 then the receiving entity shall ignore the whole information element.
    */
-  public static final char[] GSM_DEFAULT_ALPHABET_TABLE = {
-      //  0 '@', '?', '$', '?', '?', '?', '?', '?',
-      '@', 163, '$', 165, 232, 233, 249, 236,
-      //  8 '?', '?', LF, '?', '?', CR, '?', '?',
-      242, 199, 10, 216, 248, 13, 197, 229,
-      // 16 'delta', '_', 'phi', 'gamma', 'lambda', 'omega', 'pi', 'psi',
-      0x394, '_', 0x3a6, 0x393, 0x39b, 0x3a9, 0x3a0, 0x3a8,
-      // 24 'sigma', 'theta', 'xi', 'EXT', '?', '?', '?', '?',
-      0x3a3, 0x398, 0x39e, 0xa0, 198, 230, 223, 201,
-      // 32 ' ', '!', '"', '#', '?', '%', '&', ''',
-      ' ', '!', '"', '#', 164, '%', '&', '\'',
-      // 40 '(', ')', '*', '+', ',', '-', '.', '/',
-      '(', ')', '*', '+', ',', '-', '.', '/',
-      // 48 '0', '1', '2', '3', '4', '5', '6', '7',
-      '0', '1', '2', '3', '4', '5', '6', '7',
-      // 56 '8', '9', ':', ';', '<', '=', '>', '?',
-      '8', '9', ':', ';', '<', '=', '>', '?',
-      // 64 '?', 'A', 'B', 'C', 'D', 'E', 'F', 'G',
-      161, 'A', 'B', 'C', 'D', 'E', 'F', 'G',
-      // 72 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
-      'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
-      // 80 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
-      'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
-      // 88 'X', 'Y', 'Z', '?', '?', '?', '?', '?',
-      'X', 'Y', 'Z', 196, 214, 209, 220, 167,
-      // 96 '?', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
-      191, 'a', 'b', 'c', 'd', 'e', 'f', 'g',
-      // 104 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-      'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-      // 112 'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
-      'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
-      // 120 'x', 'y', 'z', '?', '?', '?', '?', '?',
-      'x', 'y', 'z', 228, 246, 241, 252, 224};
-
-  /**
-   * Some alternative character encodings.
-   * <p>
-   * The table is encoded as pairs with unicode value and gsm charset value.
-   * <br>
-   * Ex:
-   *
-   * <pre>
-   * char unicode = GSM_DEFAULT_ALPHABET_ALTERNATIVES[i * 2];char gsm = GSM_DEFAULT_ALPHABET_ALTERNATIVES[i*2+1];
-   *
-   * </pre>
-   * <p>
-   * See http://www.unicode.org/Public/MAPPINGS/ETSI/GSM0338.TXT
-   */
-  public static final char[] GSM_DEFAULT_ALPHABET_ALTERNATIVES = {
-      // LATIN CAPITAL LETTER C WITH CEDILLA (see note above)
-      0x00c7, 0x09,
-      // GREEK CAPITAL LETTER ALPHA
-      0x0391, 0x41,
-      // GREEK CAPITAL LETTER BETA
-      0x0392, 0x42,
-      // GREEK CAPITAL LETTER ETA
-      0x0397, 0x48,
-      // GREEK CAPITAL LETTER IOTA
-      0x0399, 0x49,
-      // GREEK CAPITAL LETTER KAPPA
-      0x039a, 0x4b,
-      // GREEK CAPITAL LETTER MU
-      0x039c, 0x4d,
-      // GREEK CAPITAL LETTER NU
-      0x039d, 0x4e,
-      // GREEK CAPITAL LETTER OMICRON
-      0x039f, 0x4f,
-      // GREEK CAPITAL LETTER RHO
-      0x03a1, 0x50,
-      // GREEK CAPITAL LETTER TAU
-      0x03a4, 0x54,
-      // GREEK CAPITAL LETTER UPSILON
-      0x03a5, 0x55,
-      // GREEK CAPITAL LETTER CHI
-      0x03a7, 0x58,
-      // GREEK CAPITAL LETTER ZETA
-      0x0396, 0x5a};
+  public static final int CONCAT_FIELD_LENGTH = 6;
 
   /**
    * This class isn't intended to be instantiated
@@ -138,101 +71,74 @@ public final class SmsPduUtil {
    * Pack the given string into septets
    */
   public static byte[] getSeptets(String msg) {
-
-    try (ByteArrayOutputStream baos = new ByteArrayOutputStream(140)) {
-      writeSeptets(baos, msg);
-      return baos.toByteArray();
-    } catch (IOException ex) {
+    try {
+      byte[] septets = msg.getBytes(Gsm7BitCharsetProvider.CHARSET_NAME);
+      return septets2octal(septets);
+    } catch (UnsupportedEncodingException e) {
       // Should not happen...
-      throw new RuntimeException(ex);
-    }
-
-  }
-
-  /**
-   * Pack the given string into septets.
-   *
-   * @param os  Write the septets into this stream
-   * @param msg The message to encode
-   * @throws IOException Thrown when failing to write to os
-   */
-  public static void writeSeptets(OutputStream os, String msg) throws IOException {
-    int data = 0;
-    int nBits = 0;
-
-    for (int i = 0; i < msg.length(); i++) {
-      byte gsmChar = toGsmCharset(msg.charAt(i));
-
-      data |= (gsmChar << nBits);
-      nBits += 7;
-
-      while (nBits >= 8) {
-        os.write((char) (data & 0xff));
-
-        data >>>= 8;
-        nBits -= 8;
-      } // while
-    } // for
-
-    // Write remaining byte
-    if (nBits > 0) {
-      os.write(data);
+      throw new RuntimeException(e);
     }
   }
 
   /**
    * Decodes a 7-bit encoded string from the given byte array
    *
-   * @param data   The byte array to read from
-   * @param length Number of decoded chars to read from the stream
+   * @param data The byte array to read from
    * @return The decoded string
    */
-  public static String readSeptets(byte[] data, int length) {
+  public static String readSeptets(byte[] data) {
     if (data == null) {
       return null;
     }
 
-    try (ByteArrayInputStream is = new ByteArrayInputStream(data)) {
-      return readSeptets(is, length);
-    } catch (IOException ex) {
+    try {
+      byte[] septets = octal2septets(data);
+      return new String(septets, Gsm7BitCharsetProvider.CHARSET_NAME);
+    } catch (UnsupportedEncodingException e) {
       // Shouldn't happen since we are reading from a bytearray...
-      return null;
+      throw new RuntimeException(e);
     }
   }
 
   /**
-   * Decodes a 7-bit encoded string from the stream
+   * octal -> septets
    *
-   * @param is     The stream to read from
-   * @param length Number of decoded chars to read from the stream
-   * @return The decoded string
-   * @throws IOException when failing to read from is
+   * @param octal octal array
+   * @return
    */
-  public static String readSeptets(InputStream is, int length) throws IOException {
-    StringBuilder msg = new StringBuilder(160);
-
-    int rest = 0;
-    int restBits = 0;
-
-    while (msg.length() < length) {
-      int data = is.read();
-
-      if (data == -1) {
-        throw new IOException("Unexpected end of stream");
+  public static byte[] octal2septets(byte[] octal) {
+    int septetCount = (8 * octal.length) / 7;
+    byte[] septets = new byte[septetCount];
+    for (int newIndex = septets.length - 1; newIndex >= 0; --newIndex) {
+      for (int bit = 6; bit >= 0; --bit) {
+        int oldBitIndex = ((newIndex * 7) + bit);
+        if ((octal[oldBitIndex >>> 3] & (1 << (oldBitIndex & 7))) != 0) {
+          septets[newIndex] |= (1 << bit);
+        }
       }
+    }
 
-      rest |= (data << restBits);
-      restBits += 8;
+    return septets;
+  }
 
-      while ((msg.length() < length) && (restBits >= 7)) {
-        msg.append(fromGsmCharset((byte) (rest & 0x7f)));
-
-        rest >>>= 7;
-        restBits -= 7;
+  /**
+   * septets -> octal
+   *
+   * @param septets septets array
+   * @return
+   */
+  public static byte[] septets2octal(byte[] septets) {
+    int octetLength = (int) Math.ceil(((septets.length * 7)) / 8.0);
+    byte[] octets = new byte[octetLength];
+    for (int i = 0; i < septets.length; i++) {
+      for (int j = 0; j < 7; j++) {
+        if ((septets[i] & (1 << j)) != 0) {
+          int bitIndex = (i * 7) + j;
+          octets[bitIndex >>> 3] |= 1 << (bitIndex & 7);
+        }
       }
-    } // for
-
-    return msg.toString();
+    }
+    return octets;
   }
 
   /**
@@ -337,7 +243,7 @@ public final class SmsPduUtil {
     for (int i = offset; i < offset + length; i++) {
       int arrb = data[i];
       if ((data[i] & 15) <= 9) {
-        out.append("").append(data[i] & 15);
+        out.append(data[i] & 15);
       }
       if ((data[i] & 15) == 0xA) {
         out.append("*");
@@ -347,7 +253,7 @@ public final class SmsPduUtil {
       }
       arrb = (arrb >>> 4);
       if ((arrb & 15) <= 9) {
-        out.append("").append(arrb & 15);
+        out.append(arrb & 15);
       }
       if ((arrb & 15) == 0xA) {
         out.append("*");
@@ -357,58 +263,6 @@ public final class SmsPduUtil {
       }
     }
     return out.toString();
-  }
-
-  /**
-   * Convert from the GSM charset to a unicode char
-   *
-   * @param gsmChar The gsm char to convert
-   * @return Unicode representation of the given gsm char
-   */
-  public static char fromGsmCharset(byte gsmChar) {
-    return GSM_DEFAULT_ALPHABET_TABLE[gsmChar];
-  }
-
-  /**
-   * Converts a unicode string to GSM charset
-   *
-   * @param str String to convert
-   * @return The string GSM encoded
-   */
-  public static byte[] toGsmCharset(String str) {
-    byte[] gsmBytes = new byte[str.length()];
-
-    for (int i = 0; i < gsmBytes.length; i++) {
-      gsmBytes[i] = toGsmCharset(str.charAt(i));
-    }
-
-    return gsmBytes;
-  }
-
-  /**
-   * Convert a unicode char to a GSM char
-   *
-   * @param ch The unicode char to convert
-   * @return GSM representation of the given unicode char
-   */
-  public static byte toGsmCharset(char ch) {
-    // First check through the GSM charset table
-    for (int i = 0; i < GSM_DEFAULT_ALPHABET_TABLE.length; i++) {
-      if (GSM_DEFAULT_ALPHABET_TABLE[i] == ch) {
-        // Found the correct char
-        return (byte) i;
-      }
-    }
-
-    // Alternative chars.
-    for (int i = 0; i < GSM_DEFAULT_ALPHABET_ALTERNATIVES.length / 2; i += 2) {
-      if (GSM_DEFAULT_ALPHABET_ALTERNATIVES[i * 2] == ch) {
-        return (byte) (GSM_DEFAULT_ALPHABET_ALTERNATIVES[i * 2 + 1] & 0x7f);
-      }
-    }
-
-    // Couldn't find a valid char
-    return '?';
   }
 
   /**
