@@ -69,7 +69,7 @@ public class SmsTextMessage extends SmsConcatMessage {
    * @param messageClass The messageclass
    */
   public SmsTextMessage(String msg, SmsAlphabet alphabet, SmsMsgClass messageClass) {
-    this(msg, SmsDcs.getGeneralDataCodingDcs(alphabet, messageClass));
+    this(msg, SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, alphabet, messageClass));
   }
 
   /**
@@ -78,7 +78,7 @@ public class SmsTextMessage extends SmsConcatMessage {
    * @param msg The message
    */
   public SmsTextMessage(String msg) {
-    this(msg, SmsAlphabet.GSM, SmsMsgClass.CLASS_UNKNOWN);
+    this(msg, SmsAlphabet.GSM, SmsMsgClass.CLASS_1);
   }
 
   /**

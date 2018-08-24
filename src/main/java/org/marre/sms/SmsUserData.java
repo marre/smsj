@@ -65,7 +65,7 @@ public class SmsUserData implements Serializable {
   public SmsUserData(byte[] userData) {
     data = userData;
     length = userData.length;
-    dcs = SmsDcs.getGeneralDataCodingDcs(SmsAlphabet.LATIN1, SmsMsgClass.CLASS_UNKNOWN);
+    dcs = SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, SmsAlphabet.LATIN1, SmsMsgClass.CLASS_1);
   }
 
   public byte[] getData() {

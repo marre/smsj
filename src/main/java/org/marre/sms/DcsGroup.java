@@ -30,12 +30,12 @@ public enum DcsGroup {
   DATA_CODING_MESSAGE,
 
   /**
-   * Message Marked for Automatic Deletion Group: 0100xxxx-0111xxxx.
+   * DCS message marked for automatic deletion group: 0100xxxx-0111xxxx.
    */
   MARKED_FOR_AUTOMATIC_DELETION,
 
   /**
-   * Reserved coding groups:  1000xxxx-1011xxxx.
+   * DCS reserved coding groups:  1000xxxx-1011xxxx.
    */
   RESERVED
 }

@@ -34,72 +34,67 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
-import org.marre.sms.SmsDcs;
-
 import junit.framework.TestCase;
 
 /**
- * 
  * @author Markus
  * @version $Id$
  */
 
-public class SmsDcsTest extends TestCase
-{
-    public void testGeneralDataCodingGroup()
-    {
-        SmsDcs dcs;
-        
-        dcs = SmsDcs.getGeneralDataCodingDcs(SmsAlphabet.GSM, SmsMsgClass.CLASS_UNKNOWN);
-        assertEquals(SmsAlphabet.GSM, dcs.getAlphabet());
-        assertEquals(SmsMsgClass.CLASS_UNKNOWN, dcs.getMessageClass());
-        assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
+public class SmsDcsTest extends TestCase {
+  public void testGeneralDataCodingGroup() {
+    SmsDcs dcs;
 
-        dcs = SmsDcs.getGeneralDataCodingDcs(SmsAlphabet.GSM, SmsMsgClass.CLASS_0);
-        assertEquals(SmsAlphabet.GSM, dcs.getAlphabet());
-        assertEquals(SmsMsgClass.CLASS_0, dcs.getMessageClass());
-        assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
-        
-        dcs = SmsDcs.getGeneralDataCodingDcs(SmsAlphabet.GSM, SmsMsgClass.CLASS_UNKNOWN);
-        assertEquals(SmsAlphabet.GSM, dcs.getAlphabet());
-        assertEquals(SmsMsgClass.CLASS_UNKNOWN, dcs.getMessageClass());
-        assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
-        
-        dcs = SmsDcs.getGeneralDataCodingDcs(SmsAlphabet.GSM, SmsMsgClass.CLASS_0);
-        assertEquals(SmsAlphabet.GSM, dcs.getAlphabet());
-        assertEquals(SmsMsgClass.CLASS_0, dcs.getMessageClass());
-        assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
-        
-        // Test message class 
-        dcs = SmsDcs.getGeneralDataCodingDcs(SmsAlphabet.GSM, SmsMsgClass.CLASS_1);
-        assertEquals(SmsAlphabet.GSM, dcs.getAlphabet());
-        assertEquals(SmsMsgClass.CLASS_1, dcs.getMessageClass());
-        assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
-        
-        dcs = SmsDcs.getGeneralDataCodingDcs(SmsAlphabet.GSM, SmsMsgClass.CLASS_2);
-        assertEquals(SmsAlphabet.GSM, dcs.getAlphabet());
-        assertEquals(SmsMsgClass.CLASS_2, dcs.getMessageClass());
-        assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
-        
-        dcs = SmsDcs.getGeneralDataCodingDcs(SmsAlphabet.GSM, SmsMsgClass.CLASS_3);
-        assertEquals(SmsAlphabet.GSM, dcs.getAlphabet());
-        assertEquals(SmsMsgClass.CLASS_3, dcs.getMessageClass());
-        assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
-        
-        // Test alphabet 
-        dcs = SmsDcs.getGeneralDataCodingDcs(SmsAlphabet.LATIN1, SmsMsgClass.CLASS_0);
-        assertEquals(SmsAlphabet.LATIN1, dcs.getAlphabet());
-        assertEquals(SmsMsgClass.CLASS_0, dcs.getMessageClass());
-        assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
-        
-        dcs = SmsDcs.getGeneralDataCodingDcs(SmsAlphabet.UCS2, SmsMsgClass.CLASS_0);
-        assertEquals(SmsAlphabet.UCS2, dcs.getAlphabet());
-        assertEquals(SmsMsgClass.CLASS_0, dcs.getMessageClass());
-        assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
-        
-        dcs = SmsDcs.getGeneralDataCodingDcs(SmsAlphabet.RESERVED, SmsMsgClass.CLASS_0);
-        assertEquals(SmsAlphabet.RESERVED, dcs.getAlphabet());
-        assertEquals(SmsMsgClass.CLASS_0, dcs.getMessageClass());
-        assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());       
-    }
+    dcs = SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, SmsAlphabet.GSM, SmsMsgClass.CLASS_1);
+    assertEquals(SmsAlphabet.GSM, dcs.getAlphabet());
+    assertEquals(SmsMsgClass.CLASS_1, dcs.getMessageClass());
+    assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
+
+    dcs = SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, SmsAlphabet.GSM, SmsMsgClass.CLASS_0);
+    assertEquals(SmsAlphabet.GSM, dcs.getAlphabet());
+    assertEquals(SmsMsgClass.CLASS_0, dcs.getMessageClass());
+    assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
+
+    dcs = SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, SmsAlphabet.GSM, SmsMsgClass.CLASS_1);
+    assertEquals(SmsAlphabet.GSM, dcs.getAlphabet());
+    assertEquals(SmsMsgClass.CLASS_1, dcs.getMessageClass());
+    assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
+
+    dcs = SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, SmsAlphabet.GSM, SmsMsgClass.CLASS_0);
+    assertEquals(SmsAlphabet.GSM, dcs.getAlphabet());
+    assertEquals(SmsMsgClass.CLASS_0, dcs.getMessageClass());
+    assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
+
+    // Test message class
+    dcs = SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, SmsAlphabet.GSM, SmsMsgClass.CLASS_1);
+    assertEquals(SmsAlphabet.GSM, dcs.getAlphabet());
+    assertEquals(SmsMsgClass.CLASS_1, dcs.getMessageClass());
+    assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
+
+    dcs = SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, SmsAlphabet.GSM, SmsMsgClass.CLASS_2);
+    assertEquals(SmsAlphabet.GSM, dcs.getAlphabet());
+    assertEquals(SmsMsgClass.CLASS_2, dcs.getMessageClass());
+    assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
+
+    dcs = SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, SmsAlphabet.GSM, SmsMsgClass.CLASS_3);
+    assertEquals(SmsAlphabet.GSM, dcs.getAlphabet());
+    assertEquals(SmsMsgClass.CLASS_3, dcs.getMessageClass());
+    assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
+
+    // Test alphabet
+    dcs = SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, SmsAlphabet.LATIN1, SmsMsgClass.CLASS_0);
+    assertEquals(SmsAlphabet.LATIN1, dcs.getAlphabet());
+    assertEquals(SmsMsgClass.CLASS_0, dcs.getMessageClass());
+    assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
+
+    dcs = SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, SmsAlphabet.UCS2, SmsMsgClass.CLASS_0);
+    assertEquals(SmsAlphabet.UCS2, dcs.getAlphabet());
+    assertEquals(SmsMsgClass.CLASS_0, dcs.getMessageClass());
+    assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
+
+    dcs = SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, SmsAlphabet.RESERVED, SmsMsgClass.CLASS_0);
+    assertEquals(SmsAlphabet.RESERVED, dcs.getAlphabet());
+    assertEquals(SmsMsgClass.CLASS_0, dcs.getMessageClass());
+    assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
+  }
 }

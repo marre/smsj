@@ -19,9 +19,5 @@ public enum SmsMsgClass {
   /**
    * Class 3 SMS. Default meaning: TE specific (See GSM TS 07.05).
    */
-  CLASS_3,
-  /**
-   * Message with no specific message class (Often handled as an class 1 SMS).
-   */
-  CLASS_UNKNOWN
+  CLASS_3
 }

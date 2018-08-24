@@ -1,4 +1,4 @@
-package org.marre.sms.address;
+package org.marre.sms;
 
 import java.io.Serializable;
 

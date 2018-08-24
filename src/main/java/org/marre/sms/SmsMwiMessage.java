@@ -52,7 +52,7 @@ public class SmsMwiMessage extends SmsTextMessage {
   /**
    * List of MsgWaiting "objects".
    */
-  protected final LinkedList<MsgWaiting> messages = new LinkedList<MsgWaiting>();
+  protected final LinkedList<MsgWaiting> messages = new LinkedList<>();
 
   /**
    * Creates an empty message.
@@ -77,7 +77,7 @@ public class SmsMwiMessage extends SmsTextMessage {
    * @param alphabet Alphabet to use. Valid values are SmsDcs.ALPHABET_*.
    */
   public SmsMwiMessage(String text, SmsAlphabet alphabet) {
-    super(text, SmsDcs.getGeneralDataCodingDcs(alphabet, SmsMsgClass.CLASS_UNKNOWN));
+    super(text, SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, alphabet, SmsMsgClass.CLASS_1));
   }
 
   /**

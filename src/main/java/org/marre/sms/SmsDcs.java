@@ -37,7 +37,6 @@ package org.marre.sms;
 import java.io.Serializable;
 
 /**
- * todo
  * Represents a SMS DCS (Data Coding Scheme).
  *
  * @author Markus Eriksson
@@ -48,15 +47,38 @@ public class SmsDcs implements Serializable {
   /**
    * The encoded dcs.
    */
-  protected final byte dcs_;
+  private final byte dcs;
 
-  /**
-   * Creates a specific DCS.
-   *
-   * @param dcs The dcs.
-   */
-  public SmsDcs(byte dcs) {
-    dcs_ = dcs;
+  private final DcsGroup group;
+
+  private final SmsAlphabet alphabet;
+
+  private final SmsMsgClass messageClass;
+
+  private final SmsWaitingInfo waitingInfo;
+
+  public SmsDcs(byte dcs, DcsGroup group, SmsAlphabet alphabet, SmsMsgClass messageClass, SmsWaitingInfo waitingInfo) {
+    this.dcs = dcs;
+    this.group = group;
+    this.alphabet = alphabet;
+    this.messageClass = messageClass;
+    this.waitingInfo = waitingInfo;
+  }
+
+  public SmsMsgClass getMessageClass() {
+    return messageClass;
+  }
+
+  public SmsWaitingInfo getWaitingInfo() {
+    return waitingInfo;
+  }
+
+  public DcsGroup getGroup() {
+    return group;
+  }
+
+  public SmsAlphabet getAlphabet() {
+    return alphabet;
   }
 
   /**
@@ -65,18 +87,25 @@ public class SmsDcs implements Serializable {
    * @return The dcs.
    */
   public byte getValue() {
-    return dcs_;
+    return dcs;
   }
 
   /**
    * Builds a general-data-coding dcs.
    *
-   * @param alphabet     The alphabet.
-   * @param messageClass The message class.
+   * @param group    The dcs group, {@link DcsGroup#GENERAL_DATA_CODING} or {@link DcsGroup#MARKED_FOR_AUTOMATIC_DELETION}
+   * @param alphabet The alphabet.
+   * @param msgClass The message class.
    * @return A valid general data coding DCS.
    */
-  public static SmsDcs getGeneralDataCodingDcs(SmsAlphabet alphabet, SmsMsgClass messageClass) {
+  public static SmsDcs general(DcsGroup group, SmsAlphabet alphabet, SmsMsgClass msgClass) {
     byte dcs = 0x00;
+
+    switch (group) {
+      case MARKED_FOR_AUTOMATIC_DELETION:
+        dcs |= 0x40;
+      default:
+    }
 
     // Bits 3 and 2 indicate the alphabet being used, as follows :
     // Bit3 Bit2 Alphabet:
@@ -100,7 +129,7 @@ public class SmsDcs implements Serializable {
       default:
     }
 
-    switch (messageClass) {
+    switch (msgClass) {
       case CLASS_0:
         dcs |= 0x10;
         break;
@@ -113,129 +142,100 @@ public class SmsDcs implements Serializable {
       case CLASS_3:
         dcs |= 0x13;
         break;
-      case CLASS_UNKNOWN:
-        dcs |= 0x00;
+      default:
+    }
+
+    return new SmsDcs(dcs, group, alphabet, msgClass, null);
+  }
+
+  /**
+   * Builds a message-waiting dcs.
+   *
+   * @param group          The dcs group, {@link DcsGroup#MESSAGE_WAITING_DISCARD} or {@link DcsGroup#MESSAGE_WAITING_STORE_GSM} or {@link DcsGroup#MESSAGE_WAITING_STORE_UCS2}
+   * @param smsWaitingInfo
+   * @return
+   */
+  public static SmsDcs waitingInfo(DcsGroup group, SmsWaitingInfo smsWaitingInfo) {
+    byte dcs = 0x00;
+
+    SmsAlphabet alphabet = null;
+
+    // Bits 5 and 4 indicate the alphabet being used, as follows :
+    // Bit5 Bit4 Alphabet:
+    //    0   1  Default alphabet
+    //    1   0  UCS2 (16bit) [10]
+    switch (group) {
+      case MESSAGE_WAITING_DISCARD:
+        dcs |= 0xC0;
+        break;
+      case MESSAGE_WAITING_STORE_GSM: {
+        alphabet = SmsAlphabet.GSM;
+        dcs |= 0xD0;
+        break;
+      }
+      case MESSAGE_WAITING_STORE_UCS2: {
+        alphabet = SmsAlphabet.UCS2;
+        dcs |= 0xE0;
+        break;
+      }
+      default:
+    }
+
+    // Bit 3
+    // 1 Set Indication Active
+    switch (smsWaitingInfo) {
+      case VOICE:
+        dcs |= 0x04;
+        break;
+      case FAX:
+        dcs |= 0x05;
+        break;
+      case EMAIL:
+        dcs |= 0x06;
+        break;
+      case OTHER:
+        dcs |= 0x07;
         break;
       default:
     }
 
-    return new SmsDcs(dcs);
+    return new SmsDcs(dcs, group, alphabet, null, smsWaitingInfo);
   }
 
   /**
-   * Decodes the given dcs and returns the alphabet.
+   * Builds a data-coding/message-class dcs.
    *
-   * @return Returns the alphabet or NULL if it was not possible to find an alphabet for this dcs.
+   * @param alphabet
+   * @param msgClass
+   * @return {@link DcsGroup#DATA_CODING_MESSAGE}
    */
-  public SmsAlphabet getAlphabet() {
-    switch (getGroup()) {
-      case GENERAL_DATA_CODING:
-        // General Data Coding Indication
-        if (dcs_ == 0x00) {
-          return SmsAlphabet.GSM;
-        }
+  public static SmsDcs dataCoding(SmsAlphabet alphabet, SmsMsgClass msgClass) {
+    byte dcs = (byte) 0xF0;
 
-        switch (dcs_ & 0x0C) {
-          case 0x00:
-            return SmsAlphabet.GSM;
-          case 0x04:
-            return SmsAlphabet.LATIN1;
-          case 0x08:
-            return SmsAlphabet.UCS2;
-          case 0x0C:
-            return SmsAlphabet.RESERVED;
-          default:
-            return null;
-        }
-
-      case MESSAGE_WAITING_STORE_GSM:
-        return SmsAlphabet.GSM;
-
-      case MESSAGE_WAITING_STORE_UCS2:
-        return SmsAlphabet.UCS2;
-
-      case DATA_CODING_MESSAGE:
-        switch (dcs_ & 0x04) {
-          case 0x00:
-            return SmsAlphabet.GSM;
-          case 0x04:
-            return SmsAlphabet.LATIN1;
-          default:
-            return null;
-        }
-
+    switch (alphabet) {
+      case LATIN1:
+        dcs |= 0x04;
+        break;
       default:
-        return null;
     }
+
+    switch (msgClass) {
+      case CLASS_0:
+        dcs |= 0x00;
+        break;
+      case CLASS_1:
+        dcs |= 0x01;
+        break;
+      case CLASS_2:
+        dcs |= 0x02;
+        break;
+      case CLASS_3:
+        dcs |= 0x03;
+        break;
+      default:
+    }
+
+    return new SmsDcs(dcs, DcsGroup.DATA_CODING_MESSAGE, alphabet, msgClass, null);
   }
 
-  /**
-   * What group (type of message) is the given dcs.
-   *
-   * @return The matching group. Or null if unknown.
-   */
-  public DcsGroup getGroup() {
-    if ((dcs_ & 0xC0) == 0x00) {
-      return DcsGroup.GENERAL_DATA_CODING;
-    }
-
-    switch ((dcs_ & 0xF0)) {
-      case 0xC0:
-        return DcsGroup.MESSAGE_WAITING_DISCARD;
-      case 0xD0:
-        return DcsGroup.MESSAGE_WAITING_STORE_GSM;
-      case 0xE0:
-        return DcsGroup.MESSAGE_WAITING_STORE_UCS2;
-      case 0xF0:
-        return DcsGroup.DATA_CODING_MESSAGE;
-      default:
-        return null;
-    }
-  }
-
-  /**
-   * Get the message class.
-   *
-   * @return Returns the message class.
-   */
-  public SmsMsgClass getMessageClass() {
-    switch (getGroup()) {
-      case GENERAL_DATA_CODING:
-        // General Data Coding Indication
-        if (dcs_ == 0x00) {
-          return SmsMsgClass.CLASS_UNKNOWN;
-        }
-
-        switch (dcs_ & 0x13) {
-          case 0x10:
-            return SmsMsgClass.CLASS_0;
-          case 0x11:
-            return SmsMsgClass.CLASS_1;
-          case 0x12:
-            return SmsMsgClass.CLASS_2;
-          case 0x13:
-            return SmsMsgClass.CLASS_3;
-          default:
-            return SmsMsgClass.CLASS_UNKNOWN;
-        }
-
-      case DATA_CODING_MESSAGE:
-        // Data coding/message class
-        switch (dcs_ & 0x03) {
-          case 0x00:
-            return SmsMsgClass.CLASS_0;
-          case 0x01:
-            return SmsMsgClass.CLASS_1;
-          case 0x02:
-            return SmsMsgClass.CLASS_2;
-          case 0x03:
-            return SmsMsgClass.CLASS_3;
-          default:
-            return SmsMsgClass.CLASS_UNKNOWN;
-        }
-
-      default:
-        return SmsMsgClass.CLASS_UNKNOWN;
-    }
-  }
 }
