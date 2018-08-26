@@ -35,6 +35,9 @@
 package org.marre.sms;
 
 import org.marre.sms.dcs.SmsDcs;
+import org.marre.sms.ud.SmsUdhElement;
+import org.marre.sms.ud.SmsUdhUtil;
+import org.marre.sms.ud.SmsUserData;
 
 import java.io.Serializable;
 

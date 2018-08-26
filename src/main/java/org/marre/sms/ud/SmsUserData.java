@@ -32,91 +32,70 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.marre.sms;
+package org.marre.sms.ud;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import org.marre.sms.dcs.DcsGroup;
+import org.marre.sms.dcs.SmsAlphabet;
+import org.marre.sms.dcs.SmsDcs;
+import org.marre.sms.dcs.SmsMsgClass;
+
 import java.io.Serializable;
 
 /**
- * Represents an User Data Header Element
- *
  * @author Markus Eriksson
  * @version $Id$
  */
-public final class SmsUdhElement implements Serializable {
-
-  protected final SmsUdhIei udhIei;
-
-  protected final byte[] udhIeiData;
+public class SmsUserData implements Serializable {
+  /**
+   * The actual user data.
+   */
+  protected final byte[] data;
 
   /**
-   * Creates an SmsUdhElement
-   *
-   * @param udhIei
-   * @param udhIeiData
+   * Length of data, in octets or septets depending on the dcs.
    */
-  public SmsUdhElement(SmsUdhIei udhIei, byte[] udhIeiData) {
-    this.udhIei = udhIei;
-    this.udhIeiData = udhIeiData;
+  protected final int length;
+
+  /**
+   * Data Coding Scheme for this user data.
+   */
+  protected final SmsDcs dcs;
+
+  public SmsUserData(byte[] userData, int userDataLength, SmsDcs dataCodingScheme) {
+    data = userData;
+    length = userDataLength;
+    dcs = dataCodingScheme;
   }
 
-  /**
-   * Returns the total length of this UDH element.
-   * <p>
-   * The length is including the UDH data length and the UDH "header" (2 bytes)
-   *
-   * @return the length
-   */
-  public int getTotalSize() {
-    return udhIeiData.length + 2;
+  public SmsUserData(byte[] userData) {
+    data = userData;
+    length = userData.length;
+    dcs = SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, SmsAlphabet.LATIN1, SmsMsgClass.CLASS_1);
   }
 
-  /**
-   * Returns the length of the UDH iei data
-   * <p>
-   * The length returned is only the length of the data
-   *
-   * @return Length of data
-   */
-  public int getUdhIeiDataLength() {
-    return udhIeiData.length;
-  }
-
-  /**
-   * Returns the Udh Iei Data excluding the UDH "header"
-   *
-   * @return Data
-   */
-  public byte[] getUdhIeiData() {
-    return udhIeiData;
-  }
-
-  /**
-   * Return the UDH element including the UDH "header" (two bytes)
-   *
-   * @return Data
-   */
   public byte[] getData() {
-    byte[] allData = new byte[udhIeiData.length + 2];
-
-    allData[0] = (byte) (udhIei.getValue() & 0xff);
-    allData[1] = (byte) (udhIeiData.length & 0xff);
-    System.arraycopy(udhIeiData, 0, allData, 2, udhIeiData.length);
-
-    return allData;
+    return data;
   }
 
   /**
-   * Writes the UDH element including UDH "header" to the given stream
+   * Returns the length of the user data field.
+   * <p>
+   * This can be in characters or byte depending on the message (DCS). If
+   * message is 7 bit coded the length is given in septets. If 8bit or UCS2
+   * the length is in octets.
    *
-   * @param os Stream to write to
-   * @throws IOException
+   * @return The length
    */
-  public void writeTo(OutputStream os)
-      throws IOException {
-    os.write(udhIei.getValue());
-    os.write(udhIeiData.length);
-    os.write(udhIeiData);
+  public int getLength() {
+    return length;
+  }
+
+  /**
+   * Returns the data coding scheme.
+   *
+   * @return The dcs
+   */
+  public SmsDcs getDcs() {
+    return dcs;
   }
 }

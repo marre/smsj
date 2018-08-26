@@ -37,7 +37,7 @@ package org.marre.wap.mms;
 import org.marre.mime.MimeBodyPart;
 import org.marre.mms.MmsConstants;
 import org.marre.mms.MmsHeaderEncoder;
-import org.marre.sms.SmsUserData;
+import org.marre.sms.ud.SmsUserData;
 import org.marre.util.StringUtil;
 import org.marre.wap.push.SmsWapPushMessage;
 import org.marre.wsp.WspEncodingVersion;

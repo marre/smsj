@@ -1,4 +1,4 @@
-package org.marre.sms;
+package org.marre.sms.ud;
 
 /**
  * https://en.wikipedia.org/wiki/User_Data_Header

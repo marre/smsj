@@ -22,7 +22,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms.nokia;
 
-import org.marre.sms.SmsUserData;
+import org.marre.sms.ud.SmsUserData;
 
 import java.nio.charset.StandardCharsets;
 

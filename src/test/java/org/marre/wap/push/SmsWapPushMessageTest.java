@@ -38,7 +38,7 @@ import junit.framework.TestCase;
 
 import org.marre.sms.SmsPdu;
 import org.marre.sms.SmsPort;
-import org.marre.sms.SmsUserData;
+import org.marre.sms.ud.SmsUserData;
 import org.marre.util.StringUtil;
 import org.marre.wap.nokia.NokiaOtaBrowserSettings;
 

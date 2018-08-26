@@ -39,7 +39,7 @@ import org.marre.mime.MimeContentType;
 import org.marre.mime.WapMimeEncoder;
 import org.marre.sms.SmsPort;
 import org.marre.sms.SmsPortAddressedMessage;
-import org.marre.sms.SmsUserData;
+import org.marre.sms.ud.SmsUserData;
 import org.marre.wap.wbxml.WbxmlDocument;
 import org.marre.wsp.WspConstants;
 import org.marre.wsp.WspEncodingVersion;

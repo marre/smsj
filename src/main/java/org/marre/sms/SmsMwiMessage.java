@@ -38,6 +38,8 @@ import org.marre.sms.dcs.DcsGroup;
 import org.marre.sms.dcs.SmsAlphabet;
 import org.marre.sms.dcs.SmsDcs;
 import org.marre.sms.dcs.SmsMsgClass;
+import org.marre.sms.ud.SmsUdhElement;
+import org.marre.sms.ud.SmsUdhIei;
 
 import java.util.Iterator;
 import java.util.LinkedList;

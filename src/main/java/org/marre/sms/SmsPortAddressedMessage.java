@@ -34,6 +34,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
+import org.marre.sms.ud.SmsUdhElement;
+import org.marre.sms.ud.SmsUdhUtil;
+
 /**
  * Base class for all port adressed messages.
  * <p>
