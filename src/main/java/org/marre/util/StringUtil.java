@@ -35,6 +35,7 @@
 package org.marre.util;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Various functions to encode and decode strings.
@@ -45,7 +46,7 @@ public final class StringUtil {
 
   private static final char[] RANDOM_CHARS = "abcdefghijklmnopqrstuvwxyz1234567890".toCharArray();
 
-  private static final Random RND = new Random();
+  private static final Random RND = ThreadLocalRandom.current();
 
   /**
    * This class isn't intended to be instantiated.

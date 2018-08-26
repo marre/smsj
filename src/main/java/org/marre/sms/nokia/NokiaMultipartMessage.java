@@ -68,11 +68,10 @@ abstract class NokiaMultipartMessage extends SmsPortAddressedMessage {
 
   @Override
   public SmsUserData getUserData() {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
 
     // Payload
 
-    try {
+    try (ByteArrayOutputStream baos = new ByteArrayOutputStream(140)) {
       // Header or something...
       baos.write(0x30);
 
@@ -89,11 +88,10 @@ abstract class NokiaMultipartMessage extends SmsPortAddressedMessage {
         baos.write(data);
       }
 
-      baos.close();
+      return new SmsUserData(baos.toByteArray());
     } catch (IOException ex) {
       throw new RuntimeException(ex);
     }
 
-    return new SmsUserData(baos.toByteArray());
   }
 }

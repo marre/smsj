@@ -34,11 +34,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
+import org.marre.sms.charset.Gsm7BitCharsetProvider;
 import org.marre.sms.dcs.DcsGroup;
 import org.marre.sms.dcs.SmsAlphabet;
 import org.marre.sms.dcs.SmsDcs;
 import org.marre.sms.dcs.SmsMsgClass;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -141,22 +143,29 @@ public class SmsTextMessage extends SmsConcatMessage {
   public SmsUserData getUserData() {
     SmsUserData ud;
 
+    byte[] bytes;
     switch (dcs.getAlphabet()) {
       case GSM:
-        ud = new SmsUserData(SmsPduUtil.getSeptets(text), text.length(), dcs);
+        try {
+          bytes = text.getBytes(Gsm7BitCharsetProvider.CHARSET_NAME);
+          ud = new SmsUserData(bytes, bytes.length, dcs);
+        } catch (UnsupportedEncodingException e) {
+          throw new RuntimeException(e);
+        }
         break;
 
       case LATIN1:
-        ud = new SmsUserData(text.getBytes(StandardCharsets.ISO_8859_1), text.length(), dcs);
+        bytes = text.getBytes(StandardCharsets.ISO_8859_1);
+        ud = new SmsUserData(bytes, bytes.length, dcs);
         break;
 
       case UCS2:
-        ud = new SmsUserData(text.getBytes(StandardCharsets.UTF_16BE), text.length() * 2, dcs);
+        bytes = text.getBytes(StandardCharsets.UTF_16BE);
+        ud = new SmsUserData(bytes, bytes.length, dcs);
         break;
 
       default:
-        ud = null;
-        break;
+        return null;
     }
 
     return ud;

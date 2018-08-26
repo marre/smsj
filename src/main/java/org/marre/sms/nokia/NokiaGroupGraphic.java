@@ -67,19 +67,17 @@ public class NokiaGroupGraphic extends SmsPortAddressedMessage {
 
   @Override
   public SmsUserData getUserData() {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
-
-    try {
+    try (ByteArrayOutputStream baos = new ByteArrayOutputStream(140)) {
       // Type?
       baos.write(0x30);
       // bitmap
       baos.write(bitmapData);
 
-      baos.close();
+      return new SmsUserData(baos.toByteArray());
     } catch (IOException ex) {
       // Should not happen!
+      throw new RuntimeException(ex);
     }
 
-    return new SmsUserData(baos.toByteArray());
   }
 }

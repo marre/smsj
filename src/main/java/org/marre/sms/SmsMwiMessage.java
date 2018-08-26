@@ -244,4 +244,48 @@ public class SmsMwiMessage extends SmsTextMessage {
       return storeMessage;
     }
   }
+
+  /**
+   * Message Waiting Profiles
+   */
+  public enum MwiProfile {
+    /**
+     * Profile ID 1. (Default)
+     */
+    ID_1,
+    /**
+     * Profile ID 2.
+     */
+    ID_2,
+    /**
+     * Profile ID 3.
+     */
+    ID_3,
+    /**
+     * Profile ID 4.
+     */
+    ID_4
+  }
+
+  /**
+   * Supported MWI types.
+   */
+  public enum MwiType {
+    /**
+     * Message waiting type : VOICE
+     */
+    VOICE,
+    /**
+     * Message waiting type : FAX
+     */
+    FAX,
+    /**
+     * Message waiting type : EMAIL
+     */
+    EMAIL,
+    /**
+     * Message waiting type : VIDEO
+     */
+    VIDEO
+  }
 }

@@ -35,12 +35,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.marre.sms;
 
-import org.marre.sms.charset.Gsm7BitCharsetProvider;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 /**
  * Various functions to encode and decode strings
@@ -49,55 +46,10 @@ import java.io.UnsupportedEncodingException;
  */
 public final class SmsPduUtil {
 
-  public static final int SMS_OCTET_MAX_LENGTH = 140;
-
-  /**
-   * Field 1 (1 octet): Length of User Data Header
-   * Field 2 (1 octet): Information Element Identifier, {@link SmsUdhIei#CONCATENATED_8BIT}
-   * Field 3 (1 octet): Length of the header, excluding the first two fields; equal to 03
-   * Field 4 (1 octet): 00-FF, CSMS reference number, must be same for all the SMS parts in the CSMS
-   * Field 5 (1 octet): 00-FF, total number of parts. The value shall remain constant for every short message which makes up the concatenated short message. If the value is zero then the receiving entity shall ignore the whole information element
-   * Field 6 (1 octet): 00-FF, this part's number in the sequence. The value shall start at 1 and increment for every short message which makes up the concatenated short message. If the value is zero or greater than the value in Field 5 then the receiving entity shall ignore the whole information element.
-   */
-  public static final int CONCAT_FIELD_LENGTH = 6;
-
   /**
    * This class isn't intended to be instantiated
    */
   private SmsPduUtil() {
-  }
-
-  /**
-   * Pack the given string into septets
-   */
-  public static byte[] getSeptets(String msg) {
-    try {
-      byte[] septets = msg.getBytes(Gsm7BitCharsetProvider.CHARSET_NAME);
-      return septets2octal(septets);
-    } catch (UnsupportedEncodingException e) {
-      // Should not happen...
-      throw new RuntimeException(e);
-    }
-  }
-
-  /**
-   * Decodes a 7-bit encoded string from the given byte array
-   *
-   * @param data The byte array to read from
-   * @return The decoded string
-   */
-  public static String readSeptets(byte[] data) {
-    if (data == null) {
-      return null;
-    }
-
-    try {
-      byte[] septets = octal2septets(data);
-      return new String(septets, Gsm7BitCharsetProvider.CHARSET_NAME);
-    } catch (UnsupportedEncodingException e) {
-      // Shouldn't happen since we are reading from a bytearray...
-      throw new RuntimeException(e);
-    }
   }
 
   /**
@@ -138,6 +90,7 @@ public final class SmsPduUtil {
         }
       }
     }
+
     return octets;
   }
 
@@ -263,34 +216,5 @@ public final class SmsPduUtil {
       }
     }
     return out.toString();
-  }
-
-  /**
-   * @param src
-   * @param srcStart
-   * @param dest
-   * @param destStart
-   * @param destBitOffset
-   * @param lengthInBits  In bits
-   */
-  public static void arrayCopy(byte[] src, int srcStart,
-                               byte[] dest, int destStart, int destBitOffset,
-                               int lengthInBits) {
-    int c = 0;
-    int nBytes = lengthInBits / 8;
-    int nRestBits = lengthInBits % 8;
-
-    for (int i = 0; i < nBytes; i++) {
-      c |= ((src[srcStart + i] & 0xff) << destBitOffset);
-      dest[destStart + i] |= (byte) (c & 0xff);
-      c >>>= 8;
-    }
-
-    if (nRestBits > 0) {
-      c |= ((src[srcStart + nBytes] & (0xff >> (8 - nRestBits))) << destBitOffset);
-    }
-    if ((nRestBits + destBitOffset) > 0) {
-      dest[destStart + nBytes] |= c & 0xff;
-    }
   }
 }

@@ -46,45 +46,74 @@ import org.marre.util.StringUtil;
 
 public class SmsPduUtilTest extends TestCase
 {
+    /**
+     * @param src
+     * @param srcStart
+     * @param dest
+     * @param destStart
+     * @param destBitOffset
+     * @param lengthInBits  In bits
+     */
+    public static void arrayCopy(byte[] src, int srcStart,
+                                 byte[] dest, int destStart, int destBitOffset,
+                                 int lengthInBits) {
+        int c = 0;
+        int nBytes = lengthInBits / 8;
+        int nRestBits = lengthInBits % 8;
+
+        for (int i = 0; i < nBytes; i++) {
+            c |= ((src[srcStart + i] & 0xff) << destBitOffset);
+            dest[destStart + i] |= (byte) (c & 0xff);
+            c >>>= 8;
+        }
+
+        if (nRestBits > 0) {
+            c |= ((src[srcStart + nBytes] & (0xff >> (8 - nRestBits))) << destBitOffset);
+        }
+        if ((nRestBits + destBitOffset) > 0) {
+            dest[destStart + nBytes] |= c & 0xff;
+        }
+    }
+    
     public void testSeptetEncoderBitLength()
     {
         byte[] srcData = StringUtil.hexStringToBytes("FFFFFFFFFFFFFFFF");
         byte[] dstData;
         
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 0, 64);
+        arrayCopy(srcData, 0, dstData, 0, 0, 64);
         assertEquals("FFFFFFFFFFFFFFFF", StringUtil.bytesToHexString(dstData));
 
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 0, 63);
+        arrayCopy(srcData, 0, dstData, 0, 0, 63);
         assertEquals("FFFFFFFFFFFFFF7F", StringUtil.bytesToHexString(dstData));
         
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 0, 62);
+        arrayCopy(srcData, 0, dstData, 0, 0, 62);
         assertEquals("FFFFFFFFFFFFFF3F", StringUtil.bytesToHexString(dstData));                
         
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 0, 61);
+        arrayCopy(srcData, 0, dstData, 0, 0, 61);
         assertEquals("FFFFFFFFFFFFFF1F", StringUtil.bytesToHexString(dstData));                
         
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 0, 60);
+        arrayCopy(srcData, 0, dstData, 0, 0, 60);
         assertEquals("FFFFFFFFFFFFFF0F", StringUtil.bytesToHexString(dstData));                
         
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 0, 59);
+        arrayCopy(srcData, 0, dstData, 0, 0, 59);
         assertEquals("FFFFFFFFFFFFFF07", StringUtil.bytesToHexString(dstData));                
         
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 0, 58);
+        arrayCopy(srcData, 0, dstData, 0, 0, 58);
         assertEquals("FFFFFFFFFFFFFF03", StringUtil.bytesToHexString(dstData));                
         
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 0, 57);
+        arrayCopy(srcData, 0, dstData, 0, 0, 57);
         assertEquals("FFFFFFFFFFFFFF01", StringUtil.bytesToHexString(dstData));                
         
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 0, 56);
+        arrayCopy(srcData, 0, dstData, 0, 0, 56);
         assertEquals("FFFFFFFFFFFFFF00", StringUtil.bytesToHexString(dstData));
     }
     
@@ -94,39 +123,39 @@ public class SmsPduUtilTest extends TestCase
         byte[] dstData;
         
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 0, 8);
+        arrayCopy(srcData, 0, dstData, 0, 0, 8);
         assertEquals("FF00", StringUtil.bytesToHexString(dstData));
         
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 1, 8);
+        arrayCopy(srcData, 0, dstData, 0, 1, 8);
         assertEquals("FE01", StringUtil.bytesToHexString(dstData));
 
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 2, 8);
+        arrayCopy(srcData, 0, dstData, 0, 2, 8);
         assertEquals("FC03", StringUtil.bytesToHexString(dstData));
 
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 3, 8);
+        arrayCopy(srcData, 0, dstData, 0, 3, 8);
         assertEquals("F807", StringUtil.bytesToHexString(dstData));
 
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 4, 8);
+        arrayCopy(srcData, 0, dstData, 0, 4, 8);
         assertEquals("F00F", StringUtil.bytesToHexString(dstData));
 
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 5, 8);
+        arrayCopy(srcData, 0, dstData, 0, 5, 8);
         assertEquals("E01F", StringUtil.bytesToHexString(dstData));
 
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 6, 8);
+        arrayCopy(srcData, 0, dstData, 0, 6, 8);
         assertEquals("C03F", StringUtil.bytesToHexString(dstData));
 
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 7, 8);
+        arrayCopy(srcData, 0, dstData, 0, 7, 8);
         assertEquals("807F", StringUtil.bytesToHexString(dstData));
         
         dstData = new byte[srcData.length];
-        SmsPduUtil.arrayCopy(srcData, 0, dstData, 0, 8, 8);
+        arrayCopy(srcData, 0, dstData, 0, 8, 8);
         assertEquals("00FF", StringUtil.bytesToHexString(dstData));                
     }    
     

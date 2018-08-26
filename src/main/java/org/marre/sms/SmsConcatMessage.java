@@ -35,9 +35,9 @@
 package org.marre.sms;
 
 import org.marre.sms.dcs.SmsAlphabet;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Baseclass for messages that needs to be concatenated.
@@ -51,7 +51,22 @@ import java.util.Random;
  */
 public abstract class SmsConcatMessage implements SmsMessage {
 
-  private static final Random RND = new Random();
+  public static final int MAX_OCTAL_LENGTH = 140;
+
+  /**
+   * Field 1 (1 octet): Length of User Data Header
+   * Field 2 (1 octet): Information Element Identifier, {@link SmsUdhIei#CONCATENATED_8BIT}
+   * Field 3 (1 octet): Length of the header, excluding the first two fields; equal to 03
+   * Field 4 (1 octet): 00-FF, CSMS reference number, must be same for all the SMS parts in the CSMS
+   * Field 5 (1 octet): 00-FF, total number of parts. The value shall remain constant for every short message which makes up the concatenated short message. If the value is zero then the receiving entity shall ignore the whole information element
+   * Field 6 (1 octet): 00-FF, this part's number in the sequence. The value shall start at 1 and increment for every short message which makes up the concatenated short message. If the value is zero or greater than the value in Field 5 then the receiving entity shall ignore the whole information element.
+   */
+  public static final int CONCAT_FIELD_LENGTH = 6;
+
+  /**
+   * refno rand 0-255
+   */
+  private static final Random RND = ThreadLocalRandom.current();
 
   /**
    * Creates an empty SmsConcatMessage.
@@ -77,11 +92,6 @@ public abstract class SmsConcatMessage implements SmsMessage {
    */
   public abstract SmsUdhElement[] getUdhElements();
 
-  protected SmsPdu[] createReservedPdus(SmsUdhElement[] udhElements, SmsUserData ud) {
-    // default nothing
-    throw new NotImplementedException();
-  }
-
   /**
    * Converts this message into SmsPdu:s
    * <p>
@@ -96,33 +106,18 @@ public abstract class SmsConcatMessage implements SmsMessage {
     SmsUdhElement[] udhElements = getUdhElements();
 
     SmsAlphabet alphabet = ud.getDcs().getAlphabet();
-    // for MESSAGE_WAITING_DISCARD
-    if (alphabet == null) {
-      return createOctalPdus(udhElements, ud);
-    }
 
-    switch (alphabet) {
-      case GSM:
-        return createSeptetPdus(udhElements, ud);
-      case UCS2:
-        return createUnicodePdus(udhElements, ud);
-      case LATIN1:
-        return createOctalPdus(udhElements, ud);
-      case RESERVED:
-      default:
-        return createReservedPdus(udhElements, ud);
-    }
-  }
+    int maxLength = SmsAlphabet.GSM.equals(alphabet) ? (MAX_OCTAL_LENGTH * 8) / 7 : MAX_OCTAL_LENGTH;
 
-  private SmsPdu[] createOctalPdus(SmsUdhElement[] udhElements, SmsUserData ud) {
-    int maxBytes = SmsPduUtil.SMS_OCTET_MAX_LENGTH - SmsUdhUtil.getTotalSize(udhElements);
-    // maxChars equals maxBytes
-    if (ud.getLength() <= maxBytes) {
-      // single pdu
+    // single pdu
+    if (ud.getLength() <= maxLength - SmsUdhUtil.getTotalSize(udhElements)) {
       return new SmsPdu[]{new SmsPdu(udhElements, ud)};
     }
 
-    int nMaxConcatChars = maxBytes - SmsPduUtil.CONCAT_FIELD_LENGTH;
+    return createMultiPdus(udhElements, ud, maxLength - CONCAT_FIELD_LENGTH);
+  }
+
+  private SmsPdu[] createMultiPdus(SmsUdhElement[] udhElements, SmsUserData ud, int nMaxConcatChars) {
     int refno = RND.nextInt(0xFF);
 
     // Calculate number of SMS needed
@@ -146,136 +141,21 @@ public abstract class SmsConcatMessage implements SmsMessage {
 
     // Create pdus
     for (int i = 0; i < nSms; i++) {
-      byte[] pduUd;
-      int udBytes;
-      int udLength;
-      int udOffset;
-
       // Create concat header
       pduUdhElements[0] = SmsUdhUtil.get8BitConcatUdh(refno, nSms, i + 1);
 
       // Create
       // Must concatenate messages
       // Calc pdu length
-      udOffset = nMaxConcatChars * i;
-      udBytes = ud.getLength() - udOffset;
+      int udOffset = nMaxConcatChars * i;
+      int udBytes = ud.getLength() - udOffset;
       if (udBytes > nMaxConcatChars) {
         udBytes = nMaxConcatChars;
       }
-      udLength = udBytes;
+      int udLength = udBytes;
 
-      pduUd = new byte[udBytes];
+      byte[] pduUd = new byte[udBytes];
       System.arraycopy(ud.getData(), udOffset, pduUd, 0, udBytes);
-      smsPdus[i] = new SmsPdu(pduUdhElements, pduUd, udLength, ud.getDcs());
-    }
-    return smsPdus;
-  }
-
-  private SmsPdu[] createUnicodePdus(SmsUdhElement[] udhElements, SmsUserData ud) {
-    int maxBytes = SmsPduUtil.SMS_OCTET_MAX_LENGTH - SmsUdhUtil.getTotalSize(udhElements);
-    if (ud.getLength() <= maxBytes) {
-      return new SmsPdu[]{new SmsPdu(udhElements, ud)};
-    }
-
-    int nMaxConcatChars = (maxBytes - SmsPduUtil.CONCAT_FIELD_LENGTH) / 2;
-    int refno = RND.nextInt(0xFF);
-
-    // Calculate number of SMS needed
-    int nSms = (ud.getLength() / 2) / nMaxConcatChars;
-    if (((ud.getLength() / 2) % nMaxConcatChars) > 0) {
-      nSms += 1;
-    }
-    SmsPdu[] smsPdus = new SmsPdu[nSms];
-
-    // Calculate number of UDHI
-    SmsUdhElement[] pduUdhElements;
-    if (udhElements == null) {
-      pduUdhElements = new SmsUdhElement[1];
-    } else {
-      pduUdhElements = new SmsUdhElement[udhElements.length + 1];
-
-      // Copy the UDH headers
-      System.arraycopy(udhElements, 0, pduUdhElements, 1, udhElements.length);
-    }
-
-    // Create pdus
-    for (int i = 0; i < nSms; i++) {
-      byte[] pduUd;
-      int udBytes;
-      int udLength;
-      int udOffset;
-
-      // Create concat header
-      pduUdhElements[0] = SmsUdhUtil.get8BitConcatUdh(refno, nSms, i + 1);
-
-      // Create
-      // Must concatenate messages
-      // Calc pdu length
-      udOffset = nMaxConcatChars * i;
-      udLength = (ud.getLength() / 2) - udOffset;
-      if (udLength > nMaxConcatChars) {
-        udLength = nMaxConcatChars;
-      }
-      udBytes = udLength * 2;
-
-      pduUd = new byte[udBytes];
-      System.arraycopy(ud.getData(), udOffset * 2, pduUd, 0, udBytes);
-      smsPdus[i] = new SmsPdu(pduUdhElements, pduUd, udBytes, ud.getDcs());
-    }
-    return smsPdus;
-  }
-
-  // todo
-  private SmsPdu[] createSeptetPdus(SmsUdhElement[] udhElements, SmsUserData ud) {
-    int maxBytes = SmsPduUtil.SMS_OCTET_MAX_LENGTH - SmsUdhUtil.getTotalSize(udhElements);
-    int nMaxChars = (maxBytes * 8) / 7;
-    if (ud.getLength() <= nMaxChars) {
-      return new SmsPdu[]{new SmsPdu(udhElements, ud)};
-    }
-
-    int nMaxConcatChars = ((maxBytes - SmsPduUtil.CONCAT_FIELD_LENGTH) * 8) / 7;
-    int refno = RND.nextInt(0xFF);
-
-    // Calculate number of SMS needed
-    int nSms = ud.getLength() / nMaxConcatChars;
-    if ((ud.getLength() % nMaxConcatChars) > 0) {
-      nSms += 1;
-    }
-    SmsPdu[] smsPdus = new SmsPdu[nSms];
-
-    // Calculate number of UDHI
-    SmsUdhElement[] pduUdhElements;
-    if (udhElements == null) {
-      pduUdhElements = new SmsUdhElement[1];
-    } else {
-      pduUdhElements = new SmsUdhElement[udhElements.length + 1];
-
-      // Copy the UDH headers
-      System.arraycopy(udhElements, 0, pduUdhElements, 1, udhElements.length);
-    }
-
-    // Convert septets into a string...
-    String msg = SmsPduUtil.readSeptets(ud.getData());
-
-    // Create pdus
-    for (int i = 0; i < nSms; i++) {
-      byte[] pduUd;
-      int udOffset;
-      int udLength;
-
-      // Create concat header
-      pduUdhElements[0] = SmsUdhUtil.get8BitConcatUdh(refno, nSms, i + 1);
-
-      // Create
-      // Must concatenate messages
-      // Calc pdu length
-      udOffset = nMaxConcatChars * i;
-      udLength = ud.getLength() - udOffset;
-      if (udLength > nMaxConcatChars) {
-        udLength = nMaxConcatChars;
-      }
-
-      pduUd = SmsPduUtil.getSeptets(msg.substring(udOffset, udOffset + udLength));
       smsPdus[i] = new SmsPdu(pduUdhElements, pduUd, udLength, ud.getDcs());
     }
     return smsPdus;
