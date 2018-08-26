@@ -36,44 +36,41 @@ package org.marre.xml;
 
 /**
  * Represents an xml attribute.
- * 
+ *
  * @author Markus Eriksson
  * @version $Id$
  */
-public class XmlAttribute
-{
-    private final String type_;
-    private final String value_;
+public class XmlAttribute {
 
-    /**
-     * Creates an XmlAttribute.
-     * 
-     * @param type Type
-     * @param value Value
-     */
-    public XmlAttribute(String type, String value)
-    {
-        type_ = type;
-        value_ = value;
-    }
+  private final String type;
+  private final String value;
 
-    /**
-     * Getter for type.
-     * 
-     * @return type
-     */
-    public String getType()
-    {
-        return type_;
-    }
+  /**
+   * Creates an XmlAttribute.
+   *
+   * @param type  Type
+   * @param value Value
+   */
+  public XmlAttribute(String type, String value) {
+    this.type = type;
+    this.value = value;
+  }
 
-    /**
-     * Getter for value.
-     * 
-     * @return value
-     */
-    public String getValue()
-    {
-        return value_;
-    }
+  /**
+   * Getter for type.
+   *
+   * @return type
+   */
+  public String getType() {
+    return type;
+  }
+
+  /**
+   * Getter for value.
+   *
+   * @return value
+   */
+  public String getValue() {
+    return value;
+  }
 }

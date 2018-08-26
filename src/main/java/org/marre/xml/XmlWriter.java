@@ -39,89 +39,88 @@ import java.io.OutputStream;
 
 /**
  * Simple interface to write XML documents.
- *
+ * <p>
  * Mainly created to make it simple to create both XML and WBXML documents.
- * 
+ *
  * @author Markus Eriksson
  * @version $Id$
  */
-public interface XmlWriter
-{
-    /**
-     * Sets a public ID doctype.
-     * 
-     * Must be set before any of the add or writeTo methods.
-     * 
-     * @param publicID XML public ID
-     */
-    void setDoctype(String publicID);
+public interface XmlWriter {
+  /**
+   * Sets a public ID doctype.
+   * <p>
+   * Must be set before any of the add or writeTo methods.
+   *
+   * @param publicID XML public ID
+   */
+  void setDoctype(String publicID);
 
-    /**
-     * Adds a start element tag.
-     * 
-     * Ex: &lt;TAG&gt;
-     * 
-     * @param tag tag
-     * @throws IOException io error
-     */
-    void addStartElement(String tag) throws IOException;
+  /**
+   * Adds a start element tag.
+   * <p>
+   * Ex: &lt;TAG&gt;
+   *
+   * @param tag tag
+   * @throws IOException io error
+   */
+  void addStartElement(String tag) throws IOException;
 
-    /**
-     * Adds a start element tag with attributes.
-     * 
-     * Ex: &lt;TAG attrib="value"&gt;
-     * 
-     * @param tag Tag
-     * @param attribs Attributes
-     * @throws IOException io error
-     */
-    void addStartElement(String tag, XmlAttribute[] attribs) throws IOException;
+  /**
+   * Adds a start element tag with attributes.
+   * <p>
+   * Ex: &lt;TAG attrib="value"&gt;
+   *
+   * @param tag     Tag
+   * @param attribs Attributes
+   * @throws IOException io error
+   */
+  void addStartElement(String tag, XmlAttribute[] attribs) throws IOException;
 
-    /**
-     * Adds an empty element tag.
-     * 
-     * Ex: &lt;TAG/&gt;
-     * 
-     * @param tag Tag
-     * @throws IOException io error
-     */
-    void addEmptyElement(String tag) throws IOException;
+  /**
+   * Adds an empty element tag.
+   * <p>
+   * Ex: &lt;TAG/&gt;
+   *
+   * @param tag Tag
+   * @throws IOException io error
+   */
+  void addEmptyElement(String tag) throws IOException;
 
-    /**
-     * Adds an empty start element tag with attributes.
-     * 
-     * Ex: &lt;TAG attrib="value"/&gt;
-     * 
-     * @param tag Tag
-     * @param attribs Attributes
-     * @throws IOException io error
-     */
-    void addEmptyElement(String tag, XmlAttribute[] attribs) throws IOException;
+  /**
+   * Adds an empty start element tag with attributes.
+   * <p>
+   * Ex: &lt;TAG attrib="value"/&gt;
+   *
+   * @param tag     Tag
+   * @param attribs Attributes
+   * @throws IOException io error
+   */
+  void addEmptyElement(String tag, XmlAttribute[] attribs) throws IOException;
 
-    /**
-     * Adds an end element tag.
-     * 
-     * Ex &lt;/TAG&gt;
-     * 
-     * @throws IOException io error
-     */
-    void addEndElement() throws IOException;
+  /**
+   * Adds an end element tag.
+   * <p>
+   * Ex &lt;/TAG&gt;
+   *
+   * @throws IOException io error
+   */
+  void addEndElement() throws IOException;
 
-    /**
-     * Adds a segment of text.
-     * 
-     * @param str Text to add
-     * @throws IOException io error
-     */
-    void addCharacters(String str) throws IOException;
-    
-    /**
-     * Flushes the xml document.
-     * 
-     * Must be called to be sure that the document is correctly created.
-     * 
-     * @throws IOException io error
-     * @param os
-     */
-    void writeTo(OutputStream os) throws IOException;
+  /**
+   * Adds a segment of text.
+   *
+   * @param str Text to add
+   * @throws IOException io error
+   */
+  void addCharacters(String str) throws IOException;
+
+  /**
+   * Flushes the xml document.
+   * <p>
+   * Must be called to be sure that the document is correctly created.
+   *
+   * @param os
+   * @throws IOException io error
+   */
+  void writeTo(OutputStream os) throws IOException;
 }
