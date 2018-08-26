@@ -1002,7 +1002,8 @@ public final class WspUtil {
   }
 
   public static void writeParameter(WspEncodingVersion wspEncodingVersion, OutputStream os, String name, String value) throws IOException {
-    int parameterType = WspUtil.getParameterType(name);
+    String theNameStr = name.toLowerCase();
+    int parameterType = WspUtil.getParameterType(theNameStr);
     int wellKnownParameter = WspUtil.getWellKnownParameterId(wspEncodingVersion, parameterType);
 
     if (wellKnownParameter == -1) {

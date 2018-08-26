@@ -150,7 +150,7 @@ public class RelatedMms extends MimeMultipartRelated {
 
     String cid = cid();
     bodyPart.setContentId(cid);
-    String contentType = bodyPart.getContentType().getName();
+    String contentType = bodyPart.getContentType().getName().toLowerCase();
     if (isTextType(contentType)) {
       media = new SmilMedia.Text(cid);
     } else if (isImageType(contentType)) {
@@ -179,7 +179,7 @@ public class RelatedMms extends MimeMultipartRelated {
 
     String cid = cid();
     bodyPart.setContentId(cid);
-    String contentType = bodyPart.getContentType().getName();
+    String contentType = bodyPart.getContentType().getName().toLowerCase();
     if (isTextType(contentType)) {
       media = new SmilMedia.Text(cid);
       ((SmilMedia.Text) media).setRef(refRegion);

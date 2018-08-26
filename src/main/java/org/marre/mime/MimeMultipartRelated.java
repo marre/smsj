@@ -53,14 +53,14 @@ public class MimeMultipartRelated extends MimeMultipart {
     MimeContentType ct = super.getContentType();
     if (startBodyPart != null) {
       MimeContentType startCt = startBodyPart.getContentType();
-      MimeHeader startCid = startBodyPart.getHeader("content-id");
+      MimeHeader startCid = startBodyPart.getHeader("Content-ID");
 
       // Add content-type
-      ct.setParam("type", startCt.getValue());
+      ct.setParam("Type", startCt.getValue());
 
       // Add start parameter
       if (startCid != null) {
-        ct.setParam("start", startCid.getValue());
+        ct.setParam("Start", startCid.getValue());
       }
     }
     return ct;
