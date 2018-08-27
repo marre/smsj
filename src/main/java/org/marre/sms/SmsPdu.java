@@ -39,6 +39,8 @@ import org.marre.sms.ud.SmsUdhElement;
 import org.marre.sms.ud.SmsUdhUtil;
 import org.marre.sms.ud.SmsUserData;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
 
 /**
@@ -68,12 +70,10 @@ public class SmsPdu implements Serializable {
    *
    * @param udhElements The UDH elements
    * @param ud          The content
-   * @param udLength    The length of the content. Can be in octets or septets
-   *                    depending on the DCS
    */
-  public SmsPdu(SmsUdhElement[] udhElements, byte[] ud, int udLength, SmsDcs dcs) {
+  public SmsPdu(SmsUdhElement[] udhElements, byte[] ud, SmsDcs dcs) {
     setUserDataHeaders(udhElements);
-    setUserData(ud, udLength, dcs);
+    setUserData(ud, dcs);
   }
 
   /**
@@ -103,28 +103,44 @@ public class SmsPdu implements Serializable {
   }
 
   /**
-   * Returns the user data headers
+   * write udh to stream, the UDH fields or null if there aren't any udh
    *
-   * @return A byte array representing the UDH fields or null if there aren't
-   * any UDH
+   * @param os stream to write
+   * @throws IOException
    */
-  public byte[] getUserDataHeaders() {
+  public void writeUDHTo(OutputStream os) throws IOException {
     if (udhElements == null) {
-      return null;
+      return;
     }
 
-    return SmsUdhUtil.getByteArray(udhElements);
+    os.write(SmsUdhUtil.getBytesOf(udhElements));
+  }
+
+  /**
+   * write ud to stream
+   * 9.2.3.24 UDL + UDHL + UDH + UD
+   *
+   * @param os stream to write
+   * @throws IOException
+   */
+  public void writeTo(OutputStream os) throws IOException {
+    byte[] udh = SmsUdhUtil.getBytesOf(udhElements);
+    byte[] ud = this.ud.getData();
+
+    // UDL
+    os.write(1 + udh.length + ud.length);
+    os.write(udh);
+    os.write(ud);
   }
 
   /**
    * Sets the user data field of the message.
    *
-   * @param ud       The content
-   * @param udLength The length, can be in septets or octets depending on the DCS
-   * @param dcs      The data coding scheme
+   * @param ud  The content
+   * @param dcs The data coding scheme
    */
-  public void setUserData(byte[] ud, int udLength, SmsDcs dcs) {
-    this.ud = new SmsUserData(ud, udLength, dcs);
+  public void setUserData(byte[] ud, SmsDcs dcs) {
+    this.ud = new SmsUserData(ud, dcs);
   }
 
   /**

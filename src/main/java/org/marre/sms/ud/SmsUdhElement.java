@@ -113,8 +113,7 @@ public final class SmsUdhElement implements Serializable {
    * @param os Stream to write to
    * @throws IOException
    */
-  public void writeTo(OutputStream os)
-      throws IOException {
+  public void writeTo(OutputStream os) throws IOException {
     os.write(udhIei.getValue());
     os.write(udhIeiData.length);
     os.write(udhIeiData);

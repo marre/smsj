@@ -48,46 +48,29 @@ import java.io.Serializable;
 public class SmsUserData implements Serializable {
   /**
    * The actual user data.
+   * <p>
+   * This length can be in characters or byte depending on the message (DCS). If
+   * message is 7 bit coded the length is given in septets. If 8bit or UCS2
+   * the length is in octets.
    */
-  protected final byte[] data;
-
-  /**
-   * Length of data, in octets or septets depending on the dcs.
-   */
-  protected final int length;
-
+  private final byte[] data;
   /**
    * Data Coding Scheme for this user data.
    */
-  protected final SmsDcs dcs;
+  private final SmsDcs dcs;
 
-  public SmsUserData(byte[] userData, int userDataLength, SmsDcs dataCodingScheme) {
+  public SmsUserData(byte[] userData, SmsDcs dataCodingScheme) {
     data = userData;
-    length = userDataLength;
     dcs = dataCodingScheme;
   }
 
   public SmsUserData(byte[] userData) {
     data = userData;
-    length = userData.length;
     dcs = SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, SmsAlphabet.LATIN1, SmsMsgClass.CLASS_1);
   }
 
   public byte[] getData() {
     return data;
-  }
-
-  /**
-   * Returns the length of the user data field.
-   * <p>
-   * This can be in characters or byte depending on the message (DCS). If
-   * message is 7 bit coded the length is given in septets. If 8bit or UCS2
-   * the length is in octets.
-   *
-   * @return The length
-   */
-  public int getLength() {
-    return length;
   }
 
   /**

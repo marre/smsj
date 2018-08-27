@@ -42,6 +42,9 @@ import org.marre.sms.ud.SmsUserData;
 import org.marre.util.StringUtil;
 import org.marre.wap.nokia.NokiaOtaBrowserSettings;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 /**
  * 
  * @author Markus Eriksson
@@ -49,8 +52,7 @@ import org.marre.wap.nokia.NokiaOtaBrowserSettings;
  */
 public class SmsWapPushMessageTest extends TestCase
 {
-    public void testOtaBrowserBookmark()
-    {
+    public void testOtaBrowserBookmark() throws IOException {
         NokiaOtaBrowserSettings browserSettings = new NokiaOtaBrowserSettings();
         
         // Add a bookmark
@@ -71,9 +73,12 @@ public class SmsWapPushMessageTest extends TestCase
         
         // The message should fit within one message
         assertEquals(1, pdus.length);
-        
-        assertEquals("060504C34FC002", 
-                StringUtil.bytesToHexString(pdus[0].getUserDataHeaders()));
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        pdus[0].writeUDHTo(os);
+
+        assertEquals("060504C34FC002",
+                StringUtil.bytesToHexString(os.toByteArray()));
         assertEquals("00062C1F2A6170706C69636174696F6E2F782D7761702D70726F762E62726F777365722D73657474696E67730081EA01016A0045C67F0187151103576170000187171103687474703A2F2F7761702E646B000101", 
                 StringUtil.bytesToHexString(pdus[0].getUserData().getData()));
     }

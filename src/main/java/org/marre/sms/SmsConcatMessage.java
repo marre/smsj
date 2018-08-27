@@ -114,7 +114,7 @@ public abstract class SmsConcatMessage implements SmsMessage {
     int maxLength = SmsAlphabet.GSM.equals(alphabet) ? (MAX_OCTAL_LENGTH * 8) / 7 : MAX_OCTAL_LENGTH;
 
     // single pdu
-    if (ud.getLength() <= maxLength - SmsUdhUtil.getTotalSize(udhElements)) {
+    if (ud.getData().length <= maxLength - SmsUdhUtil.getSizeOf(udhElements)) {
       return new SmsPdu[]{new SmsPdu(udhElements, ud)};
     }
 
@@ -123,10 +123,11 @@ public abstract class SmsConcatMessage implements SmsMessage {
 
   private SmsPdu[] createMultiPdus(SmsUdhElement[] udhElements, SmsUserData ud, int nMaxConcatChars) {
     int refno = RND.nextInt(0xFF);
+    int udl = ud.getData().length;
 
     // Calculate number of SMS needed
-    int nSms = ud.getLength() / nMaxConcatChars;
-    if ((ud.getLength() % nMaxConcatChars) > 0) {
+    int nSms = udl / nMaxConcatChars;
+    if ((udl % nMaxConcatChars) > 0) {
       nSms += 1;
     }
     SmsPdu[] smsPdus = new SmsPdu[nSms];
@@ -152,15 +153,14 @@ public abstract class SmsConcatMessage implements SmsMessage {
       // Must concatenate messages
       // Calc pdu length
       int udOffset = nMaxConcatChars * i;
-      int udBytes = ud.getLength() - udOffset;
+      int udBytes = udl - udOffset;
       if (udBytes > nMaxConcatChars) {
         udBytes = nMaxConcatChars;
       }
-      int udLength = udBytes;
 
       byte[] pduUd = new byte[udBytes];
       System.arraycopy(ud.getData(), udOffset, pduUd, 0, udBytes);
-      smsPdus[i] = new SmsPdu(pduUdhElements, pduUd, udLength, ud.getDcs());
+      smsPdus[i] = new SmsPdu(pduUdhElements, pduUd, ud.getDcs());
     }
     return smsPdus;
   }

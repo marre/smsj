@@ -58,7 +58,7 @@ public final class SmsUdhUtil {
    * @param udhElements The udh elements
    * @return The size (in bytes)
    */
-  public static int getTotalSize(SmsUdhElement[] udhElements) {
+  public static int getSizeOf(SmsUdhElement[] udhElements) {
     int totLength = 0;
 
     if (udhElements == null) {
@@ -81,13 +81,13 @@ public final class SmsUdhUtil {
    *
    * @return the UDH elements as a byte array.
    */
-  public static byte[] getByteArray(SmsUdhElement[] udhElements) {
+  public static byte[] getBytesOf(SmsUdhElement[] udhElements) {
     if (udhElements == null) {
       return new byte[0];
     }
 
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream(100)) {
-      baos.write((byte) SmsUdhUtil.getTotalSize(udhElements));
+      baos.write(SmsUdhUtil.getSizeOf(udhElements));
 
       for (SmsUdhElement udhElement : udhElements) {
         udhElement.writeTo(baos);
@@ -107,7 +107,7 @@ public final class SmsUdhUtil {
    * @return true if the message must be concatentated.
    */
   public static boolean isConcat(SmsUserData ud, byte[] udh) {
-    int udLength = ud.getLength();
+    int udLength = ud.getData().length;
 
     int bytesLeft = 140;
     int maxChars;

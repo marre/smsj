@@ -143,34 +143,24 @@ public class SmsTextMessage extends SmsConcatMessage {
    */
   @Override
   public SmsUserData getUserData() {
-    SmsUserData ud;
-
-    byte[] bytes;
     switch (dcs.getAlphabet()) {
       case GSM:
         try {
-          bytes = text.getBytes(Gsm7BitCharsetProvider.CHARSET_NAME);
-          ud = new SmsUserData(bytes, bytes.length, dcs);
+          return new SmsUserData(text.getBytes(Gsm7BitCharsetProvider.CHARSET_NAME), dcs);
         } catch (UnsupportedEncodingException e) {
+          // shouldn't happen...
           throw new RuntimeException(e);
         }
-        break;
 
       case LATIN1:
-        bytes = text.getBytes(StandardCharsets.ISO_8859_1);
-        ud = new SmsUserData(bytes, bytes.length, dcs);
-        break;
+        return new SmsUserData(text.getBytes(StandardCharsets.ISO_8859_1), dcs);
 
       case UCS2:
-        bytes = text.getBytes(StandardCharsets.UTF_16BE);
-        ud = new SmsUserData(bytes, bytes.length, dcs);
-        break;
+        return new SmsUserData(text.getBytes(StandardCharsets.UTF_16BE), dcs);
 
       default:
         return null;
     }
-
-    return ud;
   }
 
   /**
