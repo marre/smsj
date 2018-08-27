@@ -2,14 +2,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.marre</groupId>
+  <groupId>com.github.xfslove</groupId>
   <artifactId>smsj</artifactId>
-  
-  <packaging>jar</packaging>
-  
   <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
   <name>smsj</name>
-  <url>http://maven.apache.org</url>
+  <url>https://github.com/xfslove/smsj</url>
   <description>SMS &amp; MMS library for the Java platform</description>
 
   <licenses>
@@ -106,18 +105,6 @@
   </properties>
 
   <dependencies>
-    <!--<dependency>-->
-      <!--<groupId>org.slf4j</groupId>-->
-      <!--<artifactId>slf4j-api</artifactId>-->
-      <!--<version>1.7.2</version>-->
-    <!--</dependency>-->
-
-    <!--<dependency>-->
-      <!--<groupId>org.slf4j</groupId>-->
-      <!--<artifactId>slf4j-simple</artifactId>-->
-      <!--<version>1.7.2</version>-->
-      <!--<scope>runtime</scope>-->
-    <!--</dependency>   -->
 
     <dependency>  
       <groupId>junit</groupId>

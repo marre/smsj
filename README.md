@@ -5,6 +5,16 @@ Java library implementing the 3GPP TS 23.040 and WAP-230-WSP, and allowing devel
 
 SMSJ is based on the marre SMSJ libraries. It contains several bug fixes, and has been generally refactored, and released at maven central repository.
 
+### Maven
+
+```
+<dependency>  
+  <groupId>com.github.xfslove</groupId>
+  <artifactId>smsj</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+</dependency>
+```
+
 ### Packages
 
 - mms - a several models represents mms file.
@@ -12,6 +22,10 @@ SMSJ is based on the marre SMSJ libraries. It contains several bug fixes, and ha
 - wap - a several models represents wap.
 
 ### Usages
+
+- Gsm-7bit charset
+
+  `Gsm7BitCharsetProvider.CHARSET_NAME`
 
 - create SMS data coding scheme
 
