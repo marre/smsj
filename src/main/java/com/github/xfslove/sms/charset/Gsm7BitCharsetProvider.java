@@ -2,9 +2,8 @@ package com.github.xfslove.sms.charset;
 
 import java.nio.charset.Charset;
 import java.nio.charset.spi.CharsetProvider;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.Set;
 
 /**
  * This is a CharsetProvider for the GSM 7-Bit character set. It is named
@@ -49,9 +48,9 @@ public class Gsm7BitCharsetProvider extends CharsetProvider {
   @Override
   public Charset charsetForName(String charsetName) {
     if (charsetName.equalsIgnoreCase(Gsm7BitCharset.CHARSET_NAME)) {
-      return (gsm7Bit);
+      return gsm7Bit;
     }
-    return (null);
+    return null;
   }
 
   /**
@@ -62,9 +61,7 @@ public class Gsm7BitCharsetProvider extends CharsetProvider {
    */
   @Override
   public Iterator<Charset> charsets() {
-    Set<Charset> set = new HashSet<>(1);
-    set.add(gsm7Bit);
-    return (set.iterator());
+    return Collections.singleton(gsm7Bit).iterator();
   }
 }
 /*
