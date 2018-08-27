@@ -129,7 +129,7 @@ public class SmsPdu implements Serializable {
     byte[] ud = this.ud.getData();
 
     // UDL
-    os.write(1 + udh.length + ud.length);
+    os.write(udh.length + ud.length);
     os.write(udh);
     os.write(ud);
   }
