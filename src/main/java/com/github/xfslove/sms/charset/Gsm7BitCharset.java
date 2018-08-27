@@ -15,7 +15,7 @@ import java.util.Map;
  * copy from https://github.com/OpenSmpp/opensmpp
  *
  * @author hanwen
- * @date 2018/8/24
+ * created at 2018/8/24
  */
 public class Gsm7BitCharset extends Charset {
 
@@ -328,6 +328,9 @@ public class Gsm7BitCharset extends Charset {
    * Constructor for the Gsm7Bit charset.  Call the superclass
    * constructor to pass along the name(s) we'll be known by.
    * Then save a reference to the delegate Charset.
+   *
+   * @param canonical canonical
+   * @param aliases   aliases
    */
   protected Gsm7BitCharset(String canonical, String[] aliases) {
     super(canonical, aliases);

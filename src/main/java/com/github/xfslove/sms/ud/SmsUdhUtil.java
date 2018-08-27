@@ -79,6 +79,7 @@ public final class SmsUdhUtil {
    * No concat headers are added.
    * <p>
    *
+   * @param udhElements The udh elements
    * @return the UDH elements as a byte array.
    */
   public static byte[] getBytesOf(SmsUdhElement[] udhElements) {

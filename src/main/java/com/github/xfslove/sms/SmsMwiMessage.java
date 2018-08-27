@@ -37,8 +37,8 @@ package com.github.xfslove.sms;
 import com.github.xfslove.sms.dcs.DcsGroup;
 import com.github.xfslove.sms.dcs.SmsAlphabet;
 import com.github.xfslove.sms.dcs.SmsDcs;
-import com.github.xfslove.sms.ud.SmsUdhElement;
 import com.github.xfslove.sms.dcs.SmsMsgClass;
+import com.github.xfslove.sms.ud.SmsUdhElement;
 import com.github.xfslove.sms.ud.SmsUdhIei;
 
 import java.util.Iterator;
@@ -102,8 +102,8 @@ public class SmsMwiMessage extends SmsTextMessage {
    *
    * @param type         Type of message that is waiting. Can be any of TYPE_*.
    * @param count        Number of messages waiting for retrieval.
-   * @param profile
-   * @param storeMessage
+   * @param profile      profile
+   * @param storeMessage is store
    */
   public void addMsgWaiting(MwiType type, int count, MwiProfile profile, boolean storeMessage) {
     // count can be at most 255.
@@ -190,6 +190,7 @@ public class SmsMwiMessage extends SmsTextMessage {
   /**
    * Builds a udh element for this message.
    *
+   * @return udhe
    * @see SmsTextMessage#getUdhElements()
    */
   @Override

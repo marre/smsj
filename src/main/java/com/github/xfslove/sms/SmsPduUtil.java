@@ -53,10 +53,10 @@ public final class SmsPduUtil {
   }
 
   /**
-   * octal -> septets
+   * octal -&gt; septets
    *
    * @param octal octal array
-   * @return
+   * @return septets array
    */
   public static byte[] octal2septets(byte[] octal) {
     int septetCount = (8 * octal.length) / 7;
@@ -74,10 +74,10 @@ public final class SmsPduUtil {
   }
 
   /**
-   * septets -> octal
+   * septets -&gt; octal
    *
    * @param septets septets array
-   * @return
+   * @return octal array
    */
   public static byte[] septets2octal(byte[] septets) {
     int octetLength = (int) Math.ceil(((septets.length * 7)) / 8.0);
@@ -176,6 +176,7 @@ public final class SmsPduUtil {
    * @param is     The byte InputStream
    * @param length how many
    * @return Decoded number
+   * @throws IOException ex
    */
   public static String readBcdNumber(InputStream is, int length) throws IOException {
     byte[] arr = new byte[length];
@@ -188,7 +189,7 @@ public final class SmsPduUtil {
    *
    * @param data   bytearray
    * @param length how many
-   * @param offset
+   * @param offset offset
    * @return Decoded number
    */
   public static String readBcdNumber(byte[] data, int offset, int length) {

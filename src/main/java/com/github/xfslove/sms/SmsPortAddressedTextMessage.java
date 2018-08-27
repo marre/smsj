@@ -55,9 +55,9 @@ public class SmsPortAddressedTextMessage extends SmsPortAddressedMessage {
   /**
    * Creates a new SmsPortAddressedTextMessage with default 6Bit GSM Alphabet.
    *
-   * @param destPort
-   * @param origPort
-   * @param msg
+   * @param destPort dest port
+   * @param origPort orig port
+   * @param msg      msg
    */
   public SmsPortAddressedTextMessage(SmsPort destPort, SmsPort origPort, String msg) {
     super(destPort, origPort);
@@ -67,11 +67,11 @@ public class SmsPortAddressedTextMessage extends SmsPortAddressedMessage {
   /**
    * Creates a new SmsPortAddressedTextMessage with the given alphabet and message class.
    *
-   * @param destPort
-   * @param origPort
-   * @param msg
-   * @param alphabet
-   * @param messageClass
+   * @param destPort     dest port
+   * @param origPort     orig port
+   * @param msg          msg
+   * @param alphabet     alphabet
+   * @param messageClass msg class
    */
   public SmsPortAddressedTextMessage(SmsPort destPort, SmsPort origPort, String msg, SmsAlphabet alphabet, SmsMsgClass messageClass) {
     super(destPort, origPort);
@@ -81,10 +81,10 @@ public class SmsPortAddressedTextMessage extends SmsPortAddressedMessage {
   /**
    * Creates a SmsPortAddressedTextMessage with the given dcs.
    *
-   * @param destPort
-   * @param origPort
-   * @param msg
-   * @param dcs
+   * @param destPort dest port
+   * @param origPort orig port
+   * @param msg      msg
+   * @param dcs      dcs
    */
   public SmsPortAddressedTextMessage(SmsPort destPort, SmsPort origPort, String msg, SmsDcs dcs) {
     super(destPort, origPort);
@@ -97,32 +97,29 @@ public class SmsPortAddressedTextMessage extends SmsPortAddressedMessage {
   }
 
   /**
-   * Returns the text message.
+   * @return the text message.
    */
   public String getText() {
     return smsTextMessage.getText();
   }
 
   /**
-   * Sets the text.
-   *
-   * @param text
+   * @param text the text.
    */
   public void setText(String text) {
     smsTextMessage.setText(text);
   }
 
   /**
-   * Sets the text.
-   *
-   * @param text
+   * @param text the text.
+   * @param dcs  the dcs.
    */
   public void setText(String text, SmsDcs dcs) {
     smsTextMessage.setText(text, dcs);
   }
 
   /**
-   * Returns the dcs.
+   * @return the dcs.
    */
   public SmsDcs getDcs() {
     return smsTextMessage.getDcs();

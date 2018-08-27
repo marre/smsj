@@ -75,7 +75,7 @@ public final class SmsNpi implements Serializable {
   /**
    * Returns the NPI value as specified in the GSM spec.
    *
-   * @return
+   * @return the value
    */
   public int getValue() {
     return value;

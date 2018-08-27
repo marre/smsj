@@ -27,7 +27,8 @@ public final class NokiaItemType implements Serializable {
   }
 
   /**
-   * Returns one of the known NokiaItemTypes defined in this class or a new instance if type is unknown.
+   * @param typeId typeId
+   * @return one of the known NokiaItemTypes defined in this class or a new instance if type is unknown.
    */
   public static NokiaItemType valueOf(byte typeId) {
     switch (typeId) {

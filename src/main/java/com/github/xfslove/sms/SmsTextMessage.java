@@ -91,16 +91,14 @@ public class SmsTextMessage extends SmsConcatMessage {
   }
 
   /**
-   * Returns the text message.
+   * @return the text message.
    */
   public String getText() {
     return text;
   }
 
   /**
-   * Sets the text.
-   *
-   * @param text
+   * @param text the text.
    */
   public void setText(String text) {
     if (text == null) {
@@ -111,9 +109,8 @@ public class SmsTextMessage extends SmsConcatMessage {
   }
 
   /**
-   * Sets the text.
-   *
-   * @param text
+   * @param dcs  dcs
+   * @param text the text.
    */
   public void setText(String text, SmsDcs dcs) {
     // Check input for null
@@ -130,7 +127,7 @@ public class SmsTextMessage extends SmsConcatMessage {
   }
 
   /**
-   * Returns the dcs.
+   * @return the dcs.
    */
   public SmsDcs getDcs() {
     return dcs;
@@ -164,7 +161,7 @@ public class SmsTextMessage extends SmsConcatMessage {
   }
 
   /**
-   * Returns null.
+   * @return null.
    */
   @Override
   public SmsUdhElement[] getUdhElements() {

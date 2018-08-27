@@ -34,8 +34,8 @@
  * ***** END LICENSE BLOCK ***** */
 package com.github.xfslove.wap.push;
 
-import com.github.xfslove.wap.wbxml.WbxmlWriter;
 import com.github.xfslove.wap.wbxml.WbxmlDocument;
+import com.github.xfslove.wap.wbxml.WbxmlWriter;
 import com.github.xfslove.xml.XmlAttribute;
 
 import java.io.OutputStream;
@@ -124,26 +124,16 @@ public class WapSLPush implements WbxmlDocument {
   /**
    * Constructor.
    *
-   * @param uri
+   * @param uri uri
    */
   public WapSLPush(String uri) {
     this.uri = uri;
   }
 
-  /**
-   * Returns the URI.
-   *
-   * @return
-   */
   public String getUri() {
     return uri;
   }
 
-  /**
-   * Sets the URI.
-   *
-   * @param uri
-   */
   public void setUri(String uri) {
     this.uri = uri;
   }
@@ -174,7 +164,7 @@ public class WapSLPush implements WbxmlDocument {
   /**
    * Writes the xml document to the given writer.
    *
-   * @param os
+   * @param os write to
    */
   @Override
   public void writeXmlTo(OutputStream os) throws Exception {

@@ -58,8 +58,9 @@ public class WapMimeEncoder {
    * NOTE! It only writes an WSP encoded content-type to the stream. It does
    * not add the content type header id.
    *
-   * @param os  The stream to write to
-   * @param msg The message to get the content-type from
+   * @param wspEncodingVersion version
+   * @param os                 The stream to write to
+   * @param msg                The message to get the content-type from
    * @throws IOException Thrown if we fail to write the content-type to the stream
    */
   public static void writeContentType(WspEncodingVersion wspEncodingVersion, OutputStream os, MimeBodyPart msg) throws IOException {
@@ -77,8 +78,9 @@ public class WapMimeEncoder {
   /**
    * Writes the headers of the message to the given stream.
    *
-   * @param os  The stream to write to
-   * @param msg The message to get the headers from
+   * @param wspEncodingVersion version
+   * @param os                 The stream to write to
+   * @param msg                The message to get the headers from
    * @throws IOException Thrown if we fail to write the headers to the stream
    */
   public static void writeHeaders(WspEncodingVersion wspEncodingVersion, OutputStream os, MimeBodyPart msg) throws IOException {
@@ -90,8 +92,9 @@ public class WapMimeEncoder {
   /**
    * Writes the body of the message to the given stream.
    *
-   * @param os  The stream to write to
-   * @param msg The message to get the data from
+   * @param wspEncodingVersion version
+   * @param os                 The stream to write to
+   * @param msg                The message to get the data from
    * @throws IOException Thrown if we fail to write the body to the stream
    */
   public static void writeBody(WspEncodingVersion wspEncodingVersion, OutputStream os, MimeBodyPart msg) throws IOException {
@@ -105,6 +108,11 @@ public class WapMimeEncoder {
 
   /**
    * Section 8.5.2 in WAP-230-WSP-20010705
+   *
+   * @param wspEncodingVersion version
+   * @param os                 The stream to write to
+   * @param multipart          multipart
+   * @throws IOException Thrown if we fail to write the body to the stream
    */
   private static void writeMultipart(WspEncodingVersion wspEncodingVersion, OutputStream os, MimeMultipart multipart) throws IOException {
     Collection<MimeBodyPart> bodyParts = multipart.getBodyParts();

@@ -119,7 +119,7 @@ public interface XmlWriter {
    * <p>
    * Must be called to be sure that the document is correctly created.
    *
-   * @param os
+   * @param os the os write to
    * @throws IOException io error
    */
   void writeTo(OutputStream os) throws IOException;

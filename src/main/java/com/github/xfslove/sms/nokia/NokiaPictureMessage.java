@@ -35,8 +35,8 @@ public class NokiaPictureMessage extends NokiaMultipartMessage {
   /**
    * Creates a Nokia Picture Message
    *
-   * @param otaBitmap
-   * @param msg
+   * @param otaBitmap bitmap
+   * @param msg       msg
    */
   public NokiaPictureMessage(OtaBitmap otaBitmap, String msg) {
     this(otaBitmap, msg, false);
@@ -45,8 +45,8 @@ public class NokiaPictureMessage extends NokiaMultipartMessage {
   /**
    * Creates a Nokia Picture Message
    *
-   * @param bitmapData
-   * @param msg
+   * @param bitmapData data
+   * @param msg        msg
    */
   public NokiaPictureMessage(byte[] bitmapData, String msg) {
     this(bitmapData, msg, false);
@@ -55,8 +55,8 @@ public class NokiaPictureMessage extends NokiaMultipartMessage {
   /**
    * Creates a Nokia Picture Message
    *
-   * @param otaBitmap
-   * @param msg
+   * @param otaBitmap bitmap
+   * @param msg       msg
    * @param asUnicode Set to true if text should be sent as unicode
    */
   public NokiaPictureMessage(OtaBitmap otaBitmap, String msg, boolean asUnicode) {
@@ -66,8 +66,8 @@ public class NokiaPictureMessage extends NokiaMultipartMessage {
   /**
    * Creates a Nokia Picture Message
    *
-   * @param bitmapData
-   * @param msg
+   * @param bitmapData data
+   * @param msg        msg
    * @param asUnicode  Set to true if text should be sent as unicode
    */
   public NokiaPictureMessage(byte[] bitmapData, String msg, boolean asUnicode) {
@@ -78,7 +78,7 @@ public class NokiaPictureMessage extends NokiaMultipartMessage {
   /**
    * Used internally to add the image
    *
-   * @param bitmapData
+   * @param bitmapData data
    */
   private void addBitmap(byte[] bitmapData) {
     addMultipart(NokiaItemType.OTA_BITMAP, bitmapData);
@@ -87,7 +87,7 @@ public class NokiaPictureMessage extends NokiaMultipartMessage {
   /**
    * Used internally to add the image
    *
-   * @param otaBitmap
+   * @param otaBitmap bitmap
    */
   private void addBitmap(OtaBitmap otaBitmap) {
     addMultipart(NokiaItemType.OTA_BITMAP, otaBitmap.getBytes());
@@ -96,8 +96,8 @@ public class NokiaPictureMessage extends NokiaMultipartMessage {
   /**
    * Used internally to add text
    *
-   * @param msg
-   * @param asUnicode
+   * @param msg       msg
+   * @param asUnicode is unicode
    */
   private void addText(String msg, boolean asUnicode) {
     if (asUnicode) {

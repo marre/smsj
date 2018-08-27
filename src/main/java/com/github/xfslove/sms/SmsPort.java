@@ -83,9 +83,7 @@ public final class SmsPort implements Serializable {
   }
 
   /**
-   * Returns the port number.
-   *
-   * @return
+   * @return the port number.
    */
   public int getPort() {
     return port;

@@ -61,7 +61,7 @@ public final class SmsTon implements Serializable {
   /**
    * Converts a TON value into a SmsTon class.
    *
-   * @param value
+   * @param value the value
    * @return one of the statically defined SmsTon or a new SmsTon if no matching SmsTon was found.
    */
   public static SmsTon valueOf(int value) {
@@ -88,7 +88,7 @@ public final class SmsTon implements Serializable {
   /**
    * Returns the value of the TON as specified in the GSM spec.
    *
-   * @return
+   * @return the value
    */
   public int getValue() {
     return value;

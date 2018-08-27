@@ -55,7 +55,7 @@ public class OtaBitmap implements Serializable {
   /**
    * Initialise with a raw Ota Bitmap
    *
-   * @param otaBitmapData
+   * @param otaBitmapData data
    */
   public OtaBitmap(byte[] otaBitmapData) {
     if (otaBitmapData != null) {
@@ -152,30 +152,18 @@ public class OtaBitmap implements Serializable {
     return otaBitmap;
   }
 
-  /**
-   * @return
-   */
   public int getHeight() {
     return height;
   }
 
-  /**
-   * @return
-   */
   public int getWidth() {
     return width;
   }
 
-  /**
-   * @param i
-   */
   public void setHeight(int i) {
     height = i;
   }
 
-  /**
-   * @param i
-   */
   public void setWidth(int i) {
     width = i;
   }

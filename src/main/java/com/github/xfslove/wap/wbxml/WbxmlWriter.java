@@ -75,8 +75,8 @@ public class WbxmlWriter implements XmlWriter, AutoCloseable {
   /**
    * Writes the wbxml to stream.
    *
-   * @param os
-   * @throws IOException
+   * @param os the os write to
+   * @throws IOException ex
    */
   @Override
   public void writeTo(OutputStream os) throws IOException {

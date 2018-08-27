@@ -70,6 +70,7 @@ public class SmsPdu implements Serializable {
    *
    * @param udhElements The UDH elements
    * @param ud          The content
+   * @param dcs         dcs
    */
   public SmsPdu(SmsUdhElement[] udhElements, byte[] ud, SmsDcs dcs) {
     setUserDataHeaders(udhElements);
@@ -106,7 +107,7 @@ public class SmsPdu implements Serializable {
    * write udh to stream, the UDH fields or null if there aren't any udh
    *
    * @param os stream to write
-   * @throws IOException
+   * @throws IOException ex
    */
   public void writeUDHTo(OutputStream os) throws IOException {
     if (udhElements == null) {
@@ -121,7 +122,7 @@ public class SmsPdu implements Serializable {
    * 9.2.3.24 UDL + UDHL + UDH + UD
    *
    * @param os stream to write
-   * @throws IOException
+   * @throws IOException ex
    */
   public void writeTo(OutputStream os) throws IOException {
     byte[] udh = SmsUdhUtil.getBytesOf(udhElements);

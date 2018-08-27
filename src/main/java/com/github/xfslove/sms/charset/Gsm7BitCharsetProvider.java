@@ -23,7 +23,7 @@ import java.util.Iterator;
  * copy from https://github.com/OpenSmpp/opensmpp
  *
  * @author hanwen
- * @date 2018/8/24
+ * created at 2018/8/24
  */
 public class Gsm7BitCharsetProvider extends CharsetProvider {
 

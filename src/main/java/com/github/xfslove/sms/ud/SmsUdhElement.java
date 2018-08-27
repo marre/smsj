@@ -46,15 +46,15 @@ import java.io.Serializable;
  */
 public final class SmsUdhElement implements Serializable {
 
-  protected final SmsUdhIei udhIei;
+  private final SmsUdhIei udhIei;
 
-  protected final byte[] udhIeiData;
+  private final byte[] udhIeiData;
 
   /**
    * Creates an SmsUdhElement
    *
-   * @param udhIei
-   * @param udhIeiData
+   * @param udhIei     udhi
+   * @param udhIeiData data
    */
   public SmsUdhElement(SmsUdhIei udhIei, byte[] udhIeiData) {
     this.udhIei = udhIei;
@@ -111,7 +111,7 @@ public final class SmsUdhElement implements Serializable {
    * Writes the UDH element including UDH "header" to the given stream
    *
    * @param os Stream to write to
-   * @throws IOException
+   * @throws IOException ex
    */
   public void writeTo(OutputStream os) throws IOException {
     os.write(udhIei.getValue());

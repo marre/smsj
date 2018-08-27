@@ -111,7 +111,7 @@ public enum SmsUdhIei {
   }
 
   /**
-   * Returns the UDH IEI value as specified in the GSM spec.
+   * @return the UDH IEI value as specified in the GSM spec.
    */
   public byte getValue() {
     return value;

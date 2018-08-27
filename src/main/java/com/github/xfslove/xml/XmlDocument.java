@@ -55,7 +55,7 @@ public interface XmlDocument extends Serializable {
   /**
    * Writes this object to the given XmlWriter.
    *
-   * @param os
+   * @param os ths os write to
    * @throws IOException Thrown if failed to write to xmlwriter.
    */
   void writeXmlTo(OutputStream os) throws Exception;

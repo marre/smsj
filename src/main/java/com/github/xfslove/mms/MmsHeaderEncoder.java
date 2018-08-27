@@ -60,9 +60,9 @@ public final class MmsHeaderEncoder {
    * Writes a wsp encoded content-location header as specified in
    * WAP-230-WSP-20010705-a.pdf.
    *
-   * @param os
-   * @param contentLocation
-   * @throws IOException
+   * @param os              os
+   * @param contentLocation content location
+   * @throws IOException ex
    */
   public static void writeHeaderContentLocation(OutputStream os, String contentLocation) throws IOException {
     WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_CONTENT_LOCATION);

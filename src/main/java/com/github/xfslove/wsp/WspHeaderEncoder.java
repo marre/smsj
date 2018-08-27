@@ -56,6 +56,11 @@ public final class WspHeaderEncoder {
    * WAP-230-WSP-20010705-a.pdf.
    * <p>
    * Content-ID is introduced in encoding version 1.3.
+   *
+   * @param wspEncodingVersion version
+   * @param os                 os
+   * @param contentId          content-id
+   * @throws IOException ex
    */
   public static void
   writeHeaderContentId(WspEncodingVersion wspEncodingVersion, OutputStream os, String contentId) throws IOException {
@@ -71,6 +76,11 @@ public final class WspHeaderEncoder {
   /**
    * Writes a wsp encoded content-location header as specified in
    * WAP-230-WSP-20010705-a.pdf.
+   *
+   * @param wspEncodingVersion version
+   * @param os                 os
+   * @param contentLocation    content-location
+   * @throws IOException ex
    */
   public static void writeHeaderContentLocation(WspEncodingVersion wspEncodingVersion, OutputStream os, String contentLocation) throws IOException {
     int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WspConstants.HEADER_CONTENT_LOCATION);
@@ -99,6 +109,11 @@ public final class WspHeaderEncoder {
    * WAP-230-WSP-20010705-a.pdf.
    * <p>
    * X-Wap-Application-Id is introduced in encoding version 1.2.
+   *
+   * @param wspEncodingVersion version
+   * @param os                 os
+   * @param appId              appid
+   * @throws IOException ex
    */
   public static void writeHeaderXWapApplicationId(WspEncodingVersion wspEncodingVersion, OutputStream os, String appId) throws IOException {
     int wellKnownAppId = WspUtil.getWellKnownPushAppId(appId.toLowerCase());

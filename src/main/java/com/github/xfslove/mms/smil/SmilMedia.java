@@ -10,9 +10,7 @@ public interface SmilMedia extends Serializable {
   String getSrc();
 
   /**
-   * reference SmilRegion
-   *
-   * @return
+   * @return reference SmilRegion
    */
   String getRef();
 

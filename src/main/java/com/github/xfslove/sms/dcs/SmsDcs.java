@@ -152,8 +152,8 @@ public class SmsDcs implements Serializable {
    * Builds a message-waiting dcs.
    *
    * @param group          The dcs group, {@link DcsGroup#MESSAGE_WAITING_DISCARD} or {@link DcsGroup#MESSAGE_WAITING_STORE_GSM} or {@link DcsGroup#MESSAGE_WAITING_STORE_UCS2}
-   * @param smsWaitingInfo
-   * @return
+   * @param smsWaitingInfo waiting info
+   * @return A valid general data coding DCS.
    */
   public static SmsDcs waitingInfo(DcsGroup group, SmsWaitingInfo smsWaitingInfo) {
     byte dcs = 0x00;
@@ -203,11 +203,11 @@ public class SmsDcs implements Serializable {
   }
 
   /**
-   * Builds a data-coding/message-class dcs.
+   * Builds a {@link DcsGroup#DATA_CODING_MESSAGE} dcs.
    *
-   * @param alphabet
-   * @param msgClass
-   * @return {@link DcsGroup#DATA_CODING_MESSAGE}
+   * @param alphabet alphabet
+   * @param msgClass message class
+   * @return A valid general data coding DCS.
    */
   public static SmsDcs dataCoding(SmsAlphabet alphabet, SmsMsgClass msgClass) {
     byte dcs = (byte) 0xF0;

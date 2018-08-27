@@ -55,9 +55,9 @@ public final class StringUtil {
   }
 
   /**
-   * @param stringTable
-   * @param text
-   * @return
+   * @param stringTable to search
+   * @param text        search text
+   * @return index of text, -1 not found
    */
   public static int findString(String[] stringTable, String text) {
     if (stringTable != null) {
@@ -151,7 +151,7 @@ public final class StringUtil {
    * <p>
    * "abcdefghijklmnopqrstuvwxyz1234567890"
    *
-   * @param length
+   * @param length length
    * @return A random string
    */
   public static String randString(int length) {

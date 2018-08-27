@@ -2,7 +2,7 @@ package com.github.xfslove.sms.dcs;
 
 /**
  * @author hanwen
- * @date 2018/8/24
+ * created at 2018/8/24
  */
 public enum SmsWaitingInfo {
   /**

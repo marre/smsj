@@ -64,6 +64,9 @@ public class MimeBodyPart implements Serializable {
 
   /**
    * Creates a new empty MimeBodyPart.
+   *
+   * @param body        body
+   * @param contentType content type
    */
   public MimeBodyPart(byte[] body, MimeContentType contentType) {
     setContent(body, contentType);
@@ -71,6 +74,9 @@ public class MimeBodyPart implements Serializable {
 
   /**
    * Creates a new empty MimeBodyPart.
+   *
+   * @param body        body
+   * @param contentType content type
    */
   public MimeBodyPart(byte[] body, String contentType) {
     setContent(body, contentType);
@@ -104,7 +110,7 @@ public class MimeBodyPart implements Serializable {
   }
 
   /**
-   * Retrieves all headers.
+   * @return Retrieves all headers.
    */
   public Collection<MimeHeader> getHeaders() {
     return Collections.unmodifiableCollection(headers);

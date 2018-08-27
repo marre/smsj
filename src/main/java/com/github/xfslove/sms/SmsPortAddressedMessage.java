@@ -54,8 +54,8 @@ public abstract class SmsPortAddressedMessage extends SmsConcatMessage {
   /**
    * Creates a new SmsPortAddressedMessage with the given dest and orig port.
    *
-   * @param destPort
-   * @param origPort
+   * @param destPort dest port
+   * @param origPort orig port
    */
   protected SmsPortAddressedMessage(SmsPort destPort, SmsPort origPort) {
     setPorts(destPort, origPort);
@@ -64,8 +64,8 @@ public abstract class SmsPortAddressedMessage extends SmsConcatMessage {
   /**
    * Sets the dest and orig ports.
    *
-   * @param destPort
-   * @param origPort
+   * @param destPort dest port
+   * @param origPort orig port
    */
   public void setPorts(SmsPort destPort, SmsPort origPort) {
     this.destPort = destPort;

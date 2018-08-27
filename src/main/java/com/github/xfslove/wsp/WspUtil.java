@@ -619,6 +619,7 @@ public final class WspUtil {
    *
    * @param theOs    Stream to write to
    * @param theValue Value to write
+   * @throws IOException ex
    */
   public static void writeUint8(OutputStream theOs, int theValue) throws IOException {
     theOs.write(theValue);
@@ -629,6 +630,7 @@ public final class WspUtil {
    *
    * @param theOs    Stream to write to
    * @param theValue Value to write
+   * @throws IOException ex
    */
   public static void writeUintvar(OutputStream theOs, long theValue) throws IOException {
     int nOctets = 1;
@@ -651,6 +653,7 @@ public final class WspUtil {
    *
    * @param theOs    Stream to write to
    * @param theValue Value to write
+   * @throws IOException ex
    */
   public static void writeLongInteger(OutputStream theOs, long theValue) throws IOException {
     int nOctets = 0;
@@ -671,6 +674,7 @@ public final class WspUtil {
    *
    * @param theOs    Stream to write to
    * @param theValue Value to write
+   * @throws IOException ex
    */
   public static void writeInteger(OutputStream theOs, long theValue) throws IOException {
     if (theValue < 128) {
@@ -685,6 +689,7 @@ public final class WspUtil {
    *
    * @param theOs    Stream to write to
    * @param theValue Value to write
+   * @throws IOException ex
    */
   public static void writeShortInteger(OutputStream theOs, int theValue) throws IOException {
     theOs.write((byte) (theValue | (byte) 0x80));
@@ -708,6 +713,7 @@ public final class WspUtil {
    *
    * @param theOs  Stream to write to
    * @param theStr Text to write
+   * @throws IOException ex
    */
   public static void writeExtensionMedia(OutputStream theOs, String theStr) throws IOException {
     theOs.write(theStr.getBytes(StandardCharsets.ISO_8859_1));
@@ -799,9 +805,10 @@ public final class WspUtil {
    * (like "image/gif; start=cid; parameter=value;") you must use the
    * MimeContentType class.
    *
-   * @param theOs
-   * @param theContentType
-   * @throws IOException
+   * @param wspEncodingVersion version
+   * @param theOs              the os
+   * @param theContentType     the content type
+   * @throws IOException ex
    */
   public static void writeContentType(WspEncodingVersion wspEncodingVersion, OutputStream theOs, String theContentType) throws IOException {
     int contentType = getContentType(theContentType.toLowerCase());
@@ -821,9 +828,10 @@ public final class WspUtil {
    * This method automatically chooses the most compact way to represent the
    * given content type.
    *
-   * @param theOs
-   * @param theContentType
-   * @throws IOException
+   * @param wspEncodingVersion version
+   * @param theOs              the os
+   * @param theContentType     the content type
+   * @throws IOException ex
    */
   public static void writeContentType(WspEncodingVersion wspEncodingVersion, OutputStream theOs, MimeHeader theContentType) throws IOException {
     if (theContentType.getParameters().isEmpty()) {
@@ -1032,8 +1040,8 @@ public final class WspUtil {
   /**
    * Converts from a "multipart/" content type to "vnd.wap..." content type.
    *
-   * @param ct
-   * @return
+   * @param ct content type
+   * @return converted
    */
   public static String convertMultipartContentType(String ct) {
     switch (ct) {

@@ -63,7 +63,7 @@ public class NokiaOperatorLogo extends SmsPortAddressedMessage {
   /**
    * Creates a Nokia Operator Logo message
    *
-   * @param otaBitmap
+   * @param otaBitmap bitmap
    * @param mcc       GSM Mobile Country Code
    * @param mnc       GSM Mobile Network Code
    */
@@ -89,9 +89,10 @@ public class NokiaOperatorLogo extends SmsPortAddressedMessage {
   /**
    * Creates a Nokia Operator Logo message
    *
-   * @param bitmapData The ota image as a byte array
-   * @param mcc        GSM Mobile Country Code
-   * @param mnc        GSM Mobile Network Code
+   * @param bitmapData     The ota image as a byte array
+   * @param mcc            GSM Mobile Country Code
+   * @param mnc            GSM Mobile Network Code
+   * @param discardHeaders discard header
    */
   public NokiaOperatorLogo(byte[] bitmapData, int mcc, int mnc, boolean discardHeaders) {
     super(SmsPort.NOKIA_OPERATOR_LOGO, SmsPort.ZERO);
