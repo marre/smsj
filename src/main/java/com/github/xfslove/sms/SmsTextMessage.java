@@ -34,7 +34,7 @@
  * ***** END LICENSE BLOCK ***** */
 package com.github.xfslove.sms;
 
-import com.github.xfslove.sms.charset.Gsm7BitCharsetProvider;
+import com.github.xfslove.sms.charset.Gsm7BitCharset;
 import com.github.xfslove.sms.dcs.DcsGroup;
 import com.github.xfslove.sms.dcs.SmsAlphabet;
 import com.github.xfslove.sms.dcs.SmsDcs;
@@ -146,7 +146,7 @@ public class SmsTextMessage extends SmsConcatMessage {
     switch (dcs.getAlphabet()) {
       case GSM:
         try {
-          return new SmsUserData(text.getBytes(Gsm7BitCharsetProvider.CHARSET_NAME), dcs);
+          return new SmsUserData(text.getBytes(Gsm7BitCharset.CHARSET_NAME), dcs);
         } catch (UnsupportedEncodingException e) {
           // shouldn't happen...
           throw new RuntimeException(e);

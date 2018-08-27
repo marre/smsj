@@ -20,6 +20,11 @@ import java.util.Map;
 public class Gsm7BitCharset extends Charset {
 
   /**
+   * The name of the charset we provide
+   */
+  public static final String CHARSET_NAME = "X-Gsm7Bit";
+
+  /**
    * HashMap's used for encoding and decoding
    */
   private static final Map<String, Byte> DEFAULT_ENCODE_MAP = new HashMap<>();

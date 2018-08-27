@@ -29,11 +29,6 @@ import java.util.Set;
 public class Gsm7BitCharsetProvider extends CharsetProvider {
 
   /**
-   * The name of the charset we provide
-   */
-  public static final String CHARSET_NAME = "X-Gsm7Bit";
-
-  /**
    * A handle to the Charset object
    */
   private Charset gsm7Bit;
@@ -43,7 +38,7 @@ public class Gsm7BitCharsetProvider extends CharsetProvider {
    */
   public Gsm7BitCharsetProvider() {
     super();
-    this.gsm7Bit = new Gsm7BitCharset(CHARSET_NAME, null);
+    this.gsm7Bit = new Gsm7BitCharset(Gsm7BitCharset.CHARSET_NAME, null);
   }
 
   /**
@@ -53,7 +48,7 @@ public class Gsm7BitCharsetProvider extends CharsetProvider {
    */
   @Override
   public Charset charsetForName(String charsetName) {
-    if (charsetName.equalsIgnoreCase(CHARSET_NAME)) {
+    if (charsetName.equalsIgnoreCase(Gsm7BitCharset.CHARSET_NAME)) {
       return (gsm7Bit);
     }
     return (null);
