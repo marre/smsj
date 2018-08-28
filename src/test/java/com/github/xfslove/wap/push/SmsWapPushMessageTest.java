@@ -42,7 +42,6 @@ import junit.framework.TestCase;
 
 import com.github.xfslove.wap.nokia.NokiaOtaBrowserSettings;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
@@ -74,11 +73,10 @@ public class SmsWapPushMessageTest extends TestCase
         // The message should fit within one message
         assertEquals(1, pdus.length);
 
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        pdus[0].writeUDHTo(os);
+        byte[] bytes = pdus[0].getUdhBytes();
 
         assertEquals("060504C34FC002",
-                StringUtil.bytesToHexString(os.toByteArray()));
+                StringUtil.bytesToHexString(bytes));
         assertEquals("00062C1F2A6170706C69636174696F6E2F782D7761702D70726F762E62726F777365722D73657474696E67730081EA01016A0045C67F0187151103576170000187171103687474703A2F2F7761702E646B000101", 
                 StringUtil.bytesToHexString(pdus[0].getUserData().getData()));
     }

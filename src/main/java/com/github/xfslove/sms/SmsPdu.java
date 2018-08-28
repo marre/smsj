@@ -39,8 +39,6 @@ import com.github.xfslove.sms.ud.SmsUdhElement;
 import com.github.xfslove.sms.ud.SmsUdhUtil;
 import com.github.xfslove.sms.ud.SmsUserData;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Serializable;
 
 /**
@@ -104,34 +102,23 @@ public class SmsPdu implements Serializable {
   }
 
   /**
-   * write udh to stream, the UDH fields or null if there aren't any udh
+   * the UDH fields or null if there aren't any udh
    *
-   * @param os stream to write
-   * @throws IOException ex
+   * @return udh bytes
    */
-  public void writeUDHTo(OutputStream os) throws IOException {
-    if (udhElements == null) {
-      return;
-    }
-
-    os.write(SmsUdhUtil.getBytesOf(udhElements));
+  public byte[] getUdhBytes() {
+    return SmsUdhUtil.getBytesOf(udhElements);
   }
 
   /**
-   * write ud to stream
-   * 9.2.3.24 UDL + UDHL + UDH + UD
-   *
-   * @param os stream to write
-   * @throws IOException ex
+   * @return ud bytes
    */
-  public void writeTo(OutputStream os) throws IOException {
-    byte[] udh = SmsUdhUtil.getBytesOf(udhElements);
-    byte[] ud = this.ud.getData();
-
-    // UDL
-    os.write(udh.length + ud.length);
-    os.write(udh);
-    os.write(ud);
+  public byte[] getUdBytes() {
+    byte[] data = ud.getData();
+    if (data == null) {
+      return new byte[0];
+    }
+    return data;
   }
 
   /**
