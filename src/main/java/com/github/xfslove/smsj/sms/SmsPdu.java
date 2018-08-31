@@ -107,7 +107,21 @@ public class SmsPdu implements Serializable {
    * @return udh bytes
    */
   public byte[] getUdhBytes() {
-    return SmsUdhUtil.getBytesOf(udhElements);
+    if (udhElements.length == 0) {
+      return new byte[0];
+    }
+
+    int sizeOf = SmsUdhUtil.getSizeOf(udhElements);
+    byte[] bytes = new byte[sizeOf + 1];
+    bytes[0] = (byte) (sizeOf & 0xff);
+    int offset = 1;
+    for (SmsUdhElement udhElement : udhElements) {
+      byte[] udh = udhElement.getData();
+      System.arraycopy(udh, 0, bytes, offset, udh.length);
+      offset += udh.length;
+    }
+
+    return bytes;
   }
 
   /**
@@ -147,6 +161,15 @@ public class SmsPdu implements Serializable {
    */
   public SmsUserData getUserData() {
     return ud;
+  }
+
+  /**
+   * Returns the user data header part of the message.
+   *
+   * @return UDH field
+   */
+  public SmsUdhElement[] getUserDateHeaders() {
+    return udhElements;
   }
 
   /**

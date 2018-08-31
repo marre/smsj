@@ -34,8 +34,6 @@
  * ***** END LICENSE BLOCK ***** */
 package com.github.xfslove.smsj.sms.ud;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Serializable;
 
 /**
@@ -105,17 +103,5 @@ public final class SmsUdhElement implements Serializable {
     System.arraycopy(udhIeiData, 0, allData, 2, udhIeiData.length);
 
     return allData;
-  }
-
-  /**
-   * Writes the UDH element including UDH "header" to the given stream
-   *
-   * @param os Stream to write to
-   * @throws IOException ex
-   */
-  public void writeTo(OutputStream os) throws IOException {
-    os.write(udhIei.getValue());
-    os.write(udhIeiData.length);
-    os.write(udhIeiData);
   }
 }

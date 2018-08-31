@@ -36,9 +36,6 @@ package com.github.xfslove.smsj.sms.ud;
 
 import com.github.xfslove.smsj.sms.SmsPort;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 /**
  * Toolkit class for SmsUdhElement objects.
  *
@@ -70,34 +67,6 @@ public final class SmsUdhUtil {
     }
 
     return totLength;
-  }
-
-  /**
-   * Returns the whole udh as a byte array.
-   * <p>
-   * The returned UDH is the same as specified when the message was created.
-   * No concat headers are added.
-   * <p>
-   *
-   * @param udhElements The udh elements
-   * @return the UDH elements as a byte array.
-   */
-  public static byte[] getBytesOf(SmsUdhElement[] udhElements) {
-    if (udhElements == null) {
-      return new byte[0];
-    }
-
-    try (ByteArrayOutputStream baos = new ByteArrayOutputStream(100)) {
-      baos.write(SmsUdhUtil.getSizeOf(udhElements));
-
-      for (SmsUdhElement udhElement : udhElements) {
-        udhElement.writeTo(baos);
-      }
-
-      return baos.toByteArray();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
   }
 
   /**
