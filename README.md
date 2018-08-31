@@ -3,7 +3,7 @@ SMSJ
 
 Java library implementing the 3GPP TS 23.040 and WAP-230-WSP, and allowing development of SMS or MMS and more
 
-SMSJ is based on the marre SMSJ libraries. It contains several bug fixes, and has been generally refactored, and released at maven central repository.
+SMSJ is based on the [marre SMSJ](https://github.com/marre/smsj) libraries. It contains several bug fixes, and has been generally refactored, and released at maven central repository.
 
 ### Maven
 
