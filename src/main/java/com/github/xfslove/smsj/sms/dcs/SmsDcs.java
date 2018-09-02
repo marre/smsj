@@ -57,7 +57,139 @@ public class SmsDcs implements Serializable {
 
   private final SmsWaitingInfo waitingInfo;
 
-  public SmsDcs(byte dcs, DcsGroup group, SmsAlphabet alphabet, SmsMsgClass messageClass, SmsWaitingInfo waitingInfo) {
+  public SmsDcs(byte dcs) {
+    this.dcs = dcs;
+    this.group = getGroup(dcs);
+    this.alphabet = getAlphabet(this.group, dcs);
+    this.messageClass = getMessageClass(this.group, dcs);
+    this.waitingInfo = getWaitingInfo(this.group, dcs);
+  }
+
+  private DcsGroup getGroup(byte dcs) {
+    // 00xx,01xx,10xx
+    switch (dcs & 0xC0) {
+      case 0x00:
+        return DcsGroup.GENERAL_DATA_CODING;
+      case 0x40:
+        return DcsGroup.MARKED_FOR_AUTOMATIC_DELETION;
+      case 0x80:
+        return DcsGroup.RESERVED;
+      default:
+    }
+
+    //11xx
+    switch (dcs & 0xF0) {
+      case 0xC0:
+        return DcsGroup.MESSAGE_WAITING_DISCARD;
+      case 0xD0:
+        return DcsGroup.MESSAGE_WAITING_STORE_GSM;
+      case 0xE0:
+        return DcsGroup.MESSAGE_WAITING_STORE_UCS2;
+      case 0xF0:
+        return DcsGroup.DATA_CODING_MESSAGE;
+      default:
+        throw new IllegalArgumentException("unknown dcs group of dcs:" + dcs);
+    }
+
+  }
+
+  private SmsAlphabet getAlphabet(DcsGroup group, byte dcs) {
+
+    switch (group) {
+      case MESSAGE_WAITING_STORE_UCS2:
+        return SmsAlphabet.UCS2;
+      case MESSAGE_WAITING_STORE_GSM:
+        return SmsAlphabet.GSM;
+      case GENERAL_DATA_CODING:
+      case MARKED_FOR_AUTOMATIC_DELETION:
+        switch (dcs & 0x0C) {
+          case 0x00:
+            return SmsAlphabet.GSM;
+          case 0x04:
+            return SmsAlphabet.LATIN1;
+          case 0x08:
+            return SmsAlphabet.UCS2;
+          case 0x0C:
+            return SmsAlphabet.RESERVED;
+          default:
+            throw new IllegalArgumentException("unknown sms alphabet of dcs:" + dcs);
+        }
+
+      case DATA_CODING_MESSAGE:
+        switch (dcs & 0x04) {
+          case 0x00:
+            return SmsAlphabet.GSM;
+          case 0x04:
+            return SmsAlphabet.LATIN1;
+          default:
+            throw new IllegalArgumentException("unknown sms alphabet of dcs:" + dcs);
+        }
+      default:
+        return SmsAlphabet.RESERVED;
+    }
+  }
+
+  public SmsMsgClass getMessageClass(DcsGroup group, byte dcs) {
+
+    switch (group) {
+      case GENERAL_DATA_CODING:
+      case MARKED_FOR_AUTOMATIC_DELETION:
+        switch (dcs & 0x13) {
+          case 0x10:
+            return SmsMsgClass.CLASS_0;
+          case 0x11:
+            return SmsMsgClass.CLASS_1;
+          case 0x12:
+            return SmsMsgClass.CLASS_2;
+          case 0x13:
+            return SmsMsgClass.CLASS_3;
+          default:
+            return SmsMsgClass.CLASS_1;
+        }
+
+      case DATA_CODING_MESSAGE:
+        switch (dcs & 0x03) {
+          case 0x00:
+            return SmsMsgClass.CLASS_0;
+          case 0x01:
+            return SmsMsgClass.CLASS_1;
+          case 0x02:
+            return SmsMsgClass.CLASS_2;
+          case 0x03:
+            return SmsMsgClass.CLASS_3;
+          default:
+            return SmsMsgClass.CLASS_1;
+        }
+      default:
+        return null;
+    }
+  }
+
+  private SmsWaitingInfo getWaitingInfo(DcsGroup group, byte dcs) {
+
+    switch (group) {
+
+      case MESSAGE_WAITING_DISCARD:
+      case MESSAGE_WAITING_STORE_GSM:
+      case MESSAGE_WAITING_STORE_UCS2:
+        switch (dcs & 0x03) {
+          case 0x00:
+            return SmsWaitingInfo.VOICE;
+          case 0x01:
+            return SmsWaitingInfo.FAX;
+          case 0x02:
+            return SmsWaitingInfo.EMAIL;
+          case 0x03:
+            return SmsWaitingInfo.OTHER;
+          default:
+            throw new IllegalArgumentException("unknown waiting info of dcs:" + dcs);
+        }
+      default:
+        return null;
+    }
+  }
+
+  SmsDcs(byte dcs, DcsGroup group, SmsAlphabet alphabet, SmsMsgClass messageClass, SmsWaitingInfo waitingInfo) {
     this.dcs = dcs;
     this.group = group;
     this.alphabet = alphabet;
@@ -158,7 +290,7 @@ public class SmsDcs implements Serializable {
   public static SmsDcs waitingInfo(DcsGroup group, SmsWaitingInfo smsWaitingInfo) {
     byte dcs = 0x00;
 
-    SmsAlphabet alphabet = null;
+    SmsAlphabet alphabet = SmsAlphabet.RESERVED;
 
     // Bits 5 and 4 indicate the alphabet being used, as follows :
     // Bit5 Bit4 Alphabet:
