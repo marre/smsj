@@ -36,6 +36,9 @@ package com.github.xfslove.smsj.sms.ud;
 
 import com.github.xfslove.smsj.sms.SmsPort;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Toolkit class for SmsUdhElement objects.
  *
@@ -47,6 +50,32 @@ public final class SmsUdhUtil {
    * Constructor for SmsUdhUtil.
    */
   private SmsUdhUtil() {
+  }
+
+  /**
+   * deserialize SmsUdhElements from supplied bytes.
+   *
+   * @param udhBytes The supplied bytes
+   * @return parsed SmsUdhElements
+   */
+  public static SmsUdhElement[] deserialize(byte[] udhBytes) {
+    if (udhBytes == null || udhBytes.length == 0) {
+      return null;
+    }
+    List<SmsUdhElement> udhElements = new ArrayList<>();
+    for (int i = 0; i < udhBytes.length; i++) {
+
+      int udhLength = udhBytes[i];
+      SmsUdhIei udhIei = SmsUdhIei.parse(udhBytes[i++]);
+      byte[] udh = new byte[udhLength];
+      System.arraycopy(udhBytes, i, udh, 0, udhLength);
+      // reset udhIei offset
+      i += udhLength - 1;
+
+      udhElements.add(new SmsUdhElement(udhIei, udh));
+    }
+
+    return udhElements.toArray(new SmsUdhElement[0]);
   }
 
   /**
@@ -67,41 +96,6 @@ public final class SmsUdhUtil {
     }
 
     return totLength;
-  }
-
-  /**
-   * Calculates if the given data needs a concatenated SMS.
-   *
-   * @param ud  User data
-   * @param udh UDH elements
-   * @return true if the message must be concatentated.
-   */
-  public static boolean isConcat(SmsUserData ud, byte[] udh) {
-    int udLength = ud.getData().length;
-
-    int bytesLeft = 140;
-    int maxChars;
-
-    if (udh != null) {
-      bytesLeft -= udh.length;
-    }
-
-    switch (ud.getDcs().getAlphabet()) {
-      case GSM:
-        maxChars = (bytesLeft * 8) / 7;
-        break;
-
-      case UCS2:
-        maxChars = bytesLeft / 2;
-        break;
-
-      case LATIN1:
-      default:
-        maxChars = bytesLeft;
-        break;
-    }
-
-    return (udLength > maxChars);
   }
 
   /**

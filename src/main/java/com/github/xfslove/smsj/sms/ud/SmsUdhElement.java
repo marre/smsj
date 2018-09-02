@@ -91,6 +91,15 @@ public final class SmsUdhElement implements Serializable {
   }
 
   /**
+   * Returns the Udh Iei
+   *
+   * @return Udh Iei
+   */
+  public SmsUdhIei getUdhIei() {
+    return udhIei;
+  }
+
+  /**
    * Return the UDH element including the UDH "header" (two bytes)
    *
    * @return Data

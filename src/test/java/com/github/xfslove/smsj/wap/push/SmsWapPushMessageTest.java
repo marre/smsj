@@ -36,6 +36,9 @@ package com.github.xfslove.smsj.wap.push;
 
 import com.github.xfslove.smsj.sms.SmsPdu;
 import com.github.xfslove.smsj.sms.SmsPort;
+import com.github.xfslove.smsj.sms.ud.SmsUdhElement;
+import com.github.xfslove.smsj.sms.ud.SmsUdhIei;
+import com.github.xfslove.smsj.sms.ud.SmsUdhUtil;
 import com.github.xfslove.smsj.sms.ud.SmsUserData;
 import com.github.xfslove.smsj.util.StringUtil;
 import junit.framework.TestCase;
@@ -79,6 +82,21 @@ public class SmsWapPushMessageTest extends TestCase
                 StringUtil.bytesToHexString(bytes));
         assertEquals("00062C1F2A6170706C69636174696F6E2F782D7761702D70726F762E62726F777365722D73657474696E67730081EA01016A0045C67F0187151103576170000187171103687474703A2F2F7761702E646B000101", 
                 StringUtil.bytesToHexString(pdus[0].getUserData().getData()));
+    }
+
+    public void testUdhDeserialize() {
+
+        String pdu = "0504C34FC0020504C34FC002";
+
+        byte[] bytes = StringUtil.hexStringToBytes(pdu);
+
+        SmsUdhElement[] udhElements = SmsUdhUtil.deserialize(bytes);
+
+        assertEquals(udhElements.length, 2);
+        for (SmsUdhElement udhElement : udhElements) {
+            assertEquals(udhElement.getUdhIei(), SmsUdhIei.APP_PORT_16BIT);
+            assertEquals(udhElement.getUdhIeiData().length, 5);
+        }
     }
     
     public void testSiPush()
