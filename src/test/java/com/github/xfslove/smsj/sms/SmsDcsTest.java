@@ -49,6 +49,28 @@ public class SmsDcsTest extends TestCase {
   public void testGeneralDataCodingGroup() {
     SmsDcs dcs;
 
+    dcs = new SmsDcs((byte) 8);
+    assertEquals(SmsAlphabet.UCS2, dcs.getAlphabet());
+    assertNull(dcs.getMessageClass());
+    assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
+
+    dcs = new SmsDcs((byte) 15);
+    assertEquals(SmsAlphabet.RESERVED, dcs.getAlphabet());
+    assertNull(dcs.getMessageClass());
+    assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
+
+    dcs = SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, SmsAlphabet.UCS2, null);
+    assertEquals(SmsAlphabet.UCS2, dcs.getAlphabet());
+    assertNull(dcs.getMessageClass());
+    assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
+    assertEquals(dcs.getValue(), 8);
+
+    dcs = SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, SmsAlphabet.RESERVED, null);
+    assertEquals(SmsAlphabet.RESERVED, dcs.getAlphabet());
+    assertNull(dcs.getMessageClass());
+    assertEquals(DcsGroup.GENERAL_DATA_CODING, dcs.getGroup());
+    assertEquals(dcs.getValue(), 12);
+
     dcs = SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, SmsAlphabet.GSM, SmsMsgClass.CLASS_1);
     assertEquals(SmsAlphabet.GSM, dcs.getAlphabet());
     assertEquals(SmsMsgClass.CLASS_1, dcs.getMessageClass());

@@ -144,7 +144,7 @@ public class SmsDcs implements Serializable {
           case 0x13:
             return SmsMsgClass.CLASS_3;
           default:
-            return SmsMsgClass.CLASS_1;
+            return null;
         }
 
       case DATA_CODING_MESSAGE:
@@ -227,7 +227,7 @@ public class SmsDcs implements Serializable {
    *
    * @param group    The dcs group, {@link DcsGroup#GENERAL_DATA_CODING} or {@link DcsGroup#MARKED_FOR_AUTOMATIC_DELETION}
    * @param alphabet The alphabet.
-   * @param msgClass The message class.
+   * @param msgClass The message class, can be null.
    * @return A valid general data coding DCS.
    */
   public static SmsDcs general(DcsGroup group, SmsAlphabet alphabet, SmsMsgClass msgClass) {
@@ -261,20 +261,24 @@ public class SmsDcs implements Serializable {
       default:
     }
 
-    switch (msgClass) {
-      case CLASS_0:
-        dcs |= 0x10;
-        break;
-      case CLASS_1:
-        dcs |= 0x11;
-        break;
-      case CLASS_2:
-        dcs |= 0x12;
-        break;
-      case CLASS_3:
-        dcs |= 0x13;
-        break;
-      default:
+    if (msgClass != null) {
+      switch (msgClass) {
+        case CLASS_0:
+          dcs |= 0x10;
+          break;
+        case CLASS_1:
+          dcs |= 0x11;
+          break;
+        case CLASS_2:
+          dcs |= 0x12;
+          break;
+        case CLASS_3:
+          dcs |= 0x13;
+          break;
+        default:
+      }
+    } else {
+      dcs |= 0x00;
     }
 
     return new SmsDcs(dcs, group, alphabet, msgClass, null);
