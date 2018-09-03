@@ -107,7 +107,7 @@ public class SmsPdu implements Serializable {
    * @return udh bytes
    */
   public byte[] getUdhBytes() {
-    if (udhElements.length == 0) {
+    if (udhElements == null || udhElements.length == 0) {
       return new byte[0];
     }
 
