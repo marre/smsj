@@ -43,6 +43,7 @@ import com.github.xfslove.smsj.sms.ud.SmsUdhElement;
 import com.github.xfslove.smsj.sms.ud.SmsUserData;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -155,9 +156,23 @@ public class SmsTextMessage extends SmsConcatMessage {
       case UCS2:
         return new SmsUserData(text.getBytes(StandardCharsets.UTF_16BE), dcs);
 
+      case RESERVED:
+
+        Charset reserveCharset = getReserveCharset();
+        if (reserveCharset != null) {
+          return new SmsUserData(text.getBytes(reserveCharset), dcs);
+        }
+
       default:
         return null;
     }
+  }
+
+  /**
+   * @return reserved charset, default null
+   */
+  public Charset getReserveCharset() {
+    return null;
   }
 
   /**
