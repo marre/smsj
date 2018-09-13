@@ -34,6 +34,12 @@
  * ***** END LICENSE BLOCK ***** */
 package com.github.xfslove.smsj.util;
 
+import com.github.xfslove.smsj.sms.charset.Gsm7BitCharset;
+import com.github.xfslove.smsj.sms.dcs.SmsAlphabet;
+
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -162,5 +168,35 @@ public final class StringUtil {
     }
 
     return sb.toString();
+  }
+
+  /**
+   * Generates a string of the given alphabet.
+   *
+   * @param bytes    bytes
+   * @param alphabet alphabet
+   * @param reserved reserved alphabet charset
+   * @return string value
+   */
+  public static String getString(byte[] bytes, SmsAlphabet alphabet, Charset reserved) {
+    if (bytes == null || bytes.length == 0) {
+      return null;
+    }
+    switch (alphabet) {
+      case GSM:
+        try {
+          return new String(bytes, Gsm7BitCharset.CHARSET_NAME);
+        } catch (UnsupportedEncodingException e) {
+          return null;
+        }
+      case LATIN1:
+        return new String(bytes, StandardCharsets.ISO_8859_1);
+      case UCS2:
+        return new String(bytes, StandardCharsets.UTF_16BE);
+      case RESERVED:
+        return new String(bytes, reserved);
+      default:
+        return null;
+    }
   }
 }
