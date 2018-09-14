@@ -35,9 +35,9 @@
 package com.github.xfslove.smsj.util;
 
 import com.github.xfslove.smsj.sms.charset.Gsm7BitCharset;
+import com.github.xfslove.smsj.sms.charset.Gsm7BitCharsetProvider;
 import com.github.xfslove.smsj.sms.dcs.SmsAlphabet;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
@@ -184,11 +184,8 @@ public final class StringUtil {
     }
     switch (alphabet) {
       case GSM:
-        try {
-          return new String(bytes, Gsm7BitCharset.CHARSET_NAME);
-        } catch (UnsupportedEncodingException e) {
-          return null;
-        }
+        Charset charset = new Gsm7BitCharsetProvider().charsetForName(Gsm7BitCharset.CHARSET_NAME);
+        return new String(bytes, charset);
       case LATIN1:
         return new String(bytes, StandardCharsets.ISO_8859_1);
       case UCS2:

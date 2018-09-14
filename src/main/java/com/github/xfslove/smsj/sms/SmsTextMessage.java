@@ -35,6 +35,7 @@
 package com.github.xfslove.smsj.sms;
 
 import com.github.xfslove.smsj.sms.charset.Gsm7BitCharset;
+import com.github.xfslove.smsj.sms.charset.Gsm7BitCharsetProvider;
 import com.github.xfslove.smsj.sms.dcs.DcsGroup;
 import com.github.xfslove.smsj.sms.dcs.SmsAlphabet;
 import com.github.xfslove.smsj.sms.dcs.SmsDcs;
@@ -42,7 +43,6 @@ import com.github.xfslove.smsj.sms.dcs.SmsMsgClass;
 import com.github.xfslove.smsj.sms.ud.SmsUdhElement;
 import com.github.xfslove.smsj.sms.ud.SmsUserData;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -143,12 +143,8 @@ public class SmsTextMessage extends SmsConcatMessage {
   public SmsUserData getUserData() {
     switch (dcs.getAlphabet()) {
       case GSM:
-        try {
-          return new SmsUserData(text.getBytes(Gsm7BitCharset.CHARSET_NAME), dcs);
-        } catch (UnsupportedEncodingException e) {
-          // shouldn't happen...
-          throw new RuntimeException(e);
-        }
+        Charset gsm7bit = new Gsm7BitCharsetProvider().charsetForName(Gsm7BitCharset.CHARSET_NAME);
+        return new SmsUserData(text.getBytes(gsm7bit), dcs);
 
       case LATIN1:
         return new SmsUserData(text.getBytes(StandardCharsets.ISO_8859_1), dcs);
