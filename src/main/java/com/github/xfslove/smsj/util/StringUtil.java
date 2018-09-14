@@ -35,7 +35,6 @@
 package com.github.xfslove.smsj.util;
 
 import com.github.xfslove.smsj.sms.charset.Gsm7BitCharset;
-import com.github.xfslove.smsj.sms.charset.Gsm7BitCharsetProvider;
 import com.github.xfslove.smsj.sms.dcs.SmsAlphabet;
 
 import java.nio.charset.Charset;
@@ -184,8 +183,7 @@ public final class StringUtil {
     }
     switch (alphabet) {
       case GSM:
-        Charset charset = new Gsm7BitCharsetProvider().charsetForName(Gsm7BitCharset.CHARSET_NAME);
-        return new String(bytes, charset);
+        return new String(bytes, Gsm7BitCharset.INSTANCE);
       case LATIN1:
         return new String(bytes, StandardCharsets.ISO_8859_1);
       case UCS2:

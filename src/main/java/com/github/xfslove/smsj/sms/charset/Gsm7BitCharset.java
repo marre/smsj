@@ -23,6 +23,7 @@ public class Gsm7BitCharset extends Charset {
    * The name of the charset we provide
    */
   public static final String CHARSET_NAME = "X-Gsm7Bit";
+  public static final Charset INSTANCE = new Gsm7BitCharsetProvider().charsetForName(CHARSET_NAME);
 
   /**
    * HashMap's used for encoding and decoding

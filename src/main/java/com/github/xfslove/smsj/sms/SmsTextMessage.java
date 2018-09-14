@@ -35,7 +35,6 @@
 package com.github.xfslove.smsj.sms;
 
 import com.github.xfslove.smsj.sms.charset.Gsm7BitCharset;
-import com.github.xfslove.smsj.sms.charset.Gsm7BitCharsetProvider;
 import com.github.xfslove.smsj.sms.dcs.DcsGroup;
 import com.github.xfslove.smsj.sms.dcs.SmsAlphabet;
 import com.github.xfslove.smsj.sms.dcs.SmsDcs;
@@ -143,8 +142,7 @@ public class SmsTextMessage extends SmsConcatMessage {
   public SmsUserData getUserData() {
     switch (dcs.getAlphabet()) {
       case GSM:
-        Charset gsm7bit = new Gsm7BitCharsetProvider().charsetForName(Gsm7BitCharset.CHARSET_NAME);
-        return new SmsUserData(text.getBytes(gsm7bit), dcs);
+        return new SmsUserData(text.getBytes(Gsm7BitCharset.INSTANCE), dcs);
 
       case LATIN1:
         return new SmsUserData(text.getBytes(StandardCharsets.ISO_8859_1), dcs);
