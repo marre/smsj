@@ -25,7 +25,7 @@ SMSJ is based on the [marre SMSJ](https://github.com/marre/smsj) libraries. It c
 
 - Gsm-7bit charset
 
-  `Gsm7BitCharset.CHARSET_NAME`
+  `Gsm7BitCharset.INSTANCE`
 
 - create SMS data coding scheme
 
