@@ -62,8 +62,7 @@ public final class WspHeaderEncoder {
    * @param contentId          content-id
    * @throws IOException ex
    */
-  public static void
-  writeHeaderContentId(WspEncodingVersion wspEncodingVersion, OutputStream os, String contentId) throws IOException {
+  public static void writeHeaderContentId(WspEncodingVersion wspEncodingVersion, OutputStream os, String contentId) throws IOException {
     int headerId = WspUtil.getWellKnownHeaderId(wspEncodingVersion, WspConstants.HEADER_CONTENT_ID);
     if (headerId != -1) {
       WspUtil.writeShortInteger(os, headerId);
