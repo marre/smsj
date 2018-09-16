@@ -99,6 +99,11 @@ public class WapMimeEncoder {
    */
   public static void writeBody(WspEncodingVersion wspEncodingVersion, OutputStream os, MimeBodyPart msg) throws IOException {
     if (msg instanceof MimeMultipart) {
+      String ct = msg.getContentType().getValue();
+
+      // Convert multipart headers...
+      String newCt = WspUtil.convertMultipartContentType(ct);
+      msg.getContentType().setValue(newCt);
 
       writeMultipart(wspEncodingVersion, os, (MimeMultipart) msg);
     } else {

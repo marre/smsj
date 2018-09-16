@@ -34,9 +34,11 @@
  * ***** END LICENSE BLOCK ***** */
 package com.github.xfslove.smsj.mime;
 
+import com.github.xfslove.smsj.wsp.WspUtil;
+
 public class MimeContentType extends MimeHeader {
 
   public MimeContentType(String contentType) {
-    super("Content-Type", contentType);
+    super("Content-Type", WspUtil.convertMultipartContentType(contentType));
   }
 }
