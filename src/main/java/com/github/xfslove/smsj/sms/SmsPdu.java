@@ -92,17 +92,11 @@ public class SmsPdu implements Serializable {
    * @param udhElements The UDH elements
    */
   public void setUserDataHeaders(SmsUdhElement[] udhElements) {
-    if (udhElements != null) {
-      this.udhElements = new SmsUdhElement[udhElements.length];
-
-      System.arraycopy(udhElements, 0, this.udhElements, 0, udhElements.length);
-    } else {
-      this.udhElements = null;
-    }
+    this.udhElements = udhElements;
   }
 
   /**
-   * the UDH fields or null if there aren't any udh
+   * the UDHL + UDH fields or null if there aren't any udh
    *
    * @return udh bytes
    */
@@ -128,11 +122,10 @@ public class SmsPdu implements Serializable {
    * @return ud bytes
    */
   public byte[] getUdBytes() {
-    byte[] data = ud.getData();
-    if (data == null) {
+    if (ud == null) {
       return new byte[0];
     }
-    return data;
+    return ud.getData() == null ? new byte[0] : ud.getData();
   }
 
   /**

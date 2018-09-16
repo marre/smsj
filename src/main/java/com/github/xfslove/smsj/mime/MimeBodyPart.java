@@ -139,8 +139,7 @@ public class MimeBodyPart implements Serializable {
    * @param contentType The content-type of the content
    */
   public void setContent(byte[] content, String contentType) {
-    body = new byte[content.length];
-    System.arraycopy(content, 0, body, 0, content.length);
+    body = content;
     this.contentType = new MimeContentType(contentType);
   }
 
@@ -151,8 +150,7 @@ public class MimeBodyPart implements Serializable {
    * @param contentType The content type
    */
   public void setContent(byte[] content, MimeContentType contentType) {
-    body = new byte[content.length];
-    System.arraycopy(content, 0, body, 0, content.length);
+    body = content;
     this.contentType = contentType;
   }
 
@@ -184,14 +182,7 @@ public class MimeBodyPart implements Serializable {
    * @return The content
    */
   public byte[] getBody() {
-    byte[] bodyCopy = null;
-
-    if (body != null) {
-      bodyCopy = new byte[body.length];
-      System.arraycopy(body, 0, bodyCopy, 0, body.length);
-    }
-
-    return bodyCopy;
+    return body == null ? new byte[0] : body;
   }
 
   /**
@@ -200,7 +191,7 @@ public class MimeBodyPart implements Serializable {
    * @return The size of the body
    */
   public int getBodySize() {
-    return body.length;
+    return getBody().length;
   }
 
   /**

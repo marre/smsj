@@ -196,12 +196,7 @@ public class WbxmlWriter implements XmlWriter, AutoCloseable {
    * @param tagTokens first element in this array defines tag #5
    */
   public void setTagTokens(String[] tagTokens) {
-    if (tagTokens != null) {
-      this.tagTokens = new String[tagTokens.length];
-      System.arraycopy(tagTokens, 0, this.tagTokens, 0, tagTokens.length);
-    } else {
-      this.tagTokens = null;
-    }
+    this.tagTokens = tagTokens;
   }
 
   /**
@@ -210,12 +205,7 @@ public class WbxmlWriter implements XmlWriter, AutoCloseable {
    * @param attrStrartTokens first element in this array defines attribute #85
    */
   public void setAttrStartTokens(String[] attrStrartTokens) {
-    if (attrStrartTokens != null) {
-      attrStartTokens = new String[attrStrartTokens.length];
-      System.arraycopy(attrStrartTokens, 0, attrStartTokens, 0, attrStrartTokens.length);
-    } else {
-      attrStartTokens = null;
-    }
+    this.attrStartTokens = attrStrartTokens;
   }
 
   /**
@@ -224,12 +214,7 @@ public class WbxmlWriter implements XmlWriter, AutoCloseable {
    * @param attrValueTokens first element in this array defines attribute #05
    */
   public void setAttrValueTokens(String[] attrValueTokens) {
-    if (attrValueTokens != null) {
-      this.attrValueTokens = new String[attrValueTokens.length];
-      System.arraycopy(attrValueTokens, 0, this.attrValueTokens, 0, attrValueTokens.length);
-    } else {
-      this.attrValueTokens = null;
-    }
+    this.attrValueTokens = attrValueTokens;
   }
 
   /////////////////////////////////////////////////////////
