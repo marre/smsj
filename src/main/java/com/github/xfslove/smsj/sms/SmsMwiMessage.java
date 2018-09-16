@@ -84,7 +84,7 @@ public class SmsMwiMessage extends SmsTextMessage {
    * @param alphabet Alphabet to use. Valid values are SmsDcs.ALPHABET_*.
    */
   public SmsMwiMessage(String text, SmsAlphabet alphabet) {
-    super(text, SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, alphabet, SmsMsgClass.CLASS_1));
+    super(text, SmsDcs.general(DcsGroup.GENERAL_DATA_CODING, alphabet, null));
   }
 
   /**
