@@ -132,20 +132,18 @@ public abstract class SmsConcatMessage implements SmsMessage {
     }
     SmsPdu[] smsPdus = new SmsPdu[nSms];
 
-    // Calculate number of UDHI
-    // add concat header...
-    SmsUdhElement[] pduUdhElements;
-    if (udhElements == null) {
-      pduUdhElements = new SmsUdhElement[1];
-    } else {
-      pduUdhElements = new SmsUdhElement[udhElements.length + 1];
-
-      // Copy the UDH headers
-      System.arraycopy(udhElements, 0, pduUdhElements, 1, udhElements.length);
-    }
-
     // Create pdus
     for (int i = 0; i < nSms; i++) {
+      // Calculate number of UDHI
+      // add concat header...
+      SmsUdhElement[] pduUdhElements;
+      if (udhElements == null) {
+        pduUdhElements = new SmsUdhElement[1];
+      } else {
+        pduUdhElements = new SmsUdhElement[udhElements.length + 1];
+        // Copy the UDH headers
+        System.arraycopy(udhElements, 0, pduUdhElements, 1, udhElements.length);
+      }
       // Create concat header
       pduUdhElements[0] = SmsUdhUtil.get8BitConcatUdh(refno, nSms, i + 1);
 
