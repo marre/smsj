@@ -3,7 +3,8 @@ package com.github.xfslove.smsj.mms.smil;
 import java.io.Serializable;
 
 /**
- * Created by hanwen on 2018/8/23.
+ * @author hanwen
+ * created at 2018/8/23.
  */
 public class SmilRegion implements Serializable {
 

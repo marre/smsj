@@ -27,7 +27,8 @@ import java.util.List;
  *
  * </pre>
  *
- * Created by hanwen on 2018/8/22.
+ * @author hanwen
+ * created at 2018/8/22.
  */
 public class Smil implements XmlDocument {
 

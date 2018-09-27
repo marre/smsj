@@ -43,7 +43,10 @@ import java.io.OutputStream;
 import java.util.Date;
 
 /**
- * Created by hanwen on 2018/8/20.
+ * iphone limit: X-Wap-Profile: http://iphonemms.apple.com/iphone/uaprof-2MB.rdf
+ *
+ * @author hanwen
+ * created at 2018/8/20.
  */
 public class MixedMms extends MimeMultipartMixed {
 

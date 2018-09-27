@@ -10,7 +10,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Stack;
 
 /**
- * Created by hanwen on 2018/8/22.
+ * @author hanwen
+ * created at 2018/8/22.
  */
 public class SmilWriter implements XmlWriter, AutoCloseable {
 
