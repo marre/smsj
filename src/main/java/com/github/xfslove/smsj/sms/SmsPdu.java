@@ -39,11 +39,23 @@ import com.github.xfslove.smsj.sms.ud.SmsUdhElement;
 import com.github.xfslove.smsj.sms.ud.SmsUdhUtil;
 import com.github.xfslove.smsj.sms.ud.SmsUserData;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
- * Represents an SMS pdu
- * <p>
+ * Represents an SMS pdu, looks like:
+ * <pre>
+ *
+ *   -------------------------------------------
+ *
+ *   udhl | udh1(udh1l + udh1) | ... | udhn | ud
+ *
+ *   --------------------------------------------
+ *   |                                      |
+ *   |&lt;----------------UDH-----------------&gt;| UD
+ *
+ * </pre>
  * A SMS pdu consists of a user data header (UDH) and the actual content often
  * called user data (UD).
  *
@@ -106,16 +118,18 @@ public class SmsPdu implements Serializable {
     }
 
     int sizeOf = SmsUdhUtil.getSizeOf(udhElements);
-    byte[] bytes = new byte[sizeOf + 1];
-    bytes[0] = (byte) (sizeOf & 0xff);
-    int offset = 1;
-    for (SmsUdhElement udhElement : udhElements) {
-      byte[] udh = udhElement.getData();
-      System.arraycopy(udh, 0, bytes, offset, udh.length);
-      offset += udh.length;
-    }
+    try (ByteArrayOutputStream os = new ByteArrayOutputStream(sizeOf + 1)) {
+      os.write(sizeOf);
 
-    return bytes;
+      for (SmsUdhElement udhElement : udhElements) {
+        os.write(udhElement.getData());
+      }
+
+      return os.toByteArray();
+
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   /**

@@ -42,9 +42,9 @@ SMSJ is based on the [marre SMSJ](https://github.com/marre/smsj) libraries. It c
   ```
   SmsTextMessage message = new SmsTextMessage("github");
   SmsPdu[] pdus = message.getPdus();
-  for (SmsPdu smsPdu : pdus) {
-    smsPdu.writeTo(os);
-  }
+  
+  byte[] udh = pdus[i].getUdhBytes();
+  byte[] ud = pdus[i].getUdBytes();
   ```
 
 - create WAP SI Push message
@@ -53,9 +53,9 @@ SMSJ is based on the [marre SMSJ](https://github.com/marre/smsj) libraries. It c
   WapSIPush push = new WapSIPush("www.github.com", "github");
   SmsWapPushMessage message = new SmsWapPushMessage(push);
   SmsPdu[] pdus = message.getPdus();
-  for (SmsPdu smsPdu : pdus) {
-    smsPdu.writeTo(os);
-  }
+  
+  byte[] udh = pdus[i].getUdhBytes();
+  byte[] ud = pdus[i].getUdBytes();
   ```
 
 - create WAP SL Push message
@@ -64,9 +64,9 @@ SMSJ is based on the [marre SMSJ](https://github.com/marre/smsj) libraries. It c
   WapSLPush push = new WapSLPush("www.github.com");
   SmsWapPushMessage message = new SmsWapPushMessage(push);
   SmsPdu[] pdus = message.getPdus();
-  for (SmsPdu smsPdu : pdus) {
-    smsPdu.writeTo(os);
-  }
+  
+  byte[] udh = pdus[i].getUdhBytes();
+  byte[] ud = pdus[i].getUdBytes();
   ```
 
 - create MMS Notification message
@@ -78,9 +78,9 @@ SMSJ is based on the [marre SMSJ](https://github.com/marre/smsj) libraries. It c
   message.setTransactionId("transaction-id");
   message.setSubject("subject");
   SmsPdu[] pdus = message.getPdus();
-  for (SmsPdu smsPdu : pdus) {
-    smsPdu.writeTo(os);
-  }
+  
+  byte[] udh = pdus[i].getUdhBytes();
+  byte[] ud = pdus[i].getUdBytes();
   ```
 
 - create mixed MMS file
