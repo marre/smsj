@@ -9,7 +9,7 @@
 
   <name>smsj</name>
   <url>https://github.com/xfslove/smsj</url>
-  <description>SMS &amp; MMS library for the Java platform</description>
+  <description>message protocols (sms, mms, wap) library</description>
 
   <licenses>
     <license>
