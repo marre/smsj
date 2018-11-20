@@ -34,8 +34,8 @@
  * ***** END LICENSE BLOCK ***** */
 package com.github.xfslove.smsj.wap.nokia;
 
-import com.github.xfslove.smsj.wap.wbxml.WbxmlWriter;
 import com.github.xfslove.smsj.wap.wbxml.WbxmlDocument;
+import com.github.xfslove.smsj.wap.wbxml.WbxmlWriter;
 import com.github.xfslove.smsj.xml.XmlWriter;
 
 import java.io.IOException;
@@ -245,16 +245,15 @@ public class NokiaOtaBrowserSettings implements WbxmlDocument {
 
   @Override
   public void writeXmlTo(OutputStream os) throws Exception {
-    try (WbxmlWriter writer = new WbxmlWriter(OTA_TAG_TOKENS, OTA_ATTR_START_TOKENS, OTA_ATTR_VALUE_TOKENS)) {
-      // <CHARACTERISTIC-LIST>
-      writer.addStartElement("CHARACTERISTIC-LIST");
+    WbxmlWriter writer = new WbxmlWriter(OTA_TAG_TOKENS, OTA_ATTR_START_TOKENS, OTA_ATTR_VALUE_TOKENS);
+    // <CHARACTERISTIC-LIST>
+    writer.addStartElement("CHARACTERISTIC-LIST");
 
-      // <CHARACTERISTIC TYPE="BOOKMARK"> ...
-      writeBookmarksTo(writer);
+    // <CHARACTERISTIC TYPE="BOOKMARK"> ...
+    writeBookmarksTo(writer);
 
-      // </CHARACTERISTIC-LIST>
-      writer.writeTo(os);
-    }
+    // </CHARACTERISTIC-LIST>
+    writer.writeTo(os);
   }
 
   private void writeBookmarksTo(XmlWriter xmlWriter) throws IOException {

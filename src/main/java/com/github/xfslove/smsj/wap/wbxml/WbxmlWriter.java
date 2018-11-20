@@ -50,7 +50,7 @@ import java.util.Map;
 /**
  * @author hanwen
  */
-public class WbxmlWriter implements XmlWriter, AutoCloseable {
+public class WbxmlWriter implements XmlWriter {
 
   private final Map<String, Integer> stringTable = new HashMap<>();
 
@@ -313,9 +313,4 @@ public class WbxmlWriter implements XmlWriter, AutoCloseable {
     os.write(WbxmlConstants.TOKEN_END);
   }
 
-  @Override
-  public void close() throws Exception {
-    stringTableBuf.close();
-    wbxmlBody.close();
-  }
 }

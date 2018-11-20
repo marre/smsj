@@ -205,15 +205,14 @@ public class RelatedMms extends MimeMultipartRelated {
   }
 
   public MimeBodyPart createSmilPart() throws Exception {
-    try (ByteArrayOutputStream os = new ByteArrayOutputStream();
-         SmilWriter writer = new SmilWriter()) {
-      writer.writeTo(os);
+    ByteArrayOutputStream os = new ByteArrayOutputStream();
+    SmilWriter writer = new SmilWriter();
+    writer.writeTo(os);
 
-      MimeBodyPart smilPart = new MimeBodyPart(os.toByteArray(), smil.getContentType());
-      // FIXME: Should perhaps set CID to something useful?
-      smilPart.setContentId("0000");
-      return smilPart;
-    }
+    MimeBodyPart smilPart = new MimeBodyPart(os.toByteArray(), smil.getContentType());
+    // FIXME: Should perhaps set CID to something useful?
+    smilPart.setContentId("0000");
+    return smilPart;
   }
 
   public boolean isTextType(String contentType) {

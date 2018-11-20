@@ -112,15 +112,14 @@ public final class MmsHeaderEncoder {
       WspUtil.writeValueLength(os, 1);
       WspUtil.writeShortInteger(os, MmsConstants.FROM_INSERT_ADDRESS);
     } else {
-      try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        // Write data to baos
-        WspUtil.writeShortInteger(baos, MmsConstants.FROM_ADDRESS_PRESENT);
-        writeEncodedStringValue(baos, from);
+      // Write data to baos
+      WspUtil.writeShortInteger(baos, MmsConstants.FROM_ADDRESS_PRESENT);
+      writeEncodedStringValue(baos, from);
 
-        WspUtil.writeValueLength(os, baos.size());
-        os.write(baos.toByteArray());
-      }
+      WspUtil.writeValueLength(os, baos.size());
+      os.write(baos.toByteArray());
     }
   }
 
@@ -172,16 +171,15 @@ public final class MmsHeaderEncoder {
   public static void writeHeaderXMmsExpiryAbsolute(OutputStream os, long expiry) throws IOException {
     // Expiry-value = Value-length (Absolute-token Date-value |
     // Relative-token Delta-seconds-value)
-    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-      // (Absolute-token Date-value)
-      WspUtil.writeShortInteger(baos, MmsConstants.ABSOLUTE_TOKEN);
-      WspUtil.writeLongInteger(baos, expiry);
+    // (Absolute-token Date-value)
+    WspUtil.writeShortInteger(baos, MmsConstants.ABSOLUTE_TOKEN);
+    WspUtil.writeLongInteger(baos, expiry);
 
-      WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_EXPIRY);
-      WspUtil.writeValueLength(os, baos.size());
-      os.write(baos.toByteArray());
-    }
+    WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_EXPIRY);
+    WspUtil.writeValueLength(os, baos.size());
+    os.write(baos.toByteArray());
   }
 
   public static void writeHeaderXMmsExpiryAbsolute(OutputStream os, Date expiry) throws IOException {
@@ -191,15 +189,14 @@ public final class MmsHeaderEncoder {
   public static void writeHeaderXMmsExpiryRelative(OutputStream os, long expiry) throws IOException {
     // Expiry-value = Value-length (Absolute-token Date-value |
     // Relative-token Delta-seconds-value)
-    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-      WspUtil.writeShortInteger(baos, MmsConstants.RELATIVE_TOKEN);
-      WspUtil.writeLongInteger(baos, expiry);
+    WspUtil.writeShortInteger(baos, MmsConstants.RELATIVE_TOKEN);
+    WspUtil.writeLongInteger(baos, expiry);
 
-      WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_EXPIRY);
-      WspUtil.writeValueLength(os, baos.size());
-      os.write(baos.toByteArray());
-    }
+    WspUtil.writeShortInteger(os, MmsConstants.HEADER_ID_X_MMS_EXPIRY);
+    WspUtil.writeValueLength(os, baos.size());
+    os.write(baos.toByteArray());
   }
 
   public static void writeHeaderXMmsSenderVisibility(OutputStream os, int visibilityId) throws IOException {
@@ -209,12 +206,11 @@ public final class MmsHeaderEncoder {
 
 
   public static void writeEncodedStringValue(OutputStream os, String stringValue) throws IOException {
-    try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-      WspUtil.writeShortInteger(bos, WspConstants.MIB_ENUM_UTF_8);
-      WspUtil.writeTextString(bos, stringValue);
+    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    WspUtil.writeShortInteger(bos, WspConstants.MIB_ENUM_UTF_8);
+    WspUtil.writeTextString(bos, stringValue);
 
-      WspUtil.writeValueLength(os, bos.size());
-      os.write(bos.toByteArray());
-    }
+    WspUtil.writeValueLength(os, bos.size());
+    os.write(bos.toByteArray());
   }
 }

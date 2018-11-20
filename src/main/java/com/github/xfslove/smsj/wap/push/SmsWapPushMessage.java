@@ -34,16 +34,16 @@
  * ***** END LICENSE BLOCK ***** */
 package com.github.xfslove.smsj.wap.push;
 
+import com.github.xfslove.smsj.mime.MimeBodyPart;
+import com.github.xfslove.smsj.mime.MimeContentType;
 import com.github.xfslove.smsj.mime.WapMimeEncoder;
 import com.github.xfslove.smsj.sms.SmsPort;
 import com.github.xfslove.smsj.sms.SmsPortAddressedMessage;
 import com.github.xfslove.smsj.sms.ud.SmsUserData;
+import com.github.xfslove.smsj.wap.wbxml.WbxmlDocument;
 import com.github.xfslove.smsj.wsp.WspConstants;
 import com.github.xfslove.smsj.wsp.WspEncodingVersion;
 import com.github.xfslove.smsj.wsp.WspUtil;
-import com.github.xfslove.smsj.mime.MimeBodyPart;
-import com.github.xfslove.smsj.mime.MimeContentType;
-import com.github.xfslove.smsj.wap.wbxml.WbxmlDocument;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -102,7 +102,8 @@ public class SmsWapPushMessage extends SmsPortAddressedMessage {
 
   protected byte[] buildPushMessage(WbxmlDocument pushMsg) {
 
-    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+    try {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
       // Data
       pushMsg.writeXmlTo(baos);
       return baos.toByteArray();
@@ -119,7 +120,8 @@ public class SmsWapPushMessage extends SmsPortAddressedMessage {
   @Override
   public SmsUserData getUserData() {
 
-    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+    try {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
       //
       // WSP HEADER
       //
@@ -135,23 +137,22 @@ public class SmsWapPushMessage extends SmsPortAddressedMessage {
       // WAP PUSH FIELDS
       //
 
+      ByteArrayOutputStream headers = new ByteArrayOutputStream();
       // Create headers first
-      try (ByteArrayOutputStream headers = new ByteArrayOutputStream()) {
 
-        // Content-type
-        WapMimeEncoder.writeContentType(wspEncodingVersion, headers, pushMsg);
+      // Content-type
+      WapMimeEncoder.writeContentType(wspEncodingVersion, headers, pushMsg);
 
-        // WAP-HEADERS
-        WapMimeEncoder.writeHeaders(wspEncodingVersion, headers, pushMsg);
+      // WAP-HEADERS
+      WapMimeEncoder.writeHeaders(wspEncodingVersion, headers, pushMsg);
 
-        // Headers created, write headers lenght and headers to baos
+      // Headers created, write headers lenght and headers to baos
 
-        // HeadersLen - Length of Content-type and Headers
-        WspUtil.writeUintvar(baos, headers.size());
+      // HeadersLen - Length of Content-type and Headers
+      WspUtil.writeUintvar(baos, headers.size());
 
-        // Headers
-        baos.write(headers.toByteArray());
-      }
+      // Headers
+      baos.write(headers.toByteArray());
 
       // Data
       WapMimeEncoder.writeBody(wspEncodingVersion, baos, pushMsg);

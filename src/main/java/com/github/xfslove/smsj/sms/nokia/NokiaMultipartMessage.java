@@ -71,7 +71,8 @@ abstract class NokiaMultipartMessage extends SmsPortAddressedMessage {
 
     // Payload
 
-    try (ByteArrayOutputStream baos = new ByteArrayOutputStream(140)) {
+    try {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
       // Header or something...
       baos.write(0x30);
 

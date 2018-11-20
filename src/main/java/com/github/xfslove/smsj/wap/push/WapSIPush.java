@@ -34,8 +34,8 @@
  * ***** END LICENSE BLOCK ***** */
 package com.github.xfslove.smsj.wap.push;
 
-import com.github.xfslove.smsj.wap.wbxml.WbxmlWriter;
 import com.github.xfslove.smsj.wap.wbxml.WbxmlDocument;
+import com.github.xfslove.smsj.wap.wbxml.WbxmlWriter;
 import com.github.xfslove.smsj.xml.XmlAttribute;
 
 import java.io.OutputStream;
@@ -171,33 +171,32 @@ public class WapSIPush implements WbxmlDocument {
 
   @Override
   public void writeXmlTo(OutputStream os) throws Exception {
-    try (WbxmlWriter writer = new WbxmlWriter(SI_TAG_TOKENS, SI_ATTR_START_TOKENS, SI_ATTR_VALUE_TOKENS)) {
-      writer.setDoctype("-//WAPFORUM//DTD SI 1.0//EN");
+    WbxmlWriter writer = new WbxmlWriter(SI_TAG_TOKENS, SI_ATTR_START_TOKENS, SI_ATTR_VALUE_TOKENS);
+    writer.setDoctype("-//WAPFORUM//DTD SI 1.0//EN");
 
-      writer.addStartElement("si");
-      List<XmlAttribute> attrs = new ArrayList<>();
-      attrs.add(new XmlAttribute("href", uri));
-      if (id != null && id.length() > 0) {
-        attrs.add(new XmlAttribute("si-id", id));
-      }
-      if (createdDate != null) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        attrs.add(new XmlAttribute("si-expires", sdf.format(createdDate)));
-      }
-      if (expiresDate != null) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        attrs.add(new XmlAttribute("created", sdf.format(expiresDate)));
-      }
-      if (action != null && action.length() > 0) {
-        attrs.add(new XmlAttribute("action", action));
-      }
-      writer.addStartElement("indication", attrs.toArray(new XmlAttribute[0]));
-      writer.addCharacters(message);
-      writer.addEndElement();
-      writer.addEndElement();
-
-      writer.writeTo(os);
+    writer.addStartElement("si");
+    List<XmlAttribute> attrs = new ArrayList<>();
+    attrs.add(new XmlAttribute("href", uri));
+    if (id != null && id.length() > 0) {
+      attrs.add(new XmlAttribute("si-id", id));
     }
+    if (createdDate != null) {
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+      attrs.add(new XmlAttribute("si-expires", sdf.format(createdDate)));
+    }
+    if (expiresDate != null) {
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+      attrs.add(new XmlAttribute("created", sdf.format(expiresDate)));
+    }
+    if (action != null && action.length() > 0) {
+      attrs.add(new XmlAttribute("action", action));
+    }
+    writer.addStartElement("indication", attrs.toArray(new XmlAttribute[0]));
+    writer.addCharacters(message);
+    writer.addEndElement();
+    writer.addEndElement();
+
+    writer.writeTo(os);
   }
 
   @Override

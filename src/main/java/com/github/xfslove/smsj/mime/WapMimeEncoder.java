@@ -126,28 +126,27 @@ public class WapMimeEncoder {
     WspUtil.writeUintvar(os, bodyParts.size());
 
     for (MimeBodyPart part : bodyParts) {
-      try (ByteArrayOutputStream headers = new ByteArrayOutputStream();
-           ByteArrayOutputStream content = new ByteArrayOutputStream()) {
+      ByteArrayOutputStream headers = new ByteArrayOutputStream();
+      ByteArrayOutputStream content = new ByteArrayOutputStream();
 
-        // Generate content-type + headers
-        writeContentType(wspEncodingVersion, headers, part);
-        writeHeaders(wspEncodingVersion, headers, part);
-        // Done with the headers...
+      // Generate content-type + headers
+      writeContentType(wspEncodingVersion, headers, part);
+      writeHeaders(wspEncodingVersion, headers, part);
+      // Done with the headers...
 
-        // Generate content...
-        writeBody(wspEncodingVersion, content, part);
+      // Generate content...
+      writeBody(wspEncodingVersion, content, part);
 
-        // Write data to the os
+      // Write data to the os
 
-        // Length of the content type and headers combined
-        WspUtil.writeUintvar(os, headers.size());
-        // Length of the data (content)
-        WspUtil.writeUintvar(os, content.size());
-        // Content type + headers
-        os.write(headers.toByteArray());
-        // Data
-        os.write(content.toByteArray());
-      }
+      // Length of the content type and headers combined
+      WspUtil.writeUintvar(os, headers.size());
+      // Length of the data (content)
+      WspUtil.writeUintvar(os, content.size());
+      // Content type + headers
+      os.write(headers.toByteArray());
+      // Data
+      os.write(content.toByteArray());
     }
   }
 

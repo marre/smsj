@@ -106,7 +106,8 @@ public class NokiaOperatorLogo extends SmsPortAddressedMessage {
   @Override
   public SmsUserData getUserData() {
 
-    try (ByteArrayOutputStream baos = new ByteArrayOutputStream(140)) {
+    try {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream(140);
       if (!discardNokiaHeaders) {
         // Header??
         baos.write(0x30);

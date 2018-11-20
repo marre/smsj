@@ -118,7 +118,8 @@ public class SmsPdu implements Serializable {
     }
 
     int sizeOf = SmsUdhUtil.getSizeOf(udhElements);
-    try (ByteArrayOutputStream os = new ByteArrayOutputStream(sizeOf + 1)) {
+    try {
+      ByteArrayOutputStream os = new ByteArrayOutputStream(sizeOf + 1);
       os.write(sizeOf);
 
       for (SmsUdhElement udhElement : udhElements) {

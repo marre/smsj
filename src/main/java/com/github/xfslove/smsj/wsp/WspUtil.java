@@ -846,26 +846,25 @@ public final class WspUtil {
       // Create parameter byte array of
       // well-known-media (integer) or extension media
       // 0 or more parameters
-      try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-        if (wellKnownContentType == -1) {
-          writeExtensionMedia(baos, theContentType.getValue());
-        } else {
-          // well-known-media (integer)
-          writeInteger(baos, wellKnownContentType);
-        }
-
-        // Add Parameters
-        for (MimeHeaderParameter headerParam : theContentType.getParameters()) {
-          writeParameter(wspEncodingVersion, baos, headerParam.getName(), headerParam.getValue());
-        }
-        // Write to stream
-
-        // content-general-form
-        // value length
-        writeValueLength(theOs, baos.size());
-        // Write parameter byte array
-        theOs.write(baos.toByteArray());
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      if (wellKnownContentType == -1) {
+        writeExtensionMedia(baos, theContentType.getValue());
+      } else {
+        // well-known-media (integer)
+        writeInteger(baos, wellKnownContentType);
       }
+
+      // Add Parameters
+      for (MimeHeaderParameter headerParam : theContentType.getParameters()) {
+        writeParameter(wspEncodingVersion, baos, headerParam.getName(), headerParam.getValue());
+      }
+      // Write to stream
+
+      // content-general-form
+      // value length
+      writeValueLength(theOs, baos.size());
+      // Write parameter byte array
+      theOs.write(baos.toByteArray());
     }
   }
 

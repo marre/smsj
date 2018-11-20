@@ -168,18 +168,17 @@ public class WapSLPush implements WbxmlDocument {
    */
   @Override
   public void writeXmlTo(OutputStream os) throws Exception {
-    try (WbxmlWriter writer = new WbxmlWriter(SL_TAG_TOKENS, SL_ATTR_START_TOKENS, SL_ATTR_VALUE_TOKENS)) {
-      writer.setDoctype("-//WAPFORUM//DTD SL 1.0//EN");
+    WbxmlWriter writer = new WbxmlWriter(SL_TAG_TOKENS, SL_ATTR_START_TOKENS, SL_ATTR_VALUE_TOKENS);
+    writer.setDoctype("-//WAPFORUM//DTD SL 1.0//EN");
 
-      List<XmlAttribute> attrs = new ArrayList<>();
-      attrs.add(new XmlAttribute("href", uri));
-      if (action != null && action.length() > 0) {
-        attrs.add(new XmlAttribute("action", action));
-      }
-
-      writer.addEmptyElement("sl", attrs.toArray(new XmlAttribute[0]));
-      writer.writeTo(os);
+    List<XmlAttribute> attrs = new ArrayList<>();
+    attrs.add(new XmlAttribute("href", uri));
+    if (action != null && action.length() > 0) {
+      attrs.add(new XmlAttribute("action", action));
     }
+
+    writer.addEmptyElement("sl", attrs.toArray(new XmlAttribute[0]));
+    writer.writeTo(os);
   }
 
   /**

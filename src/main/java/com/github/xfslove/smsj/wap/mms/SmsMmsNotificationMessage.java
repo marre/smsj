@@ -34,9 +34,9 @@
  * ***** END LICENSE BLOCK ***** */
 package com.github.xfslove.smsj.wap.mms;
 
+import com.github.xfslove.smsj.mime.MimeBodyPart;
 import com.github.xfslove.smsj.mms.MmsConstants;
 import com.github.xfslove.smsj.mms.MmsHeaderEncoder;
-import com.github.xfslove.smsj.mime.MimeBodyPart;
 import com.github.xfslove.smsj.sms.ud.SmsUserData;
 import com.github.xfslove.smsj.util.StringUtil;
 import com.github.xfslove.smsj.wap.push.SmsWapPushMessage;
@@ -122,7 +122,8 @@ public class SmsMmsNotificationMessage extends SmsWapPushMessage {
   @Override
   public SmsUserData getUserData() {
 
-    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+    try {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
       writeNotificationTo(baos);
       pushMsg = new MimeBodyPart(baos.toByteArray(), "application/vnd.wap.mms-message");
       setXWapApplicationId("x-wap-application:mms.ua");

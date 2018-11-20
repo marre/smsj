@@ -13,7 +13,7 @@ import java.util.Stack;
  * @author hanwen
  * created at 2018/8/22.
  */
-public class SmilWriter implements XmlWriter, AutoCloseable {
+public class SmilWriter implements XmlWriter {
 
   private final ByteArrayOutputStream smilBody = new ByteArrayOutputStream();
 
@@ -94,10 +94,5 @@ public class SmilWriter implements XmlWriter, AutoCloseable {
         os.write(' ');
       }
     }
-  }
-
-  @Override
-  public void close() throws Exception {
-    smilBody.close();
   }
 }
