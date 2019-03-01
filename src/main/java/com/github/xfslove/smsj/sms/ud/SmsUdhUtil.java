@@ -120,6 +120,28 @@ public final class SmsUdhUtil {
   }
 
   /**
+   * Parse a "8Bit concatenated" UDH element, if not return null.
+   *
+   * @param smsUdhElement the smsUdhElement
+   * @return concatenated sms info: refNr, totalNumberOfSms, seqNr
+   */
+  public static int[] parse8BitConcatUdh(SmsUdhElement smsUdhElement) {
+    if (!SmsUdhIei.CONCATENATED_8BIT.equals(smsUdhElement.getUdhIei())) {
+      return null;
+    }
+
+    if (smsUdhElement.getUdhIeiDataLength() != 3) {
+      return null;
+    }
+    byte[] udhIeiData = smsUdhElement.getUdhIeiData();
+    int[] udhd = new int[3];
+    udhd[0] = udhIeiData[0] & 0xff;
+    udhd[1] = udhIeiData[1] & 0xff;
+    udhd[2] = udhIeiData[2] & 0xff;
+    return udhd;
+  }
+
+  /**
    * Creates a "Message waiting" UDH element using UDH_IEI_SPECIAL_MESSAGE.
    * <p>
    * If more than one type of message is required to be indicated within
