@@ -106,7 +106,7 @@ public enum SmsUdhIei {
       case 0x25:
         return NATIONAL_LANGUAGE_LOCKING_SHIFT;
       default:
-        throw new IllegalArgumentException("unsupported user data header");
+        throw new IllegalArgumentException("unsupported user data header: [" + value + "]");
     }
   }
 

@@ -65,8 +65,8 @@ public final class SmsUdhUtil {
     List<SmsUdhElement> udhElements = new ArrayList<>();
     for (int i = 0; i < udhBytes.length; i++) {
 
-      int udhLength = udhBytes[i];
       SmsUdhIei udhIei = SmsUdhIei.parse(udhBytes[i++]);
+      int udhLength = udhBytes[i++];
       byte[] udh = new byte[udhLength];
       System.arraycopy(udhBytes, i, udh, 0, udhLength);
       // reset udhIei offset

@@ -95,7 +95,7 @@ public class SmsWapPushMessageTest extends TestCase
         assertEquals(udhElements.length, 2);
         for (SmsUdhElement udhElement : udhElements) {
             assertEquals(udhElement.getUdhIei(), SmsUdhIei.APP_PORT_16BIT);
-            assertEquals(udhElement.getUdhIeiData().length, 5);
+            assertEquals(4, udhElement.getUdhIeiData().length);
         }
     }
     
