@@ -123,7 +123,7 @@ public final class SmsUdhUtil {
    * Parse a "8Bit concatenated" UDH element, if not return null.
    *
    * @param smsUdhElement the smsUdhElement
-   * @return concatenated sms info: refNr, totalNumberOfSms, seqNr
+   * @return concatenated sms info: [0]refNr, [1]totalNumberOfSms, [2]seqNr
    */
   public static int[] parse8BitConcatUdh(SmsUdhElement smsUdhElement) {
     if (!SmsUdhIei.CONCATENATED_8BIT.equals(smsUdhElement.getUdhIei())) {
