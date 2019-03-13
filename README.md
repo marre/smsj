@@ -1,4 +1,4 @@
-smsj
+SMSJ
 ====
 
 Java library implementing the 3GPP TS 23.040 and WAP-230-WSP, and allowing development of SMS or MMS and more
