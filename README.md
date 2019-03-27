@@ -11,7 +11,7 @@ SMSJ is based on the [marre SMSJ](https://github.com/marre/smsj) libraries. It c
 <dependency>  
   <groupId>com.github.xfslove</groupId>
   <artifactId>smsj</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 
