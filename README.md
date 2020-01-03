@@ -1,3 +1,7 @@
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.xfslove/smsj/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.xfslove/smsj)
+[![Gitee](https://gitee.com/xfslove/smsj/badge/star.svg)](https://gitee.com/xfslove/smsj)
+[![Github](http://github-svg-buttons.herokuapp.com/star.svg?user=xfslove&repo=smsj&style=flat)](https://github.com/xfslove/smsj)
+
 SMSJ
 ====
 
