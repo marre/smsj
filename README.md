@@ -9,6 +9,14 @@ Java library implementing the 3GPP TS 23.040 and WAP-230-WSP, and allowing devel
 
 SMSJ is based on the [marre SMSJ](https://github.com/marre/smsj) libraries. It contains several bug fixes, and has been generally refactored, and released at maven central repository.
 
+### Introductions
+  
+[白话短信协议](https://segmentfault.com/a/1190000020779563)    
+
+[白话彩信协议](https://segmentfault.com/a/1190000020791435)  
+  
+[白话CMPP、SGIP](https://segmentfault.com/a/1190000020798138) ---([SMSSP](https://github.com/xfslove/smssp)的doc还在写~)
+
 ### Maven
 
 ```
