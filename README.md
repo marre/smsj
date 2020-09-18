@@ -147,6 +147,6 @@ SMSJ is based on the [marre SMSJ](https://github.com/marre/smsj) libraries. It c
   par2.setDur(3000);
   mms.addPar(par2);
   mms.addBodyPart(MimeFactory.createTextBodyPart("github"), SmilRegion.TEXT);
-  
+  // notice: must one smilPar one BodyPart
   mms.writeTo(os);
   ```
