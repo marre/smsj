@@ -126,7 +126,7 @@ public class RelatedMms extends MimeMultipartRelated {
     MmsHeaderEncoder.writeHeaderXMmsMmsVersion(out, version);
 
     if (subject != null && subject.length() > 0) {
-      MmsHeaderEncoder.writeHeaderSubject(out, new String(subject.getBytes(Charset.defaultCharset()), StandardCharsets.ISO_8859_1));
+      MmsHeaderEncoder.writeHeaderSubject(out, new String(subject.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
     }
 
     if (from != null && from.length() > 0) {
