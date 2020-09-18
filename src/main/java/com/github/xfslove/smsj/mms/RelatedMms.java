@@ -43,6 +43,8 @@ import com.github.xfslove.smsj.wsp.WspEncodingVersion;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.UUID;
@@ -124,7 +126,7 @@ public class RelatedMms extends MimeMultipartRelated {
     MmsHeaderEncoder.writeHeaderXMmsMmsVersion(out, version);
 
     if (subject != null && subject.length() > 0) {
-      MmsHeaderEncoder.writeHeaderSubject(out, subject);
+      MmsHeaderEncoder.writeHeaderSubject(out, new String(subject.getBytes(Charset.defaultCharset()), StandardCharsets.ISO_8859_1));
     }
 
     if (from != null && from.length() > 0) {
@@ -153,7 +155,7 @@ public class RelatedMms extends MimeMultipartRelated {
 
     String cid = cid();
     bodyPart.setContentId(cid);
-    String contentType = bodyPart.getContentType().getName().toLowerCase();
+    String contentType = bodyPart.getContentType().getValue().toLowerCase();
     if (isTextType(contentType)) {
       media = new SmilMedia.Text(cid);
     } else if (isImageType(contentType)) {
@@ -182,7 +184,7 @@ public class RelatedMms extends MimeMultipartRelated {
 
     String cid = cid();
     bodyPart.setContentId(cid);
-    String contentType = bodyPart.getContentType().getName().toLowerCase();
+    String contentType = bodyPart.getContentType().getValue().toLowerCase();
     if (isTextType(contentType)) {
       media = new SmilMedia.Text(cid);
       ((SmilMedia.Text) media).setRef(refRegion);

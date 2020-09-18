@@ -59,7 +59,7 @@ public class Smil implements XmlDocument {
   }
 
   public List<SmilRegion> getRegionList() {
-    return Collections.unmodifiableList(regionList);
+    return regionList;
   }
 
   public void addRegion(SmilRegion region) {
@@ -67,7 +67,7 @@ public class Smil implements XmlDocument {
   }
 
   public List<SmilPar> getParList() {
-    return Collections.unmodifiableList(parList);
+    return parList;
   }
 
   public void addPar(SmilPar par) {

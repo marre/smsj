@@ -717,7 +717,7 @@ public final class WspUtil {
    */
   public static void writeExtensionMedia(OutputStream theOs, String theStr) throws IOException {
     theOs.write(theStr.getBytes(StandardCharsets.ISO_8859_1));
-    theOs.write((byte) 0x00);
+    theOs.write( 0x00);
   }
 
   public static void writeTextString(OutputStream theOs, String theStr) throws IOException {
