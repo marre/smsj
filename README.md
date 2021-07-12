@@ -1,7 +1,5 @@
 # SMSJ
 
-[![Build Status](https://travis-ci.org/marre/smsj.png)](https://travis-ci.org/marre/smsj)
-
 ## Project archived
 
 This project is now archived as I haven't had interest nor time to work on this.
